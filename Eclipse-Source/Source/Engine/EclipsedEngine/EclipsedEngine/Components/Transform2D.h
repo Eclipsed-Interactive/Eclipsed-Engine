@@ -18,8 +18,7 @@ namespace Eclipse
 	public:
 		void OnComponentAddedNoCreations();
 
-		void EditorUpdate() override;
-		
+		void AfterRenderUpdate() override;
 		void DirtyUpdate() const;
 
 		

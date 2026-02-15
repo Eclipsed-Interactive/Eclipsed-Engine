@@ -123,6 +123,11 @@ namespace Eclipse
 		for (auto& component : myComponents)
 			component->Render();
 	}
+	void ComponentManager::AfterRenderUpdateComponents()
+	{
+		for (auto& component : myComponents)
+			component->AfterRenderUpdate();
+	}
 	void ComponentManager::SortComponents()
 	{
 		std::sort(myComponents.begin(), myComponents.end(), [&](Component* aComp0, Component* aComp1)

@@ -23,7 +23,7 @@ namespace Eclipse
         virtual void OnTransformDirty() {}
 
         bool IsBodyOwner() { return BodyOwned; }
-        unsigned GetBody() { return myBodyID; }
+        b2BodyId* GetBody() { return myBodyRef; }
 
     protected:
         virtual void CreateCollider() {}
@@ -40,8 +40,12 @@ namespace Eclipse
         
         class Transform2D* myTransform;
 
-        unsigned myShapeID = 0;
-        unsigned myBodyID = 0;
+        ShapeId myShapeID;
+        BodyId myBodyID;
+        
+        // Internal
+        b2ShapeId* myInternalCollider = reinterpret_cast<b2ShapeId*>(&myShapeID);
+        b2BodyId* myBodyRef = reinterpret_cast<b2BodyId*>(&myBodyID);
 
     private:
         int myLastLayer;

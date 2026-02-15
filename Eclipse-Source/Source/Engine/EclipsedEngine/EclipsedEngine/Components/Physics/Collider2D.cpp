@@ -14,17 +14,17 @@ namespace Eclipse
         auto rigidBody = gameObject->GetComponent<RigidBody2D>();
         if (BodyOwned)
         {
-            PhysicsEngine::DeleteShape(myShapeID);
+            PhysicsEngine::DeleteShape(myInternalCollider);
 
             std::vector<Collider2D*> colliders;
             ComponentManager::GetAllComponentsOfType<Collider2D>(gameObject->GetID(), colliders);
 
             if (!colliders.size())
-                PhysicsEngine::DeleteBody(myBodyID);
+                PhysicsEngine::DeleteBody(myBodyRef);
         }
         else
         {
-            PhysicsEngine::DeleteShape(myShapeID);
+            PhysicsEngine::DeleteShape(myInternalCollider);
         }
     }
 
@@ -44,7 +44,7 @@ namespace Eclipse
         {
             if (collider->BodyOwned)
             {
-                myBodyID = collider->myBodyID;
+                myBodyRef = collider->myBodyRef;
                 ColliderHasRB = true;
                 break;
             }
@@ -52,7 +52,7 @@ namespace Eclipse
 
         if (!ColliderHasRB)
         {
-            myBodyID = PhysicsEngine::CreateRigidBody(&myUserData, StaticBody, false, false, false, myTransform->GetPosition());
+            PhysicsEngine::CreateRigidBody(myBodyRef, &myUserData, StaticBody, false, false, false, myTransform->GetPosition());
             BodyOwned = true;
         }
 
@@ -70,7 +70,7 @@ namespace Eclipse
         if (myLastLayer != static_cast<int>(myLayer->value))
         {
             myLastLayer = myLayer->value;
-            PhysicsEngine::ChangeLayer(myShapeID, myLayer);
+            PhysicsEngine::ChangeLayer(myInternalCollider, myLayer);
         }
     }
 }

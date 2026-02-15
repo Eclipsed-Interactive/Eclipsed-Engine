@@ -33,9 +33,13 @@ namespace Eclipse
                 if (Camera::main != this)
                     return;
 
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", gameObject->transform->GetPositionPtr());
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", gameObject->transform->GetRotationPtr());
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", gameObject->transform->GetScalePtr());
+                Math::Vector2f position = gameObject->transform->GetPosition();
+                float rotation = gameObject->transform->GetRotation();
+                Math::Vector2f scale = gameObject->transform->GetScale();
+
+                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
+                GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
+                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
                 });
 
             created = true;

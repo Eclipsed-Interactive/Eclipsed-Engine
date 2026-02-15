@@ -182,7 +182,7 @@ namespace Eclipse
 		myFunctionsToRunOnDirtyUpdate.push_back(aFunction);
 	}
 
-	void Transform2D::EditorUpdate()
+	void Transform2D::AfterRenderUpdate()
 	{
 		if (position->x != lastPosition.x || position->y != lastPosition.y)
 		{

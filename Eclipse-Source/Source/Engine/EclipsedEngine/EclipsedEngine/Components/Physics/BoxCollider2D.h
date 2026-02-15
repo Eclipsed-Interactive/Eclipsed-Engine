@@ -20,8 +20,6 @@ namespace Eclipse
         void SetScale(const Math::Vector2f& aHalfExtents);
 
     private:
-        static inline float number = 0;
-
         Math::Vector2f myHalfExtents;
         SERIALIZED_FIELD_DEFAULT(Math::Vector2f, HalfExtents, Math::Vector2f(0.5f, 0.5f));
 

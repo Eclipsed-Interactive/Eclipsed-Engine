@@ -10,7 +10,7 @@ namespace Eclipse
 {
 	void CircleCollider2D::CreateCollider()
 	{
-		myShapeID = PhysicsEngine::CreateCircleCollider(myBodyID, myInternalRadius, myLayer);
+		PhysicsEngine::CreateCircleCollider(myInternalCollider, myBodyRef, myInternalRadius, myLayer);
 	}
 
 	void CircleCollider2D::DeltaChanges()
@@ -42,6 +42,6 @@ namespace Eclipse
 
 		myInternalRadius = Radius * std::max(size.x, size.y);
 
-		PhysicsEngine::SetTransformCircle(myBodyID, myTransform->GetPosition(), myTransform->GetRotation(), myInternalRadius, ColliderPivot * myInternalRadius * 2.f);
+		PhysicsEngine::SetTransformCircle(myBodyRef, myTransform->GetPosition(), myTransform->GetRotation(), myInternalRadius, ColliderPivot * myInternalRadius * 2.f);
 	}
 }

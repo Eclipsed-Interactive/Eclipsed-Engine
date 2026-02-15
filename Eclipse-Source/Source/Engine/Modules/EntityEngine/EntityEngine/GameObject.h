@@ -26,8 +26,6 @@ namespace Eclipse
 
 		template<typename T>
 		T* GetComponent();
-		// template<typename T>
-		// T* GetComponentBase();
 		std::vector<Component*> GetComponents();
 
 		template <typename T>
@@ -86,10 +84,4 @@ namespace Eclipse
 	{
 		return  ComponentManager::template GetComponent<T>(myID);
 	}
-
-	// template<typename T>
-	// inline T* GameObject::GetComponentBase()
-	// {
-	// 	return  ComponentManager::template GetComponentBase<T>(myID);
-	// }
 }

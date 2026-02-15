@@ -11,7 +11,6 @@
 
 #include <array>
 
-#include <unordered_map>
 
 
 namespace Eclipse
@@ -22,14 +21,14 @@ namespace Eclipse
         class Physics
         {
         public:
-            static void SetLinearVelocity(unsigned aBodyID, const Math::Vector2f& aVelocity);
-            static void SetAngularVelocity(unsigned aBodyID, float aVelocity);
+            static void SetLinearVelocity(const b2BodyId* aBodyID, const Math::Vector2f& aVelocity);
+            static void SetAngularVelocity(const b2BodyId* aBodyID, float aVelocity);
 
-            static Math::Vector2f GetLinearVelocity(unsigned aBodyID);
-            static float GetAngularVelocity(unsigned aBodyID);
+            static Math::Vector2f GetLinearVelocity(const b2BodyId* aBodyID);
+            static float GetAngularVelocity(const b2BodyId* aBodyID);
 
-            static Math::Vector2f GetBodyPosition(unsigned aBodyID);
-            static float GetBodyRotation(unsigned aBodyID);
+            static Math::Vector2f GetBodyPosition(const b2BodyId* aBodyID);
+            static float GetBodyRotation(const b2BodyId* aBodyID);
         };
 
     public:
@@ -39,7 +38,7 @@ namespace Eclipse
 
 
 
-        static unsigned CreateRigidBody(
+        static void CreateRigidBody(b2BodyId* aBody,
             UserData* aUserData,
             Box2DBodyType BodyType = StaticBody,
             bool LockRotation = false,
@@ -48,32 +47,35 @@ namespace Eclipse
             const Math::Vector2f& aStartPosition = { 0.f, 0.f });
 
         // Simple
-        static unsigned CreateBoxCollider(unsigned aBodyID, const Math::Vector2f& aHalfExtents, Layer aLayer);
-        static unsigned CreateCircleCollider(unsigned aBodyID, float radius, Layer aLayer);
-        static unsigned CreateCapsuleCollider(unsigned aBodyID, float aHalfHeight, float aRadius, Layer aLayer);
+        static void CreateBoxCollider(b2ShapeId* aShape, const b2BodyId* aBodyID, const Math::Vector2f& aHalfExtents, Layer aLayer);
+        static void CreateCircleCollider(b2ShapeId* aShape, const b2BodyId* aBodyID, float radius, Layer aLayer);
+        static void CreateCapsuleCollider(b2ShapeId* aShape, const b2BodyId* aBodyID, float aHalfHeight, float aRadius, Layer aLayer);
 
         // Complex
-        static unsigned CreatePolygonCollider(unsigned aBodyID, const std::vector<Math::Vector2f>& aPolygonPoints, Layer aLayer);
+        static bool CreatePolygonCollider(b2ShapeId* aShape, const b2BodyId* aBodyID, const std::vector<Math::Vector2f>& aPolygonPoints, Layer aLayer);
 
-        static void DeleteShape(unsigned aShapeID);
-        static void DeleteBody(unsigned aBodyID);
+        static void DeleteShape(b2ShapeId* aShape);
+        static void DeleteBody(b2BodyId* aBody);
         
-        static void ChangeLayer(unsigned aShapeID, Layer aLayer);
-        static void ChangeBodyType(unsigned aBodyID, BodyType aBodyType);
-        static void ChangeRBLocks(unsigned aBodyID, bool XLock, bool YLock, bool RotationLock);
+        static void ChangeLayer(b2ShapeId* aShapeID, Layer aLayer);
+        static void ChangeBodyType(b2BodyId* aBodyID, BodyType aBodyType);
+        static void ChangeRBLocks(b2BodyId* aBodyID, bool XLock, bool YLock, bool RotationLock);
 
-        static void SetPosition(unsigned aBodyID, const Math::Vector2f& aPosition);
-        static void SetRotation(unsigned aBodyID, float aRotation);
+        static void RemoveRigidBody(b2BodyId* aBodyID);
+        static void RemoveCollider(b2ShapeId* aShape);
 
-        static void SetTransform(unsigned aBodyID, const Math::Vector2f& aPosition, float aRotation);
+        static void SetPosition(b2BodyId* aBodyID, const Math::Vector2f& aPosition);
+        static void SetRotation(b2BodyId* aBodyID, float aRotation);
+
+        static void SetTransform(b2BodyId* aBodyID, const Math::Vector2f& aPosition, float aRotation);
 
         // Update Simple collisions
-        static void SetTransformBox(unsigned aBodyID, const Math::Vector2f& aPosition, float aRotation, const Math::Vector2f& aScale, const Math::Vector2f& aPivot = { 0.f, 0.f });
-        static void SetTransformCircle(unsigned aBodyID, const Math::Vector2f& aPosition, float aRotation, float aRadius, const Math::Vector2f& aPivot = { 0.f, 0.f });
-        static void SetTransformCapsule(unsigned aBodyID, const Math::Vector2f& aPosition, float aRotation, float aRadius, float aHalfHeight, const Math::Vector2f& aPivot = { 0.f, 0.f });
+        static void SetTransformBox(b2BodyId* aBodyID, const Math::Vector2f& aPosition, float aRotation, const Math::Vector2f& aScale, const Math::Vector2f& aPivot = { 0.f, 0.f });
+        static void SetTransformCircle(b2BodyId* aBodyID, const Math::Vector2f& aPosition, float aRotation, float aRadius, const Math::Vector2f& aPivot = { 0.f, 0.f });
+        static void SetTransformCapsule(b2BodyId* aBodyID, const Math::Vector2f& aPosition, float aRotation, float aRadius, float aHalfHeight, const Math::Vector2f& aPivot = { 0.f, 0.f });
 
         // Update Complex collisions
-        static void SetTransformPolygon(unsigned aBodyID, const Math::Vector2f& aPosition, float aRotation, const std::vector<Math::Vector2f>& aPoints, const Math::Vector2f& aScale, const Math::Vector2f& aPivot = { 0.f, 0.f });
+        static void SetTransformPolygon(b2BodyId* aBodyID, const Math::Vector2f& aPosition, float aRotation, const std::vector<Math::Vector2f>& aPoints, const Math::Vector2f& aScale, const Math::Vector2f& aPivot = { 0.f, 0.f });
 
         static void SetGravity(const Math::Vector2f& aGravity);
 
@@ -96,23 +98,15 @@ namespace Eclipse
 
         static inline std::array<uint64_t, MAX_LAYERS> myCollisionLayers = {};
 
-        static inline std::unordered_map<unsigned, b2BodyId> myBodyIdRegistry;
-        static inline std::unordered_map<unsigned, b2ShapeId> myShapeIdRegistry;
-        static inline std::unordered_map<unsigned, b2ChainId> myChainIdRegistry;
-
     private:
         static inline b2WorldId myWorld;
         static inline Math::Vector2f myGravity;
-        static inline int mySubstepCount = 4;
+        static inline int mySubstepCount = 8;
 
         static inline b2DebugDraw myDebugDraw;
         static inline bool myDrawDebugShapes = true;
         static inline bool myDrawQueries = false;
 
         static inline bool myHasCreatedWorld;
-
-        static inline unsigned IDCounter = 1;
-
-        static inline unsigned GetNextIdCounter(){ return IDCounter++; }
     };
 }

@@ -37,11 +37,8 @@ namespace Eclipse
         Math::Vector2f scale = Math::Vector2f(myTransform->GetScale().x, myTransform->GetScale().y) * 0.01f;
 
         if (!CreatedShape)
-        {
-            myShapeID = PhysicsEngine::CreatePolygonCollider(myBodyID, myPoints, myLayer);
-            CreatedShape = myShapeID;
-        }
+            CreatedShape = PhysicsEngine::CreatePolygonCollider(myInternalCollider, myBodyRef, myPoints, myLayer);
 
-        PhysicsEngine::SetTransformPolygon(myBodyID, myTransform->GetPosition(), myTransform->GetRotation(), myPoints, scale);
+        PhysicsEngine::SetTransformPolygon(myBodyRef, myTransform->GetPosition(), myTransform->GetRotation(), myPoints, scale);
     }
 }

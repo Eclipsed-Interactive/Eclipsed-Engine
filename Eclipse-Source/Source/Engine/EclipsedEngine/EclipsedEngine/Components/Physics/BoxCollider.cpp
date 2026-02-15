@@ -22,10 +22,8 @@ namespace Eclipse
 
 	void BoxCollider2D::CreateCollider()
 	{
-		number = 123;
-
 		SetScale(HalfExtents);
-		myShapeID = PhysicsEngine::CreateBoxCollider(myBodyID, myHalfExtents, myLayer);
+		PhysicsEngine::CreateBoxCollider(myInternalCollider, myBodyRef, myHalfExtents, myLayer);
 	}
 
 	void BoxCollider2D::SetScale(const Math::Vector2f& aHalfExtents)
@@ -53,6 +51,6 @@ namespace Eclipse
 
 		myHalfExtents = halfExtent;
 
-		PhysicsEngine::SetTransformBox(myBodyID, myTransform->GetPosition(), myTransform->GetRotation(), myHalfExtents, { ColliderPivot->x * halfExtent.x * 2.f, ColliderPivot->y * halfExtent.y * 2.f });
+		PhysicsEngine::SetTransformBox(myBodyRef, myTransform->GetPosition(), myTransform->GetRotation(), myHalfExtents, { ColliderPivot->x * halfExtent.x * 2.f, ColliderPivot->y * halfExtent.y * 2.f });
 	}
 }

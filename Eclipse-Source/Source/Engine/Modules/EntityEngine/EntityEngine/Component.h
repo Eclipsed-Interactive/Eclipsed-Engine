@@ -86,6 +86,7 @@ namespace Eclipse
 		virtual void StartNextFrame() {}
 
 		virtual void EditorUpdate() {}
+		virtual void AfterRenderUpdate() {}
 
 		virtual void EarlyUpdate() {}
 		virtual void Update() {}
