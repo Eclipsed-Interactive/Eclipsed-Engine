@@ -7,8 +7,8 @@ namespace Eclipse::Editor
 	class EditorProjectManager
 	{
 	public:
-		std::string LoadOrSelectProject();
-		std::string LoadProjectFromFile();
-		void SaveProjectPath(const std::string& path);
+		static std::string LoadOrSelectProject();
+		static std::string LoadProjectFromFile();
+		static void SaveProjectPath(const std::string& path);
 	};
 }
