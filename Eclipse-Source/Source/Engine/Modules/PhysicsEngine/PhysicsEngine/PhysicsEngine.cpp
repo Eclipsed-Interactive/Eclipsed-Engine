@@ -176,6 +176,16 @@ namespace Eclipse
         b2Body_SetType(*aBodyID, static_cast<b2BodyType>(aBodyType));
     }
 
+    void PhysicsEngine::SetPhysicsMaterial(b2ShapeId* aShape, const PhysMaterial& material)
+    {
+        b2SurfaceMaterial b2SurfaceMaterial = {};
+
+        b2SurfaceMaterial.friction = material.friction;
+        b2SurfaceMaterial.restitution = material.restitusion;
+
+        b2Shape_SetSurfaceMaterial(*aShape, &b2SurfaceMaterial);
+    }
+
     void PhysicsEngine::ChangeLayer(b2ShapeId* aShapeID, Layer aLayer)
     {
         b2Filter filter;
@@ -333,24 +343,6 @@ namespace Eclipse
         {
             aCollisionLayers[i] = layers[i];
         }
-
-
-
-
-        //std::string sPath = (PathManager::GetSettingsPath() / "CollisionLayers.json").generic_string();
-        //const char* layerPath = sPath.c_str();
-
-        //FILE* fileP = fopen(layerPath, "rb");
-        //char readBuffer[2048];
-        //rapidjson::FileReadStream fileReadStream(fileP, readBuffer, sizeof(readBuffer));
-
-        //rapidjson::Document document;
-        //document.ParseStream(fileReadStream);
-        //fclose(fileP);
-
-        //auto layers = document["Layers"].GetArray();
-        //for (unsigned i = 0; i < layers.Size(); i++)
-        //    aCollisionLayers[i] = layers[i].GetInt();
     }
 
     void PhysicsEngine::InitWorld()
@@ -423,7 +415,7 @@ namespace Eclipse
     void PhysicsEngine::Update()
     {
         const float timeScale = Time::GetTimeScale();
-        const float timeStep = timeScale / 60.f;
+        const float timeStep = timeScale / 800.f;
 
         b2World_Step(myWorld, timeStep, mySubstepCount);
 

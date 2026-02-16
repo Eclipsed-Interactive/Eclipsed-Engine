@@ -79,6 +79,12 @@ namespace Eclipse
 		bool LockYPos = false;
 	};
 
+	struct PhysMaterial
+	{
+		float friction = 0.6f;
+		float restitusion = 0.3f;	
+	};
+
 	struct UserData
 	{
 		unsigned gameobject = 0;

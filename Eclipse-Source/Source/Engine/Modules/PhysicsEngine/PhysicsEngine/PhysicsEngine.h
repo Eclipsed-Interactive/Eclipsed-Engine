@@ -57,6 +57,7 @@ namespace Eclipse
         static void DeleteShape(b2ShapeId* aShape);
         static void DeleteBody(b2BodyId* aBody);
         
+        static void SetPhysicsMaterial(b2ShapeId* aShape, const PhysMaterial& material);
         static void ChangeLayer(b2ShapeId* aShapeID, Layer aLayer);
         static void ChangeBodyType(b2BodyId* aBodyID, BodyType aBodyType);
         static void ChangeRBLocks(b2BodyId* aBodyID, bool XLock, bool YLock, bool RotationLock);

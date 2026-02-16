@@ -11,6 +11,8 @@
 
 namespace Eclipse
 {
+	using DirtyFunctionPtr = void (Component::*)();
+
 	class Transform2D : public Component
 	{
 		COMPONENT_BASE_2(Transform2D, UINT_MAX * 0.5f)
@@ -21,7 +23,7 @@ namespace Eclipse
 		void AfterRenderUpdate() override;
 		void DirtyUpdate() const;
 
-		
+
 		void AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const;
 		void AddParentRotation(GameObject* aParent, float& totalRotation) const;
 		void AddParentScale(GameObject* aParent, Math::Vector2f& totalScale) const;
@@ -52,6 +54,7 @@ namespace Eclipse
 		void SetScale(float aX, float aY);
 
 		void AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction);
+		void AddFunctionToRunOnDirtyUpdate(DirtyFunctionPtr* aFunction);
 
 	private:
 		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(Math::Vector2<float>, position, 0.01f, Math::Vector2f(0, 0), Transform2D);

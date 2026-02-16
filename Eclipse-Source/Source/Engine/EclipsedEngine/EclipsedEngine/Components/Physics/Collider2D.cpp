@@ -61,6 +61,8 @@ namespace Eclipse
             });
 
         CreateCollider();
+
+        PhysicsEngine::SetPhysicsMaterial(myInternalCollider, physMaterial);
     }
 
     void Collider2D::EditorUpdate()

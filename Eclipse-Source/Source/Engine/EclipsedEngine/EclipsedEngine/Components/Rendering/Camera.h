@@ -17,6 +17,8 @@ namespace Eclipse
         void OnSceneLoaded() override;
         void Render() override;
 
+        void UpdateCameraTransform();
+
         static inline class Camera* main;
 
         bool created;

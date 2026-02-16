@@ -23,24 +23,28 @@ namespace Eclipse
         OnSceneLoaded();
     }
 
+    void Camera::UpdateCameraTransform()
+    {
+        if (Camera::main != this)
+            return;
+
+        Math::Vector2f position = gameObject->transform->GetPosition();
+        float rotation = gameObject->transform->GetRotation();
+        Math::Vector2f scale = gameObject->transform->GetScale();
+
+        GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
+        GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
+        GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
+    }
+
+
     void Camera::OnSceneLoaded()
     {
         if (!created)
         {
             main = this;
 
-            gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() {
-                if (Camera::main != this)
-                    return;
-
-                Math::Vector2f position = gameObject->transform->GetPosition();
-                float rotation = gameObject->transform->GetRotation();
-                Math::Vector2f scale = gameObject->transform->GetScale();
-
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
-                GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
-                });
+            gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() { UpdateCameraTransform(); });
 
             created = true;
         }

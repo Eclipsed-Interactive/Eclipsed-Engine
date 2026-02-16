@@ -219,7 +219,7 @@ namespace Eclipse
 
 		for (const auto& child : gameObject->GetChildren())
 		{
-			if(child->transform)
+			if (child->transform)
 				child->transform->DirtyUpdate();
 		}
 	}

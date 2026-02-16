@@ -33,6 +33,8 @@ namespace Eclipse
         SERIALIZED_FIELD_DEFAULT(Layer, myLayer, Layer::Default);
         SERIALIZED_FIELD(Math::Vector2f, ColliderPivot);
 
+        PhysMaterial physMaterial;
+
     protected:
 
         UserData myUserData;
