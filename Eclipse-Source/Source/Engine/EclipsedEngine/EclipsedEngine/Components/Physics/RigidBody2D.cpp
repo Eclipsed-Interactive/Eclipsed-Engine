@@ -58,7 +58,7 @@ namespace Eclipse
 
     void RigidBody2D::AddForce(const Math::Vector2f& aVelocity)
     {
-        SetVelocity(myVelocity.Get() + aVelocity);
+        SetVelocity(myVelocity + aVelocity);
     }
 
     const Math::Vector2f& RigidBody2D::GetVelocity()
