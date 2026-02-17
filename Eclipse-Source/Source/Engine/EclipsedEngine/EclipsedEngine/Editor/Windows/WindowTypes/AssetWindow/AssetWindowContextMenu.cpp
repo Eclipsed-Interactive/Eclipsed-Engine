@@ -8,13 +8,15 @@
 
 #include <fstream>
 
-#include <shellapi.h>
+//#include <shellapi.h>
 
 #include "EclipsedEngine/Editor/Game/GameLoader.h"
 #include "EclipsedEngine/Editor/Game/GameCompiler.h"
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "EntityEngine/ComponentManager.h"
+
+#include "EclipsedEngine/Input/Input.h"
 
 namespace Eclipse::Editor
 {
@@ -33,14 +35,20 @@ namespace Eclipse::Editor
 
 	void AssetWindowContextMenu::UpdateAlways()
 	{
-		if (Renaming)
+		if (renameModal) {
+			ImGui::OpenPopup("SetName");
+		}
+
+		if (ImGui::BeginPopupModal("SetName", &renameModal, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Begin("Rename", (bool*)1, ImGuiWindowFlags_AlwaysAutoResize);
+			if (focusNameRename) {
+				focusNameRename = false;
+				ImGui::SetKeyboardFocusHere();
+			}
 
 			ImGui::InputText("New name", tempName, 512);
 
-
-			if (ImGui::Button("OK"))
+			if (ImGui::Button("OK") || Input::GetKeyDown(Keycode::ENTER))
 			{
 				std::string renamePathExt = activePathAtRenaming.extension().string();
 
@@ -49,10 +57,20 @@ namespace Eclipse::Editor
 				std::filesystem::path newName = activePathAtRenaming.parent_path() / tempName;
 
 				std::filesystem::rename(activePathAtRenaming, newName);
-				Renaming = false;
+
+				ImGui::CloseCurrentPopup();
+				renameModal = false;
 			}
 
-			ImGui::End();
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel") || Input::GetKeyDown(Keycode::ESCAPE))
+			{
+				ImGui::CloseCurrentPopup();
+				renameModal = false;
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 
@@ -78,7 +96,8 @@ namespace Eclipse::Editor
 			std::string str = activePathAtRenaming.filename().replace_extension().string();
 			memcpy(tempName, str.c_str(), str.size() + 1);
 
-			Renaming = true;
+			renameModal = true;
+			focusNameRename = true;
 		}
 
 		if (ImGui::MenuItem("Open"))

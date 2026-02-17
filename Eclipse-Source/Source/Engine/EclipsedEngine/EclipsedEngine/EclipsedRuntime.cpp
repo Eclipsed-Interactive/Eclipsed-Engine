@@ -1,7 +1,7 @@
 #include "EclipsedRuntime.h"
 
 #include "CoreEngine/MainSingleton.h"
-#include "CoreEngine/Input/Input.h"
+#include "EclipsedEngine/Input/Input.h"
 
 #include "PhysicsEngine/PhysicsEngine.h"
 #include "EntityEngine/ComponentManager.h"
@@ -72,7 +72,7 @@ namespace Eclipse
 		SceneManager::LoadSceneData();
 
 		//MainSingleton::RegisterInstance<EngineSettings>();
-
+ 
 		GraphicsEngine::Init();
 		Input::Init();
 
@@ -121,6 +121,7 @@ namespace Eclipse
 	void EclipsedRuntime::Update()
 	{
 		engine.Update();
+		Input::Update();
 		ComponentManager::EditorUpdateComponents();
 
 	}

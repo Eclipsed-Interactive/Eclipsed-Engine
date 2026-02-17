@@ -20,7 +20,8 @@ namespace Eclipse::Editor
 
 
 		std::filesystem::path activePathAtRenaming;
-		bool Renaming = false;
+		bool renameModal = false;
+		bool focusNameRename = true;
 		char tempName[512];
 	};
 }

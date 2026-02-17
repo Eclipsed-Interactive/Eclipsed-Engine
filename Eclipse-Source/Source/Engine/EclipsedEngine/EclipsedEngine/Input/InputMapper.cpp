@@ -2,7 +2,7 @@
 
 #include "InputMapper.h"
 
-#include "Keycodes.h"
+#include "CoreEngine/Input/Keycodes.h"
 
 #include <string>
 #include <functional>

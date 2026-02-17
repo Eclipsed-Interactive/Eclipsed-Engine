@@ -51,9 +51,8 @@ namespace Eclipse
         SERIALIZED_FIELD_DEFAULT(bool, LockRotation, false);
         SERIALIZED_FIELD_DEFAULT(bool, LockXPos, false);
         SERIALIZED_FIELD_DEFAULT(bool, LockYPos, false);
-        SERIALIZED_FIELD(Math::Vector2f, myVelocity);
         
-        //Math::Vector2f myVelocity = { 0.f, 0.f };
+        Math::Vector2f myVelocity = { 0.f, 0.f };
 
         float myAngularVelocity = 0.f;
 

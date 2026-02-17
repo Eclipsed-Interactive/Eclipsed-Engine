@@ -5,31 +5,31 @@
 #include "OpenGL/GLFW/glfw3.h"
 #include <algorithm>
 
-namespace Eclipse
+namespace Eclipse::Core
 {
-	void Input::OnMousePos_Callback(GLFWwindow* window, double x, double y)
+	void Input::OnMousePos_Callback(GLFWwindow* w, double x, double y)
 	{
 		currentPos.x = static_cast<int>(x);
 		currentPos.y = static_cast<int>(y);
 	}
 
-	void Input::OnMouseEnter_Callback(GLFWwindow* window, int entered)
+	void Input::OnMouseEnter_Callback(GLFWwindow* w, int entered)
 	{
 		mouseIsInside = (bool)entered;
 	}
 
-	void Input::OnMouseButton_Callback(GLFWwindow* window, int button, int action, int mods)
+	void Input::OnMouseButton_Callback(GLFWwindow* w, int button, int action, int mods)
 	{
 		if (action == GLFW_PRESS) currentKeys[button] = true;
 		else if (action == GLFW_RELEASE) currentKeys[button] = false;
 	}
 
-	void Input::OnWindowFocus_Callback(GLFWwindow* window, int focused)
+	void Input::OnWindowFocus_Callback(GLFWwindow* w, int focused)
 	{
 		windowFocused = focused;
 	}
 
-	void Input::OnMouseScroll_Callback(GLFWwindow* window, double xOffset, double yOffset)
+	void Input::OnMouseScroll_Callback(GLFWwindow* w, double xOffset, double yOffset)
 	{
 		mouseScrollDelta.x += xOffset;
 		mouseScrollDelta.y += yOffset;
@@ -38,7 +38,7 @@ namespace Eclipse
 		normalizedMouseScrollDelta.y = std::clamp(mouseScrollDelta.y, -1, 1);
 	}
 
-	void Input::OnKey_Callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	void Input::OnKey_Callback(GLFWwindow* w, int key, int scancode, int action, int mods)
 	{
 		if (key < 0 || key >= MAX_KEYS) return;
 

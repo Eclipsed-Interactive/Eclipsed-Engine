@@ -6,9 +6,9 @@
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "EclipsedEngine/Scenes/SceneLoader.h"
 
-#include "CoreEngine/Input/Input.h"
+#include "EclipsedEngine/Input/Input.h"
 
-#include "CoreEngine/Input/InputMapper.h"
+#include "EclipsedEngine/Input/InputMapper.h"
 #include "Game/GameCompiler.h"
 #include "Game/GameLoader.h"
 

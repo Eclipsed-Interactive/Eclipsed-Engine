@@ -19,6 +19,8 @@
 #include "CoreEngine/MainSingleton.h"
 #include "CoreEngine/Settings/GraphicsSettings.h"
 
+#include "EclipsedEngine/Input/Input.h"
+
 
 namespace Eclipse::Editor
 {

@@ -10,7 +10,7 @@ namespace Eclipse
     {
 
 
-        Input::GetMouseUp(Keycode::Scancode::MOUSE_LEFT);
+        //Input::GetMouseUp(Keycode::Scancode::MOUSE_LEFT);
         //Math::Vector2i mousePosition = ;
 
         //std::stringstream stringStream;

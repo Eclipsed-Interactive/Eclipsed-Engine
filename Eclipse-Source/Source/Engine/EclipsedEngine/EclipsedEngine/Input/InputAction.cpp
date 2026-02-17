@@ -6,10 +6,9 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/filewritestream.h"
 
-#include "Keycodes.h"
 #include "Input.h"
 
-#include "Macros/defines.h"
+#include "CoreEngine/Macros/defines.h"
 
 namespace Eclipse
 {
@@ -99,24 +98,25 @@ namespace Eclipse
 	}
 	int InputAction::GetCombo()
 	{
-		for (const Keycode::Scancode& key : comboButtons)
-		{
-			if (!Input::GetKey(key))
-			{
-				return 0;
-			}
-		}
+		//for (const Keycode::Scancode& key : comboButtons)
+		//{
+		//	if (!Input::GetKey(key))
+		//	{
+		//		return 0;
+		//	}
+		//}
 
-		return true;
+		//return true;
+		return false;
 	}
 	bool InputAction::GetKey(Keycode::Scancode aKey, InputActionButtonType aButtonType)
 	{
-		switch (buttonType)
-		{
-		case InputActionButtonType::Repeated: return Input::GetKey(aKey);
-		case InputActionButtonType::Down: return Input::GetKeyDown(aKey);
-		case InputActionButtonType::Up: return Input::GetKeyUp(aKey);
-		}
+		//switch (buttonType)
+		//{
+		//case InputActionButtonType::Repeated: return Input::GetKey(aKey);
+		//case InputActionButtonType::Down: return Input::GetKeyDown(aKey);
+		//case InputActionButtonType::Up: return Input::GetKeyUp(aKey);
+		//}
 
 		return false;
 	}

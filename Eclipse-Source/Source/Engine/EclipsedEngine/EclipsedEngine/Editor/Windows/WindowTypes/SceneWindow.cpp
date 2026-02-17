@@ -18,7 +18,7 @@
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 
-#include "CoreEngine/Input/InputMapper.h"
+#include "EclipsedEngine/Input/InputMapper.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 
 #include "GraphicsEngine/OpenGL/DebugDrawers/DebugDrawer.h"

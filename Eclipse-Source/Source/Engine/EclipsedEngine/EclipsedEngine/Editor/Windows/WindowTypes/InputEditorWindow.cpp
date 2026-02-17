@@ -4,8 +4,8 @@
 
 #include "EntityEngine/ComponentManager.h"
 
-#include "CoreEngine/Input/InputMapper.h"
-#include "CoreEngine/Input/Input.h"
+#include "EclipsedEngine/Input/InputMapper.h"
+#include "EclipsedEngine/Input/Input.h"
 
 #include "rapidjson/stringbuffer.h"
 

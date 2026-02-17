@@ -4,7 +4,7 @@
 #include <string>
 #include "rapidjson/document.h"
 
-#include "Keycodes.h"
+#include "CoreEngine/Input/Keycodes.h"
 
 namespace Eclipse
 {
