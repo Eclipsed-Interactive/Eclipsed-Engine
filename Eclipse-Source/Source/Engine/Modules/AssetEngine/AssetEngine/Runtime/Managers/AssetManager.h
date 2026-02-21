@@ -15,6 +15,7 @@
 #include "AssetEngine/Runtime/Loader/TypeLoaders/ShaderLoader.h"
 #include "AssetEngine/Runtime/Loader/TypeLoaders/MaterialLoader.h"
 #include "AssetEngine/Runtime/Loader/TypeLoaders/PrefabLoader.h"
+#include "AssetEngine/Runtime/Loader/TypeLoaders/AudioLoader.h"
 
 namespace Eclipse
 {
@@ -26,6 +27,7 @@ namespace Eclipse
 	using TextureManager = AssetManager<Texture, TextureData, TextureLoader>;
 	using MaterialManager = AssetManager<Material, MaterialData, MaterialLoader>;
 	using PrefabManager = AssetManager<Prefab, PrefabData, PrefabLoader>;
+	using AudioClipManager = AssetManager<AudioClip, AudioClipData, AudioLoader>;
 
 	template<typename AssetType, typename Handle, typename Loader>
 	class AssetManager

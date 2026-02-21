@@ -35,7 +35,8 @@ namespace Eclipse
 		}
 		else
 		{
-			guid = GuidGenerator::Generate();
+			AssetMetaSettings importSettings = LoadOrCreateMeta<AssetMetaSettings>(aPath);
+			guid = importSettings.guid;
 		}
 
 		std::filesystem::path artifactPath = GetArtifactPath(guid);

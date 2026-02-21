@@ -9,6 +9,7 @@ namespace Eclipse
 	MaterialManager Resources::materialManager;
 	TextureManager Resources::textureManager;
 	PrefabManager Resources::prefabManager;
+	AudioClipManager Resources::audioClipManager;
 
 	void Resources::Init()
 	{

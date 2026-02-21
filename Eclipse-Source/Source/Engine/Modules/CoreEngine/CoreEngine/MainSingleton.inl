@@ -27,6 +27,15 @@ namespace Eclipse
         throw std::runtime_error("Singleton not registered.");
     }
 
+    template<typename T>
+    inline T MainSingleton::GetRaw()
+    {
+        auto it = mySingletons.find(typeid(T));
+        if (it != mySingletons.end())
+            return static_cast<T>(it->second.instance); // safe for raw pointers
+        throw std::runtime_error("Singleton not registered.");
+    }
+
     template<typename T, typename ...Args>
     inline T& MainSingleton::RegisterInstance(bool useDestructor, Args&&... args)
     {

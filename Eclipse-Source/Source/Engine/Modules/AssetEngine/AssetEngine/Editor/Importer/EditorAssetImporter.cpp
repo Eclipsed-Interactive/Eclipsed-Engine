@@ -19,6 +19,8 @@ namespace Eclipse
 
 		case AssetType::VertexShader: vertexShaderImporter.Import(aPath); break;
 		case AssetType::PixelShader: pixelShaderImporter.Import(aPath); break;
+
+		case AssetType::AudioClip: audioImporter.Import(aPath); break;
 		}
 	}
 

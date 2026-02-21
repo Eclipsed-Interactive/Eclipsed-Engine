@@ -30,6 +30,7 @@ namespace Eclipse
 		static MaterialManager materialManager;
 		static TextureManager textureManager;
 		static PrefabManager prefabManager;
+		static AudioClipManager audioClipManager;
 	};
 
 	template<typename T>
@@ -49,6 +50,7 @@ namespace Eclipse
 		else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.Get(aGuid, in);
 		else if constexpr (std::is_same<T, PixelShader>::value) return pixelShaderManager.Get(aGuid, in);
 		else if constexpr (std::is_same<T, Material>::value) return materialManager.Get(aGuid, in);
+		else if constexpr (std::is_same<T, AudioClip>::value) return audioClipManager.Get(aGuid, in);
 		else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.Get(aGuid, in);
 
 		return {};

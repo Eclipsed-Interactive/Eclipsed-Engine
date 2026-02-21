@@ -100,7 +100,8 @@ namespace Eclipse::Reflection
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Audio))
 				{
 					std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
-					*clip = Resources::Get<AudioClip>(guid);
+					AudioClip clips = Resources::Get<AudioClip>(guid);
+					*clip = clips;
 				}
 			} break;
 

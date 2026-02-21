@@ -1,80 +1,56 @@
 #include "AudioSource.h"
 
+#include "AudioEngine/AudioManager.h"
+
 namespace Eclipse
 {
-	//COMPONENT_REGISTRATION(AudioSource);
-
-	//void AudioSource::Awake()
-	//{
-	//	SetAudioClip(myAudioPath->c_str());
-	//}
-
-	//void AudioSource::SetAudioClip(const char* aPath)
-	//{
-	//	myAudioClip = Resources::Get<AudioClip>(aPath);
-	//	myAudioPath = aPath;
-	//}
-
-	//void AudioSource::SetVolume(float aVolume)
-	//{
-	//	myVolume = aVolume;
-	//	myChannel->setVolume(aVolume);
-	//}
-
-	//void AudioSource::Play()
-	//{
-	//	if (!myIsPlaying)
-	//	{
-	//		AudioManager::PlayAudio(*myAudioClip.Get(), &myChannel);
-
-	//		SetVolume(myVolume);
-	//		SetLooping(myIsLooping);
-
-	//		myIsPlaying = true;
-	//	}
-	//	else if (myIsPaused)
-	//	{
-	//		myIsPaused = !myIsPaused;
-	//		myChannel->setPaused(myIsPaused);
-	//	}
-	//}
-
-	//void AudioSource::Pause()
-	//{
-	//	myIsPaused = true;
-	//	myChannel->setPaused(true);
-	//}
-
-	//void AudioSource::Stop()
-	//{
-	//	myChannel->stop();
-	//	myChannel = nullptr;
-
-	//	myIsPlaying = false;
-	//}
-
-	//void AudioSource::SetLooping(bool aState)
-	//{
-	//	myIsLooping = aState;
-
-	//	if (!myAudioClip && !myChannel)  return;
-
-
-
-	void AudioSource::OnDrawInspector()
+	void AudioSource::Awake()
 	{
-		ImGui::Text("Du är här!");
+		if (playOnAwake) {
+			Play();
+		}
 	}
 
-	//	if (aState) // Play infinitely looping
-	//	{
-	//		myChannel->setMode(FMOD_LOOP_NORMAL);
-	//		myChannel->setLoopCount(-1);
-	//	}
-	//	else // Play once
-	//	{
-	//		myChannel->setMode(FMOD_LOOP_OFF);
-	//		myChannel->setLoopCount(0);
-	//	}
-	//}
+	void AudioSource::OnDestroy() {
+		channel->stop();
+	}
+
+	void AudioSource::Update()
+	{
+		SetVolume(volume);
+	}
+
+	void AudioSource::Play() {
+		isPlaying = true;
+		channel->setPaused(isPlaying);
+		AudioManager::PlayAudio(audioClip->data->sound, &channel);
+	}
+
+	void AudioSource::Resume() {
+		isPlaying = true;
+		channel->setPaused(false);
+	}
+
+	void AudioSource::Pause() {
+		isPlaying = false;
+		channel->setPaused(true);
+	}
+
+	void AudioSource::SetAudioClip(AudioClip clip)
+	{
+		audioClip = clip;
+	}
+
+	void AudioSource::Stop() {
+		channel->stop();
+	}
+
+	void AudioSource::SetVolume(float aVolume) {
+		volume = aVolume;
+		channel->setVolume(volume);
+	}
+
+	float AudioSource::GetVolume() const {
+		return volume;
+	}
 }

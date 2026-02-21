@@ -9,6 +9,11 @@
 
 #include "AssetEngine/Assets/AudioClip.h"
 
+namespace FMOD {
+	class Channel;
+}
+
+
 namespace Eclipse
 {
 	namespace Editor
@@ -16,18 +21,39 @@ namespace Eclipse
 		class InspectorWindow;
 	}
 
-	class AudioSource : public Component
+	class ECLIPSED_API AudioSource : public Component
 	{
 		BASE_SELECTION(AudioSource, 0)
 
+
 	public:
-		SERIALIZED_FIELD(AudioClip, hitSound);
+		void Awake() override;
+		void OnDestroy() override;
 
-		void OnDrawInspector() override;
+		void Update() override;
 
-	protected:
-		 bool HasDrawInspector() const override { return true; }
+	public:
+		void Play();
+		void Stop();
 
+		void Resume();
+		void Pause();
+
+		void SetAudioClip(AudioClip clip);
+
+		void SetVolume(float aVolume);
+		float GetVolume() const ;
+
+	public:
+		SERIALIZED_FIELD(AudioClip, audioClip);
+		
+		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);
+		SERIALIZED_FIELD_DEFAULT(float, volume, 1.f);
+
+
+	private:
+		FMOD::Channel* channel;
+		bool isPlaying = false;
 	};
 
 }
