@@ -2,7 +2,7 @@
 
 #include "EclipsedEngine/Editor/Common/DragAndDrop.h"
 
-#include "EclipsedEngine/Components/AudioSource.h"
+#include "EclipsedEngine/Components/Audio/AudioEmitter.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 
 namespace Eclipse

@@ -2,6 +2,8 @@
 
 #include "fmod/fmod.h"
 #include "fmod/fmod.hpp"
+#include "fmod/fmod_studio.h"
+#include "fmod/fmod_studio.hpp"
 
 #include "PcmData.h"
 
@@ -14,10 +16,9 @@ namespace Eclipse
 		static void Update();
 
 		static void PlayAudio(FMOD::Sound* aSound, FMOD::Channel** aChannel);
-		static void CreateAudioFromPath(const char* path, FMOD::Sound* aSound);
-		static void CreateAudioFromMemory(const char* data, size_t size, FMOD::Sound* aSound);
 
 	private:
 		static FMOD::System* mySystem;
+		static FMOD::Studio::System* myStudioSystem;
 	};
 }

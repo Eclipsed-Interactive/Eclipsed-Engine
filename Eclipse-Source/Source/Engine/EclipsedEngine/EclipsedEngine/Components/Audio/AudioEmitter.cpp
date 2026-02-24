@@ -1,56 +1,56 @@
-#include "AudioSource.h"
+#include "AudioEmitter.h"
 
 #include "AudioEngine/AudioManager.h"
 
 namespace Eclipse
 {
-	void AudioSource::Awake()
+	void AudioEmitter::Awake()
 	{
 		if (playOnAwake) {
 			Play();
 		}
 	}
 
-	void AudioSource::OnDestroy() {
+	void AudioEmitter::OnDestroy() {
 		channel->stop();
 	}
 
-	void AudioSource::Update()
+	void AudioEmitter::Update()
 	{
 		SetVolume(volume);
 	}
 
-	void AudioSource::Play() {
+	void AudioEmitter::Play() {
 		isPlaying = true;
 		channel->setPaused(isPlaying);
 		AudioManager::PlayAudio(audioClip->data->sound, &channel);
 	}
 
-	void AudioSource::Resume() {
+	void AudioEmitter::Resume() {
 		isPlaying = true;
 		channel->setPaused(false);
 	}
 
-	void AudioSource::Pause() {
+	void AudioEmitter::Pause() {
 		isPlaying = false;
 		channel->setPaused(true);
 	}
 
-	void AudioSource::SetAudioClip(AudioClip clip)
+	void AudioEmitter::SetAudioClip(AudioClip clip)
 	{
 		audioClip = clip;
 	}
 
-	void AudioSource::Stop() {
+	void AudioEmitter::Stop() {
 		channel->stop();
 	}
 
-	void AudioSource::SetVolume(float aVolume) {
+	void AudioEmitter::SetVolume(float aVolume) {
 		volume = aVolume;
 		channel->setVolume(volume);
 	}
 
-	float AudioSource::GetVolume() const {
+	float AudioEmitter::GetVolume() const {
 		return volume;
 	}
 }

@@ -154,15 +154,20 @@ namespace Eclipse::Reflection
 
 
 			case SerializedType_String:
+			{
 				ImGui::SameLine();
 
 				char TemporaryName[256];
-				std::strcpy(TemporaryName, static_cast<const char*>(GetData()));
+				std::string* data = reinterpret_cast<std::string*>(GetData());
+				std::strcpy(TemporaryName, data->c_str());
 
 				if (ImGui::InputText(("##" + std::to_string(imguiID) + std::to_string(iType) + GetName()).c_str(), TemporaryName, 256, ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					memcpy(GetData(), &TemporaryName, strlen(TemporaryName) + 1);
+					size_t size = strlen(TemporaryName);
+					data->resize(size);
+					memcpy(data->data(), &TemporaryName, size + 1);
 				}
+			}
 				break;
 			case SerializedType_Bool:
 				ImGui::SameLine();

@@ -28,11 +28,8 @@ namespace Eclipse
         exinfo.length = static_cast<unsigned int>(size);
 
         FMOD::System* system = MainSingleton::GetRaw<FMOD::System*>();
-        unsigned int version = 0;
-        FMOD_RESULT result = system->getVersion(&version);
 
-
-        result = system->createSound(
+        FMOD_RESULT result = system->createSound(
             data->audioData,
             FMOD_OPENMEMORY | FMOD_CREATESTREAM,
             &exinfo,

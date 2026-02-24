@@ -10,7 +10,7 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteSheetAnimator2D.h"
-#include "EclipsedEngine/Components/AudioSource.h"
+#include "EclipsedEngine/Components/Audio/AudioEmitter.h"
 
 #include "SpriteEditor.h"
 

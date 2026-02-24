@@ -21,9 +21,9 @@ namespace Eclipse
 		class InspectorWindow;
 	}
 
-	class ECLIPSED_API AudioSource : public Component
+	class ECLIPSED_API AudioEmitter : public Component
 	{
-		BASE_SELECTION(AudioSource, 0)
+		BASE_SELECTION(AudioEmitter, 0)
 
 
 	public:
@@ -42,11 +42,11 @@ namespace Eclipse
 		void SetAudioClip(AudioClip clip);
 
 		void SetVolume(float aVolume);
-		float GetVolume() const ;
+		float GetVolume() const;
 
 	public:
 		SERIALIZED_FIELD(AudioClip, audioClip);
-		
+
 		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);
 		SERIALIZED_FIELD_DEFAULT(float, volume, 1.f);
 
