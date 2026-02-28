@@ -1,6 +1,7 @@
 #include "AudioEmitter.h"
 
 #include "AudioEngine/AudioManager.h"
+#include "EclipsedEngine/Components/Transform2D.h"
 
 namespace Eclipse
 {
@@ -8,6 +9,17 @@ namespace Eclipse
 	{
 		if (playOnAwake) {
 			Play();
+		}
+
+		if (EnableSpatial) {
+			Transform2D* trans = gameObject->transform;
+			trans->AddFunctionToRunOnDirtyUpdate(
+				[this]() {
+					this->UpdateAudioPosition();
+				}
+			);
+
+			UpdateAudioPosition();
 		}
 	}
 
@@ -39,6 +51,9 @@ namespace Eclipse
 	void AudioEmitter::SetAudioClip(AudioClip clip)
 	{
 		audioClip = clip;
+
+		channel->setMode(FMOD_3D_LINEARROLLOFF);
+		channel->set3DMinMaxDistance(1.0f, 1000.0f);
 	}
 
 	void AudioEmitter::Stop() {
@@ -52,5 +67,14 @@ namespace Eclipse
 
 	float AudioEmitter::GetVolume() const {
 		return volume;
+	}
+
+	void AudioEmitter::UpdateAudioPosition()
+	{
+		Transform2D* trans = gameObject->transform;
+		Math::Vector2f ePos = trans->GetPosition();
+
+		FMOD_VECTOR pos = { ePos.x, ePos.y, 0.f };
+		channel->set3DAttributes(&pos, nullptr);
 	}
 }

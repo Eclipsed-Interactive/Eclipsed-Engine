@@ -2,7 +2,6 @@
 
 #include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 
-#include "EclipsedEngine/Components/Audio/AudioEmitter.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Physics/Collider2D.h"
 #include "EclipsedEngine/Components/Physics/BoxCollider2D.h"
@@ -22,8 +21,11 @@
 #include "EclipsedEngine/Components/UI/Canvas.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/UIImage.h"
+
 #include "EclipsedEngine/Components/Audio/AudioBank.h"
+#include "EclipsedEngine/Components/Audio/AudioEmitter.h"
 #include "EclipsedEngine/Components/Audio/AudioEvent.h"
+#include "EclipsedEngine/Components/Audio/AudioListener.h"
 
 void Eclipse::ComponentForcelink::LinkComponents()
 {
@@ -48,6 +50,7 @@ void Eclipse::ComponentForcelink::LinkComponents()
 	COMP_REG(AudioEmitter);
 	COMP_REG(AudioBank);
 	COMP_REG(AudioEvent);
+	COMP_REG(AudioListener);
 	
 	COMP_REG(PlayerSpawner);
 }

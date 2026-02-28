@@ -31,7 +31,7 @@ namespace Eclipse
 
         FMOD_RESULT result = system->createSound(
             data->audioData,
-            FMOD_OPENMEMORY | FMOD_CREATESTREAM,
+            FMOD_OPENMEMORY | FMOD_CREATESTREAM | FMOD_3D,
             &exinfo,
             &data->sound
         );

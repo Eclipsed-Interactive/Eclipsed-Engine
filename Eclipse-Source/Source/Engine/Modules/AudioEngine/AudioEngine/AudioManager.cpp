@@ -17,7 +17,7 @@ namespace Eclipse
 		result = myStudioSystem->initialize(
 			512, 
 			FMOD_STUDIO_INIT_NORMAL, 
-			FMOD_INIT_NORMAL, 
+			FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED,
 			nullptr
 		);
 

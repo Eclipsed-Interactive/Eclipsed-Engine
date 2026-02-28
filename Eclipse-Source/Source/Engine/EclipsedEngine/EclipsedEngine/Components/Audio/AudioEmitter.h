@@ -25,7 +25,6 @@ namespace Eclipse
 	{
 		BASE_SELECTION(AudioEmitter, 0)
 
-
 	public:
 		void Awake() override;
 		void OnDestroy() override;
@@ -44,9 +43,13 @@ namespace Eclipse
 		void SetVolume(float aVolume);
 		float GetVolume() const;
 
+	private:
+		void UpdateAudioPosition();
+
 	public:
 		SERIALIZED_FIELD(AudioClip, audioClip);
 
+		SERIALIZED_FIELD_DEFAULT(bool, EnableSpatial, true);
 		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);
 		SERIALIZED_FIELD_DEFAULT(float, volume, 1.f);
 
