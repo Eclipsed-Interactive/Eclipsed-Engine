@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "AbstractContextMenu.h"
 
 #include "ImGui/imgui.h"
@@ -58,3 +59,4 @@ namespace Eclipse::Editor
 		ImGui::EndPopup();
 	}
 }
+#endif

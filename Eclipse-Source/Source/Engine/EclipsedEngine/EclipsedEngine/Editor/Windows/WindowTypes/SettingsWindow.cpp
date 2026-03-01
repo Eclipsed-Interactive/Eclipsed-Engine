@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "SettingsWindow.h"
 
 #include "ImGui/imgui.h"
@@ -228,3 +229,4 @@ namespace Eclipse::Editor
         // ofs.close();
     }
 }
+#endif

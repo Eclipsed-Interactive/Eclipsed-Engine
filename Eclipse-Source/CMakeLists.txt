@@ -15,8 +15,13 @@ add_compile_definitions(LEAN_AND_MEAN)
 option(INCLUDE_GAME "Includes game" FALSE)
 option(BUILD_GAME "Build game as static library." FALSE)
 
+if(ECLIPSED_EDITOR)
+    add_compile_definitions(
+        ECLIPSED_EDITOR
+    )
+endif()
+
 add_compile_definitions(
-    ECLIPSED_EDITOR
     _ECLIPSED_EXPORT_DLL
     )
 

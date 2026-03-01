@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "EclipsedEngine/Editor/Windows/AbstractContextMenu.h"
@@ -25,3 +26,4 @@ namespace Eclipse::Editor
 		char tempName[512];
 	};
 }
+#endif

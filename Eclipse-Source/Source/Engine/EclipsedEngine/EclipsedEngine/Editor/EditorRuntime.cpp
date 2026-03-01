@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "EditorRuntime.h"
 
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
@@ -185,3 +186,4 @@ namespace Eclipse::Editor
 		ImGui::End();
 	}
 }
+#endif

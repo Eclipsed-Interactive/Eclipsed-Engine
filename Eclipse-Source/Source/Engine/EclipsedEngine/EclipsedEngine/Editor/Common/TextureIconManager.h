@@ -1,3 +1,5 @@
+
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include <filesystem>
@@ -43,3 +45,4 @@ namespace Eclipse::Editor
 		static inline IconData emptyInternalIconData = {};
 	};
 }
+#endif

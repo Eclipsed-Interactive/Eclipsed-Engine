@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "CoreEngine/Files/FileWatcher.h"
@@ -44,3 +45,4 @@ namespace Eclipse::Editor
 		EclipsedRuntime eclipseRuntime = {};
 	};
 }
+#endif

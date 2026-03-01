@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "EditorActions.h"
 
 #include "ImGui/imgui.h"
@@ -204,3 +205,4 @@ namespace Eclipse::Editor
 		}
 	}
 }
+#endif

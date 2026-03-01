@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "ConsoleWindow.h"
 
 #include <ImGui/imgui.h>
@@ -128,3 +129,5 @@ namespace Eclipse::Editor
 		}
 	}
 }
+
+#endif

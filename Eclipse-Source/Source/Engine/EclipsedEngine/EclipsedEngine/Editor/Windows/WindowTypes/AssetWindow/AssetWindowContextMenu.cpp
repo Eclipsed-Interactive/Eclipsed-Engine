@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "AssetWindowContextMenu.h"
 
 #include <filesystem>
@@ -238,3 +239,4 @@ namespace Eclipse::Editor
 		// }
 	}
 }
+#endif

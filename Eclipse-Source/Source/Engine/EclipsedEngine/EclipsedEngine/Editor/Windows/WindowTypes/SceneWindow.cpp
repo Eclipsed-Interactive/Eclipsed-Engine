@@ -1,4 +1,4 @@
-
+#ifdef ECLIPSED_EDITOR
 #include "SceneWindow.h"
 
 #include "ImGui/imgui.h"
@@ -472,3 +472,4 @@ void Eclipse::Editor::SceneWindow::Open()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "InspectorWindow.h"
 #include "HierarchyWindow.h"
 
@@ -305,3 +306,4 @@ void Eclipse::Editor::InspectorWindow::DrawMaterialAssetInspector()
 	//	}
 	//}
 }
+#endif

@@ -3,7 +3,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#ifdef ECLIPSED_EDITOR
 namespace Eclipse
 {
 	// Define static member variables (they live only in the DLL)
@@ -81,4 +80,3 @@ namespace Eclipse
 		return inspectorAddComponentMap;
 	}
 } // namespace Eclipse
-#endif

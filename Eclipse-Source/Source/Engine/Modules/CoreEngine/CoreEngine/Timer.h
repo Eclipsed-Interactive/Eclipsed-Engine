@@ -2,15 +2,9 @@
 
 #include <chrono>
 
-#ifdef ECLIPSED_EDITOR
-#define ENGINE_API __declspec(dllexport)
-#else
-#define ENGINE_API __declspec(dllimport)
-#endif
-
 namespace Eclipse
 {
-	class ENGINE_API Time
+	class Time
 	{
 	public:
 		Time() = delete;

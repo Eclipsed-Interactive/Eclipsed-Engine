@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "EclipsedEngine/Editor/Windows/WindowBase.h"
@@ -39,3 +40,4 @@ namespace Eclipse
 		};
 	}
 }
+#endif

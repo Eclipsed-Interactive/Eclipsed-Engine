@@ -4,14 +4,10 @@
 #include <unordered_map>
 #include <string>
 
+#include "CoreEngine/Macros/defines.h"
+
 namespace Eclipse
 {
-#ifdef ECLIPSED_EDITOR
-#define ENGINE_API __declspec(dllexport)
-#else
-#define ENGINE_API __declspec(dllimport)
-#endif
-
     class Component;
 
     class ComponentRegistry final
@@ -24,8 +20,8 @@ namespace Eclipse
         using AddComponentMap = std::unordered_map<std::string, std::function<Component* (unsigned, unsigned)>>;
         using InspectorAddComponentMap = std::unordered_map<std::string, std::function<Component* (unsigned)>>;
 
-        static ENGINE_API AddComponentMap addComponentMap;
-        static ENGINE_API InspectorAddComponentMap inspectorAddComponentMap;
+        static ECLIPSED_API AddComponentMap addComponentMap;
+        static ECLIPSED_API InspectorAddComponentMap inspectorAddComponentMap;
 
     public:
         static bool IsRegisteredInspector(const std::string& typeName);

@@ -40,13 +40,16 @@ namespace Eclipse
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
 	template SpriteRenderer2D* ComponentManager::GetComponent<SpriteRenderer2D>(GameObjectID);
 
-
+#ifdef ECLIPSED_EDITOR
 	void EclipsedRuntime::StartEngine(const std::string& path)
+#else
+	void EclipsedRuntime::StartEngine()
+#endif
 	{
 		Replication::ReplicationManager::Init();
 		Resources::Init();
 
-		PathManager::Init(path);
+#ifdef ECLIPSED_EDITOR
 		{
 			const char* appData = std::getenv("APPDATA");
 
@@ -66,6 +69,7 @@ namespace Eclipse
 			out.write(engineRoot.c_str(), engineRoot.size());
 			out.close();
 		}
+#endif
 
 		engine.Init();
 
@@ -123,7 +127,6 @@ namespace Eclipse
 		engine.Update();
 		Input::Update();
 		ComponentManager::EditorUpdateComponents();
-
 	}
 
 	void EclipsedRuntime::EndFrame()
@@ -136,18 +139,7 @@ namespace Eclipse
 	{
 		MainSingleton::Destroy();
 		engine.End();
-	}
 
-	bool EclipsedRuntime::BeginFrame()
-	{
-		GraphicsEngine::BeginFrame();
-		int shouldCloseWindow = GraphicsEngine::ShouldWindowClose();
-
-		return !shouldCloseWindow;
-	}
-
-	void EclipsedRuntime::ShutDown()
-	{
 		if (MainSingleton::Exists<Server>())
 		{
 			auto& server = MainSingleton::GetInstance<Server>();
@@ -159,5 +151,13 @@ namespace Eclipse
 			auto& client = MainSingleton::GetInstance<Client>();
 			client.ShutDown();
 		}
+	}
+
+	bool EclipsedRuntime::BeginFrame()
+	{
+		GraphicsEngine::BeginFrame();
+		int shouldCloseWindow = GraphicsEngine::ShouldWindowClose();
+
+		return !shouldCloseWindow;
 	}
 }

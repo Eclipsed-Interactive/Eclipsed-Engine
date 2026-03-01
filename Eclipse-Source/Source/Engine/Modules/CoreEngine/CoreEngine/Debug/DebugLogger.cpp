@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "pch.h"
 
 #include "DebugLogger.h"
@@ -21,3 +22,4 @@ namespace Eclipse
 		messageBuffer.Clear();
 	}
 }
+#endif

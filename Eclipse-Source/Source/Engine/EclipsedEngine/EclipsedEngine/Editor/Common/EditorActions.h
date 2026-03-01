@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "rapidjson/rapidjson.h"
@@ -49,3 +50,4 @@ namespace Eclipse
         };
     }
 }
+#endif

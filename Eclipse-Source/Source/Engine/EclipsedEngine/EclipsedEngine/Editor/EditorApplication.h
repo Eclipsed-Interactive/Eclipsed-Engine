@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "EclipsedEngine/Editor/EditorContext.h"
@@ -17,3 +18,4 @@ namespace Eclipse::Editor
         EditorContexts myContext;
     };
 }
+#endif

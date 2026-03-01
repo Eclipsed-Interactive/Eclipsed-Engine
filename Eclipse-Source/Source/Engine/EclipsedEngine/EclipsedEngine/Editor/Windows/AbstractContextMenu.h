@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 namespace Eclipse::Editor
@@ -19,3 +20,4 @@ namespace Eclipse::Editor
 		bool showMenu = false;
 	};
 }
+#endif

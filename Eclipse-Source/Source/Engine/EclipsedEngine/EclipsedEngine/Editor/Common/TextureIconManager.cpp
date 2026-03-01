@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "TextureIconManager.h"
 
 #include <filesystem>
@@ -243,3 +244,4 @@ namespace Eclipse::Editor
 		return loadedIcons[id];
 	}
 }
+#endif

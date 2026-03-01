@@ -40,7 +40,7 @@ namespace Eclipse::Reflection
 	//	}
 	//#endif
 
-
+#ifdef ECLIPSED_EDITOR
 	void AbstractSerializedVariable::DrawTest()
 	{
 		ResolveTypeInfo();
@@ -190,6 +190,7 @@ namespace Eclipse::Reflection
 		{
 		}
 	}
+#endif
 
 	const char* AbstractSerializedVariable::GetName() const { return name; }
 	Component* AbstractSerializedVariable::GetComponent() { return pComponent; }

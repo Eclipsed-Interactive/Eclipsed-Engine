@@ -1,13 +1,18 @@
 #pragma once
 
 #include "CoreEngine/Engine.h"
+#include "CoreEngine/Macros/defines.h"
 
 namespace Eclipse
 {
-	class EclipsedRuntime
+	class ECLIPSED_API EclipsedRuntime
 	{
 	public:
+#ifdef ECLIPSED_EDITOR
 		void StartEngine(const std::string& path);
+#else
+		void StartEngine();
+#endif
 
 		void UpdateGame();
 
@@ -18,7 +23,6 @@ namespace Eclipse
 		void EndFrame();
 		bool BeginFrame();
 
-		void ShutDown();
 
 	private:
 		Engine engine;

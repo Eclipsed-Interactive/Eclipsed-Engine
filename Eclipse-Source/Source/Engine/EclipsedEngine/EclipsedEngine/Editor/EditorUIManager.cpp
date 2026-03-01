@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "EditorUIManager.h"
 
 #include "ImGui/ImGui_Impl.h"
@@ -104,3 +105,4 @@ namespace Eclipse::Editor
 		io.FontDefault = FontSmall;
 	}
 }
+#endif

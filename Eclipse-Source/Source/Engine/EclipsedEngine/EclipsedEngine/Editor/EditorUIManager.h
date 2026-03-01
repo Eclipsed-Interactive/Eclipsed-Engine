@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #pragma once
 
 #include "EclipsedEngine/Editor/Windows/WindowManager.h"
@@ -29,3 +30,4 @@ namespace Eclipse::Editor
 		static inline class ImFont* FontExtraLarge = nullptr;
 	};
 }
+#endif

@@ -1,3 +1,4 @@
+#ifdef ECLIPSED_EDITOR
 #include "AssetWindow.h"
 #include "EclipsedEngine/Editor/Common/TextureIconManager.h"
 
@@ -397,3 +398,4 @@ namespace Eclipse::Editor
 	}
 
 }
+#endif

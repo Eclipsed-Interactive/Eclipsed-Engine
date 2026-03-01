@@ -84,8 +84,10 @@ namespace Eclipse::Reflection
 			{ImGuiDataType_String, 20000},
 		};
 
-		void DrawTest();
+#ifdef ECLIPSED_EDITOR
 
+		void DrawTest();
+#endif
 
 		enum SerializedTypes_
 		{
