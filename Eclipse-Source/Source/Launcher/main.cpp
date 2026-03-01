@@ -26,6 +26,7 @@ int main()
     while (eclipseRuntime.BeginFrame()) {
         eclipseRuntime.Update();
         eclipseRuntime.UpdateGame();
+        eclipseRuntime.Render();
         eclipseRuntime.EndFrame();
     }
 

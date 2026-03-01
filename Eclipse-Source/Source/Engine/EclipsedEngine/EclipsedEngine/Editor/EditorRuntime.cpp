@@ -100,7 +100,7 @@ namespace Eclipse::Editor
 	void EditorRuntime::RenderEngine()
 	{
 		DrawPlayGameButtons();
-		eclipseRuntime.Render();
+		//eclipseRuntime.Render();
 	}
 	bool EditorRuntime::BeginFrameEngine()
 	{

@@ -75,6 +75,8 @@ namespace Eclipse
 
 		SceneManager::LoadSceneData();
 
+		//SceneManager::LoadScene(SceneManager::)
+
 		//MainSingleton::RegisterInstance<EngineSettings>();
  
 		GraphicsEngine::Init();
