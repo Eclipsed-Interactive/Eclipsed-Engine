@@ -35,6 +35,8 @@
 
 #include "CoreEngine/Debug/DebugLogger.h"
 
+#include "EclipsedEngine/Components/ComponentForcelink.h"
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -48,6 +50,7 @@ namespace Eclipse
 	{
 		Replication::ReplicationManager::Init();
 		Resources::Init();
+		ComponentForcelink::LinkComponents();
 
 #ifdef ECLIPSED_EDITOR
 		{
@@ -75,8 +78,6 @@ namespace Eclipse
 
 		SceneManager::LoadSceneData();
 
-		//SceneManager::LoadScene(SceneManager::)
-
 		//MainSingleton::RegisterInstance<EngineSettings>();
  
 		GraphicsEngine::Init();
@@ -101,6 +102,9 @@ namespace Eclipse
 					ComponentManager::EndCollisions(aUserData.gameobject);
 				};
 		}
+
+
+		SceneManager::LoadScene(1);
 	}
 
 	void EclipsedRuntime::UpdateGame()

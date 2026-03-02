@@ -270,7 +270,8 @@ namespace Eclipse
 	void SceneLoader::LoadComponent(const std::string& componentName, const rapidjson::Value& aValue)
 	{
 		using namespace rapidjson;
-		if (!ComponentRegistry::IsRegisteredScene(componentName)) return;
+		if (!ComponentRegistry::IsRegisteredScene(componentName)) 
+			return;
 
 		auto addComponent = ComponentRegistry::GetAddComponent(componentName);
 

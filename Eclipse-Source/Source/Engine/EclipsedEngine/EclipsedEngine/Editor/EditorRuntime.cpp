@@ -15,9 +15,6 @@
 
 #include "CoreEngine/Files/FileWatcher.h"
 
-//#include <GLFW/glfw3.h>
-
-#include "EclipsedEngine/Components/ComponentForcelink.h"
 #include "CoreEngine/PathManager.h"
 #include "CoreEngine/MainSingleton.h"
 #include "CoreEngine/Settings/EngineSettings.h"
@@ -100,7 +97,7 @@ namespace Eclipse::Editor
 	void EditorRuntime::RenderEngine()
 	{
 		DrawPlayGameButtons();
-		//eclipseRuntime.Render();
+		eclipseRuntime.Render();
 	}
 	bool EditorRuntime::BeginFrameEngine()
 	{

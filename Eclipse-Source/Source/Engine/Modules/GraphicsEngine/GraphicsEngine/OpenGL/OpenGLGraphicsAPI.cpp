@@ -197,8 +197,13 @@ namespace Eclipse
 
 		DebugDrawer::Get().Begin();
 
+
 		GraphicsEngine::BindFrameBuffer(0);
+#ifdef ECLIPSEDEDITOR
 		GraphicsEngine::ClearCurrentSceneBuffer(0.3f, 0.3f, 0.3f, 1);
+#else
+		GraphicsEngine::ClearCurrentSceneBuffer();
+#endif
 	}
 
 	void GraphicsEngine::SetGlobalUniforms(unsigned aShaderProgram)
@@ -208,20 +213,21 @@ namespace Eclipse
 
 	void GraphicsEngine::Render()
 	{
-#ifdef _GAME
-		float resX = TemporarySettingsSingleton::Get().GetResolutionX();
-		float resY = TemporarySettingsSingleton::Get().GetResolutionY();
+#ifndef ECLIPSEDEDITOR
+		Math::Vector2i resolution = Settings::GraphicsSettings::GetResolution();
 
-		glViewport(0, 0, resX, resY);
+		glViewport(0, 0, resolution.x, resolution.y);
 
-		float aspectRatio = resY / resX;
+		float aspectRatio = static_cast<float>(resolution.y) / static_cast<float>(resolution.x);
 		GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
 
 		int ovColor = 1;
 		GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "notOverrideColor", &ovColor);
+#endif
 
 		CommandListManager::ExecuteAllCommandLists();
-#else
+
+#ifdef ECLIPSEDEDITOR
 		DebugDrawer::Get().Render();
 #endif
 	}

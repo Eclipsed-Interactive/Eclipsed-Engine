@@ -7,7 +7,7 @@
 int main()
 {
     HWND console = GetConsoleWindow();
-    ShowWindow(console, SW_SHOW); 
+    ShowWindow(console, SW_SHOW);
 
 
 #ifdef ECLIPSED_EDITOR
