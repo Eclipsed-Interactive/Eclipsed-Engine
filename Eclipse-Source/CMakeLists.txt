@@ -12,6 +12,7 @@ project(Eclipsed-Engine LANGUAGES CXX)
 
 add_compile_definitions(LEAN_AND_MEAN)
 
+option(ECLIPSED_EDITOR "Enables the editor" TRUE)
 option(INCLUDE_GAME "Includes game" FALSE)
 option(BUILD_GAME "Build game as static library." FALSE)
 

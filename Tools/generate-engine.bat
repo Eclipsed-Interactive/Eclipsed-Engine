@@ -1,3 +1,8 @@
-generate-game.bat "F:\Projects\Eclipsed\RPS-Project"
+@echo off
+setlocal
 
-pause
+call Engine/set-project.bat
+call Engine/generate-engine-cmake.bat
+call Engine/copy-engine-dlls.bat
+
+endlocal
