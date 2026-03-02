@@ -199,7 +199,12 @@ namespace Eclipse
 
     void PhysicsEngine::ChangeRBLocks(b2BodyId* aBodyID, bool XLock, bool YLock, bool RotationLock)
     {
-        b2Body_SetMotionLocks(*aBodyID, b2MotionLocks(XLock, YLock, RotationLock));
+        auto ml = b2MotionLocks(XLock, YLock, RotationLock);
+
+        std::cout << ml.linearX << "   " << ml.linearY << "   " << ml.angularZ;
+
+        b2Body_SetMotionLocks(*aBodyID, ml);
+        b2Body_SetAwake(*aBodyID, true);
     }
 
 

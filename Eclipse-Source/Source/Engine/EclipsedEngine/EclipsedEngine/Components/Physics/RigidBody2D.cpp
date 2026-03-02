@@ -30,6 +30,8 @@ namespace Eclipse
             }
         }
         
+        PhysicsEngine::ChangeRBLocks(myBody, LockXPos, LockYPos, LockRotation);
+        
         PhysicsEngine::ChangeBodyType(myBody, BodyType::Dynamic);
 
         myTransform = gameObject->GetComponent<Transform2D>();

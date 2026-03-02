@@ -213,10 +213,11 @@ namespace Eclipse
 
 	void GraphicsEngine::Render()
 	{
-#ifndef ECLIPSEDEDITOR
+#ifndef ECLIPSED_EDITOR
 		Math::Vector2i resolution = Settings::GraphicsSettings::GetResolution();
 
 		glViewport(0, 0, resolution.x, resolution.y);
+		
 
 		float aspectRatio = static_cast<float>(resolution.y) / static_cast<float>(resolution.x);
 		GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
@@ -227,7 +228,7 @@ namespace Eclipse
 
 		CommandListManager::ExecuteAllCommandLists();
 
-#ifdef ECLIPSEDEDITOR
+#ifdef ECLIPSED_EDITOR
 		DebugDrawer::Get().Render();
 #endif
 	}
