@@ -48,9 +48,11 @@ namespace Eclipse
 	void EclipsedRuntime::StartEngine()
 #endif
 	{
+		AudioManager::Init();
+
 		Replication::ReplicationManager::Init();
-		Resources::Init();
 		ComponentForcelink::LinkComponents();
+		Resources::Init();
 
 #ifdef ECLIPSED_EDITOR
 		{
@@ -83,8 +85,6 @@ namespace Eclipse
 		GraphicsEngine::Init();
 		Input::Init();
 
-
-		AudioManager::Init();
 		//Settings::SettingsRegistry::SaveDefaults();
 
 		{ // PHYSICS

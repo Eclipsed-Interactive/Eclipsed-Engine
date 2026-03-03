@@ -1,9 +1,7 @@
 include("${CMAKE_SOURCE_DIR}/Tools/CMake/common.cmake")
 
-option(BUILD_GAME "Build game as static library." FALSE)
-message(TESTING -  ${BUILD_GAME})
 
-if(BUILD_GAME)
+if(INCLUDE_GAME)
     CreateProject(STATIC)
 else()
     CreateProject(SHARED)
@@ -28,6 +26,6 @@ target_link_libraries(EclipsedEngine PUBLIC
 )
 
 
-if(BUILD_GAME)
+if(INCLUDE_GAME)
     target_link_libraries(EclipsedEngine PUBLIC Game)
 endif()

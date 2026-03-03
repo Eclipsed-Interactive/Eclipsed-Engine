@@ -68,11 +68,11 @@ namespace Eclipse
 
 	void SceneManager::AddScene(const std::string& aPath)
 	{
-		std::filesystem::path path = aPath;
+		std::filesystem::path path = std::filesystem::relative(aPath, PathManager::GetAssetsPath());
 
 		std::string name = path.filename().stem().string();
 		nameToIdx[name] = (unsigned)scenePaths.size();
-		scenePaths.push_back(aPath);
+		scenePaths.push_back(path.generic_string());
 	}
 
 	void SceneManager::LoadSceneData()

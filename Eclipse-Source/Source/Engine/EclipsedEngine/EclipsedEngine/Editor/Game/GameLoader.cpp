@@ -6,6 +6,8 @@
 
 void Eclipse::GameLoader::LoadGameDLL()
 {
+	auto test = (PathManager::GetGameDllBuildPath() / "Game.dll").generic_string();
+
 	gameDll = LoadLibraryA((PathManager::GetGameDllBuildPath() / "Game.dll").generic_string().c_str());
 	if (!gameDll)
 	{

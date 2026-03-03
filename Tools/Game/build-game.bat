@@ -1,8 +1,6 @@
 @echo off
 setlocal
 
-call generate-game.bat
-
-
+cmake --build ../Eclipse-Source/build/ --config Debug
 
 endlocal

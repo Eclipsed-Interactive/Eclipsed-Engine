@@ -14,17 +14,15 @@ add_compile_definitions(LEAN_AND_MEAN)
 
 option(ECLIPSED_EDITOR "Enables the editor" TRUE)
 option(INCLUDE_GAME "Includes game" FALSE)
-option(BUILD_GAME "Build game as static library." FALSE)
 
-if(ECLIPSED_EDITOR)
+if(${ECLIPSED_EDITOR})
     add_compile_definitions(
         ECLIPSED_EDITOR
+        _ECLIPSED_EXPORT_DLL
     )
+else(    )
+    add_compile_definitions(_NO_EXPORT)
 endif()
-
-add_compile_definitions(
-    _ECLIPSED_EXPORT_DLL
-    )
 
 
 set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin")
@@ -83,15 +81,12 @@ add_subdirectory(Source/Engine/EclipsedEngine)
 
 add_subdirectory(Source/Launcher)
 
-
-message(PROJECT_SOURCE_DIR="${PROJECT_DIR}/Library/Engine-Binary")
-
 if(ECLIPSED_EDITOR)
     add_subdirectory(Source/Tools/AssetExporter)
 endif()
 
 if(INCLUDE_GAME)
-    add_subdirectory(${PROJECT_DIR}  ${PROJECT_DIR})
+    add_subdirectory(${PROJECT_DIR}  ${PROJECT_DIR}/Library/Game)
 endif()
 
 

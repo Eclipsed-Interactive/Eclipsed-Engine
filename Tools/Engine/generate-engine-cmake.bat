@@ -7,6 +7,7 @@ cmake -G "Visual Studio 17 2022"                 ^
     -S ../Eclipse-Source/  ^
     -B ../Eclipse-Source/Library/Binary  ^
     -DECLIPSED_EDITOR=ON  ^
-    -DPROJECT_DIR="%PROJECT_DIR%"
+    -DPROJECT_DIR="%PROJECT_DIR%" ^
+    -DINCLUDE_GAME=OFF   
 
 endlocal
