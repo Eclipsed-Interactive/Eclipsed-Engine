@@ -14,6 +14,7 @@ add_compile_definitions(LEAN_AND_MEAN)
 
 option(ECLIPSED_EDITOR "Enables the editor" TRUE)
 option(INCLUDE_GAME "Includes game" FALSE)
+option(BUILD_GAME_PATH "Includes game" "${CMAKE_SOURCE_DIR}/Bin")
 
 if(${ECLIPSED_EDITOR})
     add_compile_definitions(

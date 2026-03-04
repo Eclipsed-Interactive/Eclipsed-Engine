@@ -8,6 +8,7 @@ cmake -G "Visual Studio 17 2022"                 ^
     -B ../Eclipse-Source/Library/Binary  ^
     -DECLIPSED_EDITOR=ON  ^
     -DPROJECT_DIR="%PROJECT_DIR%" ^
-    -DINCLUDE_GAME=OFF   
+    -DINCLUDE_GAME=OFF   ^
+    -DBUILD_GAME_PATH="${CMAKE_SOURCE_DIR}/Bin"
 
 endlocal

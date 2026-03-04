@@ -27,6 +27,11 @@
 #include "EclipsedEngine/Components/Audio/AudioEvent.h"
 #include "EclipsedEngine/Components/Audio/AudioListener.h"
 
+
+#ifndef ECLIPSED_EDITOR
+#include "Forcelink.h"
+#endif
+
 void Eclipse::ComponentForcelink::LinkComponents()
 {
 	
@@ -53,4 +58,8 @@ void Eclipse::ComponentForcelink::LinkComponents()
 	COMP_REG(AudioListener);
 	
 	COMP_REG(PlayerSpawner);
+
+#ifndef ECLIPSED_EDITOR
+	RegisterComponents();
+#endif
 }

@@ -37,6 +37,7 @@
 
 #include "EclipsedEngine/Components/ComponentForcelink.h"
 
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -102,7 +103,6 @@ namespace Eclipse
 					ComponentManager::EndCollisions(aUserData.gameobject);
 				};
 		}
-
 
 		SceneManager::LoadScene(1);
 	}

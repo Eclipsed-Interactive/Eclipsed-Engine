@@ -1,1 +1,0 @@
-build-game.bat F:\Videos\Eclipsed Engine F:\Projects\Eclipsed\RPS-Project

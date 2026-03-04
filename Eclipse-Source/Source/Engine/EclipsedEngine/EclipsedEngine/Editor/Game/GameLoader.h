@@ -20,7 +20,6 @@ namespace Eclipse
 
 
 	typedef ComponentRegistrySnapshot(*RegisterComponentsFunc)();
-	typedef void (*InitGameFunction)(Eclipse::Time*);
 
 	HMODULE gameDll;
 
