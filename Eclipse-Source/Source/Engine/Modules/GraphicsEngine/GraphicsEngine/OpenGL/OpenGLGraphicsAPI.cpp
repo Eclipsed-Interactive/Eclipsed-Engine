@@ -197,13 +197,14 @@ namespace Eclipse
 
 		DebugDrawer::Get().Begin();
 
-
 		GraphicsEngine::BindFrameBuffer(0);
-#ifdef ECLIPSEDEDITOR
+
+#ifdef ECLIPSED_EDITOR
 		GraphicsEngine::ClearCurrentSceneBuffer(0.3f, 0.3f, 0.3f, 1);
 #else
 		GraphicsEngine::ClearCurrentSceneBuffer();
 #endif
+
 	}
 
 	void GraphicsEngine::SetGlobalUniforms(unsigned aShaderProgram)
@@ -224,13 +225,12 @@ namespace Eclipse
 
 		int ovColor = 1;
 		GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "notOverrideColor", &ovColor);
-#endif
 
 		CommandListManager::ExecuteAllCommandLists();
-
-#ifdef ECLIPSED_EDITOR
-		DebugDrawer::Get().Render();
+#else
+	DebugDrawer::Get().Render();
 #endif
+
 	}
 	void GraphicsEngine::EndFrame()
 	{
