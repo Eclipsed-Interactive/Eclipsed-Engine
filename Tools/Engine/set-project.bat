@@ -2,7 +2,7 @@
 setlocal
 
 :: Target folder
-set LOCAL_DIR=../../Eclipse-Source/Bin
+set LOCAL_DIR=../Eclipse-Source/Bin
 
 :: Make folder if it doesn't exist
 if not exist "%LOCAL_DIR%" (

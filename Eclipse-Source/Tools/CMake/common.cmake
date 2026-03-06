@@ -113,8 +113,6 @@ function(CreateProject TYPE)
         RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}"
 
         FOLDER "Engine/EngineModules"
-
-        OUTPUT_NAME "${CURRENT_DIR_NAME}_${ECLIPSED_EDITOR}"
     )
 
     target_include_directories(${CURRENT_DIR_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/Source/Externals)

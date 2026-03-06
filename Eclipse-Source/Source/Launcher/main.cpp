@@ -4,10 +4,11 @@
 
 #include <filesystem>
 
-int main()
+//int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    HWND console = GetConsoleWindow();
-    ShowWindow(console, SW_SHOW);
+    //HWND console = GetConsoleWindow();
+    //ShowWindow(console, SW_SHOW);
 
 
 #ifdef ECLIPSED_EDITOR

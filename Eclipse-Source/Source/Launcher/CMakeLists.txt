@@ -10,7 +10,7 @@ file(GLOB_RECURSE LAUNCHER_SOURCES
     "${LAUNCHER_ROOT}/main.cpp"
 )
 
-add_executable(Launcher "${LAUNCHER_ROOT}/main.cpp")
+add_executable(Launcher WIN32 "${LAUNCHER_ROOT}/main.cpp")
 
 target_include_directories(Launcher PUBLIC ${CMAKE_SOURCE_DIR}/Source/Launcher/)
     target_include_directories(Launcher PRIVATE ${CMAKE_SOURCE_DIR}/Source/Externals)
