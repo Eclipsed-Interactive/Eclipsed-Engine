@@ -11,16 +11,11 @@
 
 #include "CoreEngine/PathManager.h"
 
-#include "CoreEngine/MainSingleton.h"
-#include "CoreEngine/Settings/EngineSettings.h"
-
 #include "Scenes/SceneManager.h"
 #include "AudioEngine/AudioManager.h"
 
 #include <fstream>
 
-#include "AssetEngine/Resources.h"
-#include "AssetEngine/Assets/AudioClip.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 
@@ -28,15 +23,13 @@
 
 #include "NetworkEngine/Client/Client.h"
 #include "NetworkEngine/Server/Server.h"
+#include "NetworkEngine/SteamNetworking/SteamGeneral.h"
 
 #include "CoreEngine/Settings/GraphicsSettings.h"
 
 #include "EclipsedEngine/Editor/PhysicsDebugDrawer.h"
 
-#include "CoreEngine/Debug/DebugLogger.h"
-
 #include "EclipsedEngine/Components/ComponentForcelink.h"
-
 
 namespace Eclipse
 {
@@ -49,6 +42,8 @@ namespace Eclipse
 	void EclipsedRuntime::StartEngine()
 #endif
 	{
+		SteamGeneral::Get().Init();
+		
 		AudioManager::Init();
 
 		Replication::ReplicationManager::Init();
@@ -75,8 +70,9 @@ namespace Eclipse
 			out.write(engineRoot.c_str(), engineRoot.size());
 			out.close();
 		}
+		
 #endif
-
+		
 		engine.Init();
 
 		SceneManager::LoadSceneData();
@@ -105,6 +101,14 @@ namespace Eclipse
 		}
 
 		SceneManager::LoadScene(1);
+
+#ifndef ECLIPSED_EDITOR
+		// This will be a text input or steam join
+		Replication::ReplicationManager::IP = "127.0.0.1";
+		
+		
+		Replication::ReplicationManager::Start();
+#endif
 	}
 
 	void EclipsedRuntime::UpdateGame()

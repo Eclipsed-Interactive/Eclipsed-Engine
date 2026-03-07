@@ -4,15 +4,19 @@
 
 #include "CoreEngine/Files/FileUtilities.h"
 
+#include <iostream>
+
 namespace Eclipse
 {
 	void PathManager::Init(const std::string& projectPath)
 	{
 		namespace fs = std::filesystem;
 
-		engineSourceRoot = fs::current_path();
 
+		engineSourceRoot = fs::current_path();
 		projectRoot = fs::absolute(projectPath);
+
+		int oasknd = 896234;
 	}
 
 

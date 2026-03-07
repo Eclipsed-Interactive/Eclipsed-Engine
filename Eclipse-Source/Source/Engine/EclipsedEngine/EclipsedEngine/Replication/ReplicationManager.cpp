@@ -81,6 +81,7 @@ namespace Eclipse::Replication
 
     void ReplicationManager::Init()
     {
+#ifdef ECLIPSED_EDITOR
         SetComponentReplicationManager();
 
         std::fstream stream("NetworkIp.ntwrk");
@@ -88,6 +89,7 @@ namespace Eclipse::Replication
         stream.getline(IpString, 16);
 
         IP = IpString;
+#endif
     }
 
     void ReplicationManager::Start()
