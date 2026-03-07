@@ -1,12 +1,19 @@
 #include "SteamGeneral.h"
 
-#include "steamSdk/steam_api.h"
+
 #include "steamSdk/isteammatchmaking.h"
 
 namespace Eclipse
 {
+    void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
+    {
+        const char* friendPresence = SteamFriends()->GetFriendRichPresence(aCallback->m_steamIDFriend, "connectIP");
+    }
+    
     void SteamGeneral::Init()
     {
+        
+        
         SteamErrMsg error;
         SteamAPI_InitEx(&error);
         
@@ -14,7 +21,9 @@ namespace Eclipse
         {
             assert("Something went wrong with initing steamSDK" && false);
         }
-        
-        SteamFriends()->SetRichPresence("steam_player_group", "192.168.1.202");
+
+        SteamFriends()->SetRichPresence("connectIP", "192.168.1.202");
+
+        int asdf = 84354;
     }
 }
