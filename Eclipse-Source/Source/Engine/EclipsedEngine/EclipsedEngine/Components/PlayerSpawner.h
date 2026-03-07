@@ -20,7 +20,9 @@ namespace Eclipse
     class PlayerSpawner : public Component
     {
     public:
-        BASE_SELECTION(PlayerSpawner, 10);
+        BASE_SELECTION(PlayerSpawner, 10)
+
+        bool Created = false;
 
         // void HasSpawnedHere_OnRep()
         // {
@@ -29,8 +31,11 @@ namespace Eclipse
 
         void Update() override
         {
-            if(Input::GetKeyDown(Keycode::L))
+            if(Input::GetKeyDown(Keycode::L) && !Created)
+            {
                 Instantiate(playerPrefab, gameObject, true);
+                Created = true;
+            }
         }
 
         void Awake() override

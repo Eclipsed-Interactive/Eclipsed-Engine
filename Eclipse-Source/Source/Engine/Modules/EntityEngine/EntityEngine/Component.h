@@ -120,7 +120,7 @@ namespace Eclipse
 
 	public:
 		//SERIALIZED_FIELD_DEFAULT(bool, IsReplicated, true);
-
+		
 		bool HasBeenCreated = false;
 
 		bool IsReplicated = false;
