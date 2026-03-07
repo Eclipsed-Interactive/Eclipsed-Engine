@@ -31,6 +31,8 @@
 
 #include "EclipsedEngine/Components/ComponentForcelink.h"
 
+#include <Input/Input.h>
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -117,6 +119,11 @@ namespace Eclipse
 		ComponentManager::LateUpdateComponents();
 
 		AudioManager::Update();
+
+		Replication::ReplicationManager::Update();
+
+		if (Input::GetKeyDown(Keycode::P))
+			Replication::ReplicationManager::Start();
 	}
 
 	void EclipsedRuntime::Render()
@@ -136,8 +143,6 @@ namespace Eclipse
 
 	void EclipsedRuntime::EndFrame()
 	{
-		Replication::ReplicationManager::Update();
-
 		GraphicsEngine::EndFrame();
 	}
 	void EclipsedRuntime::Shutdown()

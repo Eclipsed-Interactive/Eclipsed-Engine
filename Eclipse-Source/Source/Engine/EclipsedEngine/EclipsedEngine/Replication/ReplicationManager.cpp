@@ -16,7 +16,6 @@
 #include <fstream>
 
 
-
 namespace Eclipse::Replication
 {
     void ReplicationManager::ReplicatedOnPlay()
@@ -36,42 +35,44 @@ namespace Eclipse::Replication
 
     void ReplicationManager::CreateServer()
     {
-        server = &Eclipse::MainSingleton::RegisterInstance<Server>(false, ioContext, [](const NetMessage& aMessage) {Replication::ReplicationHelper::ServerHelp::HandleRecieve(aMessage);});
+        server = &Eclipse::MainSingleton::RegisterInstance<Server>(false, ioContext, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ServerHelp::HandleRecieve(aMessage); });
     }
+
     void ReplicationManager::CreateClient()
     {
         const char* ip = ReplicationManager::IP.c_str();
-        client = &Eclipse::MainSingleton::RegisterInstance<Client>(false, ioContext, ip, [](const NetMessage& aMessage) {Replication::ReplicationHelper::ClientHelp::HandleRecieve(aMessage);});
+        client = &Eclipse::MainSingleton::RegisterInstance<Client>(false, ioContext, ip, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ClientHelp::HandleRecieve(aMessage); });
 
         NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_Connect, nullptr, 0, true);
 
-        client->Send(message, [ip]() {
+        client->Send(message, [ip]()
+        {
             NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestSceneInfo, nullptr, 0, true);
             client->Send(message);
-            });
+        });
     }
 
     void SetComponentReplicationManager()
     {
         ComponentManager::SetCreateComponentReplicated([](Component* aComponent)
-            {
-                if (!MainSingleton::Exists<Client>())
-                    return;
+        {
+            if (!MainSingleton::Exists<Client>())
+                return;
 
-                NetMessage message;
-                Replication::ReplicationManager::CreateComponentMessage(aComponent, message);
-                MainSingleton::GetInstance<Client>().Send(message);
-            });
+            NetMessage message;
+            Replication::ReplicationManager::CreateComponentMessage(aComponent, message);
+            MainSingleton::GetInstance<Client>().Send(message);
+        });
 
         ComponentManager::SetDestroyGameObjectReplicated([](unsigned aGameObject)
-            {
-                if (!MainSingleton::Exists<Client>())
-                    return;
+        {
+            if (!MainSingleton::Exists<Client>())
+                return;
 
-                NetMessage message;
-                Replication::ReplicationManager::DeleteGOMessage(aGameObject, message);
-                MainSingleton::GetInstance<Client>().Send(message);
-            });
+            NetMessage message;
+            Replication::ReplicationManager::DeleteGOMessage(aGameObject, message);
+            MainSingleton::GetInstance<Client>().Send(message);
+        });
 
         ComponentManager::SetDeleteReplicationComponent([](unsigned aComponentID) { Replication::ReplicationManager::DeleteReplicatedComponent(aComponentID); });
         ComponentManager::SetBeforeAfterComponentConstruction(
@@ -81,8 +82,9 @@ namespace Eclipse::Replication
 
     void ReplicationManager::Init()
     {
-#ifdef ECLIPSED_EDITOR
         SetComponentReplicationManager();
+        
+#ifdef ECLIPSED_EDITOR
 
         std::fstream stream("NetworkIp.ntwrk");
         char IpString[16];
@@ -128,7 +130,6 @@ namespace Eclipse::Replication
                     if (!Variable->ManualVariableSending)
                         Variable->ReplicateThis(i);
                 }
-
             }
 
             timer = 0.005f;
@@ -227,6 +228,5 @@ namespace Eclipse::Replication
         }
 
         ReplicationManager::TemporaryReplicatedVariableList.erase(0);
-
     }
 }
