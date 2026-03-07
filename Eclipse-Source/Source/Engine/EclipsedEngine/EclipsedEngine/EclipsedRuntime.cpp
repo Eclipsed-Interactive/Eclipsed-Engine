@@ -23,7 +23,7 @@
 
 #include "NetworkEngine/Client/Client.h"
 #include "NetworkEngine/Server/Server.h"
-#include "NetworkEngine/SteamNetworking/SteamGeneral.h"
+#include "Steam/SteamGeneral.h"
 
 #include "CoreEngine/Settings/GraphicsSettings.h"
 
@@ -101,18 +101,13 @@ namespace Eclipse
 		}
 
 		SceneManager::LoadScene(1);
-
-#ifndef ECLIPSED_EDITOR
-		// This will be a text input or steam join
-		Replication::ReplicationManager::IP = "127.0.0.1";
-		
-		
-		Replication::ReplicationManager::Start();
-#endif
 	}
 
 	void EclipsedRuntime::UpdateGame()
 	{
+		//TODO: Might not want to call every frame but it does now
+		SteamGeneral::Get().Update();
+		
 		PhysicsEngine::Update();
 
 		ComponentManager::AwakeStartComponents();

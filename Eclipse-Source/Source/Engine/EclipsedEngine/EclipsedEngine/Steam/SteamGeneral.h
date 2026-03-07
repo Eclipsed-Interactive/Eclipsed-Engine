@@ -12,9 +12,10 @@ namespace Eclipse
     public:
         SteamGeneral() = default;
 
+        void Update();
         void Init();
 
-        static SteamGeneral Get()
+        static SteamGeneral& Get()
         {
             static SteamGeneral instance;
             return instance;

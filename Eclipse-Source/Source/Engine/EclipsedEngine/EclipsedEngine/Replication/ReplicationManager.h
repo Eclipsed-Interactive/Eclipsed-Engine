@@ -83,7 +83,7 @@ namespace Eclipse::Replication
         static inline Client* client = nullptr;
         static inline Server* server = nullptr;
 
-        static inline bool startServer = false;
+        static inline bool startServer = true;
         static inline bool startClient = true;
 
         static inline bool startedGame = false;

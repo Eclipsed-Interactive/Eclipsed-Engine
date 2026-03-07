@@ -25,6 +25,8 @@ target_link_libraries(EclipsedEngine PUBLIC
     ImGui
 )
 
+target_link_libraries(EclipsedEngine PRIVATE "${CMAKE_SOURCE_DIR}/Source/Externals/steamsdk/lib/win64/steam_api64.lib")
+
 
 if(INCLUDE_GAME)
     target_link_libraries(EclipsedEngine PUBLIC Game)
