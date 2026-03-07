@@ -22,7 +22,7 @@ namespace Eclipse
             assert("Something went wrong with initing steamSDK" && false);
         }
 
-        SteamFriends()->SetRichPresence("connect", "");
+        SteamFriends()->SetRichPresence("connect", "192.168.1.202");
         SteamFriends()->SetRichPresence("connectIP", "192.168.1.202");
 
         int asdf = 84354;
