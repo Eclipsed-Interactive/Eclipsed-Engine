@@ -13,6 +13,7 @@
 #include "EclipsedEngine/Components/Component.h"
 
 #include "EclipsedEngine/ECS/SpawnObject.h"
+#include "Input/Input.h"
 
 namespace Eclipse
 {
@@ -26,9 +27,15 @@ namespace Eclipse
 
         // }
 
+        void Update() override
+        {
+            if(Input::GetKeyDown(Keycode::L))
+                Instantiate(playerPrefab, gameObject, true);
+        }
+
         void Awake() override
         {
-            Instantiate(playerPrefab, gameObject, true);
+            
 
             // unsigned componentCount = 4;
             // NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_SendMultipleComponents, &componentCount, sizeof(unsigned), true);
