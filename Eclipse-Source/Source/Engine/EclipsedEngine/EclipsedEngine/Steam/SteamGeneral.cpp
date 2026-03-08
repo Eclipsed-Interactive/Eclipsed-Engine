@@ -4,6 +4,11 @@
 
 namespace Eclipse
 {
+    void SteamGeneral::RelayNetworkInitilized(SteamRelayNetworkStatus_t* aCallback)
+    {
+        printf("Relay network ready");
+    }
+    
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
     {
         // const char* friendPresence = SteamFriends()->GetFriendRichPresence(aCallback->m_steamIDFriend, "connect");
@@ -23,13 +28,11 @@ namespace Eclipse
     void SteamGeneral::Init()
     {
         SteamErrMsg error;
-        SteamAPI_InitEx(&error);
-        
-        if (*error != 0)
-            assert((std::string("Something went wrong with initing steamSDK Error: ") + std::string(error)).c_str() && false);
-
-        //SteamFriends()->SetRichPresence("connect", General::GetPublicIPAdress().c_str());
-
-        SteamNetworkingUtils()->InitRelayNetworkAccess();
+        if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
+        {
+            printf("SteamAPI Init failed: %s\n", error);
+            assert(false && "Steam initialization failed");
+            return;
+        }
     }
 }

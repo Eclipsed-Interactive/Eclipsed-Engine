@@ -112,9 +112,7 @@ namespace Eclipse
 
 	void EclipsedRuntime::UpdateGame()
 	{
-		//TODO: Might not want to call every frame but it does now
-		SteamGeneral::Get().Update();
-		
+
 		PhysicsEngine::Update();
 
 		ComponentManager::AwakeStartComponents();
@@ -154,6 +152,9 @@ namespace Eclipse
 
 	void EclipsedRuntime::Update()
 	{
+		//TODO: Might not want to call every frame but it does now
+		SteamGeneral::Get().Update();
+		
 		engine.Update();
 		Input::Update();
 		ComponentManager::EditorUpdateComponents();

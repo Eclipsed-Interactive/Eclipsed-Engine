@@ -1,7 +1,9 @@
 #pragma once
 
 
+#include "SteamP2PNetworkingServer.h"
 #include "steamsdk/isteamnetworkingsockets.h"
+#include "steamsdk/isteamgameserver.h"
 
 class SteamP2PNetworkingServer
 {
@@ -14,6 +16,23 @@ public:
 
     void Start()
     {
+        if (SteamGameServer())
+        {
+            SteamGameServer()->SetProduct("Project Nova");
+            SteamGameServer()->SetGameDescription("Project Nova Desc");
+
+            //SteamGameServer()->SetSpectatorPort( ... );
+            //SteamGameServer()->SetSpectatorServerName( ... );
+
+            SteamGameServer()->LogOnAnonymous();
+
+            SteamNetworkingUtils()->InitRelayNetworkAccess();
+        }
+        else
+        {
+            OutputDebugString("SteamGameServer() interface is invalid\n");
+        }
+
         myListenSocket = SteamNetworkingSockets()->CreateListenSocketP2P(0, 0, nullptr);
     }
 
@@ -22,18 +41,12 @@ public:
         if (!myConnection)
             return;
 
-        SteamNetworkingMessage_t* messages = new SteamNetworkingMessage_t[16];
-        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &messages, 16);
+        SteamNetworkingMessage_t* message = nullptr;
+        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &message, 1);
 
         if (messageCount)
         {
-            
-        }
-
-        for (int i = 0; i < 16; ++i)
-        {
-            std::cout << messages[i].GetData() << std::endl;
-            messages[i].Release();
+            int uhadsud = 867;
         }
     }
 
