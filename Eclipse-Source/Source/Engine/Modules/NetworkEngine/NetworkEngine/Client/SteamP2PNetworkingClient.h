@@ -44,13 +44,6 @@ public:
 
     void Send(const void* aData, uint32 aDataCount, EMessageType messageType)
     {
-        SteamNetConnectionInfo_t status;
-        bool test = SteamNetworkingSockets()->GetConnectionInfo(myConnection, &status);
-        if (test) {
-            printf("Connection state: %d\n", status.m_eState);
-            // Should be k_ESteamNetworkingConnectionState_Connected (which is 4)
-        }
-        
         int64 messageCount;
         EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, aData, aDataCount, messageType, &messageCount);
 

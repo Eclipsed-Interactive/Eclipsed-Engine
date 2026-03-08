@@ -40,13 +40,18 @@ public:
     {
         if (!myConnection)
             return;
-
+        
         SteamNetworkingMessage_t* message = nullptr;
-        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &message, 1);
+        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &message, 32);
 
-        if (messageCount)
+        for (int i = 0; i < messageCount; ++i)
         {
-            int uhadsud = 867;
+            int messageSize = message->m_cbSize;
+            
+            char* mess = static_cast<char*>(malloc(messageSize));
+            memcpy(mess, message->GetData(), messageSize);
+            memset(mess + messageSize, '\0', 1);
+            message[i].Release();
         }
     }
 
@@ -59,5 +64,19 @@ public:
 
 inline void SteamP2PNetworkingServer::OnSteamConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* aInfo)
 {
+    switch (aInfo->m_info.m_eState) {
+    case k_ESteamNetworkingConnectionState_Connecting:
+        // IMPORTANT: Accept immediately when in Connecting state
+        SteamNetworkingSockets()->AcceptConnection(aInfo->m_hConn);
+        break;
+            
+    case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+        // Log the reason code for debugging
+        printf("Connection failed with reason: %d - %s\n", 
+               aInfo->m_info.m_eEndReason, 
+               aInfo->m_info.m_szEndDebug);
+        break;
+    }
+    
     myConnection = aInfo->m_hConn;
 }
