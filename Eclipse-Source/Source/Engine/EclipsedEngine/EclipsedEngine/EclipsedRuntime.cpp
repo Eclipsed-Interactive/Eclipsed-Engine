@@ -134,8 +134,12 @@ namespace Eclipse
 		if (Input::GetKeyDown(Keycode::C))
 			SteamP2PNetworkingClient::Get().Start(76561198368166721);
 
-		const char* testString = "hello there person";
-		SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
+		if (Input::GetKeyDown(Keycode::M))
+		{
+			const char* testString = "hello there person";
+			SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
+		}
+		
 
 		//SteamNetworkingSockets()->FlushMessagesOnConnection()
 	}
