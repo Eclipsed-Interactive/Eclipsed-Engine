@@ -9,6 +9,8 @@
 
 #include "GraphicsEngine/RenderCommands/CommandList.h"
 
+#include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
+
 namespace Eclipse
 {
     void UIImage::sprite_OnRep()
@@ -53,11 +55,22 @@ namespace Eclipse
 
         Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
 
+
+        Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+
+        resolution.x = 1.f / resolution.x;
+        resolution.y = 1.f / resolution.y;
+
+        Math::Vector2f canvasScaleRelationOneDiv = { resolution.x, resolution.y };
+
         Math::Vector2f position = tranform->Position;
         position *= canvasCameraTransform.ScaleMultiplier;
         position += canvasCameraTransform.PositionOffset;
 
-        Math::Vector2f scale = tranform->WidthHeightPX * 2.f;
+        Math::Vector2f scale = tranform->WidthHeightPX;
+        scale *= canvasScaleRelationOneDiv;
+        scale *= Math::Vector2f(200, 200);
+        scale.x *= resolution.y / resolution.x;
         scale *= canvasCameraTransform.ScaleMultiplier;
 
         float rotation = 0.f;
@@ -82,12 +95,6 @@ namespace Eclipse
 
         //auto tempSettings = TemporarySettingsSingleton::Get();
 
-        Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-
-        resolution.x = 1.f / resolution.x;
-        resolution.y = 1.f / resolution.y;
-
-        Math::Vector2f canvasScaleRelationOneDiv = { resolution.x, resolution.y };
         GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
 
         // Math::Vector4f pixelPickColor = gameObject->GetPixelPickingIDColor();

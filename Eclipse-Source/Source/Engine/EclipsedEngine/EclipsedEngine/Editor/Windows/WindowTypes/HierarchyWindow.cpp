@@ -6,6 +6,7 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 #include "EclipsedEngine/Components/UI/UIImage.h"
+#include "EclipsedEngine/Components/UI/Button.h"
 #include "EclipsedEngine/Components/Rendering/TextRenderer.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "CoreEngine/Input/Input.h"
@@ -295,6 +296,17 @@ namespace Eclipse::Editor
 						GameObject* obj = ComponentManager::CreateGameObject();
 						obj->AddComponent<RectTransform>();
 						obj->AddComponent<TextRenderer>();
+
+						obj->SetName("New Text");
+					}
+					else if (ImGui::MenuItem("Button"))
+					{
+						GameObject* obj = ComponentManager::CreateGameObject();
+						obj->AddComponent<RectTransform>();
+						obj->AddComponent<Button>();
+						obj->AddComponent<UIImage>();
+						TextRenderer* rend = obj->AddComponent<TextRenderer>();
+						rend->SetText("UI Button");
 
 						obj->SetName("New Text");
 					}

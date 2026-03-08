@@ -21,6 +21,9 @@ namespace Eclipse::Editor
 		void Update() override;
 		void Open() override;
 
+
+		static inline Math::Vector2f myGameImageResolution = { 0,0 };
+
 	private:
 		unsigned myGameFrameBuffer = 0;
 		unsigned myGameTexture = 0;
