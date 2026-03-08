@@ -11,9 +11,9 @@ public:
         return Instance;
     }
     
-    void Start(uint32 aSteamID, EUniverse aUniverse)
+    void Start(uint64 aSteamID)
     {
-        CSteamID steamID(aSteamID, aUniverse, EAccountType::k_EAccountTypeIndividual);
+        CSteamID steamID(aSteamID);
         
         SteamNetworkingIdentity identity;
         identity.SetSteamID(steamID);

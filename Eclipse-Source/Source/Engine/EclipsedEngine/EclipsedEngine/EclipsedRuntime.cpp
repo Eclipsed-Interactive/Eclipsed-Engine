@@ -130,7 +130,7 @@ namespace Eclipse
 			//Replication::ReplicationManager::Start();
 
 		if (Input::GetKeyDown(Keycode::C))
-			SteamP2PNetworkingClient::Get().Start(76561198368166721, EUniverse::k_EUniverseDev);
+			SteamP2PNetworkingClient::Get().Start(76561198368166721);
 	}
 
 	void EclipsedRuntime::Render()
