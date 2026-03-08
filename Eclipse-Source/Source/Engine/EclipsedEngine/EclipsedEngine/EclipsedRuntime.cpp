@@ -127,6 +127,9 @@ namespace Eclipse
 
 		Replication::ReplicationManager::Update();
 
+		SteamP2PNetworkingServer::Get().Update();
+		//SteamP2PNetworkingClient::Get().Update();
+
 		if (Input::GetKeyDown(Keycode::S))
 			SteamP2PNetworkingServer::Get().Start();
 			//Replication::ReplicationManager::Start();
