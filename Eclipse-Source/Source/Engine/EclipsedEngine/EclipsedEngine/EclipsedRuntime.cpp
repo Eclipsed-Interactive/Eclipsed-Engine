@@ -33,6 +33,9 @@
 
 #include <Input/Input.h>
 
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -122,8 +125,12 @@ namespace Eclipse
 
 		Replication::ReplicationManager::Update();
 
-		if (Input::GetKeyDown(Keycode::P))
-			Replication::ReplicationManager::Start();
+		if (Input::GetKeyDown(Keycode::S))
+			SteamP2PNetworkingServer::Get().Start();
+			//Replication::ReplicationManager::Start();
+
+		if (Input::GetKeyDown(Keycode::C))
+			SteamP2PNetworkingClient::Get().Start(76561198368166721, EUniverse::k_EUniverseDev);
 	}
 
 	void EclipsedRuntime::Render()

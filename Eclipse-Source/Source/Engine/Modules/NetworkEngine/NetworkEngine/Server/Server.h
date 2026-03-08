@@ -41,8 +41,10 @@ namespace Eclipse
 			garantiedMessageHandler(&Server::SendDirectly_NoChecks, this),
 			HandleRecieveFunc(aHandleRecieveFunc)
 		{
-			StartRecieve();
+			//StartRecieve();
 			memset(recieveBuffer, 0, sizeof(recieveBuffer));
+
+						
 		}
 
 		void Update()

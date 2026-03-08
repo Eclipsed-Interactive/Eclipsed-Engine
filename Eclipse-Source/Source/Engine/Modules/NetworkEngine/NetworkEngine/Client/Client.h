@@ -9,6 +9,7 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
+
 namespace Eclipse
 {
 	using asio::ip::udp;
