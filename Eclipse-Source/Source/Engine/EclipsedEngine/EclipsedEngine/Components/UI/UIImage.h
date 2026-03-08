@@ -3,6 +3,7 @@
 #include "EclipsedEngine/Components/Component.h"
 
 #include "AssetEngine/Assets/Material.h"
+#include "AssetEngine/Assets/Texture.h"
 
 namespace Eclipse
 {
@@ -10,12 +11,16 @@ namespace Eclipse
     {
         COMPONENT_BASE_2(UIImage, 0)
 
-    //public:
-    //    void OnComponentAdded() override;
-    //    void Render() override;
-    //    void Draw();
+    public:
+        void OnComponentAdded() override;
+        void Render() override;
+        void Draw();
 
-    //    Materials myMaterial;
+        bool hasSprite = false;
+        bool hasMaterial = false;
+
+        MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
+        SERIALIZED_FIELD(Material, material);
         
     };
 }

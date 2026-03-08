@@ -11,69 +11,90 @@
 
 namespace Eclipse
 {
-    //void UIImage::OnComponentAdded()
-    //{
-    //    myMaterial = Resourcess::Get<Materials>();
-    //    myMaterial = new Material((PathManager::GetEngineAssetsPath() / "Default/Shaders/ScreenSpaceSpritePixelShader.glsl").generic_string().c_str(), (PathManager::GetEngineAssetsPath() / "Default/Shaders/ScreenSpaceSpriteVertexShader.glsl").generic_string().c_str());
-    //}
+    void UIImage::sprite_OnRep()
+    {
+        
+    }
 
-    //void UIImage::Render()
-    //{
-    //    CommandListManager::GetUICommandList().Enqueue([&]() {
-    //        Draw();
-    //        });
-    //}
+    void UIImage::OnComponentAdded()
+    {
+        if (material->IsValid()) hasMaterial = true;
+        if (sprite->IsValid()) hasSprite = true;
 
-    //void UIImage::Draw()
-    //{
-    //    if (!myMaterial)
-    //        return;
+        if (!hasMaterial)
+        {
+            material = Resources::GetDefault<Material>();
+            material->Create();
 
-    //    auto tranform = gameObject->GetComponent<RectTransform>();
+            hasMaterial = true;
+        }
+    }
 
-    //    if (!tranform)
-    //        return;
-    //    if (!tranform->myCanvas)
-    //        return;
-    //        
-    //    tranform->myCanvas->SetCanvasTransformProperties();
+    void UIImage::Render()
+    {
+        CommandListManager::GetUICommandList().Enqueue([&]() {
+            Draw();
+            });
+    }
 
-    //    Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
+    void UIImage::Draw()
+    {
+        if (!hasMaterial)
+            return;
 
-    //    Math::Vector2f position = tranform->Position;
-    //    position *= canvasCameraTransform.ScaleMultiplier;
-    //    position += canvasCameraTransform.PositionOffset;
+        auto tranform = gameObject->GetComponent<RectTransform>();
 
-    //    Math::Vector2f scale = tranform->WidthHeightPX * 2.f;
-    //    scale *= canvasCameraTransform.ScaleMultiplier;
+        if (!tranform)
+            return;
+        if (!tranform->myCanvas)
+            return;
+            
+        tranform->myCanvas->SetCanvasTransformProperties();
 
-    //    float rotation = 0.f;
-    //    rotation += canvasCameraTransform.Rotation;
+        Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
 
-    //    unsigned shaderID = myMaterial->myShader->GetProgramID();
+        Math::Vector2f position = tranform->Position;
+        position *= canvasCameraTransform.ScaleMultiplier;
+        position += canvasCameraTransform.PositionOffset;
 
-    //    myMaterial->myShader->Use(shaderID);
-    //    myMaterial->Use();
+        Math::Vector2f scale = tranform->WidthHeightPX * 2.f;
+        scale *= canvasCameraTransform.ScaleMultiplier;
 
-    //    GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
-    //    GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
-    //    GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
+        float rotation = 0.f;
+        rotation += canvasCameraTransform.Rotation;
 
-    //    //auto tempSettings = TemporarySettingsSingleton::Get();
+        unsigned shaderID = material->GetShaderProgramID();
 
-    //    Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+        if (sprite->IsValid())
+        {
+            material->BindShader();
+            sprite->Bind();
+            material->BindColor();
+        }
+        else
+        {
+            material->Use();
+        }
 
-    //    resolution.x = 1.f / resolution.x;
-    //    resolution.y = 1.f / resolution.y;
+        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
+        GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
+        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
 
-    //    Math::Vector2f canvasScaleRelationOneDiv = { resolution.x, resolution.y };
-    //    GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
+        //auto tempSettings = TemporarySettingsSingleton::Get();
 
-    //    // Math::Vector4f pixelPickColor = gameObject->GetPixelPickingIDColor();
-    //    // GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "pixelPickColor", &pixelPickColor);
+        Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
 
-    //    GraphicsEngine::SetGlobalUniforms(shaderID);
+        resolution.x = 1.f / resolution.x;
+        resolution.y = 1.f / resolution.y;
 
-    //    Sprite::Get().Render();
-    //}
+        Math::Vector2f canvasScaleRelationOneDiv = { resolution.x, resolution.y };
+        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
+
+        // Math::Vector4f pixelPickColor = gameObject->GetPixelPickingIDColor();
+        // GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "pixelPickColor", &pixelPickColor);
+
+        GraphicsEngine::SetGlobalUniforms(shaderID);
+
+        Sprite::Get().Render();
+    }
 }

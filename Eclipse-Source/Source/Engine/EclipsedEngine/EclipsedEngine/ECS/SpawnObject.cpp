@@ -58,8 +58,8 @@ namespace Eclipse
                     SceneLoader::LoadType(reflectedVariable, coIt->value);
                 }
 
-                if (coIt->value.HasMember("IsReplicated"))
-                    component->IsReplicated = coIt->value["IsReplicated"].GetBool();
+                if (components.HasMember("IsReplicated"))
+                    component->IsReplicated = components["IsReplicated"].GetBool();
             }
         }
 

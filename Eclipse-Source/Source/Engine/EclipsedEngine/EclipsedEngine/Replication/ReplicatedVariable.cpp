@@ -7,7 +7,7 @@ namespace Eclipse::Replication
 {
     void BaseReplicatedVariable::ReplicateThis(unsigned aID, bool aIsGarantied, bool aAlwaysSend)
     {
-        if (!ConnectedComponent->IsOwner() && !aAlwaysSend)
+        if (!ConnectedComponent->IsReplicated || !ConnectedComponent->IsOwner() && !aAlwaysSend)
             return;
 
         unsigned componentID = ConnectedComponent->myInstanceComponentID;

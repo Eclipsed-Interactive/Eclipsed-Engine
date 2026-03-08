@@ -15,8 +15,6 @@ namespace Eclipse
 
 		engineSourceRoot = fs::current_path();
 		projectRoot = fs::absolute(projectPath);
-
-		int oasknd = 896234;
 	}
 
 
