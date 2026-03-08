@@ -35,7 +35,7 @@ public:
         SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
     }
 
-    void Send(void* aData, uint32 aDataCount, EMessageType messageType)
+    void Send(const void* aData, uint32 aDataCount, EMessageType messageType)
     {
         int64 messageCount;
         EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, aData, aDataCount, messageType, &messageCount);

@@ -137,7 +137,7 @@ namespace Eclipse
 		const char* testString = "hello there person";
 		SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
 
-		SteamNetworkingSockets()->FlushMessagesOnConnection()
+		//SteamNetworkingSockets()->FlushMessagesOnConnection()
 	}
 
 	void EclipsedRuntime::Render()

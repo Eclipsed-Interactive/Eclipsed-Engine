@@ -16,7 +16,30 @@ public:
     {
         myListenSocket = SteamNetworkingSockets()->CreateListenSocketP2P(0, 0, nullptr);
     }
+
+    void Update()
+    {
+        if (!myConnection)
+            return;
+
+        SteamNetworkingMessage_t* messages = new SteamNetworkingMessage_t[16];
+        
+        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &messages, 16);
+
+        if (!messageCount)
+            return;
+
+        int test = 0;
+    }
     
 public:
     HSteamListenSocket myListenSocket;
+    HSteamNetConnection myConnection;
+
+    STEAM_CALLBACK(SteamP2PNetworkingServer, OnSteamConnectionStatusChanged, SteamNetConnectionStatusChangedCallback_t);
 };
+
+inline void SteamP2PNetworkingServer::OnSteamConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* aInfo)
+{
+    myConnection = aInfo->m_hConn;
+}
