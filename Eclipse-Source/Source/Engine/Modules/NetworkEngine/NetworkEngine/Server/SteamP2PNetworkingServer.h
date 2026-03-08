@@ -11,7 +11,7 @@ public:
         static SteamP2PNetworkingServer Instance;
         return Instance;
     }
-    
+
     void Start()
     {
         myListenSocket = SteamNetworkingSockets()->CreateListenSocketP2P(0, 0, nullptr);
@@ -23,15 +23,20 @@ public:
             return;
 
         SteamNetworkingMessage_t* messages = new SteamNetworkingMessage_t[16];
-        
         int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &messages, 16);
 
-        if (!messageCount)
-            return;
+        if (messageCount)
+        {
+            
+        }
 
-        std::cout << messages[0].GetData() << std::endl;
+        for (int i = 0; i < 16; ++i)
+        {
+            std::cout << messages[i].GetData() << std::endl;
+            messages[i].Release();
+        }
     }
-    
+
 public:
     HSteamListenSocket myListenSocket;
     HSteamNetConnection myConnection;
