@@ -27,10 +27,7 @@ public:
 
     void Update()
     {
-        if (!myConnection)
-            return;
         
-        SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
     }
     
     void Start(uint64 aSteamID)
@@ -48,7 +45,7 @@ public:
         int64 messageCount;
         EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, aData, aDataCount, messageType, &messageCount);
 
-        int test = 0;
+        SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
     }
     
 public:
