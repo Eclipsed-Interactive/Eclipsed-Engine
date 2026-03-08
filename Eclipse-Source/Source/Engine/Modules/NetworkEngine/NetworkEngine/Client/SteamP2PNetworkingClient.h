@@ -2,6 +2,20 @@
 
 #include "steamsdk/isteamnetworkingsockets.h"
 
+enum EMessageType
+{
+    Reliable = k_nSteamNetworkingSend_Reliable,
+    Garantied = k_nSteamNetworkingSend_Reliable,
+    Ack = k_nSteamNetworkingSend_Reliable,
+    
+    Unreliable = k_nSteamNetworkingSend_Unreliable,
+    NotGarantied = k_nSteamNetworkingSend_Unreliable,
+    NotAck = k_nSteamNetworkingSend_Unreliable,
+
+    NoNagle = k_nSteamNetworkingSend_NoNagle,
+    NoDelay = k_nSteamNetworkingSend_NoDelay,
+};
+
 class SteamP2PNetworkingClient
 {
 public:
@@ -19,6 +33,14 @@ public:
         identity.SetSteamID(steamID);
         
         SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
+    }
+
+    void Send(void* aData, uint32 aDataCount, EMessageType messageType)
+    {
+        int64 messageCount;
+        EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, aData, aDataCount, messageType, &messageCount);
+
+        int test = 0;
     }
     
 public:

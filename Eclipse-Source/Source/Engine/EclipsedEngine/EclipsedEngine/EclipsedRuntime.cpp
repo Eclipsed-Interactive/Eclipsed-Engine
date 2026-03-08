@@ -36,6 +36,8 @@
 #include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
 #include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
 
+#include "steamsdk/isteamnetworkingsockets.h"
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -131,6 +133,11 @@ namespace Eclipse
 
 		if (Input::GetKeyDown(Keycode::C))
 			SteamP2PNetworkingClient::Get().Start(76561198368166721);
+
+		const char* testString = "hello there person";
+		SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
+
+		SteamNetworkingSockets()->FlushMessagesOnConnection()
 	}
 
 	void EclipsedRuntime::Render()
