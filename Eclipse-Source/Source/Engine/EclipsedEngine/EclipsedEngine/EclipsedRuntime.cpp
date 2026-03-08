@@ -128,7 +128,7 @@ namespace Eclipse
 		Replication::ReplicationManager::Update();
 
 		SteamP2PNetworkingServer::Get().Update();
-		//SteamP2PNetworkingClient::Get().Update();
+		SteamP2PNetworkingClient::Get().Update();
 
 		if (Input::GetKeyDown(Keycode::S))
 			SteamP2PNetworkingServer::Get().Start();
@@ -142,9 +142,6 @@ namespace Eclipse
 			const char* testString = "hello there person";
 			SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
 		}
-		
-
-		//SteamNetworkingSockets()->FlushMessagesOnConnection()
 	}
 
 	void EclipsedRuntime::Render()

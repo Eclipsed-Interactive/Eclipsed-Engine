@@ -24,6 +24,14 @@ public:
         static SteamP2PNetworkingClient Instance;
         return Instance;
     }
+
+    void Update()
+    {
+        if (!myConnection)
+            return;
+        
+        SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
+    }
     
     void Start(uint64 aSteamID)
     {
