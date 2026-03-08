@@ -32,7 +32,7 @@ public:
         SteamNetworkingIdentity identity;
         identity.SetSteamID(steamID);
         
-        SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
+        myConnection = SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
     }
 
     void Send(const void* aData, uint32 aDataCount, EMessageType messageType)

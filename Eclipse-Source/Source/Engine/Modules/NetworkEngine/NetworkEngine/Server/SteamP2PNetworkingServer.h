@@ -29,7 +29,7 @@ public:
         if (!messageCount)
             return;
 
-        int test = 0;
+        std::cout << messages[0].GetData() << std::endl;
     }
     
 public:
