@@ -1,55 +1,71 @@
 #pragma once
 
+#include <functional>
+
 #include "steamsdk/isteamnetworkingsockets.h"
+#include "steamsdk/isteamnetworkingutils.h"
 
-enum EMessageType
+#include "NetworkEngine/Shared/Message.h"
+
+namespace Eclipse
 {
-    Reliable = k_nSteamNetworkingSend_Reliable,
-    Garantied = k_nSteamNetworkingSend_Reliable,
-    Ack = k_nSteamNetworkingSend_Reliable,
-    
-    Unreliable = k_nSteamNetworkingSend_Unreliable,
-    NotGarantied = k_nSteamNetworkingSend_Unreliable,
-    NotAck = k_nSteamNetworkingSend_Unreliable,
-
-    NoNagle = k_nSteamNetworkingSend_NoNagle,
-    NoDelay = k_nSteamNetworkingSend_NoDelay,
-};
-
-class SteamP2PNetworkingClient
-{
-public:
-    static SteamP2PNetworkingClient& Get()
+    class SteamP2PNetworkingClient
     {
-        static SteamP2PNetworkingClient Instance;
-        return Instance;
-    }
-
-    void Update()
-    {
+    public:
+        SteamP2PNetworkingClient(std::function<void(const NetMessage& aNetMessage)> aHandleRecieve) : myConnection(0), HandleRecieve(aHandleRecieve)
+        {
+            
+        }
         
-    }
-    
-    void Start(uint64 aSteamID)
-    {
-        CSteamID steamID(aSteamID);
+        void Update()
+        {
+            if (!myConnection)
+                return;
         
-        SteamNetworkingIdentity identity;
-        identity.SetSteamID(steamID);
-        
-        myConnection = SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
+            SteamNetworkingMessage_t* RecieveMessage = nullptr;
+            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &RecieveMessage, 1);
 
-        SteamNetworkingUtils()->InitRelayNetworkAccess();
-    }
+            for (int i = 0; i < messageCount; ++i)
+            {
+                int messageSize = RecieveMessage[i].m_cbSize;
+            
+                NetMessage message;
+                memcpy(&message, RecieveMessage[i].GetData(), messageSize);
+                HandleRecieve(message);
 
-    void Send(const void* aData, uint32 aDataCount, EMessageType messageType)
-    {
-        int64 messageCount;
-        EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, aData, aDataCount, messageType, &messageCount);
-
-        SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
-    }
+                RecieveMessage[i].Release();
+            }
+        }
     
-public:
-    HSteamNetConnection myConnection;
-};
+        void Start(uint64 aSteamID)
+        {
+            CSteamID steamID(aSteamID);
+        
+            SteamNetworkingIdentity identity;
+            identity.SetSteamID(steamID);
+        
+            myConnection = SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
+
+            SteamNetworkingUtils()->InitRelayNetworkAccess();
+        }
+
+        void Send(NetMessage& message)
+        {
+            EMessageType messageType;
+            if (message.MetaData.IsGarantied)
+                messageType = EMessageType::Garantied;
+            else
+                messageType = EMessageType::NotGarantied;
+            
+            int64 messageCount;
+            EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, &message, message.MetaData.dataSize, messageType, &messageCount);
+
+            SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
+        }
+    
+    public:
+        HSteamNetConnection myConnection;
+
+        std::function<void(const NetMessage& aNetMessage)> HandleRecieve;
+    };
+}

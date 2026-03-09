@@ -2,8 +2,8 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
-#include "NetworkEngine/Server/Server.h"
-#include "NetworkEngine/Client/Client.h"
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
 
 #include "GraphicsEngine/RenderCommands/CommandList.h"
 #include "EntityEngine/ComponentManager.h"
@@ -275,7 +275,7 @@ namespace Eclipse::Replication
 
 	void ReplicationHelper::ServerHelp::RequestVariablesFromClient()
 	{
-		Server& server = Eclipse::MainSingleton::GetInstance<Server>();
+		SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
 		NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestVariables, nullptr, 0, true);
 		server.Send(msg);
 	}
@@ -306,12 +306,10 @@ namespace Eclipse::Replication
 			}
 		}
 
-		Server& server = Eclipse::MainSingleton::GetInstance<Server>();
+		SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
 
 		NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_SendMultipleComponents, &ComponentCount, sizeof(unsigned), true);
 		server.Send(msg);
-
-		int size = server.GetEndpoints().size();
 
 		for (const auto& gameobject : ReplicatedGameObjects)
 		{
@@ -323,29 +321,12 @@ namespace Eclipse::Replication
 
 				continue;
 			}
-
-			for (auto& endpoint : server.GetEndpoints())
+			
+			for (const auto& component : componentsToReplicate)
 			{
-				for (const auto& component : componentsToReplicate)
-				{
-					NetMessage message;
-					Replication::ReplicationManager::CreateComponentMessage(component, message, true);
-
-					static int TotalCoponentMessagesRecieved = 0;
-
-					Server& server = Eclipse::MainSingleton::GetInstance<Server>();
-
-					server.Send(message, endpoint, [ComponentCount, size]()
-						{
-							if (TotalCoponentMessagesRecieved++ >= ComponentCount * size)
-							{
-								RequestVariablesFromClient();
-							}
-
-							return;
-						});
-				}
-
+				NetMessage message;
+				Replication::ReplicationManager::CreateComponentMessage(component, message, true);
+				server.Send(message);
 			}
 		}
 	}

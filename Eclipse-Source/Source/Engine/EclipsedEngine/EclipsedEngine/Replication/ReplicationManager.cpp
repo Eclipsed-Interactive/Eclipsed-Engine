@@ -7,8 +7,9 @@
 
 #include "AssetEngine/Assets/Prefab.h"
 
-#include "NetworkEngine/Client/Client.h"
-#include "NetworkEngine/Server/Server.h"
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
+
 #include "EclipsedEngine/Replication/Replication.h"
 #include "ReplicatedVariable.h"
 
@@ -33,23 +34,35 @@ namespace Eclipse::Replication
         RealReplicatedVariableList.at(aComponentID)[aVariableID]->ReplicateThis(aComponentID);
     }
 
+    void ReplicationManager::RelayNetworkReady()
+    {
+        if (server)
+            ServerConnected();
+        if (client)
+            ClientConnected();
+    }
+    
+    void ReplicationManager::ServerConnected()
+    {
+        
+    }
+    
+    void ReplicationManager::ClientConnected()
+    {
+        NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestSceneInfo, nullptr, 0, true);
+        client->Send(message);
+    }
+
     void ReplicationManager::CreateServer()
     {
-        server = &Eclipse::MainSingleton::RegisterInstance<Server>(false, ioContext, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ServerHelp::HandleRecieve(aMessage); });
+        server = &MainSingleton::RegisterInstance<SteamP2PNetworkingServer>(false, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ServerHelp::HandleRecieve(aMessage); });
+        server->Start();
     }
 
     void ReplicationManager::CreateClient()
     {
-        const char* ip = ReplicationManager::IP.c_str();
-        client = &Eclipse::MainSingleton::RegisterInstance<Client>(false, ioContext, ip, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ClientHelp::HandleRecieve(aMessage); });
-
-        NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_Connect, nullptr, 0, true);
-
-        client->Send(message, [ip]()
-        {
-            NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestSceneInfo, nullptr, 0, true);
-            client->Send(message);
-        });
+        client = &MainSingleton::RegisterInstance<SteamP2PNetworkingClient>(false, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ClientHelp::HandleRecieve(aMessage); });        
+        client->Start(76561198368166721);
     }
 
     void SetComponentReplicationManager()
@@ -197,17 +210,15 @@ namespace Eclipse::Replication
         NetMessage message;
         Replication::ReplicationManager::CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID().c_str(), componentIDs, message);
 
-        if (Eclipse::MainSingleton::Exists<Server>())
+        if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingServer>())
         {
-            Server& server = Eclipse::MainSingleton::GetInstance<Server>();
+            SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
             server.Send(message);
-            return;
         }
-        else if (Eclipse::MainSingleton::Exists<Client>())
+        else if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingClient>())
         {
-            Client& client = Eclipse::MainSingleton::GetInstance<Client>();
+            SteamP2PNetworkingClient& client = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingClient>();
             client.Send(message);
-            return;
         }
     }
 

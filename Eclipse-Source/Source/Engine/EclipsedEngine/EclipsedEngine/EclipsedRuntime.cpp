@@ -21,8 +21,6 @@
 
 #include "Replication/ReplicationManager.h"
 
-#include "NetworkEngine/Client/Client.h"
-#include "NetworkEngine/Server/Server.h"
 #include "Steam/SteamGeneral.h"
 
 #include "CoreEngine/Settings/GraphicsSettings.h"
@@ -30,13 +28,10 @@
 #include "EclipsedEngine/Editor/PhysicsDebugDrawer.h"
 
 #include "EclipsedEngine/Components/ComponentForcelink.h"
-
 #include <Input/Input.h>
 
-#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
 #include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
-
-#include "steamsdk/isteamnetworkingsockets.h"
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
 
 namespace Eclipse
 {
@@ -124,22 +119,6 @@ namespace Eclipse
 		AudioManager::Update();
 
 		Replication::ReplicationManager::Update();
-
-		SteamP2PNetworkingServer::Get().Update();
-		SteamP2PNetworkingClient::Get().Update();
-
-		if (Input::GetKeyDown(Keycode::S))
-			SteamP2PNetworkingServer::Get().Start();
-			//Replication::ReplicationManager::Start();
-
-		if (Input::GetKeyDown(Keycode::C))
-			SteamP2PNetworkingClient::Get().Start(76561198368166721);
-
-		if (Input::GetKeyDown(Keycode::M))
-		{
-			const char* testString = "hello there person";
-			SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
-		}
 	}
 
 	void EclipsedRuntime::Render()
@@ -152,6 +131,9 @@ namespace Eclipse
 
 	void EclipsedRuntime::Update()
 	{
+		if (Input::GetKeyDown(Keycode::P))
+			Replication::ReplicationManager::Start();
+		
 		//TODO: Might not want to call every frame but it does now
 		SteamGeneral::Get().Update();
 		
@@ -169,16 +151,16 @@ namespace Eclipse
 		MainSingleton::Destroy();
 		engine.End();
 
-		if (MainSingleton::Exists<Server>())
+		if (MainSingleton::Exists<SteamP2PNetworkingServer>())
 		{
-			auto& server = MainSingleton::GetInstance<Server>();
-			server.ShutDown();
+			auto& server = MainSingleton::GetInstance<SteamP2PNetworkingServer>();
+			//server.ShutDown();
 		}
 
-		if (MainSingleton::Exists<Client>())
+		if (MainSingleton::Exists<SteamP2PNetworkingClient>())
 		{
-			auto& client = MainSingleton::GetInstance<Client>();
-			client.ShutDown();
+			auto& client = MainSingleton::GetInstance<SteamP2PNetworkingClient>();
+			//client.ShutDown();
 		}
 	}
 

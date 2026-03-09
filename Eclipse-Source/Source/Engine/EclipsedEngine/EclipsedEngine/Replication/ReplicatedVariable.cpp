@@ -2,6 +2,9 @@
 
 #include "AssetEngine/Data/AssetData.h"
 
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
+
 
 namespace Eclipse::Replication
 {
@@ -36,10 +39,18 @@ namespace Eclipse::Replication
             offset += dataAmount;
         }
 
-        NetMessage message = NetMessage::BuildGameObjectMessage(ConnectedComponent->gameObject->GetID(), MessageType::Msg_Variable, data, offset, aIsGarantied);
-
-        Client& client = Eclipse::MainSingleton::GetInstance<Client>();
-        client.Send(message);
+        if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingClient>())
+        {
+            NetMessage message = NetMessage::BuildGameObjectMessage(ConnectedComponent->gameObject->GetID(), MessageType::Msg_Variable, data, offset, aIsGarantied);
+            SteamP2PNetworkingClient& client = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingClient>();
+            client.Send(message);   
+        }
+        else if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingServer>())
+        {
+            NetMessage message = NetMessage::BuildGameObjectMessage(ConnectedComponent->gameObject->GetID(), MessageType::Msg_Variable, data, offset, aIsGarantied);
+            SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
+            server.Send(message);   
+        }
 
         free(data);
     }

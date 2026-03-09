@@ -6,10 +6,12 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
+#include "steamsdk/steam_api.h"
+
 namespace Eclipse
 {
-    class Client;
-    class Server;
+    class SteamP2PNetworkingClient;
+    class SteamP2PNetworkingServer;
     
     class GameObject;
     class Component;
@@ -54,6 +56,10 @@ namespace Eclipse::Replication
             ReplicatedVariabpePtr->erase(aComponentID);
         }
 
+        static void ClientConnected();
+        static void ServerConnected();
+        static void RelayNetworkReady();
+
 
     public:
     // Create replication messages
@@ -80,16 +86,17 @@ namespace Eclipse::Replication
 
         static inline std::unordered_map<unsigned, std::vector<BaseReplicatedVariable*>>* ReplicatedVariabpePtr = &PossibleReplicatedVariableList;
 
-        static inline Client* client = nullptr;
-        static inline Server* server = nullptr;
+        static inline SteamP2PNetworkingClient* client = nullptr;
+        static inline SteamP2PNetworkingServer* server = nullptr;
 
         static inline bool startServer = true;
-        static inline bool startClient = true;
+        static inline bool startClient = false;
 
         static inline bool startedGame = false;
 
         static inline asio::io_context ioContext;
 
         static inline std::string IP = "";
+
     };
 }
