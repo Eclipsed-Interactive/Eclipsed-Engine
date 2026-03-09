@@ -98,5 +98,6 @@ namespace Eclipse::Replication
 
         static inline std::string IP = "";
 
+        STEAM_CALLBACK(ReplicationManager, FriendClickedJoinedGame, GameRichPresenceJoinRequested_t);
     };
 }

@@ -10,17 +10,6 @@ namespace Eclipse
         Replication::ReplicationManager::RelayNetworkReady();
     }
     
-    void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
-    {
-        // const char* friendPresence = SteamFriends()->GetFriendRichPresence(aCallback->m_steamIDFriend, "connect");
-        //
-        // Replication::ReplicationManager::IP = friendPresence;
-        // Replication::ReplicationManager::startClient = true;
-        // Replication::ReplicationManager::startServer = false;
-        //
-        // Replication::ReplicationManager::Start();
-    }
-    
     void SteamGeneral::Update()
     {
         SteamAPI_RunCallbacks();
@@ -35,5 +24,7 @@ namespace Eclipse
             assert(false && "Steam initialization failed");
             return;
         }
+
+        SteamFriends()->SetRichPresence("connect", "");
     }
 }
