@@ -23,5 +23,7 @@ namespace Eclipse
     private:
         STEAM_CALLBACK(SteamGeneral, FriendClickedJoinedGame, GameRichPresenceJoinRequested_t);
         STEAM_CALLBACK(SteamGeneral, RelayNetworkInitilized, SteamRelayNetworkStatus_t);
+
+        CSteamID steamID = CSteamID();
     };
 }
