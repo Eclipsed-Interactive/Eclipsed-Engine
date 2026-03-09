@@ -12,6 +12,8 @@ namespace Eclipse
 
 	template<typename... Args>
 	struct Event final : public BaseEvent {
+		Event() = default;
+
 		Event(void(*_callback)(Args...))
 			: callback(_callback) {
 		}

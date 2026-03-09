@@ -130,6 +130,7 @@ namespace Eclipse::Editor
 		float mousePosY = windowSize.y - (mousePos.y - cursorScreenPos.y);
 		Input::SetGamePosition({ static_cast<int>(mousePosX), static_cast<int>(mousePosY) });
 
+		GameWindow::myGameImageResolution = Math::Vector2f(windowSize.x, windowSize.y - CursorPos.y);
 		ImGui::Image(myGameTexture, ImVec2(windowSize.x, windowSize.y - CursorPos.y), ImVec2(0, 1), ImVec2(0.99, 0));
 
 		//MainSingleton::GetInstance<EngineSettings>().GetGameResolutionRation() = windowSize.x / (windowSize.y - 46);
@@ -190,6 +191,7 @@ namespace Eclipse::Editor
 		float mousePosY = windowSize.y - (mousePos.y - cursorScreenPos.y);
 		Input::SetGamePosition({ static_cast<int>(mousePosX), static_cast<int>(mousePosY) });
 
+		GameWindow::myGameImageResolution = Math::Vector2f(windowSize.x, windowSize.y);
 		ImGui::Image(myGameTexture, windowSize, ImVec2(0, 1), ImVec2(1, 0));
 
 		//MainSingleton::GetInstance<EngineSettings>().GetGameResolutionRation() = windowSize.x / windowSize.y;
