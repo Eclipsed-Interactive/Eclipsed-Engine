@@ -2,6 +2,8 @@
 
 #include "AssetEngine/Data/AssetData.h"
 
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
+
 
 namespace Eclipse::Replication
 {
@@ -38,7 +40,7 @@ namespace Eclipse::Replication
 
         NetMessage message = NetMessage::BuildGameObjectMessage(ConnectedComponent->gameObject->GetID(), MessageType::Msg_Variable, data, offset, aIsGarantied);
 
-        Client& client = Eclipse::MainSingleton::GetInstance<Client>();
+        SteamP2PNetworkingClient& client = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingClient>();
         client.Send(message);
 
         free(data);

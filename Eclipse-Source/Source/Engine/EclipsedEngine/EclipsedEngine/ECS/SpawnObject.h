@@ -10,9 +10,6 @@
 
 #include "Replication/ReplicationManager.h"
 
-#include "CoreEngine/MainSingleton.h"
-#include "NetworkEngine/Client/Client.h"
-
 #include "CoreEngine/Macros/defines.h"
 
 #include "EclipsedEngine/Components/Transform2D.h"

@@ -21,8 +21,6 @@
 
 #include "Replication/ReplicationManager.h"
 
-#include "NetworkEngine/Client/Client.h"
-#include "NetworkEngine/Server/Server.h"
 #include "Steam/SteamGeneral.h"
 
 #include "CoreEngine/Settings/GraphicsSettings.h"
@@ -151,16 +149,16 @@ namespace Eclipse
 		MainSingleton::Destroy();
 		engine.End();
 
-		if (MainSingleton::Exists<Server>())
+		if (MainSingleton::Exists<SteamP2PNetworkingServer>())
 		{
-			auto& server = MainSingleton::GetInstance<Server>();
-			server.ShutDown();
+			auto& server = MainSingleton::GetInstance<SteamP2PNetworkingServer>();
+			//server.ShutDown();
 		}
 
-		if (MainSingleton::Exists<Client>())
+		if (MainSingleton::Exists<SteamP2PNetworkingClient>())
 		{
-			auto& client = MainSingleton::GetInstance<Client>();
-			client.ShutDown();
+			auto& client = MainSingleton::GetInstance<SteamP2PNetworkingClient>();
+			//client.ShutDown();
 		}
 	}
 
