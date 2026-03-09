@@ -1,9 +1,25 @@
 #pragma once
 
+#include "steamsdk/steamnetworkingtypes.h"
+
 #include <string>
 
 namespace Eclipse
 {
+	enum EMessageType
+	{
+		Reliable = k_nSteamNetworkingSend_Reliable,
+		Garantied = k_nSteamNetworkingSend_Reliable,
+		Ack = k_nSteamNetworkingSend_Reliable,
+    
+		Unreliable = k_nSteamNetworkingSend_Unreliable,
+		NotGarantied = k_nSteamNetworkingSend_Unreliable,
+		NotAck = k_nSteamNetworkingSend_Unreliable,
+
+		NoNagle = k_nSteamNetworkingSend_NoNagle,
+		NoDelay = k_nSteamNetworkingSend_NoDelay,
+	};
+	
 	enum MessageType
 	{
 		Msg_Connect,

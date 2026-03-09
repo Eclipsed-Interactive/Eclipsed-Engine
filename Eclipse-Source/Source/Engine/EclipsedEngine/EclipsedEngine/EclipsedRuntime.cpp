@@ -33,11 +33,6 @@
 
 #include <Input/Input.h>
 
-#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
-#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
-
-#include "steamsdk/isteamnetworkingsockets.h"
-
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -124,22 +119,6 @@ namespace Eclipse
 		AudioManager::Update();
 
 		Replication::ReplicationManager::Update();
-
-		SteamP2PNetworkingServer::Get().Update();
-		SteamP2PNetworkingClient::Get().Update();
-
-		if (Input::GetKeyDown(Keycode::S))
-			SteamP2PNetworkingServer::Get().Start();
-			//Replication::ReplicationManager::Start();
-
-		if (Input::GetKeyDown(Keycode::C))
-			SteamP2PNetworkingClient::Get().Start(76561198368166721);
-
-		if (Input::GetKeyDown(Keycode::M))
-		{
-			const char* testString = "hello there person";
-			SteamP2PNetworkingClient::Get().Send(testString, strlen(testString), EMessageType::Garantied);
-		}
 	}
 
 	void EclipsedRuntime::Render()
@@ -152,6 +131,9 @@ namespace Eclipse
 
 	void EclipsedRuntime::Update()
 	{
+		if (Input::GetKeyDown(Keycode::P))
+			Replication::ReplicationManager::Start();
+		
 		//TODO: Might not want to call every frame but it does now
 		SteamGeneral::Get().Update();
 		

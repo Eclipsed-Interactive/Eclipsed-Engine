@@ -3,8 +3,6 @@
 #include "steamsdk/steam_api.h"
 #include "steamsdk/isteamfriends.h"
 
-#include "steamsdk/steamclientpublic.h"
-
 namespace Eclipse
 {
     class SteamGeneral

@@ -1,82 +1,89 @@
 #pragma once
 
+#include <functional>
 
-#include "SteamP2PNetworkingServer.h"
 #include "steamsdk/isteamnetworkingsockets.h"
 #include "steamsdk/isteamgameserver.h"
+#include "steamsdk/isteamnetworkingutils.h"
 
-class SteamP2PNetworkingServer
+#include "NetworkEngine/Shared/Message.h"
+
+namespace Eclipse
 {
-public:
-    static SteamP2PNetworkingServer& Get()
+    class SteamP2PNetworkingServer
     {
-        static SteamP2PNetworkingServer Instance;
-        return Instance;
-    }
-
-    void Start()
-    {
-        if (SteamGameServer())
+    public:
+        SteamP2PNetworkingServer(const std::function<void(const NetMessage& aNetMessage)>& aHandleRecieve) : myConnection(0), myListenSocket(0), HandleRecieve(aHandleRecieve)
         {
-            SteamGameServer()->SetProduct("Project Nova");
-            SteamGameServer()->SetGameDescription("Project Nova Desc");
+        }
 
-            //SteamGameServer()->SetSpectatorPort( ... );
-            //SteamGameServer()->SetSpectatorServerName( ... );
+        void Send(NetMessage& message)
+        {
+            EMessageType messageType;
+            if (message.MetaData.IsGarantied)
+                messageType = EMessageType::Garantied;
+            else
+                messageType = EMessageType::NotGarantied;
 
-            SteamGameServer()->LogOnAnonymous();
+            int64 messageCount;
+            EResult result = SteamNetworkingSockets()->SendMessageToConnection(myConnection, &message, message.MetaData.dataSize, messageType, &messageCount);
 
+            SteamNetworkingSockets()->FlushMessagesOnConnection(myConnection);
+        }
+
+        void Start()
+        {
             SteamNetworkingUtils()->InitRelayNetworkAccess();
+
+            myListenSocket = SteamNetworkingSockets()->CreateListenSocketP2P(0, 0, nullptr);
         }
-        else
+
+        void Update()
         {
-            OutputDebugString("SteamGameServer() interface is invalid\n");
+            if (!myConnection)
+                return;
+
+            SteamNetworkingMessage_t* RecieveMessage = nullptr;
+            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &RecieveMessage, 32);
+
+            for (int i = 0; i < messageCount; ++i)
+            {
+                int messageSize = RecieveMessage[i].m_cbSize;
+
+                NetMessage message;
+                memcpy(&message, RecieveMessage[i].GetData(), messageSize);
+                HandleRecieve(message);
+
+                RecieveMessage[i].Release();
+            }
         }
 
-        myListenSocket = SteamNetworkingSockets()->CreateListenSocketP2P(0, 0, nullptr);
-    }
+    public:
+        std::function<void(const NetMessage& aNetMessage)> HandleRecieve;
 
-    void Update()
+        HSteamListenSocket myListenSocket;
+        HSteamNetConnection myConnection;
+
+        STEAM_CALLBACK(SteamP2PNetworkingServer, OnSteamConnectionStatusChanged, SteamNetConnectionStatusChangedCallback_t);
+    };
+
+    inline void SteamP2PNetworkingServer::OnSteamConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* aInfo)
     {
-        if (!myConnection)
-            return;
-        
-        SteamNetworkingMessage_t* message = nullptr;
-        int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &message, 32);
-
-        for (int i = 0; i < messageCount; ++i)
+        switch (aInfo->m_info.m_eState)
         {
-            int messageSize = message->m_cbSize;
-            
-            char* mess = static_cast<char*>(malloc(messageSize));
-            memcpy(mess, message->GetData(), messageSize);
-            memset(mess + messageSize, '\0', 1);
-            message[i].Release();
+        case k_ESteamNetworkingConnectionState_Connecting:
+            // IMPORTANT: Accept immediately when in Connecting state
+            SteamNetworkingSockets()->AcceptConnection(aInfo->m_hConn);
+            break;
+
+        case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
+            // Log the reason code for debugging
+            printf("Connection failed with reason: %d - %s\n",
+                   aInfo->m_info.m_eEndReason,
+                   aInfo->m_info.m_szEndDebug);
+            break;
         }
+
+        myConnection = aInfo->m_hConn;
     }
-
-public:
-    HSteamListenSocket myListenSocket;
-    HSteamNetConnection myConnection;
-
-    STEAM_CALLBACK(SteamP2PNetworkingServer, OnSteamConnectionStatusChanged, SteamNetConnectionStatusChangedCallback_t);
-};
-
-inline void SteamP2PNetworkingServer::OnSteamConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* aInfo)
-{
-    switch (aInfo->m_info.m_eState) {
-    case k_ESteamNetworkingConnectionState_Connecting:
-        // IMPORTANT: Accept immediately when in Connecting state
-        SteamNetworkingSockets()->AcceptConnection(aInfo->m_hConn);
-        break;
-            
-    case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
-        // Log the reason code for debugging
-        printf("Connection failed with reason: %d - %s\n", 
-               aInfo->m_info.m_eEndReason, 
-               aInfo->m_info.m_szEndDebug);
-        break;
-    }
-    
-    myConnection = aInfo->m_hConn;
 }

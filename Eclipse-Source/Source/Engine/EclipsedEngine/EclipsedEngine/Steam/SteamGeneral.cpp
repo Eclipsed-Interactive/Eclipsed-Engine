@@ -1,12 +1,13 @@
 #include "SteamGeneral.h"
 
-#include "steamsdk/isteamnetworkingutils.h"
+#include "Replication/ReplicationManager.h"
 
 namespace Eclipse
 {
+    
     void SteamGeneral::RelayNetworkInitilized(SteamRelayNetworkStatus_t* aCallback)
     {
-        printf("Relay network ready");
+        Replication::ReplicationManager::RelayNetworkReady();
     }
     
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
