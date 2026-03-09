@@ -183,7 +183,7 @@ namespace Eclipse::Editor
 			ImGui::SetCursorPos(ImVec2(actuallWindowRes.x * 0.5f - windowSize.x * 0.5f, CursorPos.y));
 		}
 		//MainSingleton::GetInstance<EngineSettings>().GetGameResolution() = { (int)windowSize.x, (int)windowSize.y };
-		Settings::GraphicsSettings::SetResolution(Math::Vector2i((int)windowSize.x, (int)windowSize.y));
+		//Settings::GraphicsSettings::SetResolution(Math::Vector2i((int)windowSize.x, (int)windowSize.y));
 
 		ImVec2 mousePos = ImGui::GetMousePos();
 		ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
