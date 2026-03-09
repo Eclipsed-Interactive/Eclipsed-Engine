@@ -28,8 +28,10 @@
 #include "EclipsedEngine/Editor/PhysicsDebugDrawer.h"
 
 #include "EclipsedEngine/Components/ComponentForcelink.h"
-
 #include <Input/Input.h>
+
+#include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
+#include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
 
 namespace Eclipse
 {
