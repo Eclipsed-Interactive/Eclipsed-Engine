@@ -44,7 +44,7 @@ namespace Eclipse
                 return;
 
             SteamNetworkingMessage_t* RecieveMessage = nullptr;
-            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &RecieveMessage, 32);
+            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &RecieveMessage, 1);
 
             for (int i = 0; i < messageCount; ++i)
             {
