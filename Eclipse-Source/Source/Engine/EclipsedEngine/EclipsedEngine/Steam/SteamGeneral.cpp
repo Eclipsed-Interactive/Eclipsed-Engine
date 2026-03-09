@@ -12,13 +12,13 @@ namespace Eclipse
     
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
     {
-        // const char* friendPresence = SteamFriends()->GetFriendRichPresence(aCallback->m_steamIDFriend, "connect");
-        //
-        // Replication::ReplicationManager::IP = friendPresence;
-        // Replication::ReplicationManager::startClient = true;
-        // Replication::ReplicationManager::startServer = false;
-        //
-        // Replication::ReplicationManager::Start();
+        const char* friendPresence = SteamFriends()->GetFriendRichPresence(aCallback->m_steamIDFriend, "connect");
+        
+        Replication::ReplicationManager::IP = friendPresence;
+        Replication::ReplicationManager::startClient = true;
+        Replication::ReplicationManager::startServer = false;
+        
+        Replication::ReplicationManager::Start();
     }
     
     void SteamGeneral::Update()
