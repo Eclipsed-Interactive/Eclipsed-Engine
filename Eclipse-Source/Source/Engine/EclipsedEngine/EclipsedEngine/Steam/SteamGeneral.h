@@ -18,12 +18,12 @@ namespace Eclipse
             static SteamGeneral instance;
             return instance;
         }
-        CSteamID mySteamID;
 
+        static inline CSteamID OthersteamID = CSteamID();
+        
     private:
         STEAM_CALLBACK(SteamGeneral, FriendClickedJoinedGame, GameRichPresenceJoinRequested_t);
         STEAM_CALLBACK(SteamGeneral, RelayNetworkInitilized, SteamRelayNetworkStatus_t);
 
-        CSteamID steamID = CSteamID();
     };
 }

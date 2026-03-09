@@ -12,7 +12,7 @@ namespace Eclipse
     
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
     {
-        steamID = aCallback->m_steamIDFriend;
+        OthersteamID = aCallback->m_steamIDFriend;
         
         Replication::ReplicationManager::Start();
     }

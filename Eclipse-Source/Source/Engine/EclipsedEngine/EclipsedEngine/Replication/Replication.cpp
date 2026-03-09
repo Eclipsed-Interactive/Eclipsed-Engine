@@ -345,7 +345,8 @@ namespace Eclipse::Replication
 			break;
 
 		default:
+			ClientHelp::HandleRecieve(aMessage);
 			break;
-		}
+		}		
 	}
 }

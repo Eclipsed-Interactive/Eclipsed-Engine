@@ -37,12 +37,10 @@ namespace Eclipse
             }
         }
     
-        void Start(uint64 aSteamID)
-        {
-            CSteamID steamID(aSteamID);
-        
+        void Start(CSteamID aSteamID)
+        {        
             SteamNetworkingIdentity identity;
-            identity.SetSteamID(steamID);
+            identity.SetSteamID(aSteamID);
         
             myConnection = SteamNetworkingSockets()->ConnectP2P(identity, 0, 0, nullptr);
 

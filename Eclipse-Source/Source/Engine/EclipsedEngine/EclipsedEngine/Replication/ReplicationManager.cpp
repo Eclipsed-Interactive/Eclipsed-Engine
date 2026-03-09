@@ -16,6 +16,7 @@
 #include <functional>
 #include <fstream>
 
+#include "Steam/SteamGeneral.h"
 
 namespace Eclipse::Replication
 {
@@ -62,29 +63,29 @@ namespace Eclipse::Replication
     void ReplicationManager::CreateClient()
     {
         client = &MainSingleton::RegisterInstance<SteamP2PNetworkingClient>(false, [](const NetMessage& aMessage) { Replication::ReplicationHelper::ClientHelp::HandleRecieve(aMessage); });        
-        client->Start(76561198368166721);
+        client->Start(SteamGeneral::OthersteamID);
     }
 
     void SetComponentReplicationManager()
     {
         ComponentManager::SetCreateComponentReplicated([](Component* aComponent)
         {
-            if (!MainSingleton::Exists<Client>())
+            if (!MainSingleton::Exists<SteamP2PNetworkingClient>())
                 return;
 
             NetMessage message;
             Replication::ReplicationManager::CreateComponentMessage(aComponent, message);
-            MainSingleton::GetInstance<Client>().Send(message);
+            MainSingleton::GetInstance<SteamP2PNetworkingClient>().Send(message);
         });
 
         ComponentManager::SetDestroyGameObjectReplicated([](unsigned aGameObject)
         {
-            if (!MainSingleton::Exists<Client>())
+            if (!MainSingleton::Exists<SteamP2PNetworkingClient>())
                 return;
 
             NetMessage message;
             Replication::ReplicationManager::DeleteGOMessage(aGameObject, message);
-            MainSingleton::GetInstance<Client>().Send(message);
+            MainSingleton::GetInstance<SteamP2PNetworkingClient>().Send(message);
         });
 
         ComponentManager::SetDeleteReplicationComponent([](unsigned aComponentID) { Replication::ReplicationManager::DeleteReplicatedComponent(aComponentID); });
