@@ -97,7 +97,6 @@ namespace Eclipse::Replication
         static inline asio::io_context ioContext;
 
         static inline std::string IP = "";
-
-        STEAM_CALLBACK(ReplicationManager, FriendClickedJoinedGame, GameRichPresenceJoinRequested_t);
+        
     };
 }
