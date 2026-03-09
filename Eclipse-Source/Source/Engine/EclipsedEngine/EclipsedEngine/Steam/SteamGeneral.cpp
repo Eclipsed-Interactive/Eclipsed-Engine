@@ -25,6 +25,6 @@ namespace Eclipse
             return;
         }
 
-        SteamFriends()->SetRichPresence("connect", "");
+        SteamFriends()->SetRichPresence("connect", "connect");
     }
 }
