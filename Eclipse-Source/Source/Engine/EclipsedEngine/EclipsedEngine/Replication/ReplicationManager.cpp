@@ -210,17 +210,15 @@ namespace Eclipse::Replication
         NetMessage message;
         Replication::ReplicationManager::CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID().c_str(), componentIDs, message);
 
-        if (Eclipse::MainSingleton::Exists<Server>())
+        if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingServer>())
         {
-            Server& server = Eclipse::MainSingleton::GetInstance<Server>();
+            SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
             server.Send(message);
-            return;
         }
-        else if (Eclipse::MainSingleton::Exists<Client>())
+        else if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingClient>())
         {
-            Client& client = Eclipse::MainSingleton::GetInstance<Client>();
+            SteamP2PNetworkingClient& client = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingClient>();
             client.Send(message);
-            return;
         }
     }
 
