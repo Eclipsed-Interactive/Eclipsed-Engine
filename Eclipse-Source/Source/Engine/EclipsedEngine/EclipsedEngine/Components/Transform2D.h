@@ -8,12 +8,13 @@
 #include "CoreEngine/Math/Vector/Vector2.h"
 #include "CoreEngine/Math/Vector/Vector3.h"
 #include "CoreEngine/Math/Matrix/Matrix3x3.h"
+#include "CoreEngine/Macros/defines.h"
 
 namespace Eclipse
 {
 	using DirtyFunctionPtr = void (Component::*)();
 
-	class Transform2D : public Component
+	class ECLIPSED_API Transform2D : public Component
 	{
 		COMPONENT_BASE_2(Transform2D, UINT_MAX * 0.5f)
 

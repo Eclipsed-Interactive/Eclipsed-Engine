@@ -208,7 +208,24 @@ namespace Eclipse::Math
 	{
 		return (x == anotherVec.x && y == anotherVec.y);
 	}
-
 #pragma endregion
 
+
+	template<typename T>
+	inline Vector2<T> operator*(const Vector2<T>& aVec, const T& aScalar)
+	{
+		return Vector2<T>(aVec.x * aScalar, aVec.y * aScalar);
+	}
+
+	template<typename T>
+	inline Vector2<T> operator*(const T& aScalar, const Vector2<T>& aVec)
+	{
+		return Vector2<T>(aVec.x * aScalar, aVec.y * aScalar);
+	}
+}
+
+template<typename T>
+inline Eclipse::Math::Vector2<T> Vec2(const T& aScalarX, const T& aScalarY) {
+	Eclipse::Math::Vector2<T> vec = { aScalarX, aScalarY };
+	return vec;
 }

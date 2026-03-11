@@ -4,8 +4,8 @@
 
 #include <filesystem>
 
-//int main()
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int main()
+//int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     //HWND console = GetConsoleWindow();
     //ShowWindow(console, SW_SHOW);

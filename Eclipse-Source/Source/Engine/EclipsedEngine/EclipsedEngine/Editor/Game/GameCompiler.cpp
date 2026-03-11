@@ -12,6 +12,12 @@ namespace Eclipse
 		GenerateForcelink();
 	}
 
+	void GameCompiler::TryCompile()
+	{
+		// Do the file exist
+		// Is there any changes to code files
+	}
+
 	void GameCompiler::GenerateForcelink()
 	{
 		const std::filesystem::path& projectRoot = PathManager::GetProjectRoot();

@@ -31,6 +31,8 @@ set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/
 
 set(LAUNCH_ARGS "--defaultArg" CACHE STRING "Arguments to pass to launcher")
 
+message("${EXE_OUTPUT_DIR}")
+
 if(NOT DEFINED PROJECT_DIR OR PROJECT_DIR STREQUAL "")
     file(READ "${EXE_OUTPUT_DIR}/.ini" PROJECT_DIR)
     string(REPLACE "\n" "" PROJECT_DIR "${PROJECT_DIR}")
@@ -111,17 +113,3 @@ file(COPY ${DLLs} DESTINATION "${CMAKE_SOURCE_DIR}/Bin/Local")
 
 file(GLOB EngineAssets "${CMAKE_SOURCE_DIR}/Assets/EngineAssets")
 file(COPY ${EngineAssets} DESTINATION "${CMAKE_SOURCE_DIR}/Bin")
-
-
-
-# if (MSVC)
-#     add_compile_options(/FI ${CMAKE_SOURCE_DIR}/Source/Utilities/pch.h)
-# else()
-#     add_compile_options(-include ${CMAKE_SOURCE_DIR}/Source/Utilities/pch.h)
-# endif()
-
-
-# Move to launcher
-# set_target_properties(Launcher PROPERTIES
-#     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin"
-# )

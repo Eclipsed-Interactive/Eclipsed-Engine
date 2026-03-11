@@ -10,13 +10,19 @@
 namespace Eclipse::Math
 {
 	template <typename T>
-	class Vector2 final 
+	class Vector2 final
 	{
 	public:
 		Vector2();
 		Vector2(const T& aX, const T& aY);
 		Vector2(const std::initializer_list<T> initList);
 		~Vector2() = default;
+
+		template<typename U>
+		Vector2(const U& aX, const U& aY) : x((T)aX), y((T)aY) {}
+
+		template<typename U>
+		Vector2(const Vector2<U>& aVec) : x((T)aVec.x), y((T)aVec.y) {}
 
 	public:
 		std::type_index GetType() const;
@@ -34,6 +40,15 @@ namespace Eclipse::Math
 
 		const Vector2 operator*(const Vector2& anotherVec) const;
 		const Vector2& operator*=(const Vector2& anotherVec);
+
+
+		template<typename U>
+		inline Vector2<T>& operator=(const Vector2<U>& aVec)
+		{
+			x = static_cast<T>(aVec.x);
+			y = static_cast<T>(aVec.y);
+			return *this;
+		}
 
 		Vector2 operator=(const Vector2& anotherVec);
 		Vector2 operator==(const Vector2& anotherVec);
@@ -84,7 +99,7 @@ namespace Eclipse::Math
 	public:
 		static rapidjson::Value Serialize(const Vector2& aVec, rapidjson::Document::AllocatorType& alloc);
 		static Vector2 Deserialize(const rapidjson::Value& aValue);
-		
+
 
 	public:
 		union

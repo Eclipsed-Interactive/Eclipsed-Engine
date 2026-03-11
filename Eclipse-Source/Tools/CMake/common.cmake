@@ -93,6 +93,8 @@ function(CreateProject TYPE)
 
     target_precompile_headers(${CURRENT_DIR_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pch.h")
 
+
+    if(ECLIPSED_EDITOR)
         set_target_properties(${CURRENT_DIR_NAME} PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}/Libs"
             ARCHIVE_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}/Libs"
@@ -106,14 +108,37 @@ function(CreateProject TYPE)
             LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}/Libs"
             LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}/Libs"
 
-        RUNTIME_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}"
-        RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}"
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${EXE_OUTPUT_DIR}"
-        RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}"
-        RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${EXE_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}"
+            RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}"
 
-        FOLDER "Engine/EngineModules"
-    )
+            FOLDER "Engine/EngineModules"
+        )
+    else()
+        set_target_properties(${CURRENT_DIR_NAME} PROPERTIES
+            ARCHIVE_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            ARCHIVE_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            ARCHIVE_OUTPUT_DIRECTORY_RELEASE        "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}/GameBuildBinary"
+
+            LIBRARY_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            LIBRARY_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            LIBRARY_OUTPUT_DIRECTORY_RELEASE        "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}/GameBuildBinary"
+            LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}/GameBuildBinary"
+
+            RUNTIME_OUTPUT_DIRECTORY                "${EXE_OUTPUT_DIR}/GameBuildBinary/Bin"
+            RUNTIME_OUTPUT_DIRECTORY_DEBUG          "${EXE_OUTPUT_DIR}/GameBuildBinary/Bin"
+            RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${EXE_OUTPUT_DIR}/GameBuildBinary/Bin"
+            RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${EXE_OUTPUT_DIR}/GameBuildBinary/Bin"
+            RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL     "${EXE_OUTPUT_DIR}/GameBuildBinary/Bin"
+        )
+       endif()
+
+
 
     target_include_directories(${CURRENT_DIR_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/Source/Externals)
 

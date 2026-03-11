@@ -8,6 +8,7 @@ namespace Eclipse
 		static void CompileGame();
 
 	private:
+		static void TryCompile();
 		static void GenerateForcelink();
 		static void GenerateProject();
 		static void Compile();
