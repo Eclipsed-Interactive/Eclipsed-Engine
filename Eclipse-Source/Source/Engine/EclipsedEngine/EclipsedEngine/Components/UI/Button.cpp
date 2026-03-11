@@ -55,6 +55,6 @@ namespace Eclipse
 
 	void Button::Print()
 	{
-		std::cout << "I WAS CLICKED!" << std::endl;
+		Replication::ReplicationManager::Start();
 	}
 }

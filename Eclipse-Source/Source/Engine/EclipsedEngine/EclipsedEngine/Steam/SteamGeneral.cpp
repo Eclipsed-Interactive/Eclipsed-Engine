@@ -31,7 +31,11 @@ namespace Eclipse
             assert(false && "Steam initialization failed");
             return;
         }
+    }
 
-        SteamFriends()->SetRichPresence("connect", "1");
+    void SteamGeneral::ShutDown()
+    {
+        SteamFriends()->ClearRichPresence();
+        SteamAPI_Shutdown();
     }
 }

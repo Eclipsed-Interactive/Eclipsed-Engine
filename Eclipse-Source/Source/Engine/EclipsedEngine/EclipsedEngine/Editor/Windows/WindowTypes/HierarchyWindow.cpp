@@ -7,7 +7,7 @@
 #include "EclipsedEngine/Components/UI/Canvas.h"
 #include "EclipsedEngine/Components/UI/UIImage.h"
 #include "EclipsedEngine/Components/UI/Button.h"
-#include "EclipsedEngine/Components/Rendering/TextRenderer.h"
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "CoreEngine/Input/Input.h"
 #include "EntityEngine/ECS.hpp"
@@ -169,6 +169,15 @@ namespace Eclipse::Editor
 		return true;
 	}
 
+	Canvas* HierarchyWindow::GetParentCanvas(GameObject* BaseObject)
+	{
+		Canvas* canvas = BaseObject->GetComponent<Canvas>();
+		if (BaseObject->GetParent())
+			canvas = GetParentCanvas(BaseObject->GetParent());
+		
+		return canvas;
+	}
+
 	void HierarchyWindow::AssignParentChildren(GameObject* aChild, GameObject* aParent)
 	{
 		if (IsNewParentMyChild(aParent, aChild))
@@ -207,7 +216,7 @@ namespace Eclipse::Editor
 
 		if (auto* recttransform = aChild->GetComponent<RectTransform>())
 		{
-			if (recttransform->myCanvas = aParent->GetComponent<Canvas>())
+			if (recttransform->myCanvas = GetParentCanvas(aChild))
 			{
 				recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
 				recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
@@ -289,7 +298,7 @@ namespace Eclipse::Editor
 						obj->AddComponent<RectTransform>();
 						obj->AddComponent<UIImage>();
 
-						obj->SetName("Image");
+						obj->SetName("New Image");
 					}
 					else if (ImGui::MenuItem("Text"))
 					{
@@ -305,10 +314,14 @@ namespace Eclipse::Editor
 						obj->AddComponent<RectTransform>();
 						obj->AddComponent<Button>();
 						obj->AddComponent<UIImage>();
-						TextRenderer* rend = obj->AddComponent<TextRenderer>();
-						rend->SetText("UI Button");
+						obj->SetName("New Button");
 
-						obj->SetName("New Text");
+						GameObject* textObj = ComponentManager::CreateGameObject();
+						textObj->AddComponent<RectTransform>();
+						TextRenderer* rend = textObj->AddComponent<TextRenderer>();
+						rend->SetText("Button");
+						
+						obj->AddChild(textObj);
 					}
 					ImGui::EndMenu();
 				}
@@ -321,7 +334,7 @@ namespace Eclipse::Editor
 
 		gameobjectrightclicked = false;
 
-		if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+		if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
 		{
 			unsigned currentObject = HierarchyWindow::CurrentGameObjectID;
 			if (currentObject > 0)
@@ -329,6 +342,7 @@ namespace Eclipse::Editor
 				if (ComponentManager::myEntityIdToEntity.find(currentObject) != ComponentManager::myEntityIdToEntity.end())
 				{
 					GameObject* gameobject = ComponentManager::myEntityIdToEntity.at(currentObject);
+					gameobject->Delete();
 					RecursiveDeleteChildren(gameobject);
 
 					gameobjectIdsThatAreOpen.erase(currentObject);
@@ -352,9 +366,7 @@ namespace Eclipse::Editor
 	{
 		auto& children = aGameObject->GetChildren();
 		for (auto& child : children)
-		{
 			RecursiveDeleteChildren(child);
-		}
 
 		if (!aGameObject->IsOwner())
 			return;

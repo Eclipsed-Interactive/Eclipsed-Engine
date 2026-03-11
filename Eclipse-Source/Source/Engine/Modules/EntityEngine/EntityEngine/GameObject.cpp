@@ -2,6 +2,26 @@
 
 namespace Eclipse
 {
+	
+	
+	void GameObject::Delete()
+	{
+		for (auto& Child : GetChildren())
+			Child->SetParent(nullptr);
+		
+		if (parent)
+		{
+			std::vector<GameObject*>& ParentChildren = parent->GetChildren();
+			for (int i = myChildIndex; i < ParentChildren.size() - 1; ++i)
+			{
+				ParentChildren[i] = ParentChildren[i + 1];
+				ParentChildren[i]->myChildIndex = i;
+			}
+			
+			ParentChildren.pop_back();
+		}
+	}
+	
 	template <typename T>
 	std::vector<T*> GameObject::GetComponents()
 	{
@@ -18,7 +38,7 @@ namespace Eclipse
 		colorInt.y = (myID & 0x0000FF00) >> 8;
 		colorInt.z = (myID & 0x00FF0000) >> 16;
 
-		myPixelPickColor = Math::Vector4f(colorInt.x / 255.f, colorInt.y / 255.f, colorInt.z / 255.f, 1);
+		myPixelPickColor = Math::Vector4f((float)colorInt.x / 255.f, (float)colorInt.y / 255.f, (float)colorInt.z / 255.f, 1);
 	}
 
 
@@ -29,8 +49,10 @@ namespace Eclipse
 	void GameObject::SetParent(GameObject* aGO)
 	{
 		parent = aGO;
-
-		parent->AddChild(this);
+		if (!parent)
+			return;
+		
+		parent->children.emplace_back(this);
 		SetChildIndex(parent->GetChildCount() - 1);
 	}
 
@@ -45,6 +67,9 @@ namespace Eclipse
 	void GameObject::AddChild(GameObject* aChild)
 	{
 		children.emplace_back(aChild);
+		
+		aChild->parent = this;
+		aChild->SetChildIndex(GetChildCount() - 1);
 	}
 	size_t GameObject::GetChildCount()
 	{

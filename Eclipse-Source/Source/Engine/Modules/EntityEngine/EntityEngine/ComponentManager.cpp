@@ -117,7 +117,7 @@ namespace Eclipse
             if (component->myIsOwner)
                 component->LateUpdate();
     }
-
+    
     void ComponentManager::RenderComponents()
     {
         for (auto& component : myComponents)
@@ -134,7 +134,7 @@ namespace Eclipse
     {
         std::sort(myComponents.begin(), myComponents.end(), [&](Component* aComp0, Component* aComp1)
         {
-            return aComp0->GetUpdatePriority() > aComp1->GetUpdatePriority();
+            return aComp0->GetUpdatePriority() + aComp0->GetZIndex() > aComp1->GetUpdatePriority() + aComp0->GetZIndex();
         });
 
         myEntityIDToVectorOfComponentIDs.clear();

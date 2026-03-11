@@ -53,6 +53,8 @@ namespace Eclipse
 			return Random::Rand<unsigned>();
 		}
 
+		virtual int GetZIndex(){ return 0; }
+
 		void SetComponentID()
 		{
 			myInstanceComponentID = GetNextComponentID();

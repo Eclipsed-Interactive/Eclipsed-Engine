@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BaseUI.h"
 #include "EclipsedEngine/Components/Component.h"
 
 #include "AssetEngine/Assets/VertexShader.h"
@@ -24,7 +25,7 @@ namespace Eclipse
         Math::Color color;
     };
 
-    class TextRenderer : public Component
+    class TextRenderer : public BaseUI
     {
         COMPONENT_BASE_2(TextRenderer, 0)
 

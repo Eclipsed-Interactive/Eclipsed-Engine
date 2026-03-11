@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BaseUI.h"
 #include "EclipsedEngine/Components/Component.h"
 
 #include "AssetEngine/Assets/Material.h"
@@ -7,12 +8,14 @@
 
 namespace Eclipse
 {
-    class UIImage : public Component
+    class UIImage : public BaseUI
     {
         COMPONENT_BASE_2(UIImage, 0)
 
     public:
         void OnComponentAdded() override;
+        void OnSceneLoaded() override;
+        
         void Render() override;
         void Draw();
 

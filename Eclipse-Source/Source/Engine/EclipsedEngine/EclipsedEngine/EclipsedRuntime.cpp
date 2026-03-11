@@ -44,7 +44,9 @@ namespace Eclipse
 	void EclipsedRuntime::StartEngine()
 #endif
 	{
+#ifndef ECLIPSED_EDITOR
 		SteamGeneral::Get().Init();
+#endif
 		
 		AudioManager::Init();
 
@@ -107,7 +109,9 @@ namespace Eclipse
 
 	void EclipsedRuntime::UpdateGame()
 	{
-
+		//TODO: Might not want to call every frame but it does now
+		SteamGeneral::Get().Update();
+		
 		PhysicsEngine::Update();
 
 		ComponentManager::AwakeStartComponents();
@@ -121,8 +125,27 @@ namespace Eclipse
 		Replication::ReplicationManager::Update();
 	}
 
+	void SortComponents()
+	{
+		// const std::vector<Component*>& AllComponents = ComponentManager::GetAllComponents();
+		//
+		// std::vector<int> ComponentsIndecies;
+		// ComponentManager::GetAllComponentsOfTypePtr<BaseUI>(ComponentsIndecies);
+		//
+		// std::vector<BaseUI*> UiComponents;
+		// for (auto& component : ComponentsIndecies)
+		// 	UiComponents.emplace_back(reinterpret_cast<BaseUI*>(AllComponents[component]));
+  //       
+		// std::sort(UiComponentsIndecies.begin(), UiComponentsIndecies.end(), [](BaseUI* aBaseUI0, BaseUI* aBaseUI1)
+		// {
+		// 	return aBaseUI0->GetZIndex() < aBaseUI1->GetZIndex();
+		// });
+	}
+	
 	void EclipsedRuntime::Render()
 	{
+		SortComponents();
+		
 		PhysicsEngine::DrawPhysicsObjects();
 		ComponentManager::RenderComponents();
 		ComponentManager::AfterRenderUpdateComponents();
@@ -130,13 +153,7 @@ namespace Eclipse
 	}
 
 	void EclipsedRuntime::Update()
-	{
-		if (Input::GetKeyDown(Keycode::P))
-			Replication::ReplicationManager::Start();
-		
-		//TODO: Might not want to call every frame but it does now
-		SteamGeneral::Get().Update();
-		
+	{		
 		engine.Update();
 		Input::Update();
 		ComponentManager::EditorUpdateComponents();

@@ -1,6 +1,5 @@
 #include "ComponentManager.h"
 
-#include <algorithm>
 namespace Eclipse
 {
     inline unsigned GetUniqueComponentTypeId()
@@ -16,6 +15,18 @@ namespace Eclipse
         return componentID;
     }
 
+    template <typename T>
+    inline void ComponentManager::GetAllComponentsOfTypePtr(std::vector<int>& aComponents)
+    {
+        for (int i = 0; i < myComponents.size(); i++)
+        {
+            auto& component = myComponents[i];
+            
+            T* dynamicedComponent = dynamic_cast<T*>(component);
+            if (dynamicedComponent)
+                aComponents.emplace_back(static_cast<T*>(i));
+        }
+    }
 
     template <typename T>
     inline void ComponentManager::GetAllComponentsOfType(unsigned aGOID, std::vector<T*>& aComponents)

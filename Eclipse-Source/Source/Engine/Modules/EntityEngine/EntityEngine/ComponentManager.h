@@ -4,13 +4,10 @@
 #include "EntityEngine/GameObject.h"
 
 #include <vector>
-#include <string>
-#include <unordered_map>
-#include <typeindex>
-#include <assert.h>
-#include "CoreEngine/Macros/defines.h"
 
-#include <string>
+#include <unordered_map>
+
+#include "CoreEngine/Macros/defines.h"
 
 #include <functional>
 
@@ -52,7 +49,7 @@ namespace Eclipse
 			BeforeComponentConstruction = aBeforeComponentConstruction;
 			AfterComponentConstruction = aAfterComponentConstruction;
 		}
-
+		
 		static void Init();
 
 		static void OnAddedAllComponentsLoadScene();
@@ -76,6 +73,9 @@ namespace Eclipse
 		static void BeginCollisions(unsigned aGOID);
 		static void EndCollisions(unsigned aGOID);
 
+		template <typename T>
+		static void GetAllComponentsOfTypePtr(std::vector<int>& aComponents);
+		
 		template <typename T>
 		static void GetAllComponentsOfType(unsigned aGOID, std::vector<T*>& aComponents);
 

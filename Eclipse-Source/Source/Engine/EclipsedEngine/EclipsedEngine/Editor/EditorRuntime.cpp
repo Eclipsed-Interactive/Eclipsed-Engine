@@ -2,7 +2,6 @@
 #include "EditorRuntime.h"
 
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
-#include "CoreEngine/Engine.h"
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "EclipsedEngine/Scenes/SceneLoader.h"
@@ -10,14 +9,11 @@
 #include "EclipsedEngine/Input/Input.h"
 
 #include "EclipsedEngine/Input/InputMapper.h"
-#include "Game/GameCompiler.h"
 #include "Game/GameLoader.h"
 
 #include "CoreEngine/Files/FileWatcher.h"
 
 #include "CoreEngine/PathManager.h"
-#include "CoreEngine/MainSingleton.h"
-#include "CoreEngine/Settings/EngineSettings.h"
 
 #include "Font-Awesome/7/IconsFontAwesome7.h"
 #include "CoreEngine/Settings/GraphicsSettings.h"
@@ -148,6 +144,8 @@ namespace Eclipse::Editor
 				isPlaying = true;
 				isPaused = false;
 
+				SteamGeneral::Get().Init();
+
 				SceneLoader::Save(SceneManager::GetActiveScene());
 
 				ImGui::End();
@@ -170,8 +168,8 @@ namespace Eclipse::Editor
 				isPlaying = false;
 				isPaused = false;
 
+				SteamGeneral::Get().ShutDown();
 				SceneManager::ReloadActiveScene();
-
 			}
 		}
 

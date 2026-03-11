@@ -13,7 +13,11 @@ namespace Eclipse
 
     public:
         void EarlyUpdate() override;
-        //void DrawInspector() override;
+        
+        void AddParentPosition(GameObject* aParent, Math::Vector2f& aPosition) const;
+        Math::Vector2f GetPosition() const;
+        
+        //void RectTransform::AddParentScale(GameObject* aParent, Math::Vector2f& aPosition) const;
 
     public:
         SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, Position, Math::Vector2f(0, 0));

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "EclipsedEngine/Components/Transform2D.h"
-
 #include "rapidjson/document.h"
 
 #include <string>
 
 namespace Eclipse
 {
+	class Canvas;
+	
 	namespace Reflection
 	{
 		class AbstractSerializedVariable;
@@ -27,6 +27,8 @@ namespace Eclipse
 			GameObject* gameobject;
 			unsigned ownerID;
 		};
+
+		static Canvas* GetParentCanvas(GameObject* BaseObject);
 		
 		static void LoadChildren(std::vector<ChildObject> aChildObjects);
 		static void LoadType(Reflection::AbstractSerializedVariable* aSerializedVariable, const rapidjson::Value& aValue);

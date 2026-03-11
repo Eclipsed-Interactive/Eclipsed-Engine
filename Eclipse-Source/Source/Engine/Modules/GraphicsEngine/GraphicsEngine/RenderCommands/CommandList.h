@@ -15,8 +15,8 @@ namespace Eclipse
     public:
         LambdaCommand(std::function<void()>&& aLambda) : myLamdaCommand(aLambda)
         {
-
         }
+
         ~LambdaCommand() override = default;
 
         void Execute() override { myLamdaCommand(); };
@@ -29,7 +29,10 @@ namespace Eclipse
     public:
         void Init();
 
-        template <class CommandClass, class ...Args>
+        template <class CommandClass, class... Args>
+        void EnqueueZIndex(int aZIndex, Args... args);
+
+        template <class CommandClass, class... Args>
         void Enqueue(Args... args);
 
         void Enqueue(const std::function<void()>& aLambda);
@@ -47,8 +50,23 @@ namespace Eclipse
         RenderCommandBase** myLink;
     };
 
-    template <class CommandClass, class ...Args>
+    template <class CommandClass, class... Args>
     inline void CommandList::Enqueue(Args... args)
+    {
+        hasCommands = true;
+        const size_t commandSize = sizeof(CommandClass);
+
+        assert((commandCursor + commandSize) <= MAXCOMMANDALLOCATION && "This encue will make the array overflow with data so you need to make smaller commands or increase MAXCOMMANDALLOCATION :)");
+
+        RenderCommandBase* command = reinterpret_cast<RenderCommandBase*>(myData + commandCursor);
+        commandCursor += commandSize;
+        ::new(command) CommandClass(std::forward<Args>(args)...);
+        *myLink = command;
+        myLink = &command->next;
+    }
+
+    template <class CommandClass, class... Args>
+    inline void CommandList::EnqueueZIndex(int aZIndex, Args... args)
     {
         hasCommands = true;
         const size_t commandSize = sizeof(CommandClass);

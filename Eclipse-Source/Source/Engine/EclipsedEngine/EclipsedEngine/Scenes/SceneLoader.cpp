@@ -178,6 +178,15 @@ namespace Eclipse
 		aValue.AddMember(key, jsonVal.Move(), alloc);
 	}
 
+	Canvas* SceneLoader::GetParentCanvas(GameObject* BaseObject)
+	{
+		Canvas* canvas = BaseObject->GetComponent<Canvas>();
+		if (BaseObject->GetParent())
+			canvas = GetParentCanvas(BaseObject->GetParent());
+		
+		return canvas;
+	}
+
 	void SceneLoader::LoadChildren(std::vector<ChildObject> aChildObjects)
 	{
 		for (ChildObject& child : aChildObjects)
@@ -187,7 +196,7 @@ namespace Eclipse
 
 			if (auto* recttransform = child.gameobject->GetComponent<RectTransform>())
 			{
-				if (recttransform->myCanvas = parent->GetComponent<Canvas>())
+				if (recttransform->myCanvas = GetParentCanvas(child.gameobject))
 				{
 					recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
 					recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;

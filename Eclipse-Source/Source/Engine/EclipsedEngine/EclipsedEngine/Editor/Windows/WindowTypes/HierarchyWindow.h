@@ -28,6 +28,8 @@ namespace Eclipse
 		public:
 			static inline unsigned CurrentGameObjectID;
 
+			Canvas* GetParentCanvas(GameObject* BaseObject);
+
 			void RecursiveDeleteChildren(GameObject*& aGameObject);
 
 			bool CheckCopomentType(GameObject* aGameobject, GameObject* aParent);

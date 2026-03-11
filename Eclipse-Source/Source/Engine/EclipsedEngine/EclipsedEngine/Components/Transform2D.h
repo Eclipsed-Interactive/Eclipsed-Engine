@@ -21,19 +21,13 @@ namespace Eclipse
 		void OnComponentAddedNoCreations();
 
 		void AfterRenderUpdate() override;
-		void DirtyUpdate() const;
-
-
-		void AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const;
-		void AddParentRotation(GameObject* aParent, float& totalRotation) const;
-		void AddParentScale(GameObject* aParent, Math::Vector2f& totalScale) const;
-
-		Math::Matrix3x3f GetTransformMatrix() const;
+		void DirtyUpdate();
 
 		//Global
-		Math::Vector2f GetPosition() const;
-		float GetRotation() const;
-		Math::Vector2f GetScale() const;
+		Math::Vector2f GetPosition();
+		float GetRotation();
+		Math::Vector2f GetScale();
+		Math::Matrix3x3f GetTransformMatrix();
 
 		//Local
 		const Math::Vector2f& GetLocalPosition() const;
@@ -57,6 +51,15 @@ namespace Eclipse
 		void AddFunctionToRunOnDirtyUpdate(DirtyFunctionPtr* aFunction);
 
 	private:
+		void AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const;
+		void AddParentRotation(GameObject* aParent, float& totalRotation) const;
+		void AddParentScale(GameObject* aParent, Math::Vector2f& totalScale) const;
+
+		void UpdateTransforms();
+
+		Math::Matrix3x3f GetTransform() const;
+		
+	private:
 		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(Math::Vector2<float>, position, 0.01f, Math::Vector2f(0, 0), Transform2D);
 		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(float, rotation, 0.01f, 0, Transform2D);
 		REPLICATED_SERIALIZED_FIELD_DEFAULT(Math::Vector2f, scale, Math::Vector2f(1, 1), Transform2D);
@@ -65,6 +68,15 @@ namespace Eclipse
 		float lastRotation;
 		Math::Vector2f lastScale;
 
+		Math::Vector2f GlobalPosition;
+		float GlobalRotation;
+		Math::Vector2f GlobalScale;
+		
+		Math::Matrix3x3f GlobalTransformationMatrix;
+		
+		// Not implemented but if strictly necessary easy to do
+		//Math::Matrix3x3f LocalTransformationMatrix;
+		
 	private:
 		bool myIsDirty = true;
 		std::vector<std::function<void()>> myFunctionsToRunOnDirtyUpdate;

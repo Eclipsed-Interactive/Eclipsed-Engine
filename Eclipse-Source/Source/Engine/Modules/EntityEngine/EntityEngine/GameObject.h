@@ -20,6 +20,8 @@ namespace Eclipse
 	public:
 		GameObject(GameObjectID aId);
 
+		void Delete();
+		
 	public:
 		template<typename T>
 		T* AddComponent(bool IsReplicated = false);

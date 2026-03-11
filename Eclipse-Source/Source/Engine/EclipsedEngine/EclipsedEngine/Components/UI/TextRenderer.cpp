@@ -72,6 +72,7 @@ namespace Eclipse
 
 			int lastFontSize = myFontSize;
 		}
+
 	}
 
 	//void TextRenderer::DrawInspector()
@@ -341,6 +342,13 @@ namespace Eclipse
 		}
 	}
 
+	void TextRenderer::Render()
+	{
+		CommandListManager::GetUICommandList().Enqueue([&]() {
+			this->Draw();
+			});
+	}
+
 	void TextRenderer::Draw()
 	{
 		if (!myMaterial)
@@ -380,6 +388,8 @@ namespace Eclipse
 		float rotation = 0.f;
 		rotation += canvasCameraTransform.Rotation;
 
+		//GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
+		
 		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
 		GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
 		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
@@ -489,13 +499,6 @@ namespace Eclipse
 
 			TextSprite::Get().Render();
 		}
-	}
-
-	void TextRenderer::Render()
-	{
-		CommandListManager::GetSpriteCommandList().Enqueue([&]() {
-			this->Draw();
-			});
 	}
 
 	void TextRenderer::SetFontSize(int aFontSize)

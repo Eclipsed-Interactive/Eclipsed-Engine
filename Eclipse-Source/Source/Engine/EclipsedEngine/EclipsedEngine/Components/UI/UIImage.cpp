@@ -15,6 +15,10 @@ namespace Eclipse
 {
     void UIImage::sprite_OnRep()
     {
+    }
+
+    void UIImage::OnSceneLoaded()
+    {
         
     }
 
@@ -36,7 +40,7 @@ namespace Eclipse
     {
         CommandListManager::GetUICommandList().Enqueue([&]() {
             Draw();
-            });
+        });
     }
 
     void UIImage::Draw()
@@ -50,7 +54,7 @@ namespace Eclipse
             return;
         if (!tranform->myCanvas)
             return;
-            
+
         tranform->myCanvas->SetCanvasTransformProperties();
 
         Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
@@ -61,16 +65,21 @@ namespace Eclipse
         resolution.x = 1.f / resolution.x;
         resolution.y = 1.f / resolution.y;
 
-        Math::Vector2f canvasScaleRelationOneDiv = { resolution.x, resolution.y };
+        float aspectRatio = resolution.y / resolution.x;
+
+        Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
         Math::Vector2f position = tranform->Position;
+        position *= canvasScaleRelationOneDiv;
         position *= canvasCameraTransform.ScaleMultiplier;
+        position.x *= aspectRatio;
+
         position += canvasCameraTransform.PositionOffset;
 
         Math::Vector2f scale = tranform->WidthHeightPX;
         scale *= canvasScaleRelationOneDiv;
         scale *= Math::Vector2f(200, 200);
-        scale.x *= resolution.y / resolution.x;
+        scale.x *= aspectRatio;
         scale *= canvasCameraTransform.ScaleMultiplier;
 
         float rotation = 0.f;
@@ -88,6 +97,8 @@ namespace Eclipse
         {
             material->Use();
         }
+
+        //GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
 
         GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
         GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);

@@ -1,6 +1,6 @@
 #include "RenderingWindow.h"
 
-#include "EclipsedEngine/Components/Rendering/TextRenderer.h"
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 

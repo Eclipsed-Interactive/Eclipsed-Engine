@@ -12,6 +12,7 @@ namespace Eclipse
 
         void Update();
         void Init();
+        void ShutDown();
 
         static SteamGeneral& Get()
         {
