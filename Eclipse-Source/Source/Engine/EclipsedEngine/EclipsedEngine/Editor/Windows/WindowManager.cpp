@@ -26,6 +26,8 @@
 #include "CoreEngine/Files/FileUtilities.h"
 
 #include "EclipsedEngine/Editor/Layout/LayoutManager.h"
+#include "EclipsedEngine/Editor/Game/GameCompiler.h"
+#include "EclipsedEngine/Editor/Game/GameLoader.h"
 
 namespace Eclipse::Editor
 {
@@ -54,108 +56,105 @@ namespace Eclipse::Editor
 	{
 		if (ImGui::BeginMainMenuBar())
 		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::BeginMenu("Game")) {
-					if (ImGui::MenuItem("Generate Game"))
-					{
-						system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && "
-							"generate-game-editor.bat " + PathManager::GetProjectRoot().generic_string() + " " + PathManager::GetEngineRoot().parent_path().generic_string()).c_str());
+			{ // Left menu
+				if (ImGui::BeginMenu("File"))
+				{
+					if (ImGui::BeginMenu("Game")) {
+						if (ImGui::MenuItem("Generate Game"))
+						{
+							system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && "
+								"generate-game-editor.bat " + PathManager::GetProjectRoot().generic_string() + " " + PathManager::GetEngineRoot().parent_path().generic_string()).c_str());
+						}
+						if (ImGui::MenuItem("Open Game SLN"))
+						{
+							system(("cd " + (PathManager::GetProjectRoot() / "Library/Engine-Build").generic_string() + " && start Eclipsed-Game.sln").c_str());
+						}
+
+						if (ImGui::MenuItem("Recompile Game DLL"))
+						{
+							GameLoader::UnloadGameDLL();
+							GameCompiler::CompileGame();
+							GameLoader::LoadGameDLL();
+						}
+
+						if (ImGui::MenuItem("Build Game EXE"))
+						{
+							system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && build-game.bat").c_str());
+						}
+
+						ImGui::EndMenu();
 					}
-					if (ImGui::MenuItem("Open Game SLN"))
-					{
-						system(("cd " + (PathManager::GetProjectRoot() / "Library/Engine-Build").generic_string() + " && start Eclipsed-Game.sln").c_str());
-					}
+
 
 
 					ImGui::EndMenu();
 				}
 
 
-
-				ImGui::EndMenu();
-			}
-
-
-			if (ImGui::BeginMenu("Windows"))
-			{
-				for (const auto& [name, window] : WindowRegistry::GetWindows())
+				if (ImGui::BeginMenu("Windows"))
 				{
-					if (!window->GetCategoryName())
+					for (const auto& [name, window] : WindowRegistry::GetWindows())
 					{
-						if (ImGui::MenuItem(name.c_str())) OpenWindow(name.c_str(), -1);
-					}
-					else
-					{
-						std::string fullCategory = window->GetCategoryName();
-
-						std::vector<std::string> categories = {};
-						while (!fullCategory.empty())
+						if (!window->GetCategoryName())
 						{
-							size_t idx = fullCategory.find_first_of('/');
-							std::string category = fullCategory.substr(0, idx);
-
-							if (!category.empty())
-								categories.push_back(category);
-
-							if (idx == std::string::npos)
-								break;
-
-							fullCategory.erase(0, idx + 1);
+							if (ImGui::MenuItem(name.c_str())) OpenWindow(name.c_str(), -1);
 						}
+						else
+						{
+							std::string fullCategory = window->GetCategoryName();
 
-						AddWindowToCategory(categories, 0, name);
+							std::vector<std::string> categories = {};
+							while (!fullCategory.empty())
+							{
+								size_t idx = fullCategory.find_first_of('/');
+								std::string category = fullCategory.substr(0, idx);
+
+								if (!category.empty())
+									categories.push_back(category);
+
+								if (idx == std::string::npos)
+									break;
+
+								fullCategory.erase(0, idx + 1);
+							}
+
+							AddWindowToCategory(categories, 0, name);
+						}
 					}
+
+					ImGui::EndMenu();
 				}
 
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Settings"))
-			{
-				ImGui::EndMenu();
-			}
-
-
-			if (ImGui::MenuItem("Build"))
-			{
-				// AssetExporter::ExportAll();
-				// std::string cmd = "cd \"" SOURCE "Tools"  "\" && build-game.bat";
-
-				// int result = system(("start cmd /K \"" + cmd + "\"").c_str());
-
-				// if (result != 0)
-				// {
-				// 	int i = 0;
-				// }
-			}
-
-			if (ImGui::BeginMenu("Network"))
-			{
-				ImGui::Text("IP: ");
-				ImGui::SameLine();
-
-				char IP[17];
-				memcpy(IP, Replication::ReplicationManager::IP.c_str(), Replication::ReplicationManager::IP.size() + 1);
-				if (ImGui::InputText("##IpToUse", IP, 16))
+				if (ImGui::BeginMenu("Network"))
 				{
-					std::ofstream stream("NetworkIp.ntwrk");
-					stream << IP;
-					stream.close();
+					ImGui::Text("IP: ");
+					ImGui::SameLine();
 
-					Replication::ReplicationManager::IP = IP;
+					char IP[17];
+					memcpy(IP, Replication::ReplicationManager::IP.c_str(), Replication::ReplicationManager::IP.size() + 1);
+					if (ImGui::InputText("##IpToUse", IP, 16))
+					{
+						std::ofstream stream("NetworkIp.ntwrk");
+						stream << IP;
+						stream.close();
+
+						Replication::ReplicationManager::IP = IP;
+					}
+
+					ImGui::Checkbox("##Start Server Checkbox", &Replication::ReplicationManager::startServer);
+					ImGui::SameLine();
+					ImGui::Text("Start Server");
+
+					ImGui::Checkbox("##Start Client Checkbox", &Replication::ReplicationManager::startClient);
+					ImGui::SameLine();
+					ImGui::Text("Start Client");
+
+					ImGui::EndMenu();
 				}
-
-				ImGui::Checkbox("##Start Server Checkbox", &Replication::ReplicationManager::startServer);
-				ImGui::SameLine();
-				ImGui::Text("Start Server");
-
-				ImGui::Checkbox("##Start Client Checkbox", &Replication::ReplicationManager::startClient);
-				ImGui::SameLine();
-				ImGui::Text("Start Client");
-
-				ImGui::EndMenu();
 			}
+
+
+
 
 			int size = ImGui::CalcTextSize("Layout: ").x + 50;
 			ImGui::SameLine(ImGui::GetWindowWidth() - (size * 2) - 50);
