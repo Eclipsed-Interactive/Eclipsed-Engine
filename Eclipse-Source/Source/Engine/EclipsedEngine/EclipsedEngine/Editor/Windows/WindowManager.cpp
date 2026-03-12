@@ -79,7 +79,7 @@ namespace Eclipse::Editor
 
 						if (ImGui::MenuItem("Build Game EXE"))
 						{
-							system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && build-game.bat").c_str());
+							system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && start build-game.bat").c_str());
 						}
 
 						ImGui::EndMenu();
