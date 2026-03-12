@@ -28,9 +28,9 @@ namespace Eclipse::Editor
 		PathManager::Init(path);
 
 		ComponentForcelink::LinkComponents();
-		eclipseRuntime.StartEngine(path);
 
 		EditorAssetImporter::ImportAll(PathManager::GetAssetsPath());
+		eclipseRuntime.StartEngine(path);
 
 		if (std::filesystem::exists(PathManager::GetGameDllBuildPath() / "Game.dll")) GameLoader::LoadGameDLL();
 

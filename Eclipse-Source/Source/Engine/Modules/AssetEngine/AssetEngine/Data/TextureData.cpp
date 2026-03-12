@@ -4,5 +4,7 @@
 
 Eclipse::TextureData::~TextureData()
 {
+	if (textureID == 0) return;
+
 	glDeleteTextures(1, &textureID);
 }
