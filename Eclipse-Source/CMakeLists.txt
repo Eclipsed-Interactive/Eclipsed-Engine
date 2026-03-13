@@ -85,7 +85,7 @@ add_subdirectory(Source/Engine/EclipsedEngine)
 add_subdirectory(Source/Launcher)
 
 if(ECLIPSED_EDITOR)
-    add_subdirectory(Source/Tools/AssetExporter)
+    add_subdirectory(Source/Tools/EclipsedHub)
 endif()
 
 if(INCLUDE_GAME)
