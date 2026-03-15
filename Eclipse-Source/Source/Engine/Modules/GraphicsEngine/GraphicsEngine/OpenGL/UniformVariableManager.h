@@ -99,15 +99,15 @@ namespace Eclipse
         void SetGlobalUniforms(unsigned aShaderProgram);
 
 
-        void AddInt(const std::string& aUniformName, int* aValue) { myGlobalUniformsInt.emplace(aUniformName, *aValue); }
+        void AddInt(const char* aUniformName, int* aValue) { myGlobalUniformsInt.emplace(aUniformName, *aValue); }
 
-        void AddFloat(const std::string& aUniformName, float* aValue) { myGlobalUniformsFloat.emplace(aUniformName, *aValue); }
+        void AddFloat(const char* aUniformName, float* aValue) { myGlobalUniformsFloat.emplace(aUniformName, *aValue); }
 
-        void AddVec2Float(const std::string& aUniformName, Math::Vector2f* aValue) { myGlobalUniformsVector2Float.emplace(aUniformName, *aValue); }
-        void AddVec3Float(const std::string& aUniformName, Math::Vector4f* aValue) { myGlobalUniformsVector3Float.emplace(aUniformName, *aValue); }
-        void AddVec4Float(const std::string& aUniformName, Math::Vector4f* aValue) { myGlobalUniformsVector4Float.emplace(aUniformName, *aValue); }
+        void AddVec2Float(const char* aUniformName, Math::Vector2f* aValue) { myGlobalUniformsVector2Float.emplace(aUniformName, *aValue); }
+        void AddVec3Float(const char* aUniformName, Math::Vector4f* aValue) { myGlobalUniformsVector3Float.emplace(aUniformName, *aValue); }
+        void AddVec4Float(const char* aUniformName, Math::Vector4f* aValue) { myGlobalUniformsVector4Float.emplace(aUniformName, *aValue); }
 
-        void AddMat2x2(const std::string& aUniformName, float* aValue)
+        void AddMat2x2(const char* aUniformName, float* aValue)
         {
             myGlobalUniformsMatrix2x2Float.emplace(aUniformName,
                 GlobalUniformValueMatrixMatrix2x2Float{
@@ -115,7 +115,7 @@ namespace Eclipse
                 }
             );
         }
-        void AddMat3x3(const std::string& aUniformName, float* aValue)
+        void AddMat3x3(const char* aUniformName, float* aValue)
         {
             myGlobalUniformsMatrix3x3Float.emplace(aUniformName,
                 GlobalUniformValueMatrixMatrix3x3Float{
@@ -123,7 +123,7 @@ namespace Eclipse
                 }
             );
         }
-        void AddMat4x4(const std::string& aUniformName, float* aValue)
+        void AddMat4x4(const char* aUniformName, float* aValue)
         {
             myGlobalUniformsMatrix4x4Float.emplace(aUniformName,
                 GlobalUniformValueMatrixMatrix4x4Float{
@@ -135,7 +135,7 @@ namespace Eclipse
 
 
 
-        void UpdateInt(const std::string& aUniformName, int* aValue)
+        void UpdateInt(const char* aUniformName, int* aValue)
         {
             if (myGlobalUniformsInt.find(aUniformName) == myGlobalUniformsInt.end())
                 AddInt(aUniformName, aValue);
@@ -143,7 +143,7 @@ namespace Eclipse
             myGlobalUniformsInt.at(aUniformName).value = *aValue;
         }
 
-        void UpdateFloat(const std::string& aUniformName, float* aValue)
+        void UpdateFloat(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsFloat.find(aUniformName) == myGlobalUniformsFloat.end())
                 AddFloat(aUniformName, aValue);
@@ -151,21 +151,21 @@ namespace Eclipse
             myGlobalUniformsFloat.at(aUniformName).value = *aValue;
         }
 
-        void UpdateVec2Float(const std::string& aUniformName, Math::Vector2f* aValue)
+        void UpdateVec2Float(const char* aUniformName, Math::Vector2f* aValue)
         {
             if (myGlobalUniformsVector2Float.find(aUniformName) == myGlobalUniformsVector2Float.end())
                 AddVec2Float(aUniformName, aValue);
 
             myGlobalUniformsVector2Float.at(aUniformName).value = *aValue;
         }
-        void UpdateVec3Float(const std::string& aUniformName, Math::Vector4f* aValue)
+        void UpdateVec3Float(const char* aUniformName, Math::Vector4f* aValue)
         {
             if (myGlobalUniformsVector3Float.find(aUniformName) == myGlobalUniformsVector3Float.end())
                 AddVec3Float(aUniformName, aValue);
 
             myGlobalUniformsVector3Float.at(aUniformName).value = *aValue;
         }
-        void UpdateVec4Float(const std::string& aUniformName, Math::Vector4f* aValue)
+        void UpdateVec4Float(const char* aUniformName, Math::Vector4f* aValue)
         {
             if (myGlobalUniformsVector4Float.find(aUniformName) == myGlobalUniformsVector4Float.end())
                 AddVec4Float(aUniformName, aValue);
@@ -173,21 +173,21 @@ namespace Eclipse
             myGlobalUniformsVector4Float.at(aUniformName).value = *aValue;
         }
 
-        void UpdateMat2x2(const std::string& aUniformName, float* aValue)
+        void UpdateMat2x2(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix2x2Float.find(aUniformName) == myGlobalUniformsMatrix2x2Float.end())
                 AddMat2x2(aUniformName, aValue);
 
             std::memcpy(&myGlobalUniformsMatrix2x2Float.at(aUniformName).value, aValue, sizeof(GlobalUniformValueMatrixMatrix2x2Float));
         }
-        void UpdateMat3x3(const std::string& aUniformName, float* aValue)
+        void UpdateMat3x3(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix3x3Float.find(aUniformName) == myGlobalUniformsMatrix3x3Float.end())
                 AddMat3x3(aUniformName, aValue);
 
             std::memcpy(&myGlobalUniformsMatrix3x3Float.at(aUniformName).value, aValue, sizeof(GlobalUniformValueMatrixMatrix3x3Float));
         }
-        void UpdateMat4x4(const std::string& aUniformName, float* aValue)
+        void UpdateMat4x4(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix4x4Float.find(aUniformName) == myGlobalUniformsMatrix4x4Float.end())
                 AddMat4x4(aUniformName, aValue);
@@ -198,7 +198,7 @@ namespace Eclipse
 
 
 
-        void GetInt(const std::string& aUniformName, int* aValue)
+        void GetInt(const char* aUniformName, int* aValue)
         {
             if (myGlobalUniformsInt.find(aUniformName) == myGlobalUniformsInt.end())
                 return;
@@ -206,7 +206,7 @@ namespace Eclipse
             *aValue = myGlobalUniformsInt.at(aUniformName).value;
         }
 
-        void GetFloat(const std::string& aUniformName, float* aValue)
+        void GetFloat(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsFloat.find(aUniformName) == myGlobalUniformsFloat.end())
                 return;
@@ -214,21 +214,21 @@ namespace Eclipse
             *aValue = myGlobalUniformsFloat.at(aUniformName).value;
         }
 
-        void GetVec2Float(const std::string& aUniformName, Math::Vector2f* aValue)
+        void GetVec2Float(const char* aUniformName, Math::Vector2f* aValue)
         {
             if (myGlobalUniformsVector2Float.find(aUniformName) == myGlobalUniformsVector2Float.end())
                 return;
 
             *aValue = myGlobalUniformsVector2Float.at(aUniformName).value;
         }
-        void GetVec3Float(const std::string& aUniformName, Math::Vector4f* aValue)
+        void GetVec3Float(const char* aUniformName, Math::Vector4f* aValue)
         {
             if (myGlobalUniformsVector3Float.find(aUniformName) == myGlobalUniformsVector3Float.end())
                 return;
 
             *aValue = myGlobalUniformsVector3Float.at(aUniformName).value;
         }
-        void GetVec4Float(const std::string& aUniformName, Math::Vector4f* aValue)
+        void GetVec4Float(const char* aUniformName, Math::Vector4f* aValue)
         {
             if (myGlobalUniformsVector4Float.find(aUniformName) == myGlobalUniformsVector4Float.end())
                 return;
@@ -236,21 +236,21 @@ namespace Eclipse
             *aValue = myGlobalUniformsVector4Float.at(aUniformName).value;
         }
 
-        void GetMat2x2(const std::string& aUniformName, float* aValue)
+        void GetMat2x2(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix2x2Float.find(aUniformName) == myGlobalUniformsMatrix2x2Float.end())
                 return;
 
             std::memcpy(aValue, &myGlobalUniformsMatrix2x2Float.at(aUniformName).value, sizeof(GlobalUniformValueMatrixMatrix2x2Float));
         }
-        void GetMat3x3(const std::string& aUniformName, float* aValue)
+        void GetMat3x3(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix3x3Float.find(aUniformName) == myGlobalUniformsMatrix3x3Float.end())
                 return;
 
             std::memcpy(aValue, &myGlobalUniformsMatrix3x3Float.at(aUniformName).value, sizeof(GlobalUniformValueMatrixMatrix3x3Float));
         }
-        void GetMat4x4(const std::string& aUniformName, float* aValue)
+        void GetMat4x4(const char* aUniformName, float* aValue)
         {
             if (myGlobalUniformsMatrix4x4Float.find(aUniformName) == myGlobalUniformsMatrix4x4Float.end())
                 return;
@@ -262,16 +262,16 @@ namespace Eclipse
 
 
 
-        void SetUniformInt(const std::string& aUniformName, unsigned aShaderProgram, int* aValue);
+        void SetUniformInt(const char* aUniformName, unsigned aShaderProgram, const int* aValue) const;
 
-        void SetUniformFloat(const std::string& aUniformName, unsigned aShaderProgram, float* aValue);
+        void SetUniformFloat(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const;
 
-        void SetUniformVec2Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector2f* aValue);
-        void SetUniformVec3Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector4f* aValue);
-        void SetUniformVec4Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector4f* aValue);
+        void SetUniformVec2Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector2f* aValue) const;
+        void SetUniformVec3Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector4f* aValue) const;
+        void SetUniformVec4Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector4f* aValue) const;
 
-        void SetUniformMat2x2(const std::string& aUniformName, unsigned aShaderProgram, float* aValue);
-        void SetUniformMat3x3(const std::string& aUniformName, unsigned aShaderProgram, float* aValue);
-        void SetUniformMat4x4(const std::string& aUniformName, unsigned aShaderProgram, float* aValue);
+        void SetUniformMat2x2(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const;
+        void SetUniformMat3x3(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const;
+        void SetUniformMat4x4(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const;
     };
 }

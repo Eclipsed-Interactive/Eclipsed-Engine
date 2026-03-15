@@ -53,47 +53,47 @@ namespace Eclipse
         }
     }
 
-    void UniformVariableManager::SetUniformInt(const std::string& aUniformName, unsigned aShaderProgram, int* aValue)
+    void UniformVariableManager::SetUniformInt(const char* aUniformName, unsigned aShaderProgram, const int* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform1i(location, *aValue);
     }
 
-    void UniformVariableManager::SetUniformFloat(const std::string& aUniformName, unsigned aShaderProgram, float* aValue)
+    void UniformVariableManager::SetUniformFloat(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform1f(location, *aValue);
     }
 
-    void UniformVariableManager::SetUniformVec2Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector2f* aValue)
+    void UniformVariableManager::SetUniformVec2Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector2f* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform2f(location, aValue->x, aValue->y);
     }
-    void UniformVariableManager::SetUniformVec3Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector4f* aValue)
+    void UniformVariableManager::SetUniformVec3Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector4f* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform3f(location, aValue->x, aValue->y, aValue->z);
     }
-    void UniformVariableManager::SetUniformVec4Float(const std::string& aUniformName, unsigned aShaderProgram, Math::Vector4f* aValue)
+    void UniformVariableManager::SetUniformVec4Float(const char* aUniformName, unsigned aShaderProgram, const Math::Vector4f* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform4f(location, aValue->x, aValue->y, aValue->z, aValue->w);
     }
 
-    void UniformVariableManager::SetUniformMat2x2(const std::string& aUniformName, unsigned aShaderProgram, float* aValue)
+    void UniformVariableManager::SetUniformMat2x2(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform2fv(location, 4, aValue);
     }
-    void UniformVariableManager::SetUniformMat3x3(const std::string& aUniformName, unsigned aShaderProgram, float* aValue)
+    void UniformVariableManager::SetUniformMat3x3(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform3fv(location, 9, aValue);
     }
-    void UniformVariableManager::SetUniformMat4x4(const std::string& aUniformName, unsigned aShaderProgram, float* aValue)
+    void UniformVariableManager::SetUniformMat4x4(const char* aUniformName, unsigned aShaderProgram, const float* aValue) const
     {
-        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName.c_str());
+        GLuint location = glGetUniformLocation(aShaderProgram, aUniformName);
         glUniform4fv(location, 16, aValue);
     }
 }

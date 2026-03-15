@@ -4,7 +4,7 @@
 
 namespace Eclipse
 {
-    class BaseUI : public Component
+    class BaseRenderComponent : public Component
     {
     public:
         SERIALIZED_FIELD_DEFAULT(int, ZIndex, 0);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BaseUI.h"
 #include "EntityEngine/ComponentManager.h"
 
 #include "CoreEngine/EventSystem/EventSystem.h"
@@ -8,7 +7,7 @@
 
 namespace Eclipse
 {
-	class Button : public BaseUI
+	class Button : public Component
 	{
 		COMPONENT_BASE_2(Button, 0)
 

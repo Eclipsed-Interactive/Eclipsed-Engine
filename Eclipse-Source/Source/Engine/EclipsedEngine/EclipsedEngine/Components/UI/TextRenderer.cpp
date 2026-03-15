@@ -364,143 +364,143 @@ namespace Eclipse
 		if (!tranform->myCanvas)
 			return;
 
-		float aspectRatio;
-		GraphicsEngine::GetGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
-
-		tranform->myCanvas->SetCanvasTransformProperties();
-
-		Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
-
-		unsigned shaderID = myMaterial->programID;
-		glUseProgram(shaderID);
-
-		Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
-
-		Math::Vector2f position = tranform->GetPosition();
-		position *= canvasCameraTransform.ScaleMultiplier;
-		position += canvasCameraTransform.PositionOffset;
-
-
-		Math::Vector2f scale = (*(Math::Vector2f*)tranform->WidthHeightPX.GetData() * canvasScaleRelationOneDiv);
-		scale *= canvasCameraTransform.ScaleMultiplier;
-		scale.x *= 2.f;
-
-		float rotation = 0.f;
-		rotation += canvasCameraTransform.Rotation;
-
-		//GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
-		
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
-		GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
-		GraphicsEngine::SetGlobalUniforms(shaderID);
-
-		Font& font = TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
-
-		Math::Vector2f textOffset = { 0, 0 };
-		Math::Vector2f scaleRect = scale * myRect * resolution;
-		scaleRect.x *= 0.5f;
-
-		lineOffsets.resize(1);
-		lineOffsets.back() = 0;
-		for (int i = 0; i < myText->size(); i++)
-		{
-			char character = textInConstChar[i];
-			if (character == ' ')
-			{
-				lineOffsets.back() += scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize;
-				continue;
-			}
-			else if (character == '\n')
-			{
-				lineOffsets.emplace_back(0.f);
-				continue;
-			}
-			Character& characterFace = font.myCharTexture.at(character);
-			float convertedAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
-			lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
-		}
-
-		if (myTextAlignment == 0 || myTextAlignment == 3)
-			textOffset.x -= scaleRect.x;
-		else if (myTextAlignment == 2)
-			textOffset.x += scaleRect.x - scale.x;
-
-
-		Math::Vector2f startOffset = textOffset;
-
-		float maxCharSize = myFont->maxCharHeight;
-		// if (myTextCentering == 0)
-		// 	textOffset.y = (scaleRect.y - myFontSize * 4.f);
-		// if (myTextCentering == 1)
-		// 	textOffset.y = myFontSize * -3.f * lineOffsets.size();
-		// else if (myTextCentering == 2)
-		// 	textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
-
-
-		Math::Vector4f color(myTextColor->r, myTextColor->g, myTextColor->b, myTextColor->a);
-		GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "color", &color);
-
-		int currentLineCount = 0;
-		for (int i = 0; i < myText->size(); i++)
-		{
-			char character = textInConstChar[i];
-
-			if (character == '\t')
-			{
-				textOffset.x += scale.x * 50.f * 4.f * myCharacterSpacing * myFontSize;
-				continue;
-			}
-			else if (character == '\n')
-			{
-				textOffset.y -= scale.y * 50.f * myEnterSpacing * 2.f * myFontSize;
-				textOffset.x = startOffset.x;
-				currentLineCount++;
-				continue;
-			}
-			else if (character == ' ')
-			{
-				textOffset.x += scale.x * 50.f * myCharacterSpacing * myFontSize;
-				continue;
-			}
-
-			Math::Vector2f scaleRect = scale * myRect * resolution;
-
-			if (font.myCharTexture.find(character) == font.myCharTexture.end())
-				character = '\n';
-
-			Character& characterFace = font.myCharTexture.at(character);
-			float characterAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
-
-			// float newXOffset = textOffset.x + characterAdvance;
-			// if (newXOffset >= scaleRect.x)
-			// {
-			// 	return;
-			// }
-
-			myMaterial->Use(characterFace.textureID);
-
-			Math::Vector2f textSize = { (float)characterFace.size.x, (float)characterFace.size.y };
-			GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "size", &textSize);
-
-			float lineOffset;
-			if (myTextAlignment == 0)
-				lineOffset = 0;
-			else
-				lineOffset = lineOffsets[currentLineCount] - scale.x * myCharacterSpacing;
-
-
-			Math::Vector2f characterSpecificOffset = textOffset;
-			characterSpecificOffset.x += (characterFace.bearing.x * 100.f * scale.x) - lineOffset;
-			characterSpecificOffset.y -= (characterFace.size.y - characterFace.bearing.y) * scale.y * 100.f;
-			GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "offset", &characterSpecificOffset);
-
-			textOffset.x += characterAdvance * myCharacterSpacing;
-
-			TextSprite::Get().Render();
-		}
+		// float aspectRatio;
+		// GraphicsEngine::GetGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
+		//
+		// tranform->myCanvas->SetCanvasTransformProperties();
+		//
+		// Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
+		//
+		// unsigned shaderID = myMaterial->programID;
+		// glUseProgram(shaderID);
+		//
+		// Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+		// Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
+		//
+		// Math::Vector2f position = tranform->GetPosition();
+		// position *= canvasCameraTransform.ScaleMultiplier;
+		// position += canvasCameraTransform.PositionOffset;
+		//
+		//
+		// Math::Vector2f scale = (*(Math::Vector2f*)tranform->WidthHeightPX.GetData() * canvasScaleRelationOneDiv);
+		// scale *= canvasCameraTransform.ScaleMultiplier;
+		// scale.x *= 2.f;
+		//
+		// float rotation = 0.f;
+		// rotation += canvasCameraTransform.Rotation;
+		//
+		// //GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
+		//
+		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
+		// GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
+		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
+		// GraphicsEngine::SetGlobalUniforms(shaderID);
+		//
+		// Font& font = TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		//
+		// Math::Vector2f textOffset = { 0, 0 };
+		// Math::Vector2f scaleRect = scale * myRect * resolution;
+		// scaleRect.x *= 0.5f;
+		//
+		// lineOffsets.resize(1);
+		// lineOffsets.back() = 0;
+		// for (int i = 0; i < myText->size(); i++)
+		// {
+		// 	char character = textInConstChar[i];
+		// 	if (character == ' ')
+		// 	{
+		// 		lineOffsets.back() += scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize;
+		// 		continue;
+		// 	}
+		// 	else if (character == '\n')
+		// 	{
+		// 		lineOffsets.emplace_back(0.f);
+		// 		continue;
+		// 	}
+		// 	Character& characterFace = font.myCharTexture.at(character);
+		// 	float convertedAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
+		// 	lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
+		// }
+		//
+		// if (myTextAlignment == 0 || myTextAlignment == 3)
+		// 	textOffset.x -= scaleRect.x;
+		// else if (myTextAlignment == 2)
+		// 	textOffset.x += scaleRect.x - scale.x;
+		//
+		//
+		// Math::Vector2f startOffset = textOffset;
+		//
+		// float maxCharSize = myFont->maxCharHeight;
+		// // if (myTextCentering == 0)
+		// // 	textOffset.y = (scaleRect.y - myFontSize * 4.f);
+		// // if (myTextCentering == 1)
+		// // 	textOffset.y = myFontSize * -3.f * lineOffsets.size();
+		// // else if (myTextCentering == 2)
+		// // 	textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
+		//
+		//
+		// Math::Vector4f color(myTextColor->r, myTextColor->g, myTextColor->b, myTextColor->a);
+		// GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "color", &color);
+		//
+		// int currentLineCount = 0;
+		// for (int i = 0; i < myText->size(); i++)
+		// {
+		// 	char character = textInConstChar[i];
+		//
+		// 	if (character == '\t')
+		// 	{
+		// 		textOffset.x += scale.x * 50.f * 4.f * myCharacterSpacing * myFontSize;
+		// 		continue;
+		// 	}
+		// 	else if (character == '\n')
+		// 	{
+		// 		textOffset.y -= scale.y * 50.f * myEnterSpacing * 2.f * myFontSize;
+		// 		textOffset.x = startOffset.x;
+		// 		currentLineCount++;
+		// 		continue;
+		// 	}
+		// 	else if (character == ' ')
+		// 	{
+		// 		textOffset.x += scale.x * 50.f * myCharacterSpacing * myFontSize;
+		// 		continue;
+		// 	}
+		//
+		// 	Math::Vector2f scaleRect = scale * myRect * resolution;
+		//
+		// 	if (font.myCharTexture.find(character) == font.myCharTexture.end())
+		// 		character = '\n';
+		//
+		// 	Character& characterFace = font.myCharTexture.at(character);
+		// 	float characterAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
+		//
+		// 	// float newXOffset = textOffset.x + characterAdvance;
+		// 	// if (newXOffset >= scaleRect.x)
+		// 	// {
+		// 	// 	return;
+		// 	// }
+		//
+		// 	myMaterial->Use(characterFace.textureID);
+		//
+		// 	Math::Vector2f textSize = { (float)characterFace.size.x, (float)characterFace.size.y };
+		// 	GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "size", &textSize);
+		//
+		// 	float lineOffset;
+		// 	if (myTextAlignment == 0)
+		// 		lineOffset = 0;
+		// 	else
+		// 		lineOffset = lineOffsets[currentLineCount] - scale.x * myCharacterSpacing;
+		//
+		//
+		// 	Math::Vector2f characterSpecificOffset = textOffset;
+		// 	characterSpecificOffset.x += (characterFace.bearing.x * 100.f * scale.x) - lineOffset;
+		// 	characterSpecificOffset.y -= (characterFace.size.y - characterFace.bearing.y) * scale.y * 100.f;
+		// 	GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "offset", &characterSpecificOffset);
+		//
+		// 	textOffset.x += characterAdvance * myCharacterSpacing;
+		//
+		// 	TextSprite::Get().Render();
+		// }
 	}
 
 	void TextRenderer::SetFontSize(int aFontSize)

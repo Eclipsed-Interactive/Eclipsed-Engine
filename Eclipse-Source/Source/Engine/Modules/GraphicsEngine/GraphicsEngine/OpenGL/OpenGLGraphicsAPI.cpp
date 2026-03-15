@@ -274,7 +274,7 @@ namespace Eclipse
 		return ErrorCode::SUCCESS;
 	}
 
-	void GraphicsEngine::AddGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue)
+	void GraphicsEngine::AddGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
 	{
 		switch (aType)
 		{
@@ -294,7 +294,7 @@ namespace Eclipse
 		}
 	}
 
-	void GraphicsEngine::UpdateGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue)
+	void GraphicsEngine::UpdateGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
 	{
 		switch (aType)
 		{
@@ -314,7 +314,7 @@ namespace Eclipse
 		}
 	}
 
-	void GraphicsEngine::GetGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue)
+	void GraphicsEngine::GetGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
 	{
 		switch (aType)
 		{
@@ -334,7 +334,7 @@ namespace Eclipse
 		}
 	}
 
-	void GraphicsEngine::SetUniform(UniformType aType, unsigned aShaderProgram, const std::string& aUniformName, void* aValue)
+	void GraphicsEngine::SetUniform(UniformType aType, unsigned aShaderProgram, const char* aUniformName, void* aValue)
 	{
 		switch (aType)
 		{

@@ -9,6 +9,7 @@
 #include "CoreEngine/Math/Color.h"
 
 #include "AssetEngine/Assets/Material.h"
+#include "Components/Rendering/BaseRenderComponent.h"
 #include "CoreEngine/Macros/defines.h"
 
 namespace Eclipse
@@ -18,7 +19,7 @@ namespace Eclipse
 
     class Transform2D;
     
-    class ECLIPSED_API SpriteRenderer2D : public Component
+    class ECLIPSED_API SpriteRenderer2D : public BaseRenderComponent
     {
         COMPONENT_BASE_2(SpriteRenderer2D, 20)
 

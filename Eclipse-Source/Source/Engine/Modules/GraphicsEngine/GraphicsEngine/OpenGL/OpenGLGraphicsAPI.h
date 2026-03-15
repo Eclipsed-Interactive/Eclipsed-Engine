@@ -30,11 +30,11 @@ namespace Eclipse
 
 		static ErrorCode CheckErrorCodes(ErrorCode aErrorCode);
 
-		static void AddGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue);
-		static void UpdateGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue);
-		static void GetGlobalUniform(UniformType aType, const std::string& aUniformName, void* aValue);
+		static void AddGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
+		static void UpdateGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
+		static void GetGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
 
-		static void SetUniform(UniformType aType, unsigned aShaderProgram, const std::string& aUniformName, void* aValue);
+		static void SetUniform(UniformType aType, unsigned aShaderProgram, const char* aUniformName, void* aValue);
 
 		static void SetGlobalUniforms(unsigned aShaderProgram);
 

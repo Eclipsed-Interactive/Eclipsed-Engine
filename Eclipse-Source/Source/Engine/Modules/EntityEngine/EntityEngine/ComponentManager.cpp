@@ -120,6 +120,7 @@ namespace Eclipse
     
     void ComponentManager::RenderComponents()
     {
+        SortComponents();
         for (auto& component : myComponents)
             component->Render();
     }
@@ -134,7 +135,7 @@ namespace Eclipse
     {
         std::sort(myComponents.begin(), myComponents.end(), [&](Component* aComp0, Component* aComp1)
         {
-            return aComp0->GetUpdatePriority() + aComp0->GetZIndex() > aComp1->GetUpdatePriority() + aComp0->GetZIndex();
+            return aComp0->GetUpdatePriority() + aComp0->GetZIndex() > aComp1->GetUpdatePriority() + aComp1->GetZIndex();
         });
 
         myEntityIDToVectorOfComponentIDs.clear();

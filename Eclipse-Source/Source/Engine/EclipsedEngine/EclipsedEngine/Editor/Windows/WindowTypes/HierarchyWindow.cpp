@@ -213,9 +213,7 @@ namespace Eclipse::Editor
 
             children.pop_back();
             if (children.size() <= 0)
-            {
                 gameobjectIdsThatAreOpen.erase(parent->GetID());
-            }
         }
 
         if (aChild->transform && aParent->transform)

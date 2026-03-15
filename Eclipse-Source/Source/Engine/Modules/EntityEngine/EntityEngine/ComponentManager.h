@@ -69,6 +69,8 @@ namespace Eclipse
 		static void RenderComponents();
 
 		static void SortComponents();
+		
+		static void SortRenderComponents();
 
 		static void BeginCollisions(unsigned aGOID);
 		static void EndCollisions(unsigned aGOID);
@@ -132,6 +134,7 @@ namespace Eclipse
 		static inline size_t myComponentMemoryTracker = 0;
 		static inline uint8_t* myComponentData;
 
+		static inline std::vector<Component*> myRenderComponents;
 		static inline std::vector<Component*> myComponents;
 
 		static inline std::vector<Component*> myComponentsToStartBuffer;
