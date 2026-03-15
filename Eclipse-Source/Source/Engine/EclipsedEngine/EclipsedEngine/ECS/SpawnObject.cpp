@@ -72,7 +72,6 @@ namespace Eclipse
                 PasteGameObject(newGameObject, child, anAllocator);
 
                 aGameObject->AddChild(newGameObject);
-                newGameObject->SetParent(aGameObject);
             }
         }
     }
@@ -219,7 +218,6 @@ namespace Eclipse
                 PasteGameObject(newGameObject, child, anAllocator);
 
                 aGameObject->AddChild(newGameObject);
-                newGameObject->SetParent(aGameObject);
             }
         }
     }

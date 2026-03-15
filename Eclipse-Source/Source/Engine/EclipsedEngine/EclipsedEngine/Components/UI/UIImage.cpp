@@ -29,7 +29,7 @@ namespace Eclipse
 
         if (!hasMaterial)
         {
-            material = Resources::GetDefault<Material>();
+            material = Resources::GetDefault<Material>(UI);
             material->Create();
 
             hasMaterial = true;
@@ -69,17 +69,12 @@ namespace Eclipse
 
         Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
-        Math::Vector2f position = tranform->Position;
-        position *= canvasScaleRelationOneDiv;
+        Math::Vector2f position = tranform->GetPosition();
         position *= canvasCameraTransform.ScaleMultiplier;
-        position.x *= aspectRatio;
-
         position += canvasCameraTransform.PositionOffset;
 
+
         Math::Vector2f scale = tranform->WidthHeightPX;
-        scale *= canvasScaleRelationOneDiv;
-        scale *= Math::Vector2f(200, 200);
-        scale.x *= aspectRatio;
         scale *= canvasCameraTransform.ScaleMultiplier;
 
         float rotation = 0.f;

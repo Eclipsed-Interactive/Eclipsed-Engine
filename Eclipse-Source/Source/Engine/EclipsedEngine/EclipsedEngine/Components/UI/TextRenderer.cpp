@@ -322,24 +322,26 @@ namespace Eclipse
 
 	void TextRenderer::OnDrawGizmos()
 	{
-		if (drawRectGizmos)
-		{
-			auto tranform = gameObject->GetComponent<RectTransform>();
-			if (!tranform)
-				return;
-
-
-			Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-			float aspectRatio = resolution.x / resolution.y;
-			Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-
-			const Math::Vector2f& position = tranform->Position.Get() * canvasScaleRelationOneDiv;
-			//float rotation = gameObject->transform->GetRotation();
-			Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
-			scale.x *= aspectRatio;
-
-			DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale * 0.5f, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
-		}
+		// Commented because doing it wrong way
+		
+		// if (drawRectGizmos)
+		// {
+		// 	auto tranform = gameObject->GetComponent<RectTransform>();
+		// 	if (!tranform)
+		// 		return;
+		//
+		//
+		// 	Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+		// 	float aspectRatio = resolution.x / resolution.y;
+		// 	Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		//
+		// 	const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv;
+		// 	//float rotation = gameObject->transform->GetRotation();
+		// 	Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
+		// 	scale.x *= aspectRatio;
+		//
+		// 	DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale * 0.5f, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
+		// }
 	}
 
 	void TextRenderer::Render()
@@ -376,7 +378,7 @@ namespace Eclipse
 		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
 		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
 
-		Math::Vector2f position = tranform->Position;
+		Math::Vector2f position = tranform->GetPosition();
 		position *= canvasCameraTransform.ScaleMultiplier;
 		position += canvasCameraTransform.PositionOffset;
 
@@ -432,8 +434,8 @@ namespace Eclipse
 		float maxCharSize = myFont->maxCharHeight;
 		// if (myTextCentering == 0)
 		// 	textOffset.y = (scaleRect.y - myFontSize * 4.f);
-		// else if (myTextCentering == 1)
-		// 	textOffset.y = (myFontSize * 0.000175f) * lineOffsets.size() * 100.f;
+		// if (myTextCentering == 1)
+		// 	textOffset.y = myFontSize * -3.f * lineOffsets.size();
 		// else if (myTextCentering == 2)
 		// 	textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
 

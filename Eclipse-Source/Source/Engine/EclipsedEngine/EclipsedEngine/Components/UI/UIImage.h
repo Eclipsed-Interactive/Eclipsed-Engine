@@ -10,7 +10,7 @@ namespace Eclipse
 {
     class UIImage : public BaseUI
     {
-        COMPONENT_BASE_2(UIImage, 0)
+        COMPONENT_BASE_2(UIImage, 100)
 
     public:
         void OnComponentAdded() override;

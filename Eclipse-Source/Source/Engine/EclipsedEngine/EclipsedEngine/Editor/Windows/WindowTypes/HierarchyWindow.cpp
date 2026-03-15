@@ -31,347 +31,361 @@
 
 namespace Eclipse::Editor
 {
-	void HierarchyWindow::HierarchyButton(GameObject* aGameObject, float totalIndent)
-	{
-		unsigned id = aGameObject->GetID();
-		bool goIsOpen = gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end();
+    void HierarchyWindow::HierarchyButton(GameObject* aGameObject, float totalIndent)
+    {
+        unsigned id = aGameObject->GetID();
+        bool goIsOpen = gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end();
 
-		ImGui::PushFont(Editor::EditorUIManager::FontExtraSmall);
-		if (aGameObject->GetChildCount() > 0)
-		{
-			float cursorXpos = ImGui::GetCursorPosX() + totalIndent;
+        ImGui::PushFont(Editor::EditorUIManager::FontExtraSmall);
+        if (aGameObject->GetChildCount() > 0)
+        {
+            float cursorXpos = ImGui::GetCursorPosX() + totalIndent;
 
-			ImGui::SetCursorPosX(cursorXpos - 2);
+            ImGui::SetCursorPosX(cursorXpos - 2);
 
-			if (goIsOpen)
-			{
-				ImGui::Text(ICON_FA_SORT_DOWN);
-				ImGui::SameLine();
-			}
-			else
-			{
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-				ImGui::Text(ICON_FA_PLAY);
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
-			}
+            if (goIsOpen)
+            {
+                ImGui::Text(ICON_FA_SORT_DOWN);
+                ImGui::SameLine();
+            }
+            else
+            {
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+                ImGui::Text(ICON_FA_PLAY);
+                ImGui::SameLine();
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
+            }
 
-			ImGui::SetCursorPosX(cursorXpos - 6);
-			if (ImGui::InvisibleButton(std::string("##InvisibleButtonForChilding" + std::to_string(id)).c_str(), ImVec2(20, 20)))
-			{
-				if (gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end())
-					gameobjectIdsThatAreOpen.erase(id);
-				else
-					gameobjectIdsThatAreOpen.emplace(id);
-			}
-			ImGui::SameLine();
-		}
+            ImGui::SetCursorPosX(cursorXpos - 6);
+            if (ImGui::InvisibleButton(std::string("##InvisibleButtonForChilding" + std::to_string(id)).c_str(), ImVec2(20, 20)))
+            {
+                if (gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end())
+                    gameobjectIdsThatAreOpen.erase(id);
+                else
+                    gameobjectIdsThatAreOpen.emplace(id);
+            }
+            ImGui::SameLine();
+        }
 
-		if (!goIsOpen && aGameObject->GetChildCount() > 0)
-		{
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
-		}
+        if (!goIsOpen && aGameObject->GetChildCount() > 0)
+        {
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
+        }
 
-		if (id == CurrentGameObjectID)
-		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
-		}
+        if (id == CurrentGameObjectID)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
+        }
 
-		ImGui::SetCursorPosX(totalIndent + 24);
-		std::string buttonName = std::string(aGameObject->GetName() + "##" + std::to_string(id));
-		const char* itemName = aGameObject->GetName().c_str();
-		ImVec2 textSize = ImGui::CalcTextSize(itemName);
-		bool clickedButton = ImGui::Button(buttonName.c_str(), ImVec2(textSize.x + 10, 20));
+        ImGui::SetCursorPosX(totalIndent + 24);
+        std::string buttonName = std::string(aGameObject->GetName() + "##" + std::to_string(id));
+        const char* itemName = aGameObject->GetName().c_str();
+        ImVec2 textSize = ImGui::CalcTextSize(itemName);
+        bool clickedButton = ImGui::Button(buttonName.c_str(), ImVec2(textSize.x + 10, 20));
 
-		if (ImGui::IsItemHovered())
-		{
-			gameobjectrightclicked = true;
+        if (ImGui::IsItemHovered())
+        {
+            gameobjectrightclicked = true;
 
-			if (ImGui::IsMouseReleased(1))
-			{
-				ImGui::OpenPopup("GameobjectHierarchyRightClicked");
-				SelectedGameobjectID = id;
-			}
-		}
+            if (ImGui::IsMouseReleased(1))
+            {
+                ImGui::OpenPopup("GameobjectHierarchyRightClicked");
+                SelectedGameobjectID = id;
+            }
+        }
 
-		if (id == CurrentGameObjectID)
-			clickedButton = false;
+        if (id == CurrentGameObjectID)
+            clickedButton = false;
 
-		if (clickedButton)
-		{
-			CurrentGameObjectID = id;
-			InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
-		}
-		ImGui::PopFont();
-		if (id == CurrentGameObjectID && !clickedButton)
-		{
-			ImGui::PopStyleColor();
-		}
+        if (clickedButton)
+        {
+            CurrentGameObjectID = id;
+            InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
+        }
+        ImGui::PopFont();
+        if (id == CurrentGameObjectID && !clickedButton)
+        {
+            ImGui::PopStyleColor();
+        }
 
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-		{
-			ImGui::SetDragDropPayload("DND_Childing_Reordering", &id, sizeof(unsigned));
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+        {
+            ImGui::SetDragDropPayload("DND_Childing_Reordering", &id, sizeof(unsigned));
 
-			ImGui::Text(aGameObject->GetName().c_str());
-			ImGui::EndDragDropSource();
-		}
+            ImGui::Text(aGameObject->GetName().c_str());
+            ImGui::EndDragDropSource();
+        }
 
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_Childing_Reordering"))
-			{
-				IM_ASSERT(payload->DataSize == sizeof(unsigned));
-				unsigned draggedEntityID = *(const unsigned*)payload->Data;
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_Childing_Reordering"))
+            {
+                IM_ASSERT(payload->DataSize == sizeof(unsigned));
+                unsigned draggedEntityID = *(const unsigned*)payload->Data;
 
-				auto it = ComponentManager::myEntityIdToEntity.find(draggedEntityID);
-				if (it != ComponentManager::myEntityIdToEntity.end())
-				{
-					AssignParentChildren(it->second, aGameObject);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
+                auto it = ComponentManager::myEntityIdToEntity.find(draggedEntityID);
+                if (it != ComponentManager::myEntityIdToEntity.end())
+                {
+                    AssignParentChildren(it->second, aGameObject);
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
 
-		if (gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end())
-		{
-			std::vector<GameObject*> children = aGameObject->GetChildren();
-			totalIndent += 24.f;
+        if (gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end())
+        {
+            std::vector<GameObject*> children = aGameObject->GetChildren();
+            totalIndent += 24.f;
 
-			for (auto& child : children)
-			{
-				HierarchyButton(child, totalIndent);
-			}
-		}
-	}
+            for (auto& child : children)
+            {
+                HierarchyButton(child, totalIndent);
+            }
+        }
+    }
 
-	bool IsNewParentMyChild(Eclipse::GameObject* aParent, Eclipse::GameObject* aChild)
-	{
-		auto& children = aChild->GetChildren();
-		for (auto& child : children)
-		{
-			if (child->GetID() == aParent->GetID())
-				return true;
+    bool IsNewParentMyChild(Eclipse::GameObject* aParent, Eclipse::GameObject* aChild)
+    {
+        auto& children = aChild->GetChildren();
+        for (auto& child : children)
+        {
+            if (child->GetID() == aParent->GetID())
+                return true;
 
-			if (IsNewParentMyChild(aParent, child))
-				return true;
-		}
+            if (IsNewParentMyChild(aParent, child))
+                return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	bool HierarchyWindow::CheckCopomentType(GameObject* aChild, GameObject* aParent)
-	{
-		if (aParent->GetComponent<Transform2D>() && aChild->transform)
-		{
-			/* code */
-		}
+    bool HierarchyWindow::CheckCopomentType(GameObject* aChild, GameObject* aParent)
+    {
+        if (aParent->GetComponent<Transform2D>() && aChild->transform)
+        {
+            /* code */
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	Canvas* HierarchyWindow::GetParentCanvas(GameObject* BaseObject)
-	{
-		Canvas* canvas = BaseObject->GetComponent<Canvas>();
-		if (BaseObject->GetParent())
-			canvas = GetParentCanvas(BaseObject->GetParent());
-		
-		return canvas;
-	}
+    void SetCanvasForChildren(Canvas* aCanvas, std::vector<GameObject*> aChildren)
+    {
+        for (auto& child : aChildren)
+        {
+            if (auto* recttransform = child->GetComponent<RectTransform>())
+            {
+                recttransform->myCanvas = aCanvas;
+                if (child->GetChildCount())
+                    SetCanvasForChildren(aCanvas, child->GetChildren());
+            }
+        }
+    }
 
-	void HierarchyWindow::AssignParentChildren(GameObject* aChild, GameObject* aParent)
-	{
-		if (IsNewParentMyChild(aParent, aChild))
-			return;
+    Canvas* HierarchyWindow::GetParentCanvas(GameObject* BaseObject)
+    {
+        Canvas* canvas = BaseObject->GetComponent<Canvas>();
+        if (BaseObject->GetParent())
+            canvas = GetParentCanvas(BaseObject->GetParent());
 
-		auto& oldParent = aChild->GetParent();
-		if (auto& parent = oldParent)
-		{
-			if (oldParent->GetID() == aParent->GetID())
-				return;
+        return canvas;
+    }
 
-			auto& children = parent->GetChildren();
-			size_t childIndex = aChild->GetChildIndex();
+    void HierarchyWindow::AssignParentChildren(GameObject* aChild, GameObject* aParent)
+    {
+        if (IsNewParentMyChild(aParent, aChild))
+            return;
 
-			for (int i = childIndex; i < children.size() - 1; i++)
-			{
-				children[i] = children[i + 1];
-				children[i]->SetChildIndex(i);
-			}
+        auto& oldParent = aChild->GetParent();
+        if (auto& parent = oldParent)
+        {
+            if (oldParent->GetID() == aParent->GetID())
+                return;
 
-			children.pop_back();
-			if (children.size() <= 0)
-			{
-				gameobjectIdsThatAreOpen.erase(parent->GetID());
-			}
-		}
+            auto& children = parent->GetChildren();
+            size_t childIndex = aChild->GetChildIndex();
 
-		if (aChild->transform && aParent->transform)
-		{
-			Math::Vector2f childPos = aChild->transform->GetPosition();
-			Math::Vector3f positionVec3(childPos.x, childPos.y, 1);
-			positionVec3 = positionVec3 * aParent->transform->GetTransformMatrix().GetInverse();
-			childPos = { positionVec3.x, positionVec3.y };
-			aChild->transform->SetPosition(childPos);
-		}
+            for (int i = childIndex; i < children.size() - 1; i++)
+            {
+                children[i] = children[i + 1];
+                children[i]->SetChildIndex(i);
+            }
 
-		if (auto* recttransform = aChild->GetComponent<RectTransform>())
-		{
-			if (recttransform->myCanvas = GetParentCanvas(aChild))
-			{
-				recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
-				recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
-				recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
-			}
-		}
+            children.pop_back();
+            if (children.size() <= 0)
+            {
+                gameobjectIdsThatAreOpen.erase(parent->GetID());
+            }
+        }
 
+        if (aChild->transform && aParent->transform)
+        {
+            Math::Vector2f childPos = aChild->transform->GetPosition();
+            Math::Vector3f positionVec3(childPos.x, childPos.y, 1);
+            positionVec3 = positionVec3 * aParent->transform->GetTransformMatrix().GetInverse();
+            childPos = {positionVec3.x, positionVec3.y};
+            aChild->transform->SetPosition(childPos);
+        }
 
-		aChild->SetParent(aParent);
+        aChild->SetParent(aParent);
 
-		gameobjectIdsThatAreOpen.emplace(aParent->GetID());
-	}
+        if (auto* recttransform = aChild->GetComponent<RectTransform>())
+        {
+            if (recttransform->myCanvas = GetParentCanvas(aChild))
+            {
+                recttransform->myCanvas->canvasCameraTransform.PositionOffset = {0.f, 0.f};
+                recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
+                recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = {1.f, 1.f};
+                
+                if (aChild->GetChildCount())
+                    SetCanvasForChildren(recttransform->myCanvas, aChild->GetChildren());
+            }
+        }
 
-	void HierarchyWindow::CreatePrefab(unsigned aGameobjectID, std::filesystem::path aPath)
-	{
-		std::string GameObjectName = ComponentManager::GetGameObject(aGameobjectID)->GetName();
+        gameobjectIdsThatAreOpen.emplace(aParent->GetID());
+    }
 
-		rapidjson::StringBuffer objectJson = EditorActions::CopyObject(aGameobjectID, false);
-		std::ofstream outputStream(aPath / (GameObjectName + ".eprf"));
-		outputStream << objectJson.GetString();
-	}
+    void HierarchyWindow::CreatePrefab(unsigned aGameobjectID, std::filesystem::path aPath)
+    {
+        std::string GameObjectName = ComponentManager::GetGameObject(aGameobjectID)->GetName();
 
-	void HierarchyWindow::Update()
-	{
-		if (ImGui::BeginPopup("GameobjectHierarchyRightClicked"))
-		{
-			if (ImGui::BeginMenu("Actions"))
-			{
-				if (ImGui::MenuItem("Make Prefab"))
-				{
-					if (AssetWindow::ActivePath.has_extension())
-						AssetWindow::ActivePath.remove_filename();
+        rapidjson::StringBuffer objectJson = EditorActions::CopyObject(aGameobjectID, false);
+        std::ofstream outputStream(aPath / (GameObjectName + ".eprf"));
+        outputStream << objectJson.GetString();
+    }
 
-					CreatePrefab(SelectedGameobjectID, AssetWindow::ActivePath);
-				}
+    void HierarchyWindow::Update()
+    {
+        if (ImGui::BeginPopup("GameobjectHierarchyRightClicked"))
+        {
+            if (ImGui::BeginMenu("Actions"))
+            {
+                if (ImGui::MenuItem("Make Prefab"))
+                {
+                    if (AssetWindow::ActivePath.has_extension())
+                        AssetWindow::ActivePath.remove_filename();
 
-				ImGui::EndMenu();
-			}
+                    CreatePrefab(SelectedGameobjectID, AssetWindow::ActivePath);
+                }
 
-			ImGui::EndPopup();
-		}
+                ImGui::EndMenu();
+            }
 
-
-
-		if (!gameobjectrightclicked && ImGui::BeginPopupContextWindow("##CTX_MENU_RIGHT_CLICK", ImGuiPopupFlags_MouseButtonRight))
-		{
-			if (ImGui::BeginMenu("Create new..."))
-			{
-				if (ImGui::MenuItem("Empty GameObject"))
-				{
-					GameObject* obj = ComponentManager::CreateGameObject();
-					obj->AddComponent<Transform2D>();
-
-					obj->SetName("New GameObject");
-				}
-				if (ImGui::BeginMenu("Special"))
-				{
-					if (ImGui::MenuItem("No Transform Object"))
-					{
-						GameObject* obj = ComponentManager::CreateGameObject();
-
-						obj->SetName("New No Transform Object");
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("UI"))
-				{
-					if (ImGui::MenuItem("Canvas"))
-					{
-						GameObject* obj = ComponentManager::CreateGameObject();
-						obj->AddComponent<Transform2D>();
-						obj->AddComponent<Canvas>();
-
-						obj->SetName("Canvas");
-					}
-					else if (ImGui::MenuItem("Image"))
-					{
-						GameObject* obj = ComponentManager::CreateGameObject();
-						obj->AddComponent<RectTransform>();
-						obj->AddComponent<UIImage>();
-
-						obj->SetName("New Image");
-					}
-					else if (ImGui::MenuItem("Text"))
-					{
-						GameObject* obj = ComponentManager::CreateGameObject();
-						obj->AddComponent<RectTransform>();
-						obj->AddComponent<TextRenderer>();
-
-						obj->SetName("New Text");
-					}
-					else if (ImGui::MenuItem("Button"))
-					{
-						GameObject* obj = ComponentManager::CreateGameObject();
-						obj->AddComponent<RectTransform>();
-						obj->AddComponent<Button>();
-						obj->AddComponent<UIImage>();
-						obj->SetName("New Button");
-
-						GameObject* textObj = ComponentManager::CreateGameObject();
-						textObj->AddComponent<RectTransform>();
-						TextRenderer* rend = textObj->AddComponent<TextRenderer>();
-						rend->SetText("Button");
-						
-						obj->AddChild(textObj);
-					}
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndPopup();
-		}
-
-		gameobjectrightclicked = false;
-
-		if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
-		{
-			unsigned currentObject = HierarchyWindow::CurrentGameObjectID;
-			if (currentObject > 0)
-			{
-				if (ComponentManager::myEntityIdToEntity.find(currentObject) != ComponentManager::myEntityIdToEntity.end())
-				{
-					GameObject* gameobject = ComponentManager::myEntityIdToEntity.at(currentObject);
-					gameobject->Delete();
-					RecursiveDeleteChildren(gameobject);
-
-					gameobjectIdsThatAreOpen.erase(currentObject);
-					HierarchyWindow::CurrentGameObjectID = 0;
-				}
-			}
-		}
+            ImGui::EndPopup();
+        }
 
 
-		for (const auto& [id, data] : ComponentManager::myEntityIdToEntity)
-		{
-			GameObject* parent = data->GetParent();
-			if (parent)
-				continue;
+        if (!gameobjectrightclicked && ImGui::BeginPopupContextWindow("##CTX_MENU_RIGHT_CLICK", ImGuiPopupFlags_MouseButtonRight))
+        {
+            if (ImGui::BeginMenu("Create new..."))
+            {
+                if (ImGui::MenuItem("Empty GameObject"))
+                {
+                    GameObject* obj = ComponentManager::CreateGameObject();
+                    obj->AddComponent<Transform2D>();
 
-			HierarchyButton(data, 0.f);
-		}
-	}
+                    obj->SetName("New GameObject");
+                }
+                if (ImGui::BeginMenu("Special"))
+                {
+                    if (ImGui::MenuItem("No Transform Object"))
+                    {
+                        GameObject* obj = ComponentManager::CreateGameObject();
 
-	void HierarchyWindow::RecursiveDeleteChildren(GameObject*& aGameObject)
-	{
-		auto& children = aGameObject->GetChildren();
-		for (auto& child : children)
-			RecursiveDeleteChildren(child);
+                        obj->SetName("New No Transform Object");
+                    }
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("UI"))
+                {
+                    if (ImGui::MenuItem("Canvas"))
+                    {
+                        GameObject* obj = ComponentManager::CreateGameObject();
+                        obj->AddComponent<Transform2D>();
+                        obj->AddComponent<Canvas>();
 
-		if (!aGameObject->IsOwner())
-			return;
+                        obj->SetName("Canvas");
+                    }
+                    else if (ImGui::MenuItem("Image"))
+                    {
+                        GameObject* obj = ComponentManager::CreateGameObject();
+                        obj->AddComponent<RectTransform>();
+                        obj->AddComponent<UIImage>();
 
-		ComponentManager::Destroy(aGameObject->GetID());
-	}
+                        obj->SetName("New Image");
+                    }
+                    else if (ImGui::MenuItem("Text"))
+                    {
+                        GameObject* obj = ComponentManager::CreateGameObject();
+                        obj->AddComponent<RectTransform>();
+                        obj->AddComponent<TextRenderer>();
+
+                        obj->SetName("New Text");
+                    }
+                    else if (ImGui::MenuItem("Button"))
+                    {
+                        GameObject* obj = ComponentManager::CreateGameObject();
+                        obj->AddComponent<RectTransform>();
+                        obj->AddComponent<Button>();
+                        obj->AddComponent<UIImage>();
+                        obj->SetName("New Button");
+
+                        GameObject* textObj = ComponentManager::CreateGameObject();
+                        textObj->AddComponent<RectTransform>();
+                        TextRenderer* rend = textObj->AddComponent<TextRenderer>();
+                        rend->SetText("Button");
+
+                        obj->AddChild(textObj);
+                    }
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndPopup();
+        }
+
+        gameobjectrightclicked = false;
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
+        {
+            unsigned currentObject = HierarchyWindow::CurrentGameObjectID;
+            if (currentObject > 0)
+            {
+                if (ComponentManager::myEntityIdToEntity.find(currentObject) != ComponentManager::myEntityIdToEntity.end())
+                {
+                    GameObject* gameobject = ComponentManager::myEntityIdToEntity.at(currentObject);
+                    gameobject->Delete();
+                    RecursiveDeleteChildren(gameobject);
+
+                    gameobjectIdsThatAreOpen.erase(currentObject);
+                    HierarchyWindow::CurrentGameObjectID = 0;
+                }
+            }
+        }
+
+
+        for (const auto& [id, data] : ComponentManager::myEntityIdToEntity)
+        {
+            GameObject* parent = data->GetParent();
+            if (parent)
+                continue;
+
+            HierarchyButton(data, 0.f);
+        }
+    }
+
+    void HierarchyWindow::RecursiveDeleteChildren(GameObject*& aGameObject)
+    {
+        auto& children = aGameObject->GetChildren();
+        for (auto& child : children)
+            RecursiveDeleteChildren(child);
+
+        if (!aGameObject->IsOwner())
+            return;
+
+        ComponentManager::Destroy(aGameObject->GetID());
+    }
 }
 #endif

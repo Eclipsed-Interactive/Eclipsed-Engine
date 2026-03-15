@@ -19,7 +19,7 @@ namespace Eclipse
 
         //canvasCameraTransform.Rotation = gameObject->transform->GetRotation();
 
-        canvasCameraTransform.ScaleMultiplier = Math::Vector2f(sceneScale.x * aspectRatio * 2.f * 0.888f, sceneScale.y);
+        canvasCameraTransform.ScaleMultiplier = Math::Vector2f(sceneScale.x * aspectRatio * 1.7777777777f, sceneScale.y) * 2.f;
 
         canvasCameraTransform.PositionOffset = { 0.f, 0.f };
         if (isScene)
