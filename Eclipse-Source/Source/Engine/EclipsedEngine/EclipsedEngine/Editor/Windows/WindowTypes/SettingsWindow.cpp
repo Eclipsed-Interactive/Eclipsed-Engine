@@ -20,6 +20,28 @@
 
 #include "CoreEngine/Settings/PhysicsSettings.h"
 
+#include "ImGui/imgui_widget_flamegraph.h"
+
+struct FlameData {
+    struct Entry {
+        float start, end;
+        ImU8 level;
+        const char* caption;
+    };
+    std::vector<Entry> entries;
+};
+
+// Getter function
+void MyFlameGetter(float* start, float* end, ImU8* level, const char** caption, const void* data, int idx) {
+    const FlameData* flameData = (const FlameData*)data;
+    if (idx >= flameData->entries.size()) return;
+
+    if (start) *start = flameData->entries[idx].start;
+    if (end) *end = flameData->entries[idx].end;
+    if (level) *level = flameData->entries[idx].level;
+    if (caption) *caption = flameData->entries[idx].caption;
+}
+
 namespace Eclipse::Editor
 {
     void GameSettingsWindow::Update()
@@ -29,11 +51,51 @@ namespace Eclipse::Editor
 
         if (collisionLayersShown) DrawCollisionLayerEditor();
 
-
         static bool sceneShown = false;
         sceneShown = ImGui::CollapsingHeader("Scene Build Settings");
 
         if (sceneShown) DrawSceneEditor();
+
+        // Static test data - only initialized once
+        static FlameData testData;
+        static bool initialized = false;
+
+        if (!initialized)
+        {
+            testData.entries.push_back({ 0.0f, 100.0f, 0, "main()" });
+            testData.entries.push_back({ 10.0f, 30.0f, 1, "update()" });
+            testData.entries.push_back({ 30.0f, 45.0f, 1, "render()" });
+            testData.entries.push_back({ 45.0f, 60.0f, 1, "physics()" });
+            testData.entries.push_back({ 15.0f, 25.0f, 2, "AI::think()" });
+            testData.entries.push_back({ 25.0f, 28.0f, 2, "AI::decide()" });
+            testData.entries.push_back({ 32.0f, 38.0f, 2, "draw::mesh()" });
+            testData.entries.push_back({ 38.0f, 42.0f, 2, "draw::shader()" });
+            testData.entries.push_back({ 48.0f, 55.0f, 2, "collision::detect()" });
+            testData.entries.push_back({ 55.0f, 58.0f, 2, "collision::resolve()" });
+            testData.entries.push_back({ 5.0f, 8.0f, 1, "init()" });
+            testData.entries.push_back({ 60.0f, 75.0f, 1, "audio()" });
+            testData.entries.push_back({ 62.0f, 68.0f, 2, "audio::load()" });
+            testData.entries.push_back({ 68.0f, 73.0f, 2, "audio::play()" });
+            testData.entries.push_back({ 75.0f, 95.0f, 1, "network()" });
+            testData.entries.push_back({ 78.0f, 85.0f, 2, "network::send()" });
+            testData.entries.push_back({ 85.0f, 92.0f, 40, "network::recv()" });
+            initialized = true;
+        }
+
+        static bool showFlameGraph = true;
+        if (ImGui::CollapsingHeader("Flame Graph Test"))
+        {
+            ImGuiWidgetFlameGraph::PlotFlame(
+                "Test Flame Graph",
+                MyFlameGetter,
+                &testData,
+                (int)testData.entries.size(),
+                0,
+                "Total: 100ms",
+                0.0f,  // scale_min
+                100.0f // scale_max
+            );
+        }
     }
 
     void GameSettingsWindow::DrawSceneEditor()
@@ -75,7 +137,7 @@ namespace Eclipse::Editor
                 }
             }
 
-            for (int row = 0; row < sceneOrder.size(); row++)
+            for (int row = 0; row < (int)sceneOrder.size(); row++)
             {
                 const std::string& name = sceneOrder[row];
 
@@ -116,7 +178,6 @@ namespace Eclipse::Editor
                             sceneOrder.insert(sceneOrder.begin() + insert_at, moved);
                             paths.insert(paths.begin() + insert_at, movedPath);
 
-
                             int idx = 0;
                             for (auto& path : sceneOrder)
                             {
@@ -150,10 +211,6 @@ namespace Eclipse::Editor
             ImGui::TableAngledHeadersRow();
             ImGui::PopID();
 
-            // ImGui::PushID(78347688345);
-            // ImGui::TableHeadersRow();
-            // ImGui::PopID();
-
             int totalID = 0;
             for (int i = 0; i < columnCount; ++i)
             {
@@ -179,7 +236,7 @@ namespace Eclipse::Editor
 
                     ImGui::PushID(totalID);
                     ImGui::SetNextItemWidth(10);
-                    if (ImGui::Checkbox("", &hasLayerBool))
+                    if (ImGui::Checkbox("##collision", &hasLayerBool))
                     {
                         if (hasLayerBool)
                         {
@@ -205,28 +262,7 @@ namespace Eclipse::Editor
     void GameSettingsWindow::SaveLayerEditToJSON()
     {
         Settings::PhysicsSettings::SetPhysicsLayers(PhysicsEngine::myCollisionLayers);
-
         Settings::PhysicsSettings::Save();
-
-        // std::string filePath = (PathManager::GetProjectRoot() / "Settings/CollisionLayers.json").generic_string();
-        // rapidjson::Document document;
-        // document.SetObject();
-        // auto& allocator = document.GetAllocator();
-
-        // rapidjson::Value layersArray(rapidjson::kArrayType);
-        // for (int i = 0; i < layerCount; i++) {
-        //     layersArray.PushBack(PhysicsEngine::myCollisionLayers[i], allocator);
-        // }
-
-        // document.AddMember("Layers", layersArray, allocator);
-
-        // rapidjson::StringBuffer buffer;
-        // rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-        // document.Accept(writer);
-
-        // std::ofstream ofs(filePath);
-        // ofs << buffer.GetString();
-        // ofs.close();
     }
 }
 #endif
