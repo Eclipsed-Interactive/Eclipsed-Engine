@@ -2,17 +2,21 @@
 
 #include "EntityEngine/ComponentManager.h"
 #include "EclipsedEngine/Components/Component.h"
+#include "CoreEngine/GraphicsBuffers/CanvasBuffer.h"
 
 namespace Eclipse
 {
     class Canvas : public Component
     {
-        COMPONENT_BASE_2(Canvas, UINT32_MAX);
+        COMPONENT_BASE_2(Canvas, 999999);
 
     public:
 
         void SetCanvasTransformProperties();
         void EditorUpdate() override;
+        void OnComponentAdded() override;
+
+        void TransformUpdate();
 
         SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, ReferenceResolution, Math::Vector2f(1920, 1080));
         SERIALIZED_FIELD_DEFAULT(bool, WorldSpace, false);
@@ -26,5 +30,6 @@ namespace Eclipse
 
         static inline bool drawCanvasGizmos = true;
 
+        CanvasBuffer myCanvasBuffer;
     };
 }

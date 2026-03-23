@@ -2,7 +2,7 @@
 
 #include "EclipsedEngine/Components/Component.h"
 
-#include "CoreEngine/Math/Math.h"
+#include "CoreEngine/GraphicsBuffers/CameraBuffer.h"
 
 namespace Eclipse
 {
@@ -24,5 +24,7 @@ namespace Eclipse
         bool created;
 
         static inline bool drawCameraGizmos = false;
+
+        CameraBuffer myCameraBuffer;
     };
 }

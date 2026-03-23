@@ -133,7 +133,7 @@ namespace Eclipse::Editor
 
 		int windowSizeX = resolution.x * 0.5f;
 		int windowSizeY = resolution.y * 0.5f;
-		Math::Vector2i windowPosition = GraphicsEngine::GetWindowPosition();
+		Math::Vector2i windowPosition = GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetWindowPosition();
 
 		ImGui::Begin("TestGameButons", (bool*)1, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 

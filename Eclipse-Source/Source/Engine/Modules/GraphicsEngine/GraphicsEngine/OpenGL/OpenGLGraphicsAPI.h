@@ -3,13 +3,14 @@
 #include <vector>
 #include <functional>
 
+#include "OpenGLGraphicsBuffer.h"
 #include "CoreEngine/ErrorCodes.h"
 
 #include "CoreEngine/Math/Math.h"
 #include "CoreEngine/Math/Color.h"
 
 #include "UniformVariableManager.h"
-#include "GPUInfo.h"
+#include "GraphicsEngine/GraphicsEngine.h"
 
 #undef CreateWindow
 
@@ -18,63 +19,61 @@ struct GLFWcursor;
 
 namespace Eclipse
 {
-	class GraphicsEngine
+	class OpenGLGraphicsEngine : public GraphicsEngine
 	{
 	public:
-		static ErrorCode Init();
-		static void BeginFrame();
-		static void Render();
-		static void EndFrame();
+		OpenGLGraphicsEngine() { myGraphicsBuffer = new OpenGLGraphicsBuffer(); }
+		
+		ErrorCode Init();
+		void BeginFrame();
+		void Render();
+		void EndFrame();
 
-		static int ShouldWindowClose();
+		int ShouldWindowClose();
 
-		static ErrorCode CheckErrorCodes(ErrorCode aErrorCode);
+		ErrorCode CheckErrorCodes(ErrorCode aErrorCode);
 
-		static void AddGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
-		static void UpdateGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
-		static void GetGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
+		void AddGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
+		void UpdateGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
+		void GetGlobalUniform(UniformType aType, const char* aUniformName, void* aValue);
 
-		static void SetUniform(UniformType aType, unsigned aShaderProgram, const char* aUniformName, void* aValue);
+		void SetUniform(UniformType aType, unsigned aShaderProgram, const char* aUniformName, void* aValue);
 
-		static void SetGlobalUniforms(unsigned aShaderProgram);
+		void SetGlobalUniforms(unsigned aShaderProgram);
 
-		static void BindTexture(int aGLType, unsigned aTextureID);
+		void BindTexture(int aGLType, unsigned aTextureID);
 
-		static void BindFrameBuffer(unsigned aFrameBuffer);
+		void BindFrameBuffer(unsigned aFrameBuffer);
 
-		static void ClearCurrentSceneBuffer(
-			float aClearColorR = myClearColor.r,
-			float aClearColorG = myClearColor.g,
-			float aClearColorB = myClearColor.b,
+		void ClearCurrentSceneBuffer(
+			float aClearColorR,
+			float aClearColorG,
+			float aClearColorB,
 			float aClearColorA = 1.f);
 
-		static void RegisterListenToResolutionChange(const std::function<void()>& aLambda);
+		void ClearCurrentSceneBuffer();
 
-		static Math::Vector2i GetWindowPosition();
+		void RegisterListenToResolutionChange(const std::function<void()>& aLambda);
 
-		static Math::Vector4ui ReadPixel(const Math::Vector2ui& aPos);
+		Math::Vector2i GetWindowPosition();
 
-		static void SetWindowIcon(const char* aPath);
+		Math::Vector4ui ReadPixel(const Math::Vector2ui& aPos);
 
-		static void CreateOpenGLTexture(unsigned& textureID, Math::Vector2f& spriteDivOne, float& dimDivOne, int channels, int width, int height, unsigned char* aPixels);
+		void SetWindowIcon(const char* aPath);
+
+		void CreateOpenGLTexture(unsigned& textureID, Math::Vector2f& spriteDivOne, float& dimDivOne, int channels, int width, int height, unsigned char* aPixels);
+	private:
+		GLFWwindow* myWindow = nullptr;
+		UniformVariableManager myUniformManager;
+		Math::Color myClearColor;
 
 	private:
-		static inline GLFWwindow* myWindow;
-		static inline UniformVariableManager myUniformManager;
-		static inline Math::Color myClearColor;
-
-	private:
-		static ErrorCode InitOpenGL();
-		static ErrorCode CreateWindow();
+		ErrorCode InitOpenGL();
+		ErrorCode CreateWindow();
 
 	public:
-		enum class MouseCursor {
-			Hand,
-			Grab
-		};
-
-		static void SetCursor(MouseCursor aMouseCursor);
-		static void ResetCursor();
+		void SetCursor(MouseCursor aMouseCursor);
+		void ResetCursor();
 	private:
 
 		static inline std::vector<GLFWcursor*> myMouseCursors;

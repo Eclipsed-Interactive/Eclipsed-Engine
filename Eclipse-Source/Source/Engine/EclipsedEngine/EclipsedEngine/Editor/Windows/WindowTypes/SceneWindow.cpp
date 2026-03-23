@@ -3,20 +3,14 @@
 
 #include "ImGui/imgui.h"
 
-#include "CoreEngine/Math/Math.h"
-
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
 #include "GraphicsEngine/RenderCommands/CommandList.h"
 
 #include "CoreEngine/Input/Input.h"
 
-#include "GraphicsEngine/RenderCommands/RenderCommand.h"
-
 #include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 
-#include "EntityEngine/Component.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
-#include "EclipsedEngine/Components/UI/Canvas.h"
 
 #include "EclipsedEngine/Input/InputMapper.h"
 #include "EclipsedEngine/Components/Transform2D.h"
@@ -34,18 +28,13 @@
 #include "Editor/Windows/WindowTypes/HierarchyWindow.h"
 #include "Editor/Windows/WindowTypes/InspectorWindow.h"
 
-#include "Editor/Common/DragAndDrop.h"
-
 #include "CoreEngine/Clipboard.h"
 
-#include "CoreEngine/Files/FileInfo.h"
 #include "EclipsedEngine/ECS/SpawnObject.h"
-#include "rapidjson/document.h"
 
 #include <filesystem>
-#include <ostream>
 
-#include "EclipsedEngine/Components/Transform2D.h"
+#include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
 
 void Eclipse::Editor::SceneWindow::ZoomToObject()
 {
@@ -144,7 +133,7 @@ void Eclipse::Editor::SceneWindow::MouseManager()
 		Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
 		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / SizeXRatio, -mouseDragdelta.y / correctScaledWindowSizeY) * 2.f * (1.f / myInspectorScale);
 
-		GraphicsEngine::SetCursor(GraphicsEngine::MouseCursor::Grab);
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::MouseCursor::Grab);
 	}
 
 	if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
@@ -192,14 +181,20 @@ void Eclipse::Editor::SceneWindow::SpriteSelecter()
 	if (myGizmoMoveY || myGizmoMoveX)
 		return;
 
-	GraphicsEngine::ClearCurrentSceneBuffer(0, 0, 0);
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
 
-	int ovColor = 0;
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "notOverrideColor", &ovColor);
+	EditorBuffer* editorBuffer;
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+	editorBuffer->overideColor = 0;
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+	
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
+
+	
 
 	CommandListManager::GetSpriteCommandList().Execute();
 
-	Math::Vector4ui colorValue = GraphicsEngine::ReadPixel({ windowRelativeMousePosition.x + 10, windowRelativeMousePosition.y - 8 });
+	Math::Vector4ui colorValue = GraphicsEngine::Get<OpenGLGraphicsEngine>()->ReadPixel({ windowRelativeMousePosition.x + 10, windowRelativeMousePosition.y - 8 });
 	unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
 
 	if (HierarchyWindow::CurrentGameObjectID == pickedID && HierarchyWindow::CurrentGameObjectID)
@@ -324,46 +319,49 @@ void Eclipse::Editor::SceneWindow::Update()
 		}
 	}
 
-	GraphicsEngine::BindFrameBuffer(mySceneFrameBuffer);
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(mySceneFrameBuffer);
 
-	Math::Vector2f lastInspectorPosition(0, 0);
-	float lastInspectorRotation = 0;
-	Math::Vector2f lastInspectorScale(1, 1);
+	// int isScene = 1;
+	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
 
-	int isScene = 1;
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
+	CameraBuffer* cameraBuffer = nullptr;
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
+	
+	Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
+	float lastInspectorRotation = cameraBuffer->cameraRotation;
+	Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
 
-	GraphicsEngine::GetGlobalUniform(UniformType::Vector2f, "cameraPosition", &lastInspectorPosition);
-	GraphicsEngine::GetGlobalUniform(UniformType::Float, "cameraRotation", &lastInspectorRotation);
-	GraphicsEngine::GetGlobalUniform(UniformType::Vector2f, "cameraScale", &lastInspectorScale);
-
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &myInspectorPosition);
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &myInspectorRotation);
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &myInspectorScale);
-
+	cameraBuffer->cameraPosition = myInspectorPosition;
+	cameraBuffer->cameraRotation = myInspectorRotation;
+	cameraBuffer->cameraScale = myInspectorScale;
+	
 	float aspectRatio = myWindowSize.y / myWindowSize.x;
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
+	cameraBuffer->resolutionRatio = aspectRatio;
 
 	glViewport(0, 0, myWindowSize.x, myWindowSize.y);
 
 	// This is not using its own framebuffer but if left click then render and get mouse position color
 	SpriteSelecter();
 
-	int notOvColor = 1;
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "notOverrideColor", &notOvColor);
+	EditorBuffer* editorBuffer;
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+	editorBuffer->overideColor = 1;
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+	
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
 
-	GraphicsEngine::ClearCurrentSceneBuffer();
-
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
+	
 	CommandListManager::GetSpriteCommandList().Execute();
 	CommandListManager::GetUICommandList().Execute();
 	CommandListManager::GetDebugDrawCommandList().Execute();
 
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &lastInspectorPosition);
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &lastInspectorRotation);
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &lastInspectorScale);
+	cameraBuffer->cameraPosition = lastInspectorPosition;
+	cameraBuffer->cameraRotation = lastInspectorRotation;
+	cameraBuffer->cameraScale = lastInspectorScale;
 
-	isScene = 0;
-	GraphicsEngine::UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
+	// isScene = 0;
+	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
 
 	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
 	{
@@ -429,7 +427,7 @@ void Eclipse::Editor::SceneWindow::Update()
 
 
 
-	GraphicsEngine::BindFrameBuffer(0);
+	GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(0);
 }
 
 void Eclipse::Editor::SceneWindow::InitSceneBuffer()

@@ -11,6 +11,7 @@
 #include "OpenGL/glad/glad.h"
 
 #include "AssetEngine/Resources.h"
+#include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
 
 namespace Eclipse
 {
@@ -94,10 +95,6 @@ namespace Eclipse
 		if (!hasMaterial)
 			return;
 
-		Math::Vector2f position = gameObject->transform->GetPosition();
-		float rotation = gameObject->transform->GetRotation();
-		Math::Vector2f scale = gameObject->transform->GetScale();
-
 		unsigned shaderID = material->GetShaderProgramID();
 
 		if (aProgramID)
@@ -113,15 +110,13 @@ namespace Eclipse
 		{
 			material->Use();
 		}
-
-
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
-		GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
+		
+		myTransformBuffer.Position = gameObject->transform->GetPosition();
+		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
+		myTransformBuffer.Scale = gameObject->transform->GetScale();
 
 		Math::Vector2f size = spriteRectMax - spriteRectMin;
-		Math::Vector4f spriteRect = { spriteRectMin.x, spriteRectMin.y, size.x, size.y };
-		GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "material.spriteRect", &spriteRect);
+		material->myMaterialBuffer.spriteRect = { spriteRectMin.x, spriteRectMin.y, size.x, size.y };
 
 		Math::Vector2f scaleMultiplier;
 		if (sprite->IsValid())
@@ -130,16 +125,18 @@ namespace Eclipse
 			scaleMultiplier = material->GetTexture().GetTextureSizeNormilized();
 
 		float aspectScale = size.y / size.x;
-		Math::Vector2f spriteScaleMultiplier = { scaleMultiplier.x, scaleMultiplier.y * aspectScale };
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "spriteScaleMultiplier", &spriteScaleMultiplier);
+		mySpriteBuffer.spriteScaleMultiplier = { scaleMultiplier.x, scaleMultiplier.y * aspectScale };
+		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
-		Math::Vector2f mirroredVec2 = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
-		GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "mirrored", &mirroredVec2);
+		EditorBuffer* editorBuffer;
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+		editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 
-		Math::Vector4f pixelPickColor = gameObject->GetPixelPickingIDColor();
-		GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "pixelPickColor", &pixelPickColor);
-
-		GraphicsEngine::SetGlobalUniforms(shaderID);
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(5, material->myMaterialBuffer);
+		
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(3, mySpriteBuffer);
 
 		Sprite::Get().Render();
 	}

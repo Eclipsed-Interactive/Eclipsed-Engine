@@ -319,7 +319,7 @@ namespace Eclipse::Editor
 			Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
 			myInspectorPosition -= Math::Vector2f(mouseDragdelta.x, -mouseDragdelta.y);
 
-			GraphicsEngine::SetCursor(GraphicsEngine::MouseCursor::Grab);
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::Get<OpenGLGraphicsEngine>()->MouseCursor::Grab);
 		}
 
 		if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))

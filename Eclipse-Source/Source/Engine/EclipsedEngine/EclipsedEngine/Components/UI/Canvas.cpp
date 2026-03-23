@@ -10,37 +10,34 @@ namespace Eclipse
     void Canvas::SetCanvasTransformProperties()
     {
         int isScene;
-        GraphicsEngine::GetGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
-        float aspectRatio;
-        GraphicsEngine::GetGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
 
-        Math::Vector2f sceneScale;
-        GraphicsEngine::GetGlobalUniform(UniformType::Vector2f, "cameraScale", &sceneScale);
-
+        CameraBuffer* cameraBuffer = nullptr;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
+        
         //canvasCameraTransform.Rotation = gameObject->transform->GetRotation();
 
-        canvasCameraTransform.ScaleMultiplier = Math::Vector2f(sceneScale.x * aspectRatio * 1.7777777777f, sceneScale.y) * 2.f;
+        canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->cameraScale.x * cameraBuffer->resolutionRatio * 1.7777777777f, cameraBuffer->cameraScale.y) * 2.f;
 
         canvasCameraTransform.PositionOffset = { 0.f, 0.f };
         if (isScene)
         {
             canvasCameraTransform.ScaleMultiplier *= gameObject->transform->GetScale();
-
-            Math::Vector2f scenePosition;
-            GraphicsEngine::GetGlobalUniform(UniformType::Vector2f, "cameraPosition", &scenePosition);
+            
+            Math::Vector2f scenePosition = cameraBuffer->cameraPosition;
             canvasCameraTransform.PositionOffset = (scenePosition * -1.f) * ReferenceResolution;
         }
 
         if (isScene || WorldSpace)
         {
             canvasCameraTransform.PositionOffset += gameObject->transform->GetPosition() * ReferenceResolution;
-            canvasCameraTransform.PositionOffset *= Math::Vector2f(aspectRatio, 1.f) * sceneScale;
+            canvasCameraTransform.PositionOffset *= Math::Vector2f(cameraBuffer->resolutionRatio, 1.f) * cameraBuffer->cameraScale;
         }
         
 
         // Rotation of canvas fucks up many things
         //float sceneRotation;
-        //GraphicsEngine::GetGlobalUniform(UniformType::Float, "cameraRotation", &sceneRotation);
+        //GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGlobalUniform(UniformType::Float, "cameraRotation", &sceneRotation);
         //canvasCameraTransform.Rotation += sceneRotation;
     }
 
@@ -57,5 +54,17 @@ namespace Eclipse
 
             DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
         }
+    }
+
+    void Canvas::OnComponentAdded()
+    {
+        gameObject->transform->AddFunctionToRunOnDirtyUpdate([&](){ TransformUpdate(); });
+    }
+
+    void Canvas::TransformUpdate()
+    {
+        Math::Vector2f resolution = ReferenceResolution;
+        myCanvasBuffer.canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, myCanvasBuffer);
     }
 }

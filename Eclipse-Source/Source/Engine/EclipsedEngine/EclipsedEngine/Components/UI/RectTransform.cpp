@@ -17,16 +17,53 @@ namespace Eclipse
 
     Math::Vector2f RectTransform::GetPosition() const
     {
-        Math::Vector2f ReturnPosition = Position;
+        return GlobalPosition;
+    }
+
+    void RectTransform::AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction)
+    {
+        myFunctionsToRunOnDirtyUpdate.push_back(aFunction);
+    }
+
+    void RectTransform::AfterRenderUpdate()
+    {
+        if (Position->x != lastPosition.x || Position->y != lastPosition.y)
+        {
+            lastPosition = Position;
+            myIsDirty = true;
+        }
+        if (WidthHeightPX->x != lastWidthHeightPX.x || WidthHeightPX->y != lastWidthHeightPX.y)
+        {
+            lastWidthHeightPX = WidthHeightPX;
+            myIsDirty = true;
+        }
+
+        if (myIsDirty)
+        {
+            DirtyUpdate();
+        }
+    }
+
+    void RectTransform::UpdateTransforms()
+    {
+        GlobalPosition = Position;
 
         GameObject* parent = gameObject->GetParent();
         if (parent)
-            AddParentPosition(parent, ReturnPosition);
-        
-        return ReturnPosition;
+            AddParentPosition(parent, GlobalPosition);
     }
 
-    void RectTransform::EarlyUpdate()
+    void RectTransform::DirtyUpdate()
     {
+        UpdateTransforms();
+
+        for (auto& func : myFunctionsToRunOnDirtyUpdate)
+            func();
+
+        for (const auto& child : gameObject->GetChildren())
+        {
+            if (RectTransform* rectTransform = child->GetComponent<RectTransform>())
+                rectTransform->DirtyUpdate();
+        }
     }
 }

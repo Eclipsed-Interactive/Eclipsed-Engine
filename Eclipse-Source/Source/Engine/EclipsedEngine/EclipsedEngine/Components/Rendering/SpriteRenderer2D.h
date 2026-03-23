@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
 #include <string>
@@ -9,8 +10,9 @@
 #include "CoreEngine/Math/Color.h"
 
 #include "AssetEngine/Assets/Material.h"
-#include "Components/Rendering/BaseRenderComponent.h"
 #include "CoreEngine/Macros/defines.h"
+#include "CoreEngine/GraphicsBuffers/SpriteBuffer.h"
+#include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
 
 namespace Eclipse
 {
@@ -57,5 +59,8 @@ namespace Eclipse
 
         MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, SpriteRenderer2D);
         SERIALIZED_FIELD(Material, material);
+
+        TransformBuffer myTransformBuffer;
+        SpriteBuffer mySpriteBuffer;
     };
 }

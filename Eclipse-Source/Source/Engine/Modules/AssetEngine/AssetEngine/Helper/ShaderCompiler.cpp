@@ -29,7 +29,11 @@ namespace Eclipse
 		glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if (!success)
         {
-            glDeleteShader(shaderId); 
+            GLchar infoLog[512];
+            glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
+            _CrtDbgBreak();
+            
+            glDeleteShader(shaderId);
             return { CompileResult::CompileError };
         }
 

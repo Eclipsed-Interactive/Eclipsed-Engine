@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "CoreEngine/Math/Vector/Vector2.h"
+#include "CoreEngine/GraphicsBuffers/CameraBuffer.h"
 
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
 #include "GraphicsEngine/RenderCommands/CommandList.h"
@@ -11,18 +12,22 @@ static const char* vtxShaderSource =
 "#version 460 core\n"
 "layout(location = 0)in vec2 VertexPosition;"
 "layout(location = 1)in vec2 trash;"
-"uniform float resolutionRatio;"
-"uniform vec2 cameraPosition;"
-"uniform float cameraRotation;"
-"uniform vec2 cameraScale;"
+"layout(std140,binding=0) uniform CameraBuffer"
+"{"
+    "vec2 cameraPosition;"
+    "vec2 cameraScale;"
+    "float cameraRotation;"
+   
+    "float resolutionRatio;"
+"};"
 "void main()"
 "{"
-"mat2 rotationMatrix = mat2(cos(cameraRotation), -sin(cameraRotation), sin(cameraRotation), cos(cameraRotation));"
-"vec2 vtxPos = VertexPosition * 2 - 1;"
-"vtxPos = vtxPos * rotationMatrix;"
-"vtxPos -= cameraPosition;"
-"vtxPos.x *= resolutionRatio;"
-"gl_Position = vec4(vtxPos * cameraScale, 0, 1);"
+    "mat2 rotationMatrix = mat2(cos(cameraRotation), -sin(cameraRotation), sin(cameraRotation), cos(cameraRotation));"
+    "vec2 vtxPos = VertexPosition * 2 - 1;"
+    "vtxPos = vtxPos * rotationMatrix;"
+    "vtxPos -= cameraPosition;"
+    "vtxPos.x *= resolutionRatio;"
+    "gl_Position = vec4(vtxPos * cameraScale, 0, 1);"
 "}";
 
 static const char* pixelShaderSource =
@@ -31,7 +36,7 @@ static const char* pixelShaderSource =
 "uniform vec4 color;"
 "void main()"
 "{"
-"frag_colour = color;"
+    "frag_colour = color;"
 "}";
 
 namespace Eclipse
@@ -108,10 +113,9 @@ namespace Eclipse
 
                 glBindVertexArray(myLineBuffer);
 
-                unsigned location = glGetUniformLocation(programID, "color");
-                glUniform4f(location, line.color.r, line.color.g, line.color.b, line.color.a);
+                glUniform4f(0, line.color.r, line.color.g, line.color.b, line.color.a);
 
-                GraphicsEngine::SetGlobalUniforms(programID);
+                GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 
                 glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
 

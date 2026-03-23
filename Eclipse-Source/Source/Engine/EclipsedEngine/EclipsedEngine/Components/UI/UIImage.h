@@ -14,7 +14,7 @@ namespace Eclipse
 
     public:
         void OnComponentAdded() override;
-        void OnSceneLoaded() override;
+        void TransformUpdate();
         
         void Render() override;
         void Draw();
@@ -24,6 +24,7 @@ namespace Eclipse
 
         MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
         SERIALIZED_FIELD(Material, material);
-        
+
+        TransformBuffer myTransformBuffer;
     };
 }

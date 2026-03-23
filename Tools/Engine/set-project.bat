@@ -38,14 +38,15 @@ if not exist "%PROJECT_DIR%" (
 	goto :SetProjectDir
 )
 
-echo %PROJECT_DIR% > "%PROJECT_FILE%"
+echo %PROJECT_DIR%> "%PROJECT_FILE%"
 
 popd
 
 goto afterSet
 
 :SetProjectDir
-set /p PROJECT_DIR=Enter the path to the project:
+for /f "delims=" %%i in ('powershell -Command "Add-Type -AssemblyName System.Windows.Forms; $folder = New-Object System.Windows.Forms.FolderBrowserDialog; $folder.Description = 'Select a folder'; $folder.ShowNewFolderButton = $true; if($folder.ShowDialog() -eq 'OK') { $folder.SelectedPath }"') do set "PROJECT_DIR=%%i"
+
 goto :afterRead
 
 :afterSet

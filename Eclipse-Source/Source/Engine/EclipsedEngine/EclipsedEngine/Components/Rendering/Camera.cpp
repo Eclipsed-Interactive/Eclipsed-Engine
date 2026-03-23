@@ -28,13 +28,15 @@ namespace Eclipse
         if (Camera::main != this)
             return;
 
-        Math::Vector2f position = gameObject->transform->GetPosition();
-        float rotation = gameObject->transform->GetRotation();
-        Math::Vector2f scale = gameObject->transform->GetScale();
+        myCameraBuffer.cameraPosition = gameObject->transform->GetPosition();
+        myCameraBuffer.cameraRotation = gameObject->transform->GetRotation();
+        myCameraBuffer.cameraScale = gameObject->transform->GetScale();
 
-        GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
-        GraphicsEngine::UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
-        GraphicsEngine::UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(0, myCameraBuffer);
+
+        // GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
+        // GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
+        // GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
     }
 
 
