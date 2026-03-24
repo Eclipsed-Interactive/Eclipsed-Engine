@@ -22,9 +22,9 @@ if(ECLIPSED_EDITOR)
     
 else()
     set(OUTPUT ${BUILD_GAME_PATH})
-set_target_properties(Launcher PROPERTIES
-        VS_DEBUGGER_WORKING_DIRECTORY "${BUILD_GAME_PATH}"
-    )
+# set_target_properties(Launcher PROPERTIES
+#         VS_DEBUGGER_WORKING_DIRECTORY "${BUILD_GAME_PATH}"
+#     )
 endif()
 
 set_target_properties(Launcher PROPERTIES
