@@ -68,17 +68,17 @@ namespace Eclipse
         if (!hasMaterial)
             return;
 
-        auto tranform = gameObject->GetComponent<RectTransform>();
+        auto transform = gameObject->GetComponent<RectTransform>();
 
-        if (!tranform)
+        if (!transform)
             return;
-        if (!tranform->myCanvas)
+        if (!transform->myCanvas)
             return;
 
-        tranform->myCanvas->SetCanvasTransformProperties();
+        transform->myCanvas->SetCanvasTransformProperties();
 
 
-        Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+        Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
 
         resolution.x = 1.f / resolution.x;
         resolution.y = 1.f / resolution.y;
@@ -113,8 +113,13 @@ namespace Eclipse
 #endif
         
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(5, material->myMaterialBuffer);
-        
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
+
+        CanvasBuffer* canvasBuffer;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+        if (!IsScene && !transform->myCanvas->WorldSpace)
+            canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
 
         Sprite::Get().Render();
     }

@@ -8,7 +8,6 @@ namespace Eclipse
     {
         //float resolutionRatio;
         Math::Vector2f canvasScaleRelationOneDiv;
-        
-        float Padding[2];
+        Math::Vector2f canvasPositionOffset;
     };
 }

@@ -14,8 +14,8 @@ namespace Eclipse
         void OnDestroy() override;
 
         void OnComponentAdded() override;
-        void OnSceneLoaded() override;
-        void Render() override;
+        void EditorUpdate() override;
+        void OnDrawGizmos() override;
 
         void UpdateCameraTransform();
 

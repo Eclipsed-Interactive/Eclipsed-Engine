@@ -14,26 +14,19 @@ namespace Eclipse
 
         CameraBuffer* cameraBuffer = nullptr;
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
-        
+
         //canvasCameraTransform.Rotation = gameObject->transform->GetRotation();
 
         canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->cameraScale.x * cameraBuffer->resolutionRatio * 1.7777777777f, cameraBuffer->cameraScale.y) * 2.f;
 
-        canvasCameraTransform.PositionOffset = { 0.f, 0.f };
-        if (isScene)
-        {
-            canvasCameraTransform.ScaleMultiplier *= gameObject->transform->GetScale();
-            
-            Math::Vector2f scenePosition = cameraBuffer->cameraPosition;
-            canvasCameraTransform.PositionOffset = (scenePosition * -1.f) * ReferenceResolution;
-        }
+        canvasCameraTransform.ScaleMultiplier *= gameObject->transform->GetScale();
+        Math::Vector2f scenePosition = cameraBuffer->cameraPosition;
+        canvasCameraTransform.PositionOffset = (scenePosition * -1.f) * ReferenceResolution;
 
-        if (isScene || WorldSpace)
-        {
-            canvasCameraTransform.PositionOffset += gameObject->transform->GetPosition() * ReferenceResolution;
-            canvasCameraTransform.PositionOffset *= Math::Vector2f(cameraBuffer->resolutionRatio, 1.f) * cameraBuffer->cameraScale;
-        }
         
+        canvasCameraTransform.PositionOffset += gameObject->transform->GetPosition() * ReferenceResolution;
+        canvasCameraTransform.PositionOffset *= Math::Vector2f(cameraBuffer->resolutionRatio, 1.f) * cameraBuffer->cameraScale;
+
 
         // Rotation of canvas fucks up many things
         //float sceneRotation;
@@ -58,13 +51,13 @@ namespace Eclipse
 
     void Canvas::OnComponentAdded()
     {
-        gameObject->transform->AddFunctionToRunOnDirtyUpdate([&](){ TransformUpdate(); });
+        gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() { TransformUpdate(); });
     }
 
     void Canvas::TransformUpdate()
     {
         Math::Vector2f resolution = ReferenceResolution;
-        myCanvasBuffer.canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+        myCanvasBuffer.canvasScaleRelationOneDiv = {1.f / resolution.x, 1.f / resolution.y};
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, myCanvasBuffer);
     }
 }

@@ -146,7 +146,6 @@ namespace Eclipse
 
     ErrorCode OpenGLGraphicsEngine::Init()
     {
-        std::cout << "test" << std::endl;
         //nvmlInit();
 
         ErrorCode errorCode = InitOpenGL();
@@ -164,6 +163,7 @@ namespace Eclipse
         GLFWimage cursor;
 
         int nrChannels = 0;
+        stbi_set_flip_vertically_on_load(false);
         cursor.pixels = stbi_load((PathManager::GetEngineAssetsPath() / "GrabbyHand.png").generic_string().c_str(), &cursor.width, &cursor.height, &nrChannels, 0);
         myMouseCursors.emplace_back(glfwCreateCursor(&cursor, 8.f, 8.f));
 

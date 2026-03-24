@@ -45,7 +45,7 @@ void Eclipse::Editor::SceneWindow::ZoomToObject()
     if (ImGui::IsAnyItemActive())
         return;
 
-    ::Eclipse::Transform2D* transform = ComponentManager::GetComponent<::Eclipse::Transform2D>(HierarchyWindow::CurrentGameObjectID);
+    Transform2D* transform = ComponentManager::GetComponent<Transform2D>(HierarchyWindow::CurrentGameObjectID);
     if (transform)
     {
         myInspectorPosition = transform->GetPosition();
@@ -54,7 +54,7 @@ void Eclipse::Editor::SceneWindow::ZoomToObject()
         return;
     }
 
-    ::Eclipse::RectTransform* rectTransform = ComponentManager::GetComponent<::Eclipse::RectTransform>(HierarchyWindow::CurrentGameObjectID);
+    RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(HierarchyWindow::CurrentGameObjectID);
     if (rectTransform)
     {
         myInspectorPosition = rectTransform->Position;
@@ -197,6 +197,10 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
 
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 
+    CanvasBuffer* canvasBuffer;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+    canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
+    BaseRenderComponent::IsScene = true;
 
     CommandListManager::GetSpriteCommandList().Execute();
     CommandListManager::GetUICommandList().Execute();
@@ -364,6 +368,12 @@ void Eclipse::Editor::SceneWindow::Update()
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
 
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
+
+    CanvasBuffer* canvasBuffer;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+    canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
+    BaseRenderComponent::IsScene = true;
+
 
     CommandListManager::GetSpriteCommandList().Execute();
     CommandListManager::GetUICommandList().Execute();

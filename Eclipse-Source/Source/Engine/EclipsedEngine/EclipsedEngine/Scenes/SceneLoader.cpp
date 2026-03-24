@@ -193,7 +193,10 @@ namespace Eclipse
 		{
 			GameObject* parent = ComponentManager::myEntityIdToEntity.at(child.ownerID);
 			child.gameobject->SetParent(parent);
-
+		}
+		
+		for (ChildObject& child : aChildObjects)
+		{
 			if (auto* recttransform = child.gameobject->GetComponent<RectTransform>())
 			{
 				if (recttransform->myCanvas = GetParentCanvas(child.gameobject))
@@ -239,8 +242,11 @@ namespace Eclipse
 
 		const Value& objs = d["GameObjects"];
 		{
-			for (const Value& obj : objs.GetArray())
+			auto GameobjectArray = objs.GetArray();
+			for (int i = 0; i < GameobjectArray.Size(); i++)
 			{
+				auto& obj = GameobjectArray[i];
+				
 				unsigned int id = obj["id"].GetUint();
 				std::string name = obj["name"].GetString();
 

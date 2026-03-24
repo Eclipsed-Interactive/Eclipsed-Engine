@@ -79,6 +79,7 @@ namespace Eclipse
 	{
 		using namespace rapidjson;
 
+		std::cout << std::filesystem::current_path() << std::endl;
 		const std::vector<std::string>& sceneIndex = Settings::BuildSettings::GetSceneIndex();
 		if (sceneIndex.empty()) return;
 

@@ -144,7 +144,7 @@ namespace Eclipse::Editor
 				isPlaying = true;
 				isPaused = false;
 
-				//SteamGeneral::Get().Init();
+				SteamGeneral::Get().Init();
 
 				SceneLoader::Save(SceneManager::GetActiveScene());
 

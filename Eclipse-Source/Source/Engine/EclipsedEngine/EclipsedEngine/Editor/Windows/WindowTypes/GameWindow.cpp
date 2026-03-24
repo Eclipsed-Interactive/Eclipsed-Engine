@@ -30,7 +30,12 @@ namespace Eclipse::Editor
 		Math::Vector2f res;
 	};
 
-	std::vector<TResolution> resolutionChooser{ {"Free Aspect", {0.f, 0.f}}, {"16:9", {16.f, 9.f}}, {"16:10", {16.f, 10.f}}, {"4:3", {4.f, 3.f}}, {"21:9", {21.f, 9.f}} };
+	std::vector<TResolution> resolutionChooser{
+		{"Free Aspect", {0.f, 0.f}},
+		{"16:9", {16.f, 9.f}},
+		{"16:10", {16.f, 10.f}},
+		{"4:3", {4.f, 3.f}},
+		{"21:9", {21.f, 9.f}} };
 
 	void GameWindow::Update()
 	{
@@ -82,6 +87,8 @@ namespace Eclipse::Editor
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(myGameFrameBuffer);
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
 
+		BaseRenderComponent::IsScene = false;
+		
 		if (myCurrentWindowMode != FreeAspect)
 			UpdateSpecifiedRes();
 		else

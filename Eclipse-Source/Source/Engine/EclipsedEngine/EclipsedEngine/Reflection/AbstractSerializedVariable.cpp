@@ -173,7 +173,19 @@ namespace Eclipse::Reflection
 				ImGui::SameLine();
 				ImGui::Checkbox(("##" + std::to_string(imguiID) + std::to_string(iType) + GetName()).c_str(), (bool*)GetData());
 				break;
-
+			case SerializedType_Color:
+				{
+					ImGui::SameLine();
+					bool ColorbuttonClick = ImGui::ColorButton(("##ColorButton" + std::to_string(imguiID) + std::to_string(iType) + GetName()).c_str(), *(ImVec4*)GetData());
+					if (ColorbuttonClick)
+						ImGui::OpenPopup("InspectorColorPickerPopUp");
+					if (ImGui::BeginPopup("InspectorColorPickerPopUp"))
+					{
+						ImGui::ColorPicker4(("##" + std::to_string(imguiID) + std::to_string(iType) + GetName()).c_str(), (float*)GetData());
+						ImGui::EndPopup();
+					}
+				}
+				break;
 			case SerializedType_Custom_Type:
 			case SerializedType_Fundamental:
 

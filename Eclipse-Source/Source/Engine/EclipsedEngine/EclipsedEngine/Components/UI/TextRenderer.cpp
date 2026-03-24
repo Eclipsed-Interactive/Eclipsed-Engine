@@ -377,22 +377,22 @@ namespace Eclipse
 			return;
 
 		const char* textInConstChar = myText->c_str();
-		auto tranform = gameObject->GetComponent<RectTransform>();
+		auto transform = gameObject->GetComponent<RectTransform>();
 
-		if (!tranform)
+		if (!transform)
 			return;
-		if (!tranform->myCanvas)
+		if (!transform->myCanvas)
 			return;
 
 		// CameraBuffer* cameraBuffer = nullptr;
 		// GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
 		
-		tranform->myCanvas->SetCanvasTransformProperties();
+		transform->myCanvas->SetCanvasTransformProperties();
 		
 		unsigned shaderID = myMaterial->programID;
 		glUseProgram(shaderID);
 		
-		Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
 		
 
 		TransformUpdate();
@@ -503,9 +503,14 @@ namespace Eclipse
 #endif
 			
 			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(3, myTextBuffer);
-		
 			textOffset.x += characterAdvance * myCharacterSpacing;
-		
+
+			CanvasBuffer* canvasBuffer;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+			if (!IsScene && !transform->myCanvas->WorldSpace)
+				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
+			
 			TextSprite::Get().Render();
 		}
 	}
