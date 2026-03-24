@@ -120,9 +120,12 @@ namespace Eclipse
     
     void ComponentManager::RenderComponents()
     {
+#ifdef ECLIPSED_EDITOR
         SortComponents();
+#endif
         for (auto& component : myComponents)
             component->Render();
+        
     }
 
     void ComponentManager::AfterRenderUpdateComponents()
@@ -133,9 +136,19 @@ namespace Eclipse
 
     void ComponentManager::SortComponents()
     {
+        // this is a work around so render components does not need to exist should be a separate list
         std::sort(myComponents.begin(), myComponents.end(), [&](Component* aComp0, Component* aComp1)
         {
-            return aComp0->GetUpdatePriority() + aComp0->GetZIndex() > aComp1->GetUpdatePriority() + aComp1->GetZIndex();
+            const double UpdatePriorityD0 = aComp0->GetUpdatePriority();
+            const double UpdatePriorityD1 = aComp1->GetUpdatePriority();
+            
+            const double ZindexD0 = aComp0->GetZIndex();
+            const double ZindexD1 = aComp1->GetZIndex();
+
+            const double ZindexSmallD0 = ZindexD0 * 0.00000000000001f;
+            const double ZindexSmallD1 = ZindexD1 * 0.00000000000001f;
+            
+            return UpdatePriorityD0 - ZindexSmallD0 > UpdatePriorityD1 - ZindexSmallD1;
         });
 
         myEntityIDToVectorOfComponentIDs.clear();

@@ -339,26 +339,29 @@ namespace Eclipse
 
 	void TextRenderer::OnDrawGizmos()
 	{
-		// Commented because doing it wrong way
+		// This is not right, does not work as intended
 		
-		// if (drawRectGizmos)
-		// {
-		// 	auto tranform = gameObject->GetComponent<RectTransform>();
-		// 	if (!tranform)
-		// 		return;
-		//
-		//
-		// 	Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-		// 	float aspectRatio = resolution.x / resolution.y;
-		// 	Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-		//
-		// 	const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv;
-		// 	//float rotation = gameObject->transform->GetRotation();
-		// 	Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
-		// 	scale.x *= aspectRatio;
-		//
-		// 	DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale * 0.5f, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
-		// }
+		if (drawRectGizmos)
+		{
+			auto tranform = gameObject->GetComponent<RectTransform>();
+			if (!tranform)
+				return;
+			if (!tranform->myCanvas)
+				return;
+		
+			Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+			float aspectRatio = resolution.x / resolution.y;
+			Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		
+			const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv * Math::Vector2f(aspectRatio, 1);
+			//float rotation = gameObject->transform->GetRotation();
+			Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
+			scale.x *= aspectRatio;
+
+			//Math::Vector2f CanvasPosition = canvasScaleRelationOneDiv * tranform->myCanvas->canvasCameraTransform.PositionOffset * 0.5f;
+		
+			DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
+		}
 	}
 
 	void TextRenderer::Render()
@@ -422,25 +425,23 @@ namespace Eclipse
 			lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
 		}
 		
+		
 		if (myTextAlignment == 0 || myTextAlignment == 3)
 			textOffset.x -= scaleRect.x;
 		else if (myTextAlignment == 2)
 			textOffset.x += scaleRect.x - myTransformBuffer.Scale.x;
 		
-		
 		Math::Vector2f startOffset = textOffset;
-		
-		//float maxCharSize = myFont->maxCharHeight;
-		// if (myTextCentering == 0)
-		// 	textOffset.y = (scaleRect.y - myFontSize * 4.f);
-		// if (myTextCentering == 1)
-		// 	textOffset.y = myFontSize * -3.f * lineOffsets.size();
-		// else if (myTextCentering == 2)
-		// 	textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
-		
+		if (myTextCentering == 0)
+			;//textOffset.y = (scaleRect.y - myFontSize * 4.f);
+		else if (myTextCentering == 1)
+			;//textOffset.y = myFontSize * -3.f * lineOffsets.size();
+		else if (myTextCentering == 2)
+			;//textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
 		
 		myTextMaterialBuffer.color = myTextColor;
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<TextMaterialBuffer>(5, myTextMaterialBuffer);
+
 		
 		int currentLineCount = 0;
 		for (int i = 0; i < myText->size(); i++)

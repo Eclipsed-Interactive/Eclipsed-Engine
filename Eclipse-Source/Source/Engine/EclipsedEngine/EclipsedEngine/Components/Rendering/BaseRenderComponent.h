@@ -7,8 +7,8 @@ namespace Eclipse
     class BaseRenderComponent : public Component
     {
     public:
-        SERIALIZED_FIELD_DEFAULT(int, ZIndex, 0);
+        SERIALIZED_FIELD_DEFAULT(float, ZIndex, 0);
 
-        int GetZIndex() override { return ZIndex; }
+        float GetZIndex() override { return ZIndex; }
     };
 }
