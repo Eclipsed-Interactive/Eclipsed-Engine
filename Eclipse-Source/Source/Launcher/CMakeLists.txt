@@ -19,20 +19,23 @@ target_link_libraries(Launcher PRIVATE EclipsedEngine)
 
 if(ECLIPSED_EDITOR)
     set(OUTPUT ${EXE_OUTPUT_DIR})
-    
-else()
-    set(OUTPUT ${BUILD_GAME_PATH})
-# set_target_properties(Launcher PROPERTIES
-#         VS_DEBUGGER_WORKING_DIRECTORY "${BUILD_GAME_PATH}"
-#     )
-endif()
-
-set_target_properties(Launcher PROPERTIES
+    set_target_properties(Launcher PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${OUTPUT}"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT}"
     OUTPUT_NAME "${GAME_NAME}_$<CONFIG>"
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Bin"
 )
+else()
+    set(OUTPUT ${BUILD_GAME_PATH})
+        set_target_properties(Launcher PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${OUTPUT}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${OUTPUT}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${OUTPUT}"
+    OUTPUT_NAME "${GAME_NAME}_$<CONFIG>"
+    VS_DEBUGGER_WORKING_DIRECTORY "$${BUILD_GAME_PATH}"
+)
+endif()
 
 
 
