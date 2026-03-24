@@ -494,6 +494,13 @@ namespace Eclipse
 			myTextBuffer.offset.x += (characterFace.bearing.x * 100.f * myTransformBuffer.Scale.x) - lineOffset;
 			myTextBuffer.offset.y -= (characterFace.size.y - characterFace.bearing.y) * myTransformBuffer.Scale.y * 100.f;
 
+#ifdef ECLIPSED_EDITOR
+			EditorBuffer* editorBuffer;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+			editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+#endif
+			
 			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(3, myTextBuffer);
 		
 			textOffset.x += characterAdvance * myCharacterSpacing;

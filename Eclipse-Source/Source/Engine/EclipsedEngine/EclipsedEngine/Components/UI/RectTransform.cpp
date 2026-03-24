@@ -20,6 +20,16 @@ namespace Eclipse
         return GlobalPosition;
     }
 
+    Math::Vector2f RectTransform::GetLocalPosition()
+    {
+        return Position;
+    }
+
+    void RectTransform::SetPosition(const Math::Vector2f& aPosition)
+    {
+        Position = aPosition;
+    }
+
     void RectTransform::AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction)
     {
         myFunctionsToRunOnDirtyUpdate.push_back(aFunction);

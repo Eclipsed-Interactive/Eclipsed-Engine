@@ -14,11 +14,17 @@ namespace Eclipse
     private:
         void UpdateTransforms();
         void DirtyUpdate();
+
+        void AddParentPosition(GameObject* aParent, Math::Vector2f& aPosition) const;
+        
     public:
         void AfterRenderUpdate() override;
 
-        void AddParentPosition(GameObject* aParent, Math::Vector2f& aPosition) const;
+        
         Math::Vector2f GetPosition() const;
+        Math::Vector2f GetLocalPosition();
+        
+        void SetPosition(const Math::Vector2f& aPosition);
 
         void AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction);
         

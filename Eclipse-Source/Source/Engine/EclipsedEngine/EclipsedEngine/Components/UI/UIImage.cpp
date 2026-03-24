@@ -87,6 +87,8 @@ namespace Eclipse
 
         Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
+        Math::Vector2f size = spriteRectMax - spriteRectMin;
+        material->myMaterialBuffer.spriteRect = { spriteRectMin.x, spriteRectMin.y, size.x, size.y };
 
         unsigned shaderID = material->GetShaderProgramID();
 
@@ -102,6 +104,15 @@ namespace Eclipse
         }
 
         TransformUpdate();
+
+#ifdef ECLIPSED_EDITOR
+        EditorBuffer* editorBuffer;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+        editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+#endif
+        
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(5, material->myMaterialBuffer);
         
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
 

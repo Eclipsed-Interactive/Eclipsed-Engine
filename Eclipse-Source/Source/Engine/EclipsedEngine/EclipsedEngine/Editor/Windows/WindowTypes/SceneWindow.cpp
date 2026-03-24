@@ -38,204 +38,219 @@
 
 void Eclipse::Editor::SceneWindow::ZoomToObject()
 {
-	if (!HierarchyWindow::CurrentGameObjectID)
-		return;
-	if (!InputMapper::ReadValue("ZoomToObject"))
-		return;
-	if (ImGui::IsAnyItemActive())
-		return;
+    if (!HierarchyWindow::CurrentGameObjectID)
+        return;
+    if (!InputMapper::ReadValue("ZoomToObject"))
+        return;
+    if (ImGui::IsAnyItemActive())
+        return;
 
-	::Eclipse::Transform2D* transform = ComponentManager::GetComponent<::Eclipse::Transform2D>(HierarchyWindow::CurrentGameObjectID);
-	if (transform)
-	{
-		myInspectorPosition = transform->GetPosition();
-		myInspectorScale = Math::Vector2f(1, 1);
-		totalYScroll = 0;
-		return;
-	}
+    ::Eclipse::Transform2D* transform = ComponentManager::GetComponent<::Eclipse::Transform2D>(HierarchyWindow::CurrentGameObjectID);
+    if (transform)
+    {
+        myInspectorPosition = transform->GetPosition();
+        myInspectorScale = Math::Vector2f(1, 1);
+        totalYScroll = 0;
+        return;
+    }
 
-	::Eclipse::RectTransform* rectTransform = ComponentManager::GetComponent<::Eclipse::RectTransform>(HierarchyWindow::CurrentGameObjectID);
-	if (rectTransform)
-	{
-		myInspectorPosition = rectTransform->Position;
-		myInspectorScale = Math::Vector2f(1, 1);
-		totalYScroll = 0;
-		return;
-	}
+    ::Eclipse::RectTransform* rectTransform = ComponentManager::GetComponent<::Eclipse::RectTransform>(HierarchyWindow::CurrentGameObjectID);
+    if (rectTransform)
+    {
+        myInspectorPosition = rectTransform->Position;
+        myInspectorScale = Math::Vector2f(1, 1);
+        totalYScroll = 0;
+        return;
+    }
 }
 
 void Eclipse::Editor::SceneWindow::ScrollManager()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	float deltaYScroll = io.MouseWheel;
+    ImGuiIO& io = ImGui::GetIO();
+    float deltaYScroll = io.MouseWheel;
 
-	if (deltaYScroll == 0.0f)
-		return;
+    if (deltaYScroll == 0.0f)
+        return;
 
-	float baseFactor = 1.07f;
+    float baseFactor = 1.07f;
 
-	float scaleMagnitude = std::log2(myInspectorScale.x + 1.0f);
-	float dynamicFactor = baseFactor - (0.02f * scaleMagnitude);
+    float scaleMagnitude = std::log2(myInspectorScale.x + 1.0f);
+    float dynamicFactor = baseFactor - (0.02f * scaleMagnitude);
 
-	dynamicFactor = Math::Max(1.001f, dynamicFactor);
-	float zoomFactor = (deltaYScroll > 0) ? dynamicFactor : 1.0f / dynamicFactor;
+    dynamicFactor = Math::Max(1.001f, dynamicFactor);
+    float zoomFactor = (deltaYScroll > 0) ? dynamicFactor : 1.0f / dynamicFactor;
 
-	Math::Vector2f zoomCenter = normalizedMousePosition + myInspectorPosition;
+    Math::Vector2f zoomCenter = normalizedMousePosition + myInspectorPosition;
 
-	myInspectorPosition = zoomCenter + (myInspectorPosition - zoomCenter) * (1.0f / zoomFactor);
+    myInspectorPosition = zoomCenter + (myInspectorPosition - zoomCenter) * (1.0f / zoomFactor);
 
-	myInspectorScale *= { zoomFactor, zoomFactor };
+    myInspectorScale *= {zoomFactor, zoomFactor};
 }
 
 void Eclipse::Editor::SceneWindow::MouseManager()
 {
-	{
-		ImVec2 mousePos = ImGui::GetMousePos();
-		ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+    {
+        ImVec2 mousePos = ImGui::GetMousePos();
+        ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
 
-		// cursorScreenPos.x -= 8;
-		// cursorScreenPos.y -= 8;
+        // cursorScreenPos.x -= 8;
+        // cursorScreenPos.y -= 8;
 
-		float mousePosX = mousePos.x - cursorScreenPos.x;
-		float mousePosY = myWindowSize.y - (mousePos.y - cursorScreenPos.y);
+        float mousePosX = mousePos.x - cursorScreenPos.x;
+        float mousePosY = myWindowSize.y - (mousePos.y - cursorScreenPos.y);
 
-		windowRelativeMousePosition = { static_cast<unsigned>(mousePosX), static_cast<unsigned>(mousePosY) };
+        windowRelativeMousePosition = {static_cast<unsigned>(mousePosX), static_cast<unsigned>(mousePosY)};
 
-		normalizedMousePosition.x = windowRelativeMousePosition.x / myWindowSize.x;
-		normalizedMousePosition.y = windowRelativeMousePosition.y / myWindowSize.y;
+        normalizedMousePosition.x = windowRelativeMousePosition.x / myWindowSize.x;
+        normalizedMousePosition.y = windowRelativeMousePosition.y / myWindowSize.y;
 
-		normalizedMousePosition.x = normalizedMousePosition.x * 2.f - 1;
-		normalizedMousePosition.y = normalizedMousePosition.y * 2.f - 1;
+        normalizedMousePosition.x = normalizedMousePosition.x * 2.f - 1;
+        normalizedMousePosition.y = normalizedMousePosition.y * 2.f - 1;
 
-		if (ImGui::IsMouseClicked(0))
-		{
-			int i = 0;
-		}
+        if (ImGui::IsMouseClicked(0))
+        {
+            int i = 0;
+        }
+    }
 
-	}
+    if (ImGui::IsWindowHovered())
+    {
+        if (ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2))
+            mouseIsDown = true;
 
-	if (ImGui::IsWindowHovered())
-	{
-		if (ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2))
-			mouseIsDown = true;
+        ScrollManager();
+    }
 
-		ScrollManager();
-	}
+    if (mouseIsDown)
+    {
+        ImGuiIO& io = ImGui::GetIO();
+        ImVec2 mouseDelta = io.MouseDelta;
 
-	if (mouseIsDown)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		ImVec2 mouseDelta = io.MouseDelta;
+        float correctScaledWindowSizeY = myWindowSize.y;
+        float SizeXRatio = myWindowSize.x * (myWindowSize.y / myWindowSize.x);
 
-		float correctScaledWindowSizeY = myWindowSize.y;
-		float SizeXRatio = myWindowSize.x * (myWindowSize.y / myWindowSize.x);
+        Math::Vector2f mouseDragdelta = {mouseDelta.x, mouseDelta.y};
+        myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / SizeXRatio, -mouseDragdelta.y / correctScaledWindowSizeY) * 2.f * (1.f / myInspectorScale);
 
-		Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
-		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / SizeXRatio, -mouseDragdelta.y / correctScaledWindowSizeY) * 2.f * (1.f / myInspectorScale);
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::MouseCursor::Grab);
+    }
 
-		GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::MouseCursor::Grab);
-	}
+    if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
+        mouseIsDown = false;
 
-	if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
-		mouseIsDown = false;
-
-	SpriteDragging();
+    SpriteDragging();
 }
 
 void Eclipse::Editor::SceneWindow::SpriteDragging()
 {
-	if (!draggingSprite)
-		return;
+    if (!draggingSprite)
+        return;
 
-	ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
-	ImVec2 mouseDelta = io.MouseDelta;
-	Math::Vector2f mouseDeltaECL = Math::Vector2f((mouseDelta.x / myWindowSize.x) * (myWindowSize.x / myWindowSize.y), (mouseDelta.y / myWindowSize.y) * -1.f) * (1.f / myInspectorScale) * 2.f;
+    ImVec2 mouseDelta = io.MouseDelta;
+    Math::Vector2f mouseDeltaECL = Math::Vector2f((mouseDelta.x / myWindowSize.x) * (myWindowSize.x / myWindowSize.y), (mouseDelta.y / myWindowSize.y) * -1.f) * (1.f / myInspectorScale) * 2.f;
 
-	int currentGO = HierarchyWindow::CurrentGameObjectID;
-	::Eclipse::Transform2D* transform = ComponentManager::GetComponent<::Eclipse::Transform2D>(currentGO);
+    unsigned currentGO = HierarchyWindow::CurrentGameObjectID;
 
-	mySpriteMoveVector += mouseDeltaECL;
+    mySpriteMoveVector += mouseDeltaECL;
 
-	Math::Vector2f positionSnappPosition = mySpriteMoveVector;
-	if (myIsSnapping)
-	{
-		float roundX = std::round(mySpriteMoveVector.x / mySnappingDistance) * mySnappingDistance;
-		float roundY = std::round(mySpriteMoveVector.y / mySnappingDistance) * mySnappingDistance;
-		positionSnappPosition = { roundX, roundY };
-	}
-	
-	if (transform)
-		transform->SetPosition(mySpriteMouseDownPosition + positionSnappPosition);
+    Math::Vector2f positionSnappPosition = mySpriteMoveVector;
+    if (myIsSnapping)
+    {
+        float roundX = std::round(mySpriteMoveVector.x / mySnappingDistance) * mySnappingDistance;
+        float roundY = std::round(mySpriteMoveVector.y / mySnappingDistance) * mySnappingDistance;
+        positionSnappPosition = {roundX, roundY};
+    }
 
-	if (ImGui::IsMouseReleased(0))
-		draggingSprite = false;
+    Transform2D* transform = ComponentManager::GetComponent<Transform2D>(currentGO);
+    if (transform)
+        transform->SetPosition(mySpriteMouseDownPosition + positionSnappPosition);
+    
+    RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(currentGO);
+    if (rectTransform)
+    {
+        Math::Vector2f translatedPosition = Math::Vector2f(rectTransform->myCanvas->ReferenceResolution->y, rectTransform->myCanvas->ReferenceResolution->y);
+        rectTransform->SetPosition(mySpriteMouseDownPosition + positionSnappPosition * translatedPosition * 0.5f);
+    }
+
+    if (ImGui::IsMouseReleased(0))
+        draggingSprite = false;
 }
 
-void Eclipse::Editor::SceneWindow::SpriteSelecter()
+void Eclipse::Editor::SceneWindow::SpriteSelector()
 {
-	if (!ImGui::IsMouseClicked(0))
-		return;
-	if (!ImGui::IsWindowHovered())
-		return;
-	if (myGizmoMoveY || myGizmoMoveX)
-		return;
+    if (!ImGui::IsMouseClicked(0))
+        return;
+    if (!ImGui::IsWindowHovered())
+        return;
+    if (myGizmoMoveY || myGizmoMoveX)
+        return;
 
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
 
-	EditorBuffer* editorBuffer;
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
-	editorBuffer->overideColor = 0;
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
-	
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
 
-	
+    EditorBuffer* editorBuffer;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+    editorBuffer->overideColor = 0;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 
-	CommandListManager::GetSpriteCommandList().Execute();
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 
-	Math::Vector4ui colorValue = GraphicsEngine::Get<OpenGLGraphicsEngine>()->ReadPixel({ windowRelativeMousePosition.x + 10, windowRelativeMousePosition.y - 8 });
-	unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
 
-	if (HierarchyWindow::CurrentGameObjectID == pickedID && HierarchyWindow::CurrentGameObjectID)
-	{
-		if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt))
-		{
-			EditorActions::CopyObject(HierarchyWindow::CurrentGameObjectID, true);
+    CommandListManager::GetSpriteCommandList().Execute();
+    CommandListManager::GetUICommandList().Execute();
 
-			char* data = (char*)ClipBoard::GetClipboardData();
-			GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
-			HierarchyWindow::CurrentGameObjectID = gameobject->GetID();
-		}
+    Math::Vector4ui colorValue = GraphicsEngine::Get<OpenGLGraphicsEngine>()->ReadPixel({windowRelativeMousePosition.x + 10, windowRelativeMousePosition.y - 8});
+    unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
 
-		::Eclipse::Transform2D* transform = ComponentManager::GetComponent<::Eclipse::Transform2D>(HierarchyWindow::CurrentGameObjectID);
+    if (HierarchyWindow::CurrentGameObjectID == pickedID && HierarchyWindow::CurrentGameObjectID)
+    {
+        if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt))
+        {
+            EditorActions::CopyObject(HierarchyWindow::CurrentGameObjectID, true);
 
-		if (!transform)
-			return;
+            char* data = (char*)ClipBoard::GetClipboardData();
+            GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+            HierarchyWindow::CurrentGameObjectID = gameobject->GetID();
+        }
 
-		draggingSprite = true;
+        Transform2D* transform = ComponentManager::GetComponent<Transform2D>(HierarchyWindow::CurrentGameObjectID);
+        if (transform)
+        {
+            draggingSprite = true;
 
-		mySpriteMouseDownPosition = transform->GetLocalPosition();
-		mySpriteMoveVector = { 0, 0 };
-	}
+            mySpriteMouseDownPosition = transform->GetLocalPosition();
+            mySpriteMoveVector = {0, 0};
+        }
 
-	HierarchyWindow::CurrentGameObjectID = pickedID;
-	InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
+        RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(HierarchyWindow::CurrentGameObjectID);
+        if (rectTransform)
+        {
+            draggingSprite = true;
+
+            mySpriteMouseDownPosition = rectTransform->GetLocalPosition();
+            mySpriteMoveVector = {0, 0};
+        }
+    }
+
+    HierarchyWindow::CurrentGameObjectID = pickedID;
+    InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
 }
 
 
 void Eclipse::Editor::SceneWindow::ObjectSnappingGizmo()
 {
-	ImGui::Checkbox("Snap##MoreSnappingIDSThatShouldBEUSED!!!ANDITISNOW:D", &myIsSnapping);
+    ImGui::Checkbox("Snap##MoreSnappingIDSThatShouldBEUSED!!!ANDITISNOW:D", &myIsSnapping);
 
-	if (myIsSnapping)
-	{
-		ImGui::Dummy({ 30, 0 });
-		ImGui::SetNextItemWidth(75);
-		ImGui::DragFloat("SnappDistance##SnappingDistanceIDSCENEWINDOW", &mySnappingDistance, 0.01f);
-	}
+    if (myIsSnapping)
+    {
+        ImGui::Dummy({30, 0});
+        ImGui::SetNextItemWidth(75);
+        ImGui::DragFloat("SnappDistance##SnappingDistanceIDSCENEWINDOW", &mySnappingDistance, 0.01f);
+    }
 
-	ImGui::SetCursorPosX(0);
+    ImGui::SetCursorPosX(0);
 }
 
 /*void Eclipse::Editor::SceneWindow::GizmoManager(::Eclipse::Transform2D* aTransform)
@@ -285,189 +300,183 @@ void Eclipse::Editor::SceneWindow::ObjectSnappingGizmo()
 
 void Eclipse::Editor::SceneWindow::Update()
 {
-	ImVec2 windowSize = ImGui::GetWindowSize();
-	myWindowSize = { windowSize.x, windowSize.y };
+    ImVec2 windowSize = ImGui::GetWindowSize();
+    myWindowSize = {windowSize.x, windowSize.y};
 
-	if (ImGui::BeginMenuBar())
-	{
-		ObjectSnappingGizmo();
-		DrawGizmoButtons(DrawGizmo);
-		ImGui::EndMenuBar();
-	}
+    if (ImGui::BeginMenuBar())
+    {
+        ObjectSnappingGizmo();
+        DrawGizmoButtons(DrawGizmo);
+        ImGui::EndMenuBar();
+    }
 
-	MouseManager();
-	ZoomToObject();
+    MouseManager();
+    ZoomToObject();
 
-	if (HierarchyWindow::CurrentGameObjectID)
-	{
-		mySelectedObject = GetComp(::Eclipse::SpriteRenderer2D, HierarchyWindow::CurrentGameObjectID);
+    if (HierarchyWindow::CurrentGameObjectID)
+    {
+        mySelectedObject = GetComp(::Eclipse::SpriteRenderer2D, HierarchyWindow::CurrentGameObjectID);
 
-		if (mySelectedObject && mySelectedObject->GetMaterial())
-		{
-			::Eclipse::Transform2D* transform = GetComp(::Eclipse::Transform2D, HierarchyWindow::CurrentGameObjectID);
+        if (mySelectedObject && mySelectedObject->GetMaterial())
+        {
+            ::Eclipse::Transform2D* transform = GetComp(::Eclipse::Transform2D, HierarchyWindow::CurrentGameObjectID);
 
-			DebugDrawer::Get().Begin();
-			Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetTextureSizeNormilized();
-			Math::Vector2f size = mySelectedObject->spriteRectMax - mySelectedObject->spriteRectMin;
-			float aspectScale = size.y / size.x;
+            DebugDrawer::Get().Begin();
+            Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetTextureSizeNormilized();
+            Math::Vector2f size = mySelectedObject->spriteRectMax - mySelectedObject->spriteRectMin;
+            float aspectScale = size.y / size.x;
 
-			DebugDrawer::DrawSquare(transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f), transform->GetRotation(), transform->GetScale() * 0.005f * 0.5f * textureScale * Math::Vector2f(1.f, aspectScale), Math::Color(1.f, 0.4f, 0.7f, 1.f));
+            DebugDrawer::DrawSquare(transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f), transform->GetRotation(), transform->GetScale() * 0.005f * 0.5f * textureScale * Math::Vector2f(1.f, aspectScale), Math::Color(1.f, 0.4f, 0.7f, 1.f));
 
-			//GizmoManager(transform);
+            //GizmoManager(transform);
 
-			DebugDrawer::Get().Render();
-		}
-	}
+            DebugDrawer::Get().Render();
+        }
+    }
 
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(mySceneFrameBuffer);
-
-	// int isScene = 1;
-	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
-
-	CameraBuffer* cameraBuffer = nullptr;
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
-	
-	Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
-	float lastInspectorRotation = cameraBuffer->cameraRotation;
-	Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
-
-	cameraBuffer->cameraPosition = myInspectorPosition;
-	cameraBuffer->cameraRotation = myInspectorRotation;
-	cameraBuffer->cameraScale = myInspectorScale;
-	
-	float aspectRatio = myWindowSize.y / myWindowSize.x;
-	cameraBuffer->resolutionRatio = aspectRatio;
-
-	glViewport(0, 0, myWindowSize.x, myWindowSize.y);
-
-	// This is not using its own framebuffer but if left click then render and get mouse position color
-	SpriteSelecter();
-
-	EditorBuffer* editorBuffer;
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
-	editorBuffer->overideColor = 1;
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
-	
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
-
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
-	
-	CommandListManager::GetSpriteCommandList().Execute();
-	CommandListManager::GetUICommandList().Execute();
-	CommandListManager::GetDebugDrawCommandList().Execute();
-
-	cameraBuffer->cameraPosition = lastInspectorPosition;
-	cameraBuffer->cameraRotation = lastInspectorRotation;
-	cameraBuffer->cameraScale = lastInspectorScale;
-
-	// isScene = 0;
-	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
-
-	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
-	{
-		glBindTexture(GL_TEXTURE_2D, mySceneTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, myWindowSize.x, myWindowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	myLastWindowResolution = { myWindowSize.x, myWindowSize.y };
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(mySceneFrameBuffer);
 
 
-	// if (Editor::DragAndDrop::BeginTarget("DND_PREFAB", Utilities::FileInfo::FileType_Prefab))
-	// {
-	// 	int i = 8;
-	// }
-	// if (Editor::DragAndDrop::BeginTarget("DND_SCENE", Utilities::FileInfo::FileType_Scene))
-	// {
-	// 	int i = 8;
-	// }
+    CameraBuffer* cameraBuffer = nullptr;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
 
-	ImVec2 CursorPos = ImGui::GetCursorPos();
-	ImGui::SetCursorPos(ImVec2(CursorPos.x - 8, CursorPos.y - 7));
-	ImGui::Image(mySceneTexture, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
+    Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
+    float lastInspectorRotation = cameraBuffer->cameraRotation;
+    Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
 
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_PREFAB"))
-		{
-			char* charString = reinterpret_cast<char*>(malloc(payload->DataSize + 1));
-			memcpy(charString, payload->Data, payload->DataSize);
-			memset(charString + payload->DataSize, '\0', 1);
+    cameraBuffer->cameraPosition = myInspectorPosition;
+    cameraBuffer->cameraRotation = myInspectorRotation;
+    cameraBuffer->cameraScale = myInspectorScale;
 
-			std::filesystem::path path = PathManager::GetAssetsPath() / charString;
+    float aspectRatio = myWindowSize.y / myWindowSize.x;
+    cameraBuffer->resolutionRatio = aspectRatio;
 
-			free(charString);
+    glViewport(0, 0, myWindowSize.x, myWindowSize.y);
 
-			std::ifstream stream(path);
-			if (!stream.is_open()) {
-				return;
-			}
+    // This is not using its own framebuffer but if left click then render and get mouse position color
+    SpriteSelector();
 
-			size_t prefSize = std::filesystem::file_size(path);
+    EditorBuffer* editorBuffer;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+    editorBuffer->overideColor = 1;
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 
-			char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
-			stream.read(data, prefSize);
-			memset(data + prefSize, '\0', 1);
-			stream.close();
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
 
-			InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 
-			free(data);
-		}
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_SCENE"))
-		{
-			// Scene loading
-		}
-		ImGui::EndDragDropTarget();
-	}
+    CommandListManager::GetSpriteCommandList().Execute();
+    CommandListManager::GetUICommandList().Execute();
+    CommandListManager::GetDebugDrawCommandList().Execute();
 
+    cameraBuffer->cameraPosition = lastInspectorPosition;
+    cameraBuffer->cameraRotation = lastInspectorRotation;
+    cameraBuffer->cameraScale = lastInspectorScale;
 
+    // isScene = 0;
+    // GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
+
+    if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
+    {
+        glBindTexture(GL_TEXTURE_2D, mySceneTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, myWindowSize.x, myWindowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    myLastWindowResolution = {myWindowSize.x, myWindowSize.y};
 
 
+    // if (Editor::DragAndDrop::BeginTarget("DND_PREFAB", Utilities::FileInfo::FileType_Prefab))
+    // {
+    // 	int i = 8;
+    // }
+    // if (Editor::DragAndDrop::BeginTarget("DND_SCENE", Utilities::FileInfo::FileType_Scene))
+    // {
+    // 	int i = 8;
+    // }
+
+    ImVec2 CursorPos = ImGui::GetCursorPos();
+    ImGui::SetCursorPos(ImVec2(CursorPos.x - 8, CursorPos.y - 7));
+    ImGui::Image(mySceneTexture, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
+
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_PREFAB"))
+        {
+            char* charString = reinterpret_cast<char*>(malloc(payload->DataSize + 1));
+            memcpy(charString, payload->Data, payload->DataSize);
+            memset(charString + payload->DataSize, '\0', 1);
+
+            std::filesystem::path path = PathManager::GetAssetsPath() / charString;
+
+            free(charString);
+
+            std::ifstream stream(path);
+            if (!stream.is_open())
+            {
+                return;
+            }
+
+            size_t prefSize = std::filesystem::file_size(path);
+
+            char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
+            stream.read(data, prefSize);
+            memset(data + prefSize, '\0', 1);
+            stream.close();
+
+            InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+
+            free(data);
+        }
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_SCENE"))
+        {
+            // Scene loading
+        }
+        ImGui::EndDragDropTarget();
+    }
 
 
-
-	GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(0);
+    GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(0);
 }
 
 void Eclipse::Editor::SceneWindow::InitSceneBuffer()
 {
-	glGenFramebuffers(1, &mySceneFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, mySceneFrameBuffer);
+    glGenFramebuffers(1, &mySceneFrameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, mySceneFrameBuffer);
 
-	glGenTextures(1, &mySceneTexture);
-	glBindTexture(GL_TEXTURE_2D, mySceneTexture);
+    glGenTextures(1, &mySceneTexture);
+    glBindTexture(GL_TEXTURE_2D, mySceneTexture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mySceneTexture, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mySceneTexture, 0);
 }
 
 void Eclipse::Editor::SceneWindow::InitSelectedObjectShader()
 {
-	// unsigned vertexShaderID = 0;
-	// unsigned pixelShaderID = 0;
+    // unsigned vertexShaderID = 0;
+    // unsigned pixelShaderID = 0;
 
-	//ResourcePointer<VertexShader> myVertexShader = Resources::Get<VertexShader>((PathManager::GetEngineAssetsPath() / "Default/Shaders/SelectedVertexSpriteShader.glsl").generic_string().c_str());
-	//ResourcePointer<PixelShader> myPixelShader = Resources::Get<PixelShader>((PathManager::GetEngineAssetsPath() / "Default/Shaders/SelectedPixelSpriteShader.glsl").generic_string().c_str());
+    //ResourcePointer<VertexShader> myVertexShader = Resources::Get<VertexShader>((PathManager::GetEngineAssetsPath() / "Default/Shaders/SelectedVertexSpriteShader.glsl").generic_string().c_str());
+    //ResourcePointer<PixelShader> myPixelShader = Resources::Get<PixelShader>((PathManager::GetEngineAssetsPath() / "Default/Shaders/SelectedPixelSpriteShader.glsl").generic_string().c_str());
 
-	// mySelectedSpriteHighlightProgram = glCreateProgram();
-	// glAttachShader(mySelectedSpriteHighlightProgram, myVertexShader->GetVertexShaderID());
-	// glAttachShader(mySelectedSpriteHighlightProgram, myPixelShader->GetPixelShaderID());
-	// glLinkProgram(mySelectedSpriteHighlightProgram);
+    // mySelectedSpriteHighlightProgram = glCreateProgram();
+    // glAttachShader(mySelectedSpriteHighlightProgram, myVertexShader->GetVertexShaderID());
+    // glAttachShader(mySelectedSpriteHighlightProgram, myPixelShader->GetPixelShaderID());
+    // glLinkProgram(mySelectedSpriteHighlightProgram);
 }
 
 void Eclipse::Editor::SceneWindow::Open()
 {
-	flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
+    flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
 
-	InitSceneBuffer();
-	InitSelectedObjectShader();
+    InitSceneBuffer();
+    InitSelectedObjectShader();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 #endif
