@@ -236,8 +236,21 @@ namespace Eclipse
         cameraBuffer->resolutionRatio = aspectRatio;
 
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
+
+
+        
+        EditorBuffer* editorBuffer;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+        editorBuffer->notOverideColor = 1;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+
+        
+        
+        CommandListManager::ExecuteAllCommandLists();
 #else
         DebugDrawer::Get().Render();
+
+
 #endif
     }
 

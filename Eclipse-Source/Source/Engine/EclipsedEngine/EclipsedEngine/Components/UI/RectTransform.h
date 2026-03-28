@@ -33,6 +33,14 @@ namespace Eclipse
     public:
         SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, Position, Math::Vector2f(0, 0));
         SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, WidthHeightPX, Math::Vector2f(100, 100));
+        
+        SERIALIZED_FIELD_DEFAULT(bool, ScaleWithCanvasX, false);
+        SERIALIZED_FIELD_DEFAULT(bool, ScaleWithCanvasY, false);
+
+        SERIALIZED_FIELD_DEFAULT(bool, AlignLeft, false);
+        SERIALIZED_FIELD_DEFAULT(bool, AlignTop, false);
+        SERIALIZED_FIELD_DEFAULT(bool, AlignRight, false);
+        SERIALIZED_FIELD_DEFAULT(bool, AlignBottom, false);
 
         Math::Vector2f GlobalPosition;
         

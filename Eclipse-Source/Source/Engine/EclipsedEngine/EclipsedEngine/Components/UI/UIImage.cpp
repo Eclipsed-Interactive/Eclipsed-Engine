@@ -3,6 +3,7 @@
 #include "GraphicsEngine/Sprite.h"
 
 #include "AssetEngine/Resources.h"
+#include "CoreEngine/Settings/GraphicsSettings.h"
 
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
@@ -33,7 +34,8 @@ namespace Eclipse
 
     void UIImage::Render()
     {
-        CommandListManager::GetUICommandList().Enqueue([&]() {
+        CommandListManager::GetUICommandList().Enqueue([&]()
+        {
             Draw();
         });
     }
@@ -48,18 +50,68 @@ namespace Eclipse
             tranform->myIsDirty = false;
             return;
         }
-		
+
         Canvas::EditorCanvasCameraTransform& canvasCameraTransform = canvas->canvasCameraTransform;
-        Math::Vector2f resolution = canvas->ReferenceResolution;
-        Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-		
-        myTransformBuffer.Position = tranform->GetPosition();
-        myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+        Math::Vector2f referenceResolution = canvas->ReferenceResolution;
+        Math::Vector2f halfRefRes = referenceResolution * 0.5f;
+
+#ifdef ECLIPSED_EDITOR
+        Math::Vector2f resolution = Editor::GameWindow::myGameImageResolution;
+#endif
+
+#ifndef ECLIPSED_EDITOR
+        Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();
+#endif
+
+        Math::Vector2f resMinRef = resolution - referenceResolution;
+
+        Math::Vector2f halfRes = resolution * 0.5f;
+        Math::Vector2f position = tranform->GetPosition();
+
+        myTransformBuffer.Position = position;
+
+        if (IsScene)
+            myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+        else
+            myTransformBuffer.Position *= Math::Vector2f(2, 2);
+        
         myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
-		
-        myTransformBuffer.Scale = (*(Math::Vector2f*)tranform->WidthHeightPX.GetData() * canvasScaleRelationOneDiv);
-        myTransformBuffer.Scale *= canvasCameraTransform.ScaleMultiplier;
-		
+
+        // if (!IsScene)
+        // {
+        //     if (tranform->AlignLeft)
+        //     {
+        //         float leftOffset = halfRefRes.x + position.x;
+        //         myTransformBuffer.Position.x = leftOffset - halfRes.x;
+        //     }
+        //     if (tranform->AlignBottom)
+        //     {
+        //         myTransformBuffer.Position.y += halfRefRes.y + position.y;
+        //     }
+        // }
+
+        Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
+        myTransformBuffer.Scale = WidthHeightPX;
+
+        Math::Vector2f canvasScaleRelationOneDiv = {1.f / referenceResolution.x, 1.f / referenceResolution.y};
+        myTransformBuffer.Scale *= canvasScaleRelationOneDiv;
+
+        Math::Vector2f multiplier;
+        if (IsScene)
+            multiplier = canvasCameraTransform.ScaleMultiplier;
+        else
+        {
+            if (!tranform->ScaleWithCanvasX)
+                multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
+            else
+                multiplier.x = 2;
+            if (!tranform->ScaleWithCanvasY)
+                multiplier.y = canvasCameraTransform.ScaleMultiplier.y;
+            else
+                multiplier.y = 2;
+        }
+        myTransformBuffer.Scale *= multiplier;
+
         myTransformBuffer.Rotation = canvasCameraTransform.Rotation;
     }
 
@@ -83,14 +135,11 @@ namespace Eclipse
         resolution.x = 1.f / resolution.x;
         resolution.y = 1.f / resolution.y;
 
-        float aspectRatio = resolution.y / resolution.x;
-
-        Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
+        // float aspectRatio = resolution.y / resolution.x;
+        // Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
         Math::Vector2f size = spriteRectMax - spriteRectMin;
-        material->myMaterialBuffer.spriteRect = { spriteRectMin.x, spriteRectMin.y, size.x, size.y };
-
-        unsigned shaderID = material->GetShaderProgramID();
+        material->myMaterialBuffer.spriteRect = {spriteRectMin.x, spriteRectMin.y, size.x, size.y};
 
         if (sprite->IsValid())
         {
@@ -111,7 +160,7 @@ namespace Eclipse
         editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 #endif
-        
+
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(5, material->myMaterialBuffer);
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
 

@@ -71,11 +71,32 @@ namespace Eclipse
 		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
 		
 		myTransformBuffer.Position = tranform->GetPosition();
-		myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+		if (IsScene)
+			myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+		else
+			myTransformBuffer.Position *= Math::Vector2f(2, 2);
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 		
-		myTransformBuffer.Scale = (*(Math::Vector2f*)tranform->WidthHeightPX.GetData() * canvasScaleRelationOneDiv);
-		myTransformBuffer.Scale *= canvasCameraTransform.ScaleMultiplier;
+		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv;
+
+		
+		Math::Vector2f multiplier;
+		if (IsScene)
+			multiplier = canvasCameraTransform.ScaleMultiplier;
+		else
+		{
+			if (!tranform->ScaleWithCanvasX)
+				multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
+			else
+				multiplier.x = 2;
+			if (!tranform->ScaleWithCanvasY)
+				multiplier.y = canvasCameraTransform.ScaleMultiplier.y;
+			else
+				multiplier.y = 2;
+		}
+		myTransformBuffer.Scale *= multiplier;
+
+		
 		myTransformBuffer.Scale.x *= 2.f;
 		
 		myTransformBuffer.Rotation = canvasCameraTransform.Rotation;

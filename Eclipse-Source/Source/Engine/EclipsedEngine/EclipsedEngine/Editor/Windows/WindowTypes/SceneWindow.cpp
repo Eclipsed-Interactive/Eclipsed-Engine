@@ -192,7 +192,7 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
 
     EditorBuffer* editorBuffer;
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
-    editorBuffer->overideColor = 0;
+    editorBuffer->notOverideColor = 0;
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
@@ -362,7 +362,7 @@ void Eclipse::Editor::SceneWindow::Update()
 
     EditorBuffer* editorBuffer;
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
-    editorBuffer->overideColor = 1;
+    editorBuffer->notOverideColor = 1;
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
 
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
