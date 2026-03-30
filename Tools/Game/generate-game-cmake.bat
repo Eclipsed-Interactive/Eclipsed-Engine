@@ -4,7 +4,11 @@ setlocal
 
 set /p PROJECT_PATH=< "../Eclipse-Source/Bin/.ini"
 
-cmake -G "Visual Studio 17 2022"                 ^
+call CheckVSVersion.bat
+echo Generator: %VS_FULL_CMAKE%
+echo.
+
+cmake -G "%VS_FULL_CMAKE%"                 ^
     -T host=x64  ^
     -S ../Eclipse-Source/  ^
     -B "%PROJECT_PATH%/Library/Game-Binary"  ^
