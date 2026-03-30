@@ -5,6 +5,7 @@
 #include "PlatformIntegration/IntegrationManager.h"
 
 #include "CoreEngine/Settings/Settings.h"
+#include "Profiler/PerformanceProfiler.h"
 
 
 namespace Eclipse
