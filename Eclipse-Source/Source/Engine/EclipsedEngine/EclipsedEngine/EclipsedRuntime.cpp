@@ -83,7 +83,8 @@ namespace Eclipse
 
 		//MainSingleton::RegisterInstance<EngineSettings>();
  
-		GraphicsEngine::Init();
+		GraphicsEngine::InitSpecifiedAPI<OpenGLGraphicsEngine>();
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->Init();
 		Input::Init();
 
 		//Settings::SettingsRegistry::SaveDefaults();
@@ -149,7 +150,7 @@ namespace Eclipse
 		PhysicsEngine::DrawPhysicsObjects();
 		ComponentManager::RenderComponents();
 		ComponentManager::AfterRenderUpdateComponents();
-		GraphicsEngine::Render();
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->Render();
 	}
 
 	void EclipsedRuntime::Update()
@@ -161,7 +162,7 @@ namespace Eclipse
 
 	void EclipsedRuntime::EndFrame()
 	{
-		GraphicsEngine::EndFrame();
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->EndFrame();
 	}
 	void EclipsedRuntime::Shutdown()
 	{
@@ -183,8 +184,8 @@ namespace Eclipse
 
 	bool EclipsedRuntime::BeginFrame()
 	{
-		GraphicsEngine::BeginFrame();
-		int shouldCloseWindow = GraphicsEngine::ShouldWindowClose();
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->BeginFrame();
+		int shouldCloseWindow = GraphicsEngine::Get<OpenGLGraphicsEngine>()->ShouldWindowClose();
 
 		return !shouldCloseWindow;
 	}

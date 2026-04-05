@@ -17,7 +17,7 @@ namespace Eclipse
         Replication::ReplicationManager::Start();
     }
     
-    void SteamGeneral::Update()
+    void SteamGeneral::Update() 
     {
         SteamAPI_RunCallbacks();
     }

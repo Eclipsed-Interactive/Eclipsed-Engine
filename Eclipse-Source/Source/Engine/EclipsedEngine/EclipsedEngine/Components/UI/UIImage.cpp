@@ -3,6 +3,7 @@
 #include "GraphicsEngine/Sprite.h"
 
 #include "AssetEngine/Resources.h"
+#include "CoreEngine/Settings/GraphicsSettings.h"
 
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
@@ -15,11 +16,6 @@ namespace Eclipse
 {
     void UIImage::sprite_OnRep()
     {
-    }
-
-    void UIImage::OnSceneLoaded()
-    {
-        
     }
 
     void UIImage::OnComponentAdded()
@@ -38,9 +34,85 @@ namespace Eclipse
 
     void UIImage::Render()
     {
-        CommandListManager::GetUICommandList().Enqueue([&]() {
+        CommandListManager::GetUICommandList().Enqueue([&]()
+        {
             Draw();
         });
+    }
+
+    void UIImage::TransformUpdate()
+    {
+        auto tranform = gameObject->GetComponent<RectTransform>();
+
+        Canvas* canvas = tranform->myCanvas;
+        if (!canvas)
+        {
+            tranform->myIsDirty = false;
+            return;
+        }
+
+        Canvas::EditorCanvasCameraTransform& canvasCameraTransform = canvas->canvasCameraTransform;
+        Math::Vector2f referenceResolution = canvas->ReferenceResolution;
+        Math::Vector2f halfRefRes = referenceResolution * 0.5f;
+
+#ifdef ECLIPSED_EDITOR
+        Math::Vector2f resolution = Editor::GameWindow::myGameImageResolution;
+#endif
+
+#ifndef ECLIPSED_EDITOR
+        Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();
+#endif
+
+        Math::Vector2f resMinRef = resolution - referenceResolution;
+
+        Math::Vector2f halfRes = resolution * 0.5f;
+        Math::Vector2f position = tranform->GetPosition();
+
+        myTransformBuffer.Position = position;
+
+        if (IsScene)
+            myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+        else
+            myTransformBuffer.Position *= Math::Vector2f(2, 2);
+        
+        myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
+
+        // if (!IsScene)
+        // {
+        //     if (tranform->AlignLeft)
+        //     {
+        //         float leftOffset = halfRefRes.x + position.x;
+        //         myTransformBuffer.Position.x = leftOffset - halfRes.x;
+        //     }
+        //     if (tranform->AlignBottom)
+        //     {
+        //         myTransformBuffer.Position.y += halfRefRes.y + position.y;
+        //     }
+        // }
+
+        Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
+        myTransformBuffer.Scale = WidthHeightPX;
+
+        Math::Vector2f canvasScaleRelationOneDiv = {1.f / referenceResolution.x, 1.f / referenceResolution.y};
+        myTransformBuffer.Scale *= canvasScaleRelationOneDiv;
+
+        Math::Vector2f multiplier;
+        if (IsScene)
+            multiplier = canvasCameraTransform.ScaleMultiplier;
+        else
+        {
+            if (!tranform->ScaleWithCanvasX)
+                multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
+            else
+                multiplier.x = 2;
+            if (!tranform->ScaleWithCanvasY)
+                multiplier.y = canvasCameraTransform.ScaleMultiplier.y;
+            else
+                multiplier.y = 2;
+        }
+        myTransformBuffer.Scale *= multiplier;
+
+        myTransformBuffer.Rotation = canvasCameraTransform.Rotation;
     }
 
     void UIImage::Draw()
@@ -48,39 +120,26 @@ namespace Eclipse
         if (!hasMaterial)
             return;
 
-        auto tranform = gameObject->GetComponent<RectTransform>();
+        auto transform = gameObject->GetComponent<RectTransform>();
 
-        if (!tranform)
+        if (!transform)
             return;
-        if (!tranform->myCanvas)
+        if (!transform->myCanvas)
             return;
 
-        tranform->myCanvas->SetCanvasTransformProperties();
-
-        Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
+        transform->myCanvas->SetCanvasTransformProperties();
 
 
-        Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+        Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
 
         resolution.x = 1.f / resolution.x;
         resolution.y = 1.f / resolution.y;
 
-        float aspectRatio = resolution.y / resolution.x;
+        // float aspectRatio = resolution.y / resolution.x;
+        // Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
-        Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
-
-        Math::Vector2f position = tranform->GetPosition();
-        position *= canvasCameraTransform.ScaleMultiplier;
-        position += canvasCameraTransform.PositionOffset;
-
-
-        Math::Vector2f scale = tranform->WidthHeightPX;
-        scale *= canvasCameraTransform.ScaleMultiplier;
-
-        float rotation = 0.f;
-        rotation += canvasCameraTransform.Rotation;
-
-        unsigned shaderID = material->GetShaderProgramID();
+        Math::Vector2f size = spriteRectMax - spriteRectMin;
+        material->myMaterialBuffer.spriteRect = {spriteRectMin.x, spriteRectMin.y, size.x, size.y};
 
         if (sprite->IsValid())
         {
@@ -93,20 +152,23 @@ namespace Eclipse
             material->Use();
         }
 
-        //GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
+        TransformUpdate();
 
-        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
-        GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
-        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
+#ifdef ECLIPSED_EDITOR
+        EditorBuffer* editorBuffer;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+        editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+#endif
 
-        //auto tempSettings = TemporarySettingsSingleton::Get();
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(5, material->myMaterialBuffer);
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
 
-        GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
-
-        // Math::Vector4f pixelPickColor = gameObject->GetPixelPickingIDColor();
-        // GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "pixelPickColor", &pixelPickColor);
-
-        GraphicsEngine::SetGlobalUniforms(shaderID);
+        CanvasBuffer* canvasBuffer;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+        if (!IsScene && !transform->myCanvas->WorldSpace)
+            canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
 
         Sprite::Get().Render();
     }

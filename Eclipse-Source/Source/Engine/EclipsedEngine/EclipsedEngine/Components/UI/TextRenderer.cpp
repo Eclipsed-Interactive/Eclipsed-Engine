@@ -1,8 +1,6 @@
 #include "TextRenderer.h"
 
-#include "GraphicsEngine/RenderCommands/RenderCommand.h"
 #include "GraphicsEngine/RenderCommands/CommandList.h"
-#include "GraphicsEngine/OpenGL/DebugDrawers/DebugDrawer.h"
 
 #include "AssetEngine/Resources.h"
 #include "GraphicsEngine/TextSprite.h"
@@ -11,11 +9,12 @@
 #include "GraphicsEngine/TextManager.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
-#include "EclipsedEngine/Components/Transform2D.h"
 
 #include "OpenGL/glad/glad.h"
 
 #include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+#include "CoreEngine/GraphicsBuffers/TextMaterialBuffer.h"
+#include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
 
 namespace Eclipse
 {
@@ -36,7 +35,7 @@ namespace Eclipse
 	void TextMaterial::Use(unsigned textureID)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		GraphicsEngine::BindTexture(GL_TEXTURE_2D, textureID);
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindTexture(GL_TEXTURE_2D, textureID);
 	}
 
 
@@ -56,23 +55,62 @@ namespace Eclipse
 
 	}
 
-	void TextRenderer::OnComponentAdded()
+	void TextRenderer::TransformUpdate()
 	{
-		OnSceneLoaded();
+		auto tranform = gameObject->GetComponent<RectTransform>();
+
+		Canvas* canvas = tranform->myCanvas;
+		if (!canvas)
+		{
+			tranform->myIsDirty = false;
+			return;
+		}
+		
+		Canvas::EditorCanvasCameraTransform& canvasCameraTransform = canvas->canvasCameraTransform;
+		Math::Vector2f resolution = canvas->ReferenceResolution;
+		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		
+		myTransformBuffer.Position = tranform->GetPosition();
+		if (IsScene)
+			myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
+		else
+			myTransformBuffer.Position *= Math::Vector2f(2, 2);
+		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
+		
+		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv;
+
+		
+		Math::Vector2f multiplier;
+		if (IsScene)
+			multiplier = canvasCameraTransform.ScaleMultiplier;
+		else
+		{
+			if (!tranform->ScaleWithCanvasX)
+				multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
+			else
+				multiplier.x = 2;
+			if (!tranform->ScaleWithCanvasY)
+				multiplier.y = canvasCameraTransform.ScaleMultiplier.y;
+			else
+				multiplier.y = 2;
+		}
+		myTransformBuffer.Scale *= multiplier;
+
+		
+		myTransformBuffer.Scale.x *= 2.f;
+		
+		myTransformBuffer.Rotation = canvasCameraTransform.Rotation;
 	}
 
-	void TextRenderer::OnSceneLoaded()
+
+	void TextRenderer::OnComponentAdded()
 	{
-		if (!myCreatedRenderer)
-		{
-			myMaterial = new TextMaterial();
-			myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		myMaterial = new TextMaterial();
+		myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 
-			myCreatedRenderer = true;
-
-			int lastFontSize = myFontSize;
-		}
-
+		gameObject->GetComponent<RectTransform>()->AddFunctionToRunOnDirtyUpdate([&](){
+			TransformUpdate();
+		});
 	}
 
 	//void TextRenderer::DrawInspector()
@@ -322,32 +360,35 @@ namespace Eclipse
 
 	void TextRenderer::OnDrawGizmos()
 	{
-		// Commented because doing it wrong way
+		// This is not right, does not work as intended
 		
-		// if (drawRectGizmos)
-		// {
-		// 	auto tranform = gameObject->GetComponent<RectTransform>();
-		// 	if (!tranform)
-		// 		return;
-		//
-		//
-		// 	Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-		// 	float aspectRatio = resolution.x / resolution.y;
-		// 	Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-		//
-		// 	const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv;
-		// 	//float rotation = gameObject->transform->GetRotation();
-		// 	Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
-		// 	scale.x *= aspectRatio;
-		//
-		// 	DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale * 0.5f, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
-		// }
+		if (drawRectGizmos)
+		{
+			auto tranform = gameObject->GetComponent<RectTransform>();
+			if (!tranform)
+				return;
+			if (!tranform->myCanvas)
+				return;
+		
+			Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+			float aspectRatio = resolution.x / resolution.y;
+			Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		
+			const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv * Math::Vector2f(aspectRatio, 1);
+			//float rotation = gameObject->transform->GetRotation();
+			Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
+			scale.x *= aspectRatio;
+
+			//Math::Vector2f CanvasPosition = canvasScaleRelationOneDiv * tranform->myCanvas->canvasCameraTransform.PositionOffset * 0.5f;
+		
+			DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
+		}
 	}
 
 	void TextRenderer::Render()
 	{
 		CommandListManager::GetUICommandList().Enqueue([&]() {
-			this->Draw();
+				this->Draw();
 			});
 	}
 
@@ -357,150 +398,142 @@ namespace Eclipse
 			return;
 
 		const char* textInConstChar = myText->c_str();
-		auto tranform = gameObject->GetComponent<RectTransform>();
+		auto transform = gameObject->GetComponent<RectTransform>();
 
-		if (!tranform)
+		if (!transform)
 			return;
-		if (!tranform->myCanvas)
+		if (!transform->myCanvas)
 			return;
 
-		// float aspectRatio;
-		// GraphicsEngine::GetGlobalUniform(UniformType::Float, "resolutionRatio", &aspectRatio);
-		//
-		// tranform->myCanvas->SetCanvasTransformProperties();
-		//
-		// Canvas::EditorCanvasCameraTransform& canvasCameraTransform = tranform->myCanvas->canvasCameraTransform;
-		//
-		// unsigned shaderID = myMaterial->programID;
-		// glUseProgram(shaderID);
-		//
-		// Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-		// Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "canvasScaleRelationOneDiv", &canvasScaleRelationOneDiv);
-		//
-		// Math::Vector2f position = tranform->GetPosition();
-		// position *= canvasCameraTransform.ScaleMultiplier;
-		// position += canvasCameraTransform.PositionOffset;
-		//
-		//
-		// Math::Vector2f scale = (*(Math::Vector2f*)tranform->WidthHeightPX.GetData() * canvasScaleRelationOneDiv);
-		// scale *= canvasCameraTransform.ScaleMultiplier;
-		// scale.x *= 2.f;
-		//
-		// float rotation = 0.f;
-		// rotation += canvasCameraTransform.Rotation;
-		//
-		// //GraphicsEngine::SetUniform(UniformType::Int, shaderID, "ZIndex", &ZIndex.Get());
-		//
-		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.position", &position);
-		// GraphicsEngine::SetUniform(UniformType::Float, shaderID, "transform.rotation", &rotation);
-		// GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "transform.size", &scale);
-		// GraphicsEngine::SetGlobalUniforms(shaderID);
-		//
-		// Font& font = TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
-		//
-		// Math::Vector2f textOffset = { 0, 0 };
-		// Math::Vector2f scaleRect = scale * myRect * resolution;
-		// scaleRect.x *= 0.5f;
-		//
-		// lineOffsets.resize(1);
-		// lineOffsets.back() = 0;
-		// for (int i = 0; i < myText->size(); i++)
-		// {
-		// 	char character = textInConstChar[i];
-		// 	if (character == ' ')
-		// 	{
-		// 		lineOffsets.back() += scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize;
-		// 		continue;
-		// 	}
-		// 	else if (character == '\n')
-		// 	{
-		// 		lineOffsets.emplace_back(0.f);
-		// 		continue;
-		// 	}
-		// 	Character& characterFace = font.myCharTexture.at(character);
-		// 	float convertedAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
-		// 	lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
-		// }
-		//
-		// if (myTextAlignment == 0 || myTextAlignment == 3)
-		// 	textOffset.x -= scaleRect.x;
-		// else if (myTextAlignment == 2)
-		// 	textOffset.x += scaleRect.x - scale.x;
-		//
-		//
-		// Math::Vector2f startOffset = textOffset;
-		//
-		// float maxCharSize = myFont->maxCharHeight;
-		// // if (myTextCentering == 0)
-		// // 	textOffset.y = (scaleRect.y - myFontSize * 4.f);
-		// // if (myTextCentering == 1)
-		// // 	textOffset.y = myFontSize * -3.f * lineOffsets.size();
-		// // else if (myTextCentering == 2)
-		// // 	textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
-		//
-		//
-		// Math::Vector4f color(myTextColor->r, myTextColor->g, myTextColor->b, myTextColor->a);
-		// GraphicsEngine::SetUniform(UniformType::Vector4f, shaderID, "color", &color);
-		//
-		// int currentLineCount = 0;
-		// for (int i = 0; i < myText->size(); i++)
-		// {
-		// 	char character = textInConstChar[i];
-		//
-		// 	if (character == '\t')
-		// 	{
-		// 		textOffset.x += scale.x * 50.f * 4.f * myCharacterSpacing * myFontSize;
-		// 		continue;
-		// 	}
-		// 	else if (character == '\n')
-		// 	{
-		// 		textOffset.y -= scale.y * 50.f * myEnterSpacing * 2.f * myFontSize;
-		// 		textOffset.x = startOffset.x;
-		// 		currentLineCount++;
-		// 		continue;
-		// 	}
-		// 	else if (character == ' ')
-		// 	{
-		// 		textOffset.x += scale.x * 50.f * myCharacterSpacing * myFontSize;
-		// 		continue;
-		// 	}
-		//
-		// 	Math::Vector2f scaleRect = scale * myRect * resolution;
-		//
-		// 	if (font.myCharTexture.find(character) == font.myCharTexture.end())
-		// 		character = '\n';
-		//
-		// 	Character& characterFace = font.myCharTexture.at(character);
-		// 	float characterAdvance = (float)(characterFace.advance >> 6) * 100.f * scale.x;
-		//
-		// 	// float newXOffset = textOffset.x + characterAdvance;
-		// 	// if (newXOffset >= scaleRect.x)
-		// 	// {
-		// 	// 	return;
-		// 	// }
-		//
-		// 	myMaterial->Use(characterFace.textureID);
-		//
-		// 	Math::Vector2f textSize = { (float)characterFace.size.x, (float)characterFace.size.y };
-		// 	GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "size", &textSize);
-		//
-		// 	float lineOffset;
-		// 	if (myTextAlignment == 0)
-		// 		lineOffset = 0;
-		// 	else
-		// 		lineOffset = lineOffsets[currentLineCount] - scale.x * myCharacterSpacing;
-		//
-		//
-		// 	Math::Vector2f characterSpecificOffset = textOffset;
-		// 	characterSpecificOffset.x += (characterFace.bearing.x * 100.f * scale.x) - lineOffset;
-		// 	characterSpecificOffset.y -= (characterFace.size.y - characterFace.bearing.y) * scale.y * 100.f;
-		// 	GraphicsEngine::SetUniform(UniformType::Vector2f, shaderID, "offset", &characterSpecificOffset);
-		//
-		// 	textOffset.x += characterAdvance * myCharacterSpacing;
-		//
-		// 	TextSprite::Get().Render();
-		// }
+		// CameraBuffer* cameraBuffer = nullptr;
+		// GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
+		
+		transform->myCanvas->SetCanvasTransformProperties();
+		
+		unsigned shaderID = myMaterial->programID;
+		glUseProgram(shaderID);
+		
+		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
+		
+
+		TransformUpdate();
+		
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
+		
+		Font& font = TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		
+		Math::Vector2f textOffset = { 0, 0 };
+		Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
+		scaleRect.x *= 0.5f;
+		
+		lineOffsets.resize(1);
+		lineOffsets.back() = 0;
+		for (int i = 0; i < myText->size(); i++)
+		{
+			char character = textInConstChar[i];
+			if (character == ' ')
+			{
+				lineOffsets.back() += myTransformBuffer.Scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize;
+				continue;
+			}
+			else if (character == '\n')
+			{
+				lineOffsets.emplace_back(0.f);
+				continue;
+			}
+			Character& characterFace = font.myCharTexture.at(character);
+			float convertedAdvance = (float)(characterFace.advance >> 6) * 100.f * myTransformBuffer.Scale.x;
+			lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
+		}
+		
+		
+		if (myTextAlignment == 0 || myTextAlignment == 3)
+			textOffset.x -= scaleRect.x;
+		else if (myTextAlignment == 2)
+			textOffset.x += scaleRect.x - myTransformBuffer.Scale.x;
+		
+		Math::Vector2f startOffset = textOffset;
+		if (myTextCentering == 0)
+			;//textOffset.y = (scaleRect.y - myFontSize * 4.f);
+		else if (myTextCentering == 1)
+			;//textOffset.y = myFontSize * -3.f * lineOffsets.size();
+		else if (myTextCentering == 2)
+			;//textOffset.y = (-scaleRect.y + 0.0125f)  * lineOffsets.size();
+		
+		myTextMaterialBuffer.color = myTextColor;
+		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<TextMaterialBuffer>(5, myTextMaterialBuffer);
+
+		
+		int currentLineCount = 0;
+		for (int i = 0; i < myText->size(); i++)
+		{
+			char character = textInConstChar[i];
+		
+			if (character == '\t')
+			{
+				textOffset.x += myTransformBuffer.Scale.x * 50.f * 4.f * myCharacterSpacing * myFontSize;
+				continue;
+			}
+			else if (character == '\n')
+			{
+				textOffset.y -= myTransformBuffer.Scale.y * 50.f * myEnterSpacing * 2.f * myFontSize;
+				textOffset.x = startOffset.x;
+				currentLineCount++;
+				continue;
+			}
+			else if (character == ' ')
+			{
+				textOffset.x += myTransformBuffer.Scale.x * 50.f * myCharacterSpacing * myFontSize;
+				continue;
+			}
+		
+			Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
+		
+			if (font.myCharTexture.find(character) == font.myCharTexture.end())
+				character = '\n';
+		
+			Character& characterFace = font.myCharTexture.at(character);
+			float characterAdvance = (float)(characterFace.advance >> 6) * 100.f * myTransformBuffer.Scale.x;
+		
+			// float newXOffset = textOffset.x + characterAdvance;
+			// if (newXOffset >= scaleRect.x)
+			// {
+			// 	return;
+			// }
+		
+			myMaterial->Use(characterFace.textureID);
+		
+			myTextBuffer.size = { (float)characterFace.size.x, (float)characterFace.size.y };
+		
+			float lineOffset;
+			if (myTextAlignment == 0)
+				lineOffset = 0;
+			else
+				lineOffset = lineOffsets[currentLineCount] - myTransformBuffer.Scale.x * myCharacterSpacing;
+		
+		
+			myTextBuffer.offset = textOffset;
+			myTextBuffer.offset.x += (characterFace.bearing.x * 100.f * myTransformBuffer.Scale.x) - lineOffset;
+			myTextBuffer.offset.y -= (characterFace.size.y - characterFace.bearing.y) * myTransformBuffer.Scale.y * 100.f;
+
+#ifdef ECLIPSED_EDITOR
+			EditorBuffer* editorBuffer;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<EditorBuffer>(editorBuffer);
+			editorBuffer->PixelPickColor = gameObject->GetPixelPickingIDColor();
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<EditorBuffer>(35);
+#endif
+			
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(3, myTextBuffer);
+			textOffset.x += characterAdvance * myCharacterSpacing;
+
+			CanvasBuffer* canvasBuffer;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
+			if (!IsScene && !transform->myCanvas->WorldSpace)
+				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
+			
+			TextSprite::Get().Render();
+		}
 	}
 
 	void TextRenderer::SetFontSize(int aFontSize)

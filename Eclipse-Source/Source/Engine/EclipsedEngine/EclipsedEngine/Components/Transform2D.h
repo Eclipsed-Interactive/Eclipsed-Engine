@@ -49,7 +49,7 @@ namespace Eclipse
 		void SetScale(float aX, float aY);
 
 		void AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction);
-		void AddFunctionToRunOnDirtyUpdate(DirtyFunctionPtr* aFunction);
+		//void AddFunctionToRunOnDirtyUpdate(DirtyFunctionPtr* aFunction);
 
 	private:
 		void AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const;

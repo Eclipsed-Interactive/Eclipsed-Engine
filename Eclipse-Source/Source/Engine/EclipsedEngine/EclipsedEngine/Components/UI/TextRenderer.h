@@ -7,6 +7,9 @@
 #include "AssetEngine/Assets/PixelShader.h"
 
 #include "CoreEngine/PathManager.h"
+#include "CoreEngine/GraphicsBuffers/TextBuffer.h"
+#include "CoreEngine/GraphicsBuffers/TextMaterialBuffer.h"
+#include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
 
 
 namespace Eclipse
@@ -30,10 +33,11 @@ namespace Eclipse
         COMPONENT_BASE_2(TextRenderer, 0)
 
     public:
+        
         void EditorUpdate() override;
 
         void OnComponentAdded() override;
-        void OnSceneLoaded() override;
+        void TransformUpdate();
 
         void Render() override;
         void Draw();
@@ -51,8 +55,8 @@ namespace Eclipse
 
         void OnDrawGizmos() override;
         
-        PRIVATE_SERIALIZED_FIELD_DEFAULT(std::string, myText, "EEE");
-        PRIVATE_SERIALIZED_FIELD_DEFAULT(Math::Color, myTextColor, Math::Color(1, 1, 1, 1));
+        SERIALIZED_FIELD_DEFAULT(std::string, myText, "EEE");
+        SERIALIZED_FIELD_DEFAULT(Math::Color, myTextColor, Math::Color(1, 1, 1, 1));
 
         SERIALIZED_FIELD_DEFAULT(std::string, myFontPath, (PathManager::GetEngineAssetsPath() / "Fonts/Quicksand-VariableFont_wght.ttf").generic_string());
         SERIALIZED_FIELD_DEFAULT(int, myFontSize, 48);
@@ -69,11 +73,13 @@ namespace Eclipse
         class Font* myFont;
         TextMaterial* myMaterial;
 
-        bool myCreatedRenderer = false;
-
         PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextAlignment, 1);
         PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextCentering, 1);
 
         std::vector<float> lineOffsets;
+
+        TextMaterialBuffer myTextMaterialBuffer;
+        TransformBuffer myTransformBuffer;
+        TextBuffer myTextBuffer;
     };
 }

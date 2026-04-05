@@ -14,7 +14,7 @@ namespace Eclipse
 
     public:
         void OnComponentAdded() override;
-        void OnSceneLoaded() override;
+        void TransformUpdate();
         
         void Render() override;
         void Draw();
@@ -22,8 +22,12 @@ namespace Eclipse
         bool hasSprite = false;
         bool hasMaterial = false;
 
+        Math::Vector2f spriteRectMin = { 0.f, 0.f };
+        Math::Vector2f spriteRectMax = { 1.f, 1.f };
+
         MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
         SERIALIZED_FIELD(Material, material);
-        
+
+        TransformBuffer myTransformBuffer;
     };
 }

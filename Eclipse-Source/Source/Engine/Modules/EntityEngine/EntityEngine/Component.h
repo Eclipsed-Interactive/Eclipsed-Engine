@@ -53,7 +53,7 @@ namespace Eclipse
 			return Random::Rand<unsigned>();
 		}
 
-		virtual int GetZIndex(){ return -1; }
+		virtual float GetZIndex(){ return -1; }
 
 		void SetComponentID()
 		{

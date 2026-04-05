@@ -173,6 +173,12 @@ namespace Eclipse::Reflection
 			sizePerElement = sizeof(Eclipse::Prefab);
 		}
 
+		else if constexpr (std::is_same<T, Math::Color>::value)
+		{
+			type = SerializedType_Color;
+			sizePerElement = sizeof(T);
+		}
+		
 		else if constexpr (std::is_same<T, bool>::value)
 		{
 			type = SerializedType_Bool;

@@ -1,11 +1,6 @@
 #include "EditorContext.h"
 
-#include "CoreEngine/Engine.h"
-
 #include "AssetEngine/Editor/Importer/EditorAssetImporter.h"
-
-#include <stdlib.h>
-
 #include "EclipsedEngine/Editor/Common/EditorActions.h"
 
 

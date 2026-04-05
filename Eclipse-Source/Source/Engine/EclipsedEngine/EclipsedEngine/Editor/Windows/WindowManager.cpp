@@ -77,10 +77,16 @@ namespace Eclipse::Editor
 							GameLoader::LoadGameDLL();
 						}
 
-						if (ImGui::MenuItem("Build Game EXE"))
+						if (ImGui::MenuItem("Build Game Release EXE"))
 						{
-							system(("cd " + (PathManager::GetEngineRoot().parent_path().parent_path() / "Tools").generic_string() + " && start build-game.bat").c_str());
+							std::filesystem::path CDPath = PathManager::GetEngineRoot().parent_path().parent_path() / "Tools";
+							system(("cd " + CDPath.generic_string() + " && start build-game-editor.bat Release").c_str());
 						}
+						// else if (ImGui::MenuItem("Build Game Debug EXE"))
+						// {
+						// 	std::filesystem::path CDPath = PathManager::GetEngineRoot().parent_path().parent_path() / "Tools";
+						// 	system(("cd " + CDPath.generic_string() + " && start build-game-editor.bat Debug").c_str());
+						// }
 
 						ImGui::EndMenu();
 					}

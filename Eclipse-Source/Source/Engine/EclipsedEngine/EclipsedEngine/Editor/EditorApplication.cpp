@@ -2,8 +2,6 @@
 
 #ifdef ECLIPSED_EDITOR
 
-#include "CoreEngine/ErrorCodes.h"
-#include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
 #include "EclipsedEngine/Editor/EditorProjectManager.h"
 
 

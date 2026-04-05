@@ -42,7 +42,7 @@ namespace Eclipse
     {
     private:
 
-        friend class GraphicsEngine;
+        friend class OpenGLGraphicsEngine;
 
         struct GlobalUniformValueInt
         {

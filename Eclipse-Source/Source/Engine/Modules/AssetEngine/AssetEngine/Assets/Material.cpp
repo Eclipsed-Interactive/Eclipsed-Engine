@@ -1,7 +1,5 @@
 #include "Material.h"
 
-#include "CoreEngine/Math/Vector/Vector4.h"
-
 namespace Eclipse
 {
 	Texture& Material::GetTexture()
@@ -49,11 +47,7 @@ namespace Eclipse
 
 	void Material::BindColor()
 	{
-
-		Math::Vector4f col = data->color.ToVector();
-
-		GLuint location = glGetUniformLocation(data->programID, "material.color");
-		glUniform4f(location, col.x, col.x, col.x, col.x);
+		myMaterialBuffer.color = data->color;
 	}
 
 	void Material::Use()

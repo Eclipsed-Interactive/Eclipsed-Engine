@@ -1,8 +1,6 @@
 #pragma once
 
-#include <initializer_list>
 #include "CoreEngine/Math/Vector/Vector4.h"
-
 #include "CoreEngine/Settings/SettingsBase.hpp"
 
 namespace Eclipse::Math

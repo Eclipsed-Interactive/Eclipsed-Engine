@@ -93,7 +93,7 @@ namespace Eclipse::Editor
 	{
 		static bool Draw(Math::Color& aValue)
 		{
-			return ImGui::DragFloat4(GetFieldKey().c_str(), &aValue.r);
+			return ImGui::ColorPicker4(GetFieldKey().c_str(), &aValue.r);
 		}
 	};
 

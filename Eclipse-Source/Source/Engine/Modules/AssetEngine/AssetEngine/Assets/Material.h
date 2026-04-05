@@ -1,7 +1,9 @@
 #pragma once
 
-#include "AssetEngine/Data/MaterialData.h"
 #include "BaseAsset.h"
+#include "AssetEngine/Data/MaterialData.h"
+
+#include "CoreEngine/GraphicsBuffers/MaterialBuffer.h"
 
 namespace Eclipse
 {
@@ -29,6 +31,6 @@ namespace Eclipse
 		void Use();
 		void Create();
 
-		static inline const char* colorID = "material.color";
+		MaterialBuffer myMaterialBuffer;
 	};
 }

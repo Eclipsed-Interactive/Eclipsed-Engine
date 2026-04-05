@@ -2,7 +2,7 @@
 
 #include "EclipsedEngine/Components/Component.h"
 
-#include "CoreEngine/Math/Math.h"
+#include "CoreEngine/GraphicsBuffers/CameraBuffer.h"
 
 namespace Eclipse
 {
@@ -14,8 +14,8 @@ namespace Eclipse
         void OnDestroy() override;
 
         void OnComponentAdded() override;
-        void OnSceneLoaded() override;
-        void Render() override;
+        void EditorUpdate() override;
+        void OnDrawGizmos() override;
 
         void UpdateCameraTransform();
 
@@ -24,5 +24,7 @@ namespace Eclipse
         bool created;
 
         static inline bool drawCameraGizmos = false;
+
+        CameraBuffer myCameraBuffer;
     };
 }

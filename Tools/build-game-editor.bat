@@ -3,7 +3,7 @@
 setlocal
 
 call Game/generate-game-cmake.bat
-call Game/build-game.bat Release
+call Game/build-game.bat %1
 
 set /p PROJECT_PATH=< "../Eclipse-Source/Bin/.ini"
 xcopy "../Eclipse-Source/Assets/DLLs" "%PROJECT_PATH%/Bin" /E /Y /I

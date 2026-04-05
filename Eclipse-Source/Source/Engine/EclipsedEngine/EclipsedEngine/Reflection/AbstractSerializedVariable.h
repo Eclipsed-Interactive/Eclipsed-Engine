@@ -103,6 +103,7 @@ namespace Eclipse::Reflection
 			SerializedType_Enum,
 			SerializedType_Custom_Type,
 			SerializedType_Bool,
+			SerializedType_Color,
 			SerializedType_Fundamental,
 
 			SerializedType_List,

@@ -25,7 +25,7 @@ namespace Eclipse
 
 			void ObjectSnappingGizmo();
 
-			void SpriteSelecter();
+			void SpriteSelector();
 
 			void ZoomToObject();
 			void ScrollManager();
@@ -81,6 +81,8 @@ namespace Eclipse
 		private:
 			unsigned mySceneFrameBuffer = 0;
 			unsigned mySceneTexture = 0;
+
+			bool AlwaysRenderSpriteSelector = true;
 		};
 	}
 }
