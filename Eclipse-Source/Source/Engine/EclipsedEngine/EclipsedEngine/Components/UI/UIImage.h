@@ -13,6 +13,7 @@ namespace Eclipse
         COMPONENT_BASE_2(UIImage, 0)
 
     public:
+        void EditorUpdate() override;
         void OnComponentAdded() override;
         void TransformUpdate();
         

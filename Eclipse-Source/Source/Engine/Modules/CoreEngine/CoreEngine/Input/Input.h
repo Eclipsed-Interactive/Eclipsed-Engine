@@ -38,7 +38,7 @@ namespace Eclipse::Core
 		bool GetMouseUp(Keycode::Scancode aKey);
 
 
-		const Math::Vector2i& GetGameMousePos();
+		const Math::Vector2f& GetGameMousePos();
 
 		const Math::Vector2i& GetMousePos();
 		const Math::Vector2i& GetMouseDeltaPos();
@@ -55,7 +55,7 @@ namespace Eclipse::Core
 		void Update();
 
 		// This is used when in editor
-		void SetGamePosition(const Math::Vector2i& aPosition);
+		void SetGamePosition(const Math::Vector2f& aPosition);
 
 	private:
 		void OnKey_Callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -72,7 +72,7 @@ namespace Eclipse::Core
 		std::bitset<MAX_KEYS> pressedThisFrame;
 		std::bitset<MAX_KEYS> releasedThisFrame;
 
-		Math::Vector2i currentGamePos;
+		Math::Vector2f currentGamePos;
 
 		Math::Vector2i currentPos;
 		Math::Vector2i lastPos;

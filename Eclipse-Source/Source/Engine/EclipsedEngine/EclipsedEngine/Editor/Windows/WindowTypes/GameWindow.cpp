@@ -82,8 +82,6 @@ namespace Eclipse::Editor
 		}
 
 
-
-		// These clear colors are not working like they should and get mixed up so the first is the empty background and second is the actual
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(myGameFrameBuffer);
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
 
@@ -140,7 +138,11 @@ namespace Eclipse::Editor
 		ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
 		float mousePosX = mousePos.x - cursorScreenPos.x;
 		float mousePosY = windowSize.y - (mousePos.y - cursorScreenPos.y);
-		Input::SetGamePosition({ static_cast<int>(mousePosX), static_cast<int>(mousePosY) });
+
+		float mousePosNormalizedX = mousePosX / windowSize.x;
+		float mousePosNormalizedY = mousePosY / windowSize.y;
+		
+		Input::SetGamePosition({ mousePosNormalizedX, mousePosNormalizedY });
 
 		GameWindow::myGameImageResolution = Math::Vector2f(windowSize.x, windowSize.y - CursorPos.y);
 		ImGui::Image(myGameTexture, ImVec2(windowSize.x, windowSize.y - CursorPos.y), ImVec2(0, 1.f), ImVec2(0.99f, 0));
@@ -206,7 +208,11 @@ namespace Eclipse::Editor
 		ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
 		float mousePosX = mousePos.x - cursorScreenPos.x;
 		float mousePosY = windowSize.y - (mousePos.y - cursorScreenPos.y);
-		Input::SetGamePosition({ static_cast<int>(mousePosX), static_cast<int>(mousePosY) });
+
+		float mousePosNormalizedX = mousePosX / windowSize.x;
+		float mousePosNormalizedY = mousePosY / windowSize.y;
+		
+		Input::SetGamePosition({ mousePosNormalizedX, mousePosNormalizedY });
 
 		GameWindow::myGameImageResolution = Math::Vector2f(windowSize.x, windowSize.y);
 		ImGui::Image(myGameTexture, windowSize, ImVec2(0, 1), ImVec2(1, 0));

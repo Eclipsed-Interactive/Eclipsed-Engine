@@ -108,7 +108,7 @@ namespace Eclipse
 		return GetInput().GetMouseUp(aKey);
 	}
 
-	const Math::Vector2i& Input::GetGameMousePos()
+	const Math::Vector2f& Input::GetGameMousePos()
 	{
 		return GetInput().GetGameMousePos();
 	}
@@ -161,7 +161,7 @@ namespace Eclipse
 
 
 	// should not be in getter but rahter setters
-	void Input::SetGamePosition(const Math::Vector2i& aPosition)
+	void Input::SetGamePosition(const Math::Vector2f& aPosition)
 	{
 		GetInput().SetGamePosition(aPosition);
 	}

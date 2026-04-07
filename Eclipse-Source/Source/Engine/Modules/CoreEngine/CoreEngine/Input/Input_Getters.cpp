@@ -102,7 +102,7 @@ namespace Eclipse::Core
 		return releasedThisFrame[(int)aKey];
 	}
 
-	const Math::Vector2i& Input::GetGameMousePos()
+	const Math::Vector2f& Input::GetGameMousePos()
 	{
 		return currentGamePos;
 	}
@@ -155,7 +155,7 @@ namespace Eclipse::Core
 
 
 	// should not be in getter but rahter setters
-	void Input::SetGamePosition(const Math::Vector2i& aPosition)
+	void Input::SetGamePosition(const Math::Vector2f& aPosition)
 	{
 		currentGamePos = aPosition;
 	}

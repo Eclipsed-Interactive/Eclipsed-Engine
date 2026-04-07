@@ -44,7 +44,7 @@ namespace Eclipse
 		static bool GetMouseUp(Keycode::Scancode aKey);
 
 
-		static const Math::Vector2i& GetGameMousePos();
+		static const Math::Vector2f& GetGameMousePos();
 
 		static const Math::Vector2i& GetMousePos();
 		static const Math::Vector2i& GetMouseDeltaPos();
@@ -56,7 +56,7 @@ namespace Eclipse
 		static bool IsWindowFocused();
 		static bool IsMouseInside();
 
-		static void SetGamePosition(const Math::Vector2i& aPosition);
+		static void SetGamePosition(const Math::Vector2f& aPosition);
 
 
 	public:

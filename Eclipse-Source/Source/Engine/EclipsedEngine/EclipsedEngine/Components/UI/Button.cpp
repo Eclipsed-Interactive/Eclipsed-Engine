@@ -14,6 +14,8 @@ namespace Eclipse
 		auto transform = gameObject->GetComponent<RectTransform>();
 		if (!transform) return;
 
+		UpdateRectProperties();
+		
 		if (Input::GetMouseDown(Keycode::MOUSE_LEFT) && IsMouseInsideRect()) {
 			OnClickEvent.Invoke();
 		}
@@ -28,10 +30,17 @@ namespace Eclipse
 
 	bool Button::IsMouseInsideRect()
 	{
-		Math::Vector2i mousePos = Input::GetGameMousePos();
+		auto transform = gameObject->GetComponent<RectTransform>();
 
-		bool x = mousePos.x < topRightCorner.x && mousePos.x > lowerLeftCorner.x;
-		bool y = mousePos.y < topRightCorner.y && mousePos.y > lowerLeftCorner.y;
+		Math::Vector2f refRes = transform->myCanvas->ReferenceResolution.Get();
+		
+		Math::Vector2f mousePos = Input::GetGameMousePos();
+		Math::Vector2f translatedMousePos = mousePos * refRes - refRes * 0.5f;
+
+		std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;
+		
+		bool x = translatedMousePos.x < topRightCorner.x && translatedMousePos.x > lowerLeftCorner.x;
+		bool y = translatedMousePos.y < topRightCorner.y && translatedMousePos.y > lowerLeftCorner.y;
 
 		return x && y;
 	}
@@ -41,20 +50,16 @@ namespace Eclipse
 		auto transform = gameObject->GetComponent<RectTransform>();
 		if (!transform) return;
 
-		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
-		float aspectRatio = resolution.x / resolution.y;
-		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
-
-
-		Math::Vector2f gameResolution = Editor::GameWindow::myGameImageResolution;
+		//Math::Vector2f gameResolution = transform->myCanvas->ReferenceResolution.Get();
+		//float aspectResoluton = gameResolution.y / gameResolution.x;
+		
 		Math::Vector2f halfWitdh = transform->WidthHeightPX.Get() * 0.5f;
-		halfWitdh *= Math::Vector2f(0.5f, 0.5f);
-		topRightCorner = transform->Position.Get() + halfWitdh + (gameResolution * 0.5f);
-		lowerLeftCorner = transform->Position.Get() - halfWitdh + (gameResolution * 0.5f);
+		topRightCorner = transform->Position.Get() + halfWitdh;
+		lowerLeftCorner = transform->Position.Get() - halfWitdh;
 	}
 
 	void Button::Print()
 	{
-		Replication::ReplicationManager::Start();
+		std::cout << "clickButton" << std::endl;
 	}
 }

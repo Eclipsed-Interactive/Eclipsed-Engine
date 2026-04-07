@@ -18,6 +18,25 @@ namespace Eclipse
     {
     }
 
+    void UIImage::EditorUpdate()
+    {
+        auto transform = gameObject->GetComponent<RectTransform>();
+
+        if (transform->myCanvas)
+        {
+            float sizeX = (transform->WidthHeightPX->x / transform->myCanvas->ReferenceResolution->y) * 0.5f;
+            float sizeY = (transform->WidthHeightPX->y / transform->myCanvas->ReferenceResolution->y) * 0.5f;
+
+            float posX = transform->Position->x / transform->myCanvas->ReferenceResolution->y + 0.5f;
+            float posY = transform->Position->y / transform->myCanvas->ReferenceResolution->y + 0.5f;
+
+            Math::Vector2f sqrPos = {posX, posY};
+            Math::Vector2f sqrSize = {sizeX, sizeY};
+
+            DebugDrawer::DrawSquare(sqrPos, 0, sqrSize, Math::Color(0x90D5FF));
+        }
+    }
+
     void UIImage::OnComponentAdded()
     {
         if (material->IsValid()) hasMaterial = true;
@@ -74,20 +93,12 @@ namespace Eclipse
             myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
         else
             myTransformBuffer.Position *= Math::Vector2f(2, 2);
-        
+
         myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 
         // if (!IsScene)
         // {
-        //     if (tranform->AlignLeft)
-        //     {
-        //         float leftOffset = halfRefRes.x + position.x;
-        //         myTransformBuffer.Position.x = leftOffset - halfRes.x;
-        //     }
-        //     if (tranform->AlignBottom)
-        //     {
-        //         myTransformBuffer.Position.y += halfRefRes.y + position.y;
-        //     }
+        //     myTransformBuffer.Position.x += tranform->WidthHeightPX->x * 0.5f;
         // }
 
         Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
@@ -117,11 +128,12 @@ namespace Eclipse
 
     void UIImage::Draw()
     {
+        
         if (!hasMaterial)
             return;
 
-        auto transform = gameObject->GetComponent<RectTransform>();
 
+        auto transform = gameObject->GetComponent<RectTransform>();
         if (!transform)
             return;
         if (!transform->myCanvas)

@@ -201,8 +201,6 @@ namespace Eclipse
     {
         auto ml = b2MotionLocks(XLock, YLock, RotationLock);
 
-        std::cout << ml.linearX << "   " << ml.linearY << "   " << ml.angularZ;
-
         b2Body_SetMotionLocks(*aBodyID, ml);
         b2Body_SetAwake(*aBodyID, true);
     }
