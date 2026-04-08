@@ -13,8 +13,9 @@ namespace Eclipse
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)
     {
         OthersteamID = aCallback->m_steamIDFriend;
+
         
-        Replication::ReplicationManager::Start();
+        Replication::ReplicationManager::Start(true);
     }
 
     bool SteamGeneral::SetRichPresence( const char *pchKey, const char *pchValue)
@@ -26,7 +27,8 @@ namespace Eclipse
     {
         if (Input::GetKeyDown(Keycode::U))
         {
-            Replication::ReplicationManager::Start();
+            std::cout << "startedServer" << std::endl;
+            Replication::ReplicationManager::Start(false);
         }
         
         SteamAPI_RunCallbacks();

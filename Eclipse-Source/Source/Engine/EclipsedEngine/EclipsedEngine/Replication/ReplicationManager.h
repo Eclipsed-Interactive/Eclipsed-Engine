@@ -40,7 +40,7 @@ namespace Eclipse::Replication
 
         static void Init();
         
-        static void Start();
+        static void Start(bool isClient);
         static void Update();
 
         static void ClearList() { PossibleReplicatedVariableList.clear(); RealReplicatedVariableList.clear(); };

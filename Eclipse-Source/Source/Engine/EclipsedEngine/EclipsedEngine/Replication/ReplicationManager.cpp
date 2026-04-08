@@ -108,15 +108,15 @@ namespace Eclipse::Replication
 // #endif
     }
 
-    void ReplicationManager::Start()
+    void ReplicationManager::Start(bool isClient)
     {
         if (startedGame)
             return;
 
-        if (startServer)
+        if (!isClient)
             CreateServer();
 
-        if (startClient)
+        if (isClient)
             CreateClient();
 
         ReplicatedOnPlay();
