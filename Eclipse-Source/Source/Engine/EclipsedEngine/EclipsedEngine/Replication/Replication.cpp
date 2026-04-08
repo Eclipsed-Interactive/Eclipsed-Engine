@@ -270,6 +270,12 @@ namespace Eclipse::Replication
 			assset = Eclipse::Resources::Get<Eclipse::Prefab>(aAssetID);
 		}
 		break;
+		case Eclipse::Reflection::AbstractSerializedVariable::SerializedType_Font:
+			{
+				Eclipse::Font& assset = *(static_cast<Eclipse::Font*>(aVariable->GetData()));
+				assset = Eclipse::Resources::Get<Eclipse::Font>(aAssetID);
+			}
+			break;
 		}
 	}
 

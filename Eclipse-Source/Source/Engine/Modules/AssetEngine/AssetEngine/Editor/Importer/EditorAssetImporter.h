@@ -6,6 +6,7 @@
 #include "TypeImporters/EditorTextureImporter.h"
 #include "TypeImporters/EditorMaterialImporter.h"
 #include "TypeImporters/EditorAudioImporter.h"
+#include "TypeImporters/EditorFontImporter.h"
 #include "TypeImporters/EditorShaderImporter.h"
 
 namespace Eclipse
@@ -19,6 +20,7 @@ namespace Eclipse
 	private:
 		static inline AudioImporter audioImporter;
 		static inline PrefabImporter prefabImporter;
+		static inline FontImporter fontImporter;
 		static inline TextureImporter textureImporter;
 		static inline MaterialImporter materialImporter;
 		static inline VertexShaderImporter vertexShaderImporter;

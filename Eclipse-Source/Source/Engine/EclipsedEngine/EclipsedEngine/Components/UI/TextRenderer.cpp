@@ -6,7 +6,6 @@
 #include "GraphicsEngine/TextSprite.h"
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
 
-#include "GraphicsEngine/TextManager.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 
@@ -77,7 +76,7 @@ namespace Eclipse
 			myTransformBuffer.Position *= Math::Vector2f(2, 2);
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 		
-		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv;
+		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv * ((float)myFontSize * 0.005f);
 
 		
 		Math::Vector2f multiplier;
@@ -106,7 +105,6 @@ namespace Eclipse
 	void TextRenderer::OnComponentAdded()
 	{
 		myMaterial = new TextMaterial();
-		myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 
 		gameObject->GetComponent<RectTransform>()->AddFunctionToRunOnDirtyUpdate([&](){
 			TransformUpdate();
@@ -396,6 +394,8 @@ namespace Eclipse
 	{
 		if (!myMaterial)
 			return;
+		if (!font->data)
+			return;
 
 		const char* textInConstChar = myText->c_str();
 		auto transform = gameObject->GetComponent<RectTransform>();
@@ -414,13 +414,12 @@ namespace Eclipse
 		glUseProgram(shaderID);
 		
 		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
-		
+
+		auto CurrentFont = font->data->font;
 
 		TransformUpdate();
 		
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(1, myTransformBuffer);
-		
-		Font& font = TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 		
 		Math::Vector2f textOffset = { 0, 0 };
 		Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
@@ -441,7 +440,7 @@ namespace Eclipse
 				lineOffsets.emplace_back(0.f);
 				continue;
 			}
-			Character& characterFace = font.myCharTexture.at(character);
+			Character& characterFace = CurrentFont.myCharTexture.at(character);
 			float convertedAdvance = (float)(characterFace.advance >> 6) * 100.f * myTransformBuffer.Scale.x;
 			lineOffsets.back() += convertedAdvance * 0.5f * myTextAlignment * myCharacterSpacing;
 		}
@@ -487,14 +486,14 @@ namespace Eclipse
 				continue;
 			}
 		
-			Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
 		
-			if (font.myCharTexture.find(character) == font.myCharTexture.end())
+			if (CurrentFont.myCharTexture.find(character) == CurrentFont.myCharTexture.end())
 				character = '\n';
 		
-			Character& characterFace = font.myCharTexture.at(character);
+			Character& characterFace = CurrentFont.myCharTexture.at(character);
 			float characterAdvance = (float)(characterFace.advance >> 6) * 100.f * myTransformBuffer.Scale.x;
 		
+			//Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
 			// float newXOffset = textOffset.x + characterAdvance;
 			// if (newXOffset >= scaleRect.x)
 			// {
@@ -503,7 +502,7 @@ namespace Eclipse
 		
 			myMaterial->Use(characterFace.textureID);
 		
-			myTextBuffer.size = { (float)characterFace.size.x, (float)characterFace.size.y };
+			myTextBuffer.size = { (float)characterFace.size.x, (float)characterFace.size.y};
 		
 			float lineOffset;
 			if (myTextAlignment == 0)
@@ -540,13 +539,13 @@ namespace Eclipse
 	{
 		myFontSize = aFontSize;
 
-		myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 	}
 
 	void TextRenderer::SetFont(const char* aFont)
 	{
-		myFontPath = aFont;
-		myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		//myFontPath = aFont;
+		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 	}
 
 	void TextRenderer::SetText(const char* aText)

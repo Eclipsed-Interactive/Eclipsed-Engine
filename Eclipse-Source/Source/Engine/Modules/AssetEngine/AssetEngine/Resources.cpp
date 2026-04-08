@@ -9,6 +9,7 @@ namespace Eclipse
 	MaterialManager Resources::materialManager;
 	TextureManager Resources::textureManager;
 	PrefabManager Resources::prefabManager;
+	FontManager Resources::fontManager;
 	AudioClipManager Resources::audioClipManager;
 
 	void Resources::Init()
@@ -23,5 +24,6 @@ namespace Eclipse
 		else if(CleanUp<Material>(aGuid)) return;
 		else if(CleanUp<Texture>(aGuid)) return;
 		else if(CleanUp<Prefab>(aGuid)) return;
+		else if(CleanUp<Font>(aGuid)) return;
 	}
 }

@@ -5,13 +5,12 @@
 #include "ImGui/imgui.h"
 
 #include "CoreEngine/Math/Math.h"
-#include "EclipsedEngine/Reflection/ReflectionTypeChecks.h"
 
-#include "EditorReflectionDrawHelper.h"
 #include <typeindex>
 
 #include "AssetEngine/Assets/Material.h"
 #include "AssetEngine/Assets/AudioClip.h"
+#include "AssetEngine/Assets/Font.h"
 #include "AssetEngine/Assets/Texture.h"
 #include "AssetEngine/Assets/Prefab.h"
 
@@ -171,6 +170,11 @@ namespace Eclipse::Reflection
 		{
 			type = SerializedType_Prefab;
 			sizePerElement = sizeof(Eclipse::Prefab);
+		}
+		else if constexpr (std::is_same<T, Eclipse::Font>::value)
+		{
+			type = SerializedType_Font;
+			sizePerElement = sizeof(Eclipse::Font);
 		}
 
 		else if constexpr (std::is_same<T, Math::Color>::value)

@@ -6,8 +6,6 @@
 #include <filesystem>
 #include <fstream>
 
-#include "CoreEngine/Exception/EclipseException.h"
-
 namespace Eclipse
 {
     enum DefaultType
@@ -37,6 +35,7 @@ namespace Eclipse
         static MaterialManager materialManager;
         static TextureManager textureManager;
         static PrefabManager prefabManager;
+        static FontManager fontManager;
         static AudioClipManager audioClipManager;
     };
 
@@ -59,6 +58,7 @@ namespace Eclipse
         else if constexpr (std::is_same<T, Material>::value) return materialManager.Get(aGuid, in);
         else if constexpr (std::is_same<T, AudioClip>::value) return audioClipManager.Get(aGuid, in);
         else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, Font>::value) return fontManager.Get(aGuid, in);
 
         return {};
     }

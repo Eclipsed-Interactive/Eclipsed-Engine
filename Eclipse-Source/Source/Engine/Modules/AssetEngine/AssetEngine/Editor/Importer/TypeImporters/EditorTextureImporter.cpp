@@ -1,20 +1,11 @@
 #include "AssetEngine/Editor/Importer/TypeImporters/EditorTextureImporter.h"
 
-#include "AssetEngine/Editor/MetaFile/AssetMetaManager.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
-#include "AssetEngine/Editor/GUID/GuidGenerator.h"
-
 #include "AssetEngine/Editor/Importer/ImportSettings/AssetImportSettings.h"
 
 #include <fstream>
-#include <cereal/archives/json.hpp>
 #include "AssetEngine/Helper/STB_Helper.h"
 #include "AssetEngine/Data/TextureData.h"
 #include "AssetEngine/SupportedTypes.h"
-
-#include <rapidjson/filereadstream.h>
-#include <rapidjson/rapidjson.h>
-#include <rapidjson/document.h>
 
 namespace Eclipse
 {

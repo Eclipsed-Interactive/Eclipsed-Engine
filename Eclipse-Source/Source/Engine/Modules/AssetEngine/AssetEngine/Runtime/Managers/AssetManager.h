@@ -9,6 +9,7 @@
 #include "AssetEngine/Assets/PixelShader.h"
 #include "AssetEngine/Assets/Material.h"
 #include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/Assets/Font.h"
 #include "AssetEngine/Assets/Audioclip.h"
 
 #include "AssetEngine/Runtime/Loader/TypeLoaders/TextureLoader.h"
@@ -16,6 +17,7 @@
 #include "AssetEngine/Runtime/Loader/TypeLoaders/MaterialLoader.h"
 #include "AssetEngine/Runtime/Loader/TypeLoaders/PrefabLoader.h"
 #include "AssetEngine/Runtime/Loader/TypeLoaders/AudioLoader.h"
+#include "AssetEngine/Runtime/Loader/TypeLoaders/FontLoader.h"
 
 namespace Eclipse
 {
@@ -27,6 +29,7 @@ namespace Eclipse
 	using TextureManager = AssetManager<Texture, TextureData, TextureLoader>;
 	using MaterialManager = AssetManager<Material, MaterialData, MaterialLoader>;
 	using PrefabManager = AssetManager<Prefab, PrefabData, PrefabLoader>;
+	using FontManager = AssetManager<Font, FontData, FontLoader>;
 	using AudioClipManager = AssetManager<AudioClip, AudioClipData, AudioLoader>;
 
 	template<typename AssetType, typename Handle, typename Loader>

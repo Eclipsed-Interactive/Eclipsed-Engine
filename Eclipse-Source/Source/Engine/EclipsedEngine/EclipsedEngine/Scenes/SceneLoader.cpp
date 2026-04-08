@@ -134,6 +134,7 @@ namespace Eclipse
 
 		else if (
 			aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Prefab ||
+			aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Font ||
 			aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Texture ||
 			aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Material ||
 			aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_AudioClip
@@ -161,6 +162,12 @@ namespace Eclipse
 			else if (aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Prefab)
 			{
 				Reflection::SerializedVariable<Prefab>* asset = (Reflection::SerializedVariable<Prefab>*)aSerialized;
+				if (!asset->Get().IsValid()) return;
+				id = asset->Get().GetAssetID();
+			}
+			else if (aSerialized->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Font)
+			{
+				Reflection::SerializedVariable<Font>* asset = (Reflection::SerializedVariable<Font>*)aSerialized;
 				if (!asset->Get().IsValid()) return;
 				id = asset->Get().GetAssetID();
 			}
@@ -359,6 +366,7 @@ namespace Eclipse
 
 			else if (
 				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Prefab ||
+				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Font ||
 				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Texture ||
 				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Material ||
 				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_AudioClip
@@ -366,6 +374,11 @@ namespace Eclipse
 			{
 				std::string id = val.GetString();
 
+				if (aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Font)
+				{
+					Reflection::SerializedVariable<Font>* asset = (Reflection::SerializedVariable<Font>*)aSerializedVariable;
+					*asset = Resources::Get<Font>(id);
+				}
 				if (aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Prefab)
 				{
 					Reflection::SerializedVariable<Prefab>* asset = (Reflection::SerializedVariable<Prefab>*)aSerializedVariable;
@@ -395,7 +408,7 @@ namespace Eclipse
 				memcpy(aSerializedVariable->GetData(), decoded.data(), decoded.size());
 			}
 		}
-		catch (const Exception& e)
+		catch (const std::runtime_error& e)
 		{
 			LOG_ERROR(e.what());
 		}

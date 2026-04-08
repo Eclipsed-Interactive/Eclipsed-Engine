@@ -143,6 +143,24 @@ namespace Eclipse::Reflection
 				}
 			} break;
 
+			case SerializedType_Font:
+				{
+					ImGui::SameLine();
+
+					std::string name = "No Font.";
+
+					Font* font = (Font*)GetData();
+					if (font->IsValid())
+					{
+						name = font->GetAssetID();
+					}
+
+					if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Font))
+					{
+						std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+						*font = Resources::Get<Font>(guid);
+					}
+				} break;
 
 			case SerializedType_List:
 			case SerializedType_Array:

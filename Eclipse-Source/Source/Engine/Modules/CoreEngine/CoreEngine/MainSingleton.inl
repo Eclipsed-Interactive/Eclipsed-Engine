@@ -1,5 +1,7 @@
 #include "MainSingleton.h"
 
+#include <stdexcept>
+
 namespace Eclipse
 {
     template<typename T>

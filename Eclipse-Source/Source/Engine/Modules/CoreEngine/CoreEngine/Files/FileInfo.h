@@ -15,12 +15,12 @@ namespace Eclipse::Utilities
 
 			FileType_Zip,
 			FileType_Json,
-			FileType_Font,
 			FileType_Scene,
 			FileType_Texture,
 			FileType_Audio,
 			FileType_Material,
 			FileType_Prefab,
+			FileType_Font,
 			FileType_VertexShader,
 			FileType_PixelShader,
 			FileType_SpriteAnimation,

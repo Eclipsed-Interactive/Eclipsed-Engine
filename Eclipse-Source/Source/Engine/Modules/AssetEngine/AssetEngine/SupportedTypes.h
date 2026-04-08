@@ -17,6 +17,8 @@ namespace Eclipse
 		PixelShader,
 		
 		AudioClip,
+		
+		Font,
 
 		Prefab,
 	};
@@ -41,6 +43,9 @@ namespace Eclipse
 		{".pglsl",  AssetType::PixelShader},
 		
 		{".mp3",  AssetType::AudioClip},
+		
+		{".ttf",  AssetType::Font},
+		{".otf",  AssetType::Font},
 	
 		{".eprf",  AssetType::Prefab},
 	};

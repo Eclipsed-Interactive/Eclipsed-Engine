@@ -16,6 +16,8 @@ namespace Eclipse
 		case AssetType::Material: materialImporter.Import(aPath); break;
 
 		case AssetType::Prefab: prefabImporter.Import(aPath); break;
+			
+		case AssetType::Font: fontImporter.Import(aPath); break;
 
 		case AssetType::VertexShader: vertexShaderImporter.Import(aPath); break;
 		case AssetType::PixelShader: pixelShaderImporter.Import(aPath); break;

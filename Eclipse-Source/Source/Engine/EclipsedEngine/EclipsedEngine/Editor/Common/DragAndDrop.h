@@ -34,6 +34,7 @@ namespace Eclipse::Editor
 			{Utilities::FileInfo::FileType_PixelShader, "DND_PIXEL_SHADER"},
 			{Utilities::FileInfo::FileType_Material, "DND_MATERIAL"},
 			{Utilities::FileInfo::FileType_Prefab, "DND_PREFAB"},
+			{Utilities::FileInfo::FileType_Font, "DND_FONT"},
 		};
 	};
 }

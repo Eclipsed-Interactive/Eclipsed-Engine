@@ -6,7 +6,6 @@
 #include "OpenGLGraphicsBuffer.h"
 #include "CoreEngine/Math/Vector/Vector2.h"
 
-#include "GraphicsEngine/TextManager.h"
 #include "DebugDrawers/DebugDrawer.h"
 #include "GraphicsEngine/RenderCommands/CommandList.h"
 
@@ -151,7 +150,6 @@ namespace Eclipse
         ErrorCode errorCode = InitOpenGL();
         EnableOpenGLSettings();
         DebugDrawer::Get().Init();
-        TextManager::Get().Init();
 
         myClearColor.r = 0.4314f;
         myClearColor.g = 0.1804f;

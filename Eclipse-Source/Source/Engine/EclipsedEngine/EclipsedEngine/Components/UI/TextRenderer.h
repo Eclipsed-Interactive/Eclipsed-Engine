@@ -5,6 +5,7 @@
 
 #include "AssetEngine/Assets/VertexShader.h"
 #include "AssetEngine/Assets/PixelShader.h"
+#include "AssetEngine/Assets/Font.h"
 
 #include "CoreEngine/PathManager.h"
 #include "CoreEngine/GraphicsBuffers/TextBuffer.h"
@@ -58,7 +59,9 @@ namespace Eclipse
         SERIALIZED_FIELD_DEFAULT(std::string, myText, "EEE");
         SERIALIZED_FIELD_DEFAULT(Math::Color, myTextColor, Math::Color(1, 1, 1, 1));
 
-        SERIALIZED_FIELD_DEFAULT(std::string, myFontPath, (PathManager::GetEngineAssetsPath() / "Fonts/Quicksand-VariableFont_wght.ttf").generic_string());
+        //SERIALIZED_FIELD_DEFAULT(std::string, myFontPath, (PathManager::GetEngineAssetsPath() / "Fonts/Quicksand-VariableFont_wght.ttf").generic_string());
+        SERIALIZED_FIELD(Font, font);
+        
         SERIALIZED_FIELD_DEFAULT(int, myFontSize, 48);
 
         SERIALIZED_FIELD_DEFAULT(Math::Vector2f, myRect, Math::Vector2f(1.f, 1.f));
@@ -70,7 +73,6 @@ namespace Eclipse
         static inline bool drawRectGizmos = false;
 
     private:
-        class Font* myFont;
         TextMaterial* myMaterial;
 
         PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextAlignment, 1);
