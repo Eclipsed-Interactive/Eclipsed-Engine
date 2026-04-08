@@ -21,14 +21,14 @@ namespace Eclipse
     public:
         static GameObject* CreateObjectFromJsonString(const char* aData);
         static GameObject* CreateObjectFromJsonStringSpecifiedIds(const char* aData,
-            int aGameobjectID, const std::vector<unsigned>& aComponentsID);
+            int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated);
 
     private:
         static void StartChildren(std::vector<GameObject*>& aChildComponents);
 
         static void PasteGameObject(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator);
         static void PasteGameObjectSpecifiedIds(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator,
-            int aGameobjectID, const std::vector<unsigned>& aComponentsID);
+            int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated);
     };
 
     ECLIPSED_API inline GameObject*& Instantiate(Prefab& aPrefab, GameObject* instagator, bool Replicated = false)

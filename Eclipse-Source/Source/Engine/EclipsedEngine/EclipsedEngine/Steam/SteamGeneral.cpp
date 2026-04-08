@@ -16,9 +16,19 @@ namespace Eclipse
         
         Replication::ReplicationManager::Start();
     }
-    
+
+    bool SteamGeneral::SetRichPresence( const char *pchKey, const char *pchValue)
+    {
+        return SteamFriends()->SetRichPresence(pchKey, pchValue);
+    }
+
     void SteamGeneral::Update() 
     {
+        if (Input::GetKeyDown(Keycode::U))
+        {
+            Replication::ReplicationManager::Start();
+        }
+        
         SteamAPI_RunCallbacks();
     }
     
@@ -31,6 +41,8 @@ namespace Eclipse
             assert(false && "Steam initialization failed");
             return;
         }
+
+        SetRichPresence("connect", "1");
     }
 
     void SteamGeneral::ShutDown()

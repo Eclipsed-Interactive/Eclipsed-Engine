@@ -417,10 +417,9 @@ namespace Eclipse
 
     void PhysicsEngine::Update()
     {
-        const float timeScale = Time::GetTimeScale();
-        const float timeStep = timeScale / 800.f;
+        const float deltaTime = Time::GetDeltaTime();
 
-        b2World_Step(myWorld, timeStep, mySubstepCount);
+        b2World_Step(myWorld, deltaTime, mySubstepCount);
 
         CheckCollisions();
     }

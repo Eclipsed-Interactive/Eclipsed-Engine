@@ -98,14 +98,14 @@ namespace Eclipse::Replication
     {
         SetComponentReplicationManager();
         
-#ifdef ECLIPSED_EDITOR
-
-        std::fstream stream("NetworkIp.ntwrk");
-        char IpString[16];
-        stream.getline(IpString, 16);
-
-        IP = IpString;
-#endif
+// #ifdef ECLIPSED_EDITOR
+//
+//         std::fstream stream("NetworkIp.ntwrk");
+//         char IpString[16];
+//         stream.getline(IpString, 16);
+//
+//         IP = IpString;
+// #endif
     }
 
     void ReplicationManager::Start()

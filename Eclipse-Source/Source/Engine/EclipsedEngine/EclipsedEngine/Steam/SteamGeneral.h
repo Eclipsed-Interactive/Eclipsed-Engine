@@ -10,6 +10,8 @@ namespace Eclipse
     public:
         SteamGeneral() = default;
 
+        bool SetRichPresence(const char *pchKey, const char *pchValue);
+        
         void Update();
         void Init();
         void ShutDown();

@@ -161,7 +161,7 @@ namespace Eclipse::Replication
 
 	void InstatiateNetworkSentPrefab(Prefab& aPrefab, int gameobjectID, std::vector<unsigned> aComponents, bool Replicated = false)
 	{
-		GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(aPrefab.GetData()->data, gameobjectID, aComponents);
+		GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(aPrefab.GetData()->data, gameobjectID, aComponents, true);
 		gameobject->prefabAssetID = aPrefab.GetAssetID();
 
 		gameobject->IsPrefab = true;
