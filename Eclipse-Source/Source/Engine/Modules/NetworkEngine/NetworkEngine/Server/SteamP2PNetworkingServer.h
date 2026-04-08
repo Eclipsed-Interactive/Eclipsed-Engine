@@ -43,19 +43,24 @@ namespace Eclipse
             if (!myConnection)
                 return;
 
-            SteamNetworkingMessage_t* RecieveMessage = nullptr;
-            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, &RecieveMessage, 1);
+            SteamNetworkingMessage_t* receivedMessages[256];
+            int messageCount = SteamNetworkingSockets()->ReceiveMessagesOnConnection(myConnection, receivedMessages, 256);
+
+            if (messageCount < 0)
+                return;
 
             for (int i = 0; i < messageCount; ++i)
             {
-                int messageSize = RecieveMessage[i].m_cbSize;
+                SteamNetworkingMessage_t* msg = receivedMessages[i];
 
                 NetMessage message;
-                memcpy(&message, RecieveMessage[i].GetData(), messageSize);
+                memcpy(&message, msg->GetData(), msg->m_cbSize);
+        
+                msg->Release();
+        
                 HandleRecieve(message);
-
-                RecieveMessage[i].Release();
             }
+            
         }
 
     public:
