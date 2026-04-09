@@ -33,7 +33,7 @@ void PerformanceProfilerManager::EndProfilingNode()
 void PerformanceProfilerManager::Print()
 {
 	auto buf = std::cout.rdbuf();
-	std::ofstream file("F:/Projects/Eclipsed-Engine/output.txt");
+	std::ofstream file("output.txt");
 	std::cout.rdbuf(file.rdbuf());
 
 	PrintNode(myRootNode, 0);
