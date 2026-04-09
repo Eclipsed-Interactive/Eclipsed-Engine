@@ -24,6 +24,7 @@
 #include "CoreEngine/Debug/DebugLogger.h"
 #include "CoreEngine/GraphicsBuffers/CameraBuffer.h"
 #include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 #undef CreateWindow
 
@@ -199,6 +200,8 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::BeginFrame()
     {
+        PROFILE_SCOPED;
+
         CommandListManager::GetHappenAtBeginCommandList().Execute();
         CommandListManager::GetHappenAtBeginCommandList().Reset();
 
@@ -223,6 +226,9 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::Render()
     {
+        PROFILE_SCOPED;
+
+
 #ifndef ECLIPSED_EDITOR
         Math::Vector2i resolution = Settings::GraphicsSettings::GetResolution();
 
@@ -256,6 +262,8 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::EndFrame()
     {
+
+        PROFILE_SCOPED;
         glfwSwapBuffers(myWindow);
 
         CommandListManager::ResetAllCommandLists();
@@ -298,6 +306,8 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::AddGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
     {
+        PROFILE_SCOPED;
+
         switch (aType)
         {
         case UniformType::Bool: myUniformManager.AddInt(aUniformName, (int*)aValue);
@@ -327,6 +337,8 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::UpdateGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
     {
+        PROFILE_SCOPED;
+
         switch (aType)
         {
         case UniformType::Bool: myUniformManager.UpdateInt(aUniformName, (int*)aValue);
@@ -356,6 +368,8 @@ namespace Eclipse
 
     void OpenGLGraphicsEngine::GetGlobalUniform(UniformType aType, const char* aUniformName, void* aValue)
     {
+        PROFILE_SCOPED;
+
         switch (aType)
         {
         case UniformType::Bool: myUniformManager.GetInt(aUniformName, (int*)aValue);

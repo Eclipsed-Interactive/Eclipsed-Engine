@@ -5,8 +5,7 @@
 #include "PlatformIntegration/IntegrationManager.h"
 
 #include "CoreEngine/Settings/Settings.h"
-#include "Profiler/PerformanceProfiler.h"
-
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 namespace Eclipse
 {
@@ -19,6 +18,8 @@ namespace Eclipse
 
 	void Engine::Update()
 	{
+		PROFILE_SCOPED;
+
 		PlatformIntegration::IntegrationManager::Update();
 
 		Time::Update();

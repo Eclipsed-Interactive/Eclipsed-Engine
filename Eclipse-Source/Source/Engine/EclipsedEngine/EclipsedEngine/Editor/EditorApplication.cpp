@@ -3,6 +3,7 @@
 #ifdef ECLIPSED_EDITOR
 
 #include "EclipsedEngine/Editor/EditorProjectManager.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 
 namespace Eclipse::Editor
@@ -16,6 +17,8 @@ namespace Eclipse::Editor
 
     int EditorApplication::Update()
     {
+        PerformanceProfilerManager::Clear();
+
         int shouldClose = myContext.BeginFrame();
         myContext.Update();
         myContext.Render();

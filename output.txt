@@ -1,0 +1,21 @@
+| Eclipse::OpenGLGraphicsEngine::BeginFrame  |  205us
+   | Eclipse::Editor::EditorContexts::Update  |  728us
+      | Eclipse::EclipsedRuntime::Update  |  23us
+         | Eclipse::Engine::Update  |  18us
+      | Eclipse::Editor::EditorRuntime::RenderEngine  |  62us
+         | Eclipse::OpenGLGraphicsEngine::Render  |  2us
+      | Eclipse::Editor::EditorUIManager::Update  |  634us
+         | Eclipse::Editor::WindowManager::Update  |  631us
+            | Eclipse::Editor::WindowManager::UpdateMainMenuBar  |  24us
+            | LayoutManager  |  0us
+            | RenderWindows  |  600us
+               | Console  |  53us
+               | Scene  |  100us
+               | Game Settings  |  50us
+               | Assets  |  289us
+               | Hierarchy  |  26us
+               | Game  |  38us
+               | Inspector  |  14us
+   | Eclipse::Editor::EditorContexts::Render  |  95us
+   | Eclipse::EclipsedRuntime::EndFrame  |  229us
+      | Eclipse::OpenGLGraphicsEngine::EndFrame  |  226us

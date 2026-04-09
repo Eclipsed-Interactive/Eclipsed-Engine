@@ -20,6 +20,7 @@
 #include "CoreEngine/Settings/EditorSettings.h"
 
 #include "AssetEngine/Editor/Importer/EditorAssetImporter.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 namespace Eclipse::Editor
 {
@@ -56,6 +57,7 @@ namespace Eclipse::Editor
 
 	void EditorRuntime::UpdateGame()
 	{
+		PROFILE_SCOPED;
 		eclipseRuntime.UpdateGame();
 	}
 
@@ -92,6 +94,8 @@ namespace Eclipse::Editor
 	}
 	void EditorRuntime::RenderEngine()
 	{
+		PROFILE_SCOPED;
+
 		DrawPlayGameButtons();
 		eclipseRuntime.Render();
 	}

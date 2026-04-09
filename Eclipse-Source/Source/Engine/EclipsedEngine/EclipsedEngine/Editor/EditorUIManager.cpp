@@ -15,6 +15,7 @@
 #include "KHR/khrplatform.h"
 
 #include "Font-Awesome/7/IconsFontAwesome7.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 namespace Eclipse::Editor
 {
@@ -37,6 +38,8 @@ namespace Eclipse::Editor
 
 	void EditorUIManager::Update()
 	{
+		PROFILE_SCOPED;
+
 		myWindowManager.Update();
 		ImGui::PopFont();
 	}

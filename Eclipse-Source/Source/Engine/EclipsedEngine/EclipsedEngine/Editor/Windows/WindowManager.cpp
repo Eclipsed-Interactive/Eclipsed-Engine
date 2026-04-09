@@ -28,6 +28,8 @@
 #include "EclipsedEngine/Editor/Layout/LayoutManager.h"
 #include "EclipsedEngine/Editor/Game/GameCompiler.h"
 #include "EclipsedEngine/Editor/Game/GameLoader.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
+
 
 namespace Eclipse::Editor
 {
@@ -54,6 +56,8 @@ namespace Eclipse::Editor
 	}
 	void WindowManager::UpdateMainMenuBar()
 	{
+		PROFILE_SCOPED;
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			{ // Left menu
@@ -214,14 +218,20 @@ namespace Eclipse::Editor
 
 	void WindowManager::Update()
 	{
+		PROFILE_SCOPED;
+
 		UpdateMainMenuBar();
 
+		PROFILE_BEGIN("LayoutManager");
 		LayoutManager::Update();
+		PROFILE_END;
 
+		PROFILE_BEGIN("RenderWindows");
 		for (auto it = IdToWindow.begin(); it != IdToWindow.end(); )
 		{
 			const int& id = it->first;
 			AbstractWindow* window = it->second;
+			PROFILE_BEGIN(window->windowName.c_str());
 
 			if (window->myWasLastOpen != window->myIsOpen)
 			{
@@ -258,11 +268,17 @@ namespace Eclipse::Editor
 
 				++it;
 			}
+			PROFILE_END;
+
 		}
+		PROFILE_END;
+
 	}
 
 	void WindowManager::Begin()
 	{
+		PROFILE_SCOPED;
+
 		Settings::EditorSettings::SetCurrentlyOpenEditorWindows({});
 
 		LayoutManager::LoadLayouts();
@@ -286,6 +302,8 @@ namespace Eclipse::Editor
 
 	void WindowManager::AddWindowToCategory(const std::vector<std::string>& categories, size_t idx, const std::string& windowName)
 	{
+		PROFILE_SCOPED;
+
 		if (idx >= categories.size()) return;
 
 		if (ImGui::BeginMenu(categories[idx].c_str()))

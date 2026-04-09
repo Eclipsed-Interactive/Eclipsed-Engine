@@ -21,6 +21,7 @@
 #include "CoreEngine/Settings/PhysicsSettings.h"
 
 #include "ImGui/imgui_widget_flamegraph.h"
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
 
 struct FlameData {
     struct Entry {
@@ -78,7 +79,7 @@ namespace Eclipse::Editor
             testData.entries.push_back({ 68.0f, 73.0f, 2, "audio::play()" });
             testData.entries.push_back({ 75.0f, 95.0f, 1, "network()" });
             testData.entries.push_back({ 78.0f, 85.0f, 2, "network::send()" });
-            testData.entries.push_back({ 85.0f, 92.0f, 40, "network::recv()" });
+            testData.entries.push_back({ 85.0f, 92.0f, 2, "network::recv()" });
             initialized = true;
         }
 
@@ -95,6 +96,10 @@ namespace Eclipse::Editor
                 0.0f,  // scale_min
                 100.0f // scale_max
             );
+
+            if (ImGui::Button("Export")) {
+                PerformanceProfilerManager::CollectNextFrame();
+            }
         }
     }
 

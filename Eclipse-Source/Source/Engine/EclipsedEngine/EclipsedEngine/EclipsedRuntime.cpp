@@ -33,6 +33,8 @@
 #include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
 #include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
 
+#include "CoreEngine/Profiler/PerformanceProfilerManager.h"
+
 namespace Eclipse
 {
 	template Transform2D* ComponentManager::GetComponent<Transform2D>(GameObjectID);
@@ -155,6 +157,7 @@ namespace Eclipse
 
 	void EclipsedRuntime::Update()
 	{		
+		PROFILE_SCOPED;
 		engine.Update();
 		Input::Update();
 		ComponentManager::EditorUpdateComponents();
@@ -162,6 +165,7 @@ namespace Eclipse
 
 	void EclipsedRuntime::EndFrame()
 	{
+		PROFILE_SCOPED;
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->EndFrame();
 	}
 	void EclipsedRuntime::Shutdown()
