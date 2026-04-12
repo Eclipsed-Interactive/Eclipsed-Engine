@@ -34,6 +34,7 @@ namespace Eclipse
 		const Math::Vector2f& GetLocalPosition() const;
 		const float GetLocalRotation() const;
 		const Math::Vector2f& GetLocalScale() const;
+		Math::Matrix3x3f GetLocalTransformMatrix() const;
 
 		Math::Vector2f* GetPositionPtr();
 		float* GetRotationPtr();
@@ -48,9 +49,11 @@ namespace Eclipse
 		void SetScale(const Math::Vector2f& aScale);
 		void SetScale(float aX, float aY);
 
-		void AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction);
+		void AddFunctionToRunOnDirtyUpdate(Component* aComponent, const std::function<void()>& aFunction);
 		//void AddFunctionToRunOnDirtyUpdate(DirtyFunctionPtr* aFunction);
 
+		static void ChildingObject(GameObject* aChild, GameObject* aParent);
+		
 	private:
 		void AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const;
 		void AddParentRotation(GameObject* aParent, float& totalRotation) const;
@@ -79,7 +82,13 @@ namespace Eclipse
 		//Math::Matrix3x3f LocalTransformationMatrix;
 		
 	private:
+		struct DirtyTransformContainer
+		{
+			Component* component;
+			std::function<void()> function;
+		};
+		
 		bool myIsDirty = true;
-		std::vector<std::function<void()>> myFunctionsToRunOnDirtyUpdate;
+		std::vector<DirtyTransformContainer> myFunctionsToRunOnDirtyUpdate;
 	};
 }

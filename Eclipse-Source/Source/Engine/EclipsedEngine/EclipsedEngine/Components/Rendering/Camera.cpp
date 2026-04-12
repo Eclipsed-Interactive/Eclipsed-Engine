@@ -48,7 +48,7 @@ namespace Eclipse
         {
             main = this;
 
-            gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() { UpdateCameraTransform(); });
+            gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { UpdateCameraTransform(); });
 
             created = true;
         }

@@ -51,7 +51,7 @@ namespace Eclipse
 
     void Canvas::OnComponentAdded()
     {
-        gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() { TransformUpdate(); });
+        gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { TransformUpdate(); });
     }
 
     void Canvas::TransformUpdate()

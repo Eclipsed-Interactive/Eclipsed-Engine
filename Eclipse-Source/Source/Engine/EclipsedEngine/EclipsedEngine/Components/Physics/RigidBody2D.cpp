@@ -5,15 +5,11 @@
 
 #include "Collider2D.h"
 
-#include "box2d/id.h"
-
 namespace Eclipse
 {
-    typedef PhysicsEngine::Physics PhysHelper;
-
     void RigidBody2D::OnDestroy()
     {
-        PhysHelper::SetLinearVelocity(myBody, myVelocity);
+        Physics::SetLinearVelocity(myBody, myVelocity);
         PhysicsEngine::ChangeBodyType(myBody, BodyType::Static);
     }
 
@@ -36,26 +32,26 @@ namespace Eclipse
 
         myTransform = gameObject->GetComponent<Transform2D>();
 
-        myTransform->AddFunctionToRunOnDirtyUpdate([&]() {
+        myTransform->AddFunctionToRunOnDirtyUpdate(this, [&]() {
             PhysicsEngine::SetTransform(myBody, myTransform->GetPosition(), myTransform->GetRotation());
             });
     }
 
     void RigidBody2D::EarlyUpdate()
     {
-        myVelocity = PhysHelper::GetLinearVelocity(myBody);
-        myAngularVelocity = PhysHelper::GetAngularVelocity(myBody);
+        myVelocity = Physics::GetLinearVelocity(myBody);
+        myAngularVelocity = Physics::GetAngularVelocity(myBody);
 
-        Math::Vector2f position = PhysHelper::GetBodyPosition(myBody);
+        Math::Vector2f position = Physics::GetBodyPosition(myBody);
         myTransform->SetPosition(position);
-        float rotation = PhysHelper::GetBodyRotation(myBody);
+        float rotation = Physics::GetBodyRotation(myBody);
         myTransform->SetRotation(rotation);
     }
 
     void RigidBody2D::SetVelocity(const Math::Vector2f& aVelocity)
     {
         myVelocity = aVelocity;
-        PhysHelper::SetLinearVelocity(myBody, myVelocity);
+        Physics::SetLinearVelocity(myBody, myVelocity);
     }
 
     void RigidBody2D::AddForce(const Math::Vector2f& aVelocity)
@@ -71,7 +67,7 @@ namespace Eclipse
     void RigidBody2D::SetAngularVelocity(float aAngularVelocity)
     {
         myAngularVelocity = aAngularVelocity;
-        PhysHelper::SetAngularVelocity(myBody, aAngularVelocity);
+        Physics::SetAngularVelocity(myBody, aAngularVelocity);
     }
 
     const float RigidBody2D::GetAngularVelocity()

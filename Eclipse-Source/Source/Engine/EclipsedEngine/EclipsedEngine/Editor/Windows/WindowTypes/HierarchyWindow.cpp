@@ -218,14 +218,35 @@ namespace Eclipse::Editor
 
         if (aChild->transform && aParent->transform)
         {
-            Math::Vector2f childPos = aChild->transform->GetPosition();
-            Math::Vector3f positionVec3(childPos.x, childPos.y, 1);
-            positionVec3 = positionVec3 * aParent->transform->GetTransformMatrix().GetInverse();
-            childPos = {positionVec3.x, positionVec3.y};
-            aChild->transform->SetPosition(childPos);
-        }
+            Math::Vector2f worldPosition = aChild->transform->GetPosition();
+            float worldRotation = aChild->transform->GetRotation();
+            Math::Vector2f worldScale = aChild->transform->GetScale();
 
-        aChild->SetParent(aParent);
+            aChild->SetParent(aParent);
+
+            Math::Matrix3x3f newParentWorldMatrix = aParent->transform->GetTransformMatrix();
+            Math::Matrix3x3f ParentRotationMatrix = Math::Matrix3x3f::CreateRotation(-aParent->transform->GetRotation());
+            
+            Math::Vector3f worldPosVec3(worldPosition.x, worldPosition.y, 1);
+
+            Math::Vector3f localPosVec3 = worldPosVec3;
+            
+            localPosVec3 = localPosVec3 * newParentWorldMatrix.GetInverse();
+            localPosVec3 = localPosVec3 * ParentRotationMatrix.GetInverse();
+            
+            aChild->transform->SetPosition({localPosVec3.x, localPosVec3.y});
+
+            float parentWorldRotation = aParent->transform->GetRotation();
+            float localRotation = worldRotation - parentWorldRotation;
+            aChild->transform->SetRotation(localRotation);
+            
+            Math::Vector2f parentWorldScale = aParent->transform->GetScale();
+            Math::Vector2f localScale = {
+                worldScale.x / parentWorldScale.x,
+                worldScale.y / parentWorldScale.y
+            };
+            aChild->transform->SetScale(localScale);
+        }
 
         if (auto* recttransform = aChild->GetComponent<RectTransform>())
         {
@@ -266,6 +287,23 @@ namespace Eclipse::Editor
                     CreatePrefab(SelectedGameobjectID, AssetWindow::ActivePath);
                 }
 
+                if (ImGui::MenuItem("Un Child"))
+                {
+                    GameObject* gameobject = ComponentManager::GetGameObject(SelectedGameobjectID);
+
+                    Transform2D* transform = gameobject->transform;
+                    
+                    Math::Vector2f globalPosition = transform->GetPosition();
+                    float globalRotation = transform->GetRotation();
+                    Math::Vector2f globalScale = transform->GetScale();
+
+                    gameobject->SetParent(nullptr);
+                    
+                    transform->SetPosition(globalPosition);
+                    transform->SetRotation(globalRotation);
+                    transform->SetScale(globalScale);
+                }
+
                 ImGui::EndMenu();
             }
 
@@ -277,6 +315,16 @@ namespace Eclipse::Editor
         {
             if (ImGui::BeginMenu("Create new..."))
             {
+                if (ImGui::MenuItem("New Sprite"))
+                {
+                    GameObject* obj = ComponentManager::CreateGameObject();
+                    Transform2D* transform = obj->AddComponent<Transform2D>();
+                    transform->SetScale(Math::Vector2f(20, 20));
+                    
+                    obj->AddComponent<SpriteRenderer2D>();
+
+                    obj->SetName("New Sprite");
+                }
                 if (ImGui::MenuItem("Empty GameObject"))
                 {
                     GameObject* obj = ComponentManager::CreateGameObject();
@@ -304,7 +352,7 @@ namespace Eclipse::Editor
 
                         obj->SetName("Canvas");
                     }
-                    else if (ImGui::MenuItem("Image"))
+                    if (ImGui::MenuItem("Image"))
                     {
                         GameObject* obj = ComponentManager::CreateGameObject();
                         obj->AddComponent<RectTransform>();
@@ -312,7 +360,7 @@ namespace Eclipse::Editor
 
                         obj->SetName("New Image");
                     }
-                    else if (ImGui::MenuItem("Text"))
+                    if (ImGui::MenuItem("Text"))
                     {
                         GameObject* obj = ComponentManager::CreateGameObject();
                         obj->AddComponent<RectTransform>();
@@ -320,7 +368,7 @@ namespace Eclipse::Editor
 
                         obj->SetName("New Text");
                     }
-                    else if (ImGui::MenuItem("Button"))
+                    if (ImGui::MenuItem("Button"))
                     {
                         GameObject* obj = ComponentManager::CreateGameObject();
                         obj->AddComponent<RectTransform>();

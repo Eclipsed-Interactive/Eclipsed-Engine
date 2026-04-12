@@ -240,6 +240,8 @@ namespace Eclipse
             component->OnDestroy();
             component->~Component();
 
+            component->IsDeleted = true;
+
             DeleteReplicatedComponent(aComponentID);
 
             indexToDelete = i;

@@ -11,26 +11,23 @@
 
 #include <array>
 
-
-
 namespace Eclipse
 {
-    class PhysicsEngine
+    class Physics
     {
     public:
-        class Physics
-        {
-        public:
-            static void SetLinearVelocity(const b2BodyId* aBodyID, const Math::Vector2f& aVelocity);
-            static void SetAngularVelocity(const b2BodyId* aBodyID, float aVelocity);
+        static void SetLinearVelocity(const b2BodyId* aBodyID, const Math::Vector2f& aVelocity);
+        static void SetAngularVelocity(const b2BodyId* aBodyID, float aVelocity);
 
-            static Math::Vector2f GetLinearVelocity(const b2BodyId* aBodyID);
-            static float GetAngularVelocity(const b2BodyId* aBodyID);
+        static Math::Vector2f GetLinearVelocity(const b2BodyId* aBodyID);
+        static float GetAngularVelocity(const b2BodyId* aBodyID);
 
-            static Math::Vector2f GetBodyPosition(const b2BodyId* aBodyID);
-            static float GetBodyRotation(const b2BodyId* aBodyID);
-        };
-
+        static Math::Vector2f GetBodyPosition(const b2BodyId* aBodyID);
+        static float GetBodyRotation(const b2BodyId* aBodyID);
+    };
+    
+    class PhysicsEngine
+    {
     public:
         static bool RayCast(const Ray& aRay, HitResults& aHitResults, float length, Layer aLayerMask = Layer::All);
         static bool OverlapBox(const Math::Vector2f& aPositon, const Math::Vector2f& aHalfExent, HitResults& aHitResults, Layer aLayerMask = Layer::All);

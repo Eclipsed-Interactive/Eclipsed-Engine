@@ -56,7 +56,7 @@ namespace Eclipse
             BodyOwned = true;
         }
 
-        myTransform->AddFunctionToRunOnDirtyUpdate([this]() {
+        myTransform->AddFunctionToRunOnDirtyUpdate(this, [this]() {
             this->OnTransformDirty();
             });
 

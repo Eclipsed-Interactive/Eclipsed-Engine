@@ -40,6 +40,7 @@ namespace Eclipse
 
 		GameObject*& GetChild(int index);
 		std::vector<GameObject*>& GetChildren();
+		void RemoveChild(int index);
 		void AddChild(GameObject* aChild);
 		size_t GetChildCount();
 
