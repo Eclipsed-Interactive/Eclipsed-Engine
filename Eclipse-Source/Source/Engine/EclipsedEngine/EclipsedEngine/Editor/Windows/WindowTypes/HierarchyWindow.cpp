@@ -231,6 +231,7 @@ namespace Eclipse::Editor
 
             Math::Vector3f localPosVec3 = worldPosVec3;
             
+            localPosVec3 = localPosVec3 * ParentRotationMatrix;
             localPosVec3 = localPosVec3 * newParentWorldMatrix.GetInverse();
             localPosVec3 = localPosVec3 * ParentRotationMatrix.GetInverse();
             
