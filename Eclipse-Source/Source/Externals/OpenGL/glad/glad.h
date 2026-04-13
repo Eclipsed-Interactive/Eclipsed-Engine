@@ -86,7 +86,11 @@ GLAPI int gladLoadGL(void);
 
 GLAPI int gladLoadGLLoader(GLADloadproc);
 
+#ifdef ECLIPSED_HUB
+#include <OpenGL/KHR/khrplatform.h>
+#else
 #include <../OpenGL/KHR/khrplatform.h>
+#endif
 typedef unsigned int GLenum;
 typedef unsigned char GLboolean;
 typedef unsigned int GLbitfield;

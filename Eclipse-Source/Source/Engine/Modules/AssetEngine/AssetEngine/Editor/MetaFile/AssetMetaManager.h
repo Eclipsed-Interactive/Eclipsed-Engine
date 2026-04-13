@@ -10,6 +10,6 @@ namespace Eclipse
 	{
 	public:
 		static std::filesystem::path CreateMetaFile(const std::filesystem::path& aPath);
-		static std::filesystem::path GetMetaFile(const std::filesystem::path& aPath);
+		static std::filesystem::path GetMetaFilePath(const std::filesystem::path& aPath);
 	};
 }

@@ -23,6 +23,7 @@
 #include "CoreEngine/Debug/DebugLogger.h"
 #include "CoreEngine/GraphicsBuffers/CameraBuffer.h"
 #include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
+#include "CoreEngine/PathManager.h"
 
 #undef CreateWindow
 
@@ -77,8 +78,9 @@ namespace Eclipse
 
         std::string engineName = Settings::EngineSettings::GetEngineName();
         std::string engineVersion = Settings::EngineSettings::GetEngineVersion();
+        std::string projectName = PathManager::GetProjectRoot().filename().string();
 
-        std::string title = engineName + " " + engineVersion;
+        std::string title = engineName + " | " + engineVersion + " | " + projectName;
 
         myWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 

@@ -25,6 +25,8 @@
 #include <sstream>
 #include <fstream>
 
+#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+
 void Eclipse::Editor::InspectorWindow::Update()
 {
 	switch (activeType)
@@ -196,114 +198,7 @@ void Eclipse::Editor::InspectorWindow::DrawTextureAssetInspector()
 
 void Eclipse::Editor::InspectorWindow::DrawMaterialAssetInspector()
 {
-	//	static MaterialBinaryData data;
+	std::filesystem::path path = MetaFileRegistry::GetMetaFilePath(AssetWindow::ActivePath);
 
-	//	std::ifstream in(AssetWindow::ActivePath, std::ios::binary);
-	//	in.read(reinterpret_cast<char*>(&data), sizeof(MaterialBinaryData));
-	//	in.close();
-
-	//	bool changed = ImGui::ColorEdit4("Material Color", data.color.data,
-	//		ImGuiColorEditFlags_AlphaBar |
-	//		ImGuiColorEditFlags_AlphaPreview |
-	//		ImGuiColorEditFlags_PickerHueWheel |
-	//		ImGuiColorEditFlags_DisplayRGB |
-	//		ImGuiColorEditFlags_NoInputs);
-
-	//	AssetRegistry& registry = AssetRegistry::GetInstance();
-
-	//	{ // Texture dnd
-	//		bool textClicked = false, arrowClicked = false;
-	//		std::string text = "No Texture";
-	//		if (data.textureID != 0)
-	//		{
-	//			auto& entry = registry.GetRegisteredAsset(data.textureID);
-	//			text = entry.path.filename().generic_string();
-	//		}
-
-	//		if (DragAndDrop::BeginTarget(text.c_str(), Utilities::FileInfo::FileType_Texture, &textClicked, &arrowClicked))
-	//		{
-	//			data.textureID = registry.GetIdFromPath(DragAndDrop::payloadBuffer);
-	//			changed = true;
-	//		}
-
-	//		if (arrowClicked)
-	//		{
-	//			ImGui::OpenPopup("##dropdown_popup");
-	//		}
-
-	//		if (ImGui::BeginPopup("##dropdown_popup"))
-	//		{
-	//			// Optional: title or search bar
-	//			ImGui::TextUnformatted("Select Texture");
-	//			ImGui::Separator();
-
-	//			if (ImGui::Selectable("None"))
-	//			{
-	//				data.textureID = 0;
-	//				changed = true;
-	//			}
-
-	//			for (const size_t& assetId : registry.GetAllAssetsOfType(AssetType::Texture))
-	//			{
-	//				const AssetRegistryEntry& entry = registry.GetRegisteredAsset(assetId);
-	//				std::string name = entry.path.filename().string();
-
-	//				if (ImGui::Selectable(name.c_str()))
-	//				{
-	//					data.textureID = assetId;
-	//					ImGui::CloseCurrentPopup();
-	//					changed = true;
-	//				}
-	//			}
-
-	//			ImGui::EndPopup();
-	//		}
-	//	}
-
-	//	ImGui::Spacing();
-
-	//	{ // Pixel shader dnd
-	//		std::string text = "No Pixel Shader";
-	//		if (data.pixelShaderID != 0)
-	//		{
-	//			auto& entry = registry.GetRegisteredAsset(data.pixelShaderID);
-	//			text = entry.path.filename().generic_string();
-	//		}
-
-	//		if (DragAndDrop::BeginTarget(text.c_str(), Utilities::FileInfo::FileType_PixelShader))
-	//		{
-	//			data.pixelShaderID = registry.GetIdFromPath(DragAndDrop::payloadBuffer);
-	//			changed = true;
-	//		}
-	//	}
-
-	//	ImGui::Spacing();
-
-	//	{ // Vertex shader dnd
-	//		std::string text = "No Vertex Shader";
-	//		if (data.vertexShaderID != 0)
-	//		{
-	//			auto& entry = registry.GetRegisteredAsset(data.vertexShaderID);
-	//			//text = entry.path.filename().generic_string();
-	//		}
-
-	//		if (DragAndDrop::BeginTarget(text.c_str(), Utilities::FileInfo::FileType_VertexShader))
-	//		{
-	//			data.vertexShaderID = registry.GetIdFromPath(DragAndDrop::payloadBuffer);
-	//			changed = true;
-	//		}
-	//	}
-
-	//	if (changed)
-	//	{
-	//		auto rel = std::filesystem::relative(AssetWindow::ActivePath, PathManager::GetAssetsPath());
-
-	//		registry.RegisterChange(rel);
-
-	//		std::ofstream out(AssetWindow::ActivePath, std::ios::binary);
-	//		out.write(reinterpret_cast<const char*>(&data), sizeof(MaterialBinaryData));
-	//		out.close();
-	//	}
-	//}
 }
 #endif

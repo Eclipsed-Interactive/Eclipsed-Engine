@@ -9,7 +9,7 @@ namespace Eclipse
 		return MetaFileRegistry::CreateMetaFile(aPath);
 	}
 
-	std::filesystem::path AssetMetaManager::GetMetaFile(const std::filesystem::path& aPath)
+	std::filesystem::path AssetMetaManager::GetMetaFilePath(const std::filesystem::path& aPath)
 	{
 		return MetaFileRegistry::GetMetaFilePath(aPath);
 	}

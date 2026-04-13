@@ -3,30 +3,36 @@
 #ifdef ECLIPSED_EDITOR
 
 #include "EclipsedEngine/Editor/EditorProjectManager.h"
-
+#include "CoreEngine/PathManager.h"
 
 namespace Eclipse::Editor
 {
-    void EditorApplication::Init()
-    {
-        std::string projectPath = EditorProjectManager::LoadOrSelectProject();
+	void EditorApplication::Init()
+	{
+		if (!PathManager::ProjectSet())
+		{
+			std::string projectPath = EditorProjectManager::LoadOrSelectProject();
+			myContext.Init(projectPath);
+		}
+		else
+		{
+			myContext.Init(PathManager::GetProjectPath().string());
+		}
+	}
 
-        myContext.Init(projectPath);
-    }
+	int EditorApplication::Update()
+	{
+		int shouldClose = myContext.BeginFrame();
+		myContext.Update();
+		myContext.Render();
+		myContext.EndFrame();
 
-    int EditorApplication::Update()
-    {
-        int shouldClose = myContext.BeginFrame();
-        myContext.Update();
-        myContext.Render();
-        myContext.EndFrame();
+		return shouldClose;
+	}
 
-        return shouldClose;
-    }
-
-    void EditorApplication::Shutdown()
-    {
-        myContext.Shutdown();
-    }
+	void EditorApplication::Shutdown()
+	{
+		myContext.Shutdown();
+	}
 }
 #endif

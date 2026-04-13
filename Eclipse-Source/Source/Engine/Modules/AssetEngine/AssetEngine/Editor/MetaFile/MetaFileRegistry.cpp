@@ -29,7 +29,8 @@ namespace Eclipse
 	bool MetaFileRegistry::MetaFileExists(const std::filesystem::path& aPath)
 	{
 		std::filesystem::path path = GetMetaFilePath(aPath);
-		return std::filesystem::exists(path);
+		bool k = std::filesystem::exists(path);
+		return k;
 	}
 
 	std::string MetaFileRegistry::GetGUID(const std::filesystem::path& aPath)
