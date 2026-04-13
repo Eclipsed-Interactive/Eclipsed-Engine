@@ -15,12 +15,10 @@ int main(int argc, char* argv[])
     std::string projectPath = "";
     if (argc > 1) // Engine opened with project path.
     {
-        std::ofstream file("ecl_testing.txt");
+        std::ofstream file(".ini");
         file.write(argv[1], strlen(argv[1]));
 
         projectPath = argv[1];
-
-        Eclipse::PathManager::Init(projectPath);
     }
     else // Engine tries to use the stored path in the .ini file.
     {
@@ -34,8 +32,6 @@ int main(int argc, char* argv[])
 
             projectPath.resize(size);
             file.read(projectPath.data(), size);
-
-            Eclipse::PathManager::Init(projectPath);
         }
     }
 
@@ -44,7 +40,7 @@ int main(int argc, char* argv[])
 #ifdef ECLIPSED_EDITOR
     Eclipse::Editor::EditorApplication editorApplication;
 
-    editorApplication.Init();
+    editorApplication.Init(projectPath.c_str());
 
     while (editorApplication.Update());
 

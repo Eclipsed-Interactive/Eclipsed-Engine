@@ -9,7 +9,7 @@ namespace Eclipse::Editor
     class ECLIPSED_API EditorApplication
     {
     public:
-        void Init();
+        void Init(const char* aPath);
         int Update();
 
         void Shutdown();

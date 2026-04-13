@@ -7,16 +7,16 @@
 
 namespace Eclipse::Editor
 {
-	void EditorApplication::Init()
+	void EditorApplication::Init(const char* aPath)
 	{
-		if (!PathManager::ProjectSet())
+		if (!aPath)
 		{
 			std::string projectPath = EditorProjectManager::LoadOrSelectProject();
 			myContext.Init(projectPath);
 		}
 		else
 		{
-			myContext.Init(PathManager::GetProjectPath().string());
+			myContext.Init(aPath);
 		}
 	}
 

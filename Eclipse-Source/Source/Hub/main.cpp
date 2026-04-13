@@ -303,7 +303,24 @@ void Update()
 		if (ImGui::IsItemHovered()) projData.isHovered = true;
 		else projData.isHovered = false;
 
+		if (ImGui::BeginPopup(projData.path.c_str()))
+		{
+			if (ImGui::Button("Delete"))
+			{
+				projects.projects.erase(projects.projects.begin() + i);
+				ImGui::EndPopup();
+				ImGui::PopStyleColor();
+				break;
+			}
+			if (ImGui::Button("Show in explorer"))
+			{
+				ShellExecute(NULL, "open", "explorer", projData.path.c_str(), NULL, SW_SHOWNORMAL);
+			}
+			ImGui::EndPopup();
+		}
+
 		if (ImGui::IsItemClicked()) OpenProjectAtPath(projData.path.c_str());
+		else if (ImGui::IsItemClicked(1)) ImGui::OpenPopup(projData.path.c_str());
 
 		ImGui::PopStyleColor();
 	}
