@@ -9,7 +9,7 @@ namespace Eclipse::Editor
 {
 	void EditorApplication::Init(const char* aPath)
 	{
-		if (!aPath)
+		if (strlen(aPath) <= 0)
 		{
 			std::string projectPath = EditorProjectManager::LoadOrSelectProject();
 			myContext.Init(projectPath);
