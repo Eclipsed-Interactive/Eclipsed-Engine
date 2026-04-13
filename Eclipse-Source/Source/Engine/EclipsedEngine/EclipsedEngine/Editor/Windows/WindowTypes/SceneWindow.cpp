@@ -217,6 +217,21 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
             char* data = (char*)ClipBoard::GetClipboardData();
             GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
             HierarchyWindow::CurrentGameObjectID = gameobject->GetID();
+
+            
+            GameObject* pickedGameobject = ComponentManager::GetGameObject(pickedID);
+            
+            Transform2D* transform = pickedGameobject->transform;
+            Math::Vector2f globalPosition = transform->GetPosition();
+            float globalRotation = transform->GetRotation();
+            Math::Vector2f globalScale = transform->GetScale();
+                    
+            Transform2D* childTransform = gameobject->transform;
+            childTransform->SetPosition(globalPosition);
+            childTransform->SetRotation(globalRotation);
+            childTransform->SetScale(globalScale);
+
+            gameobject->SetParent(nullptr);
         }
 
         Transform2D* transform = ComponentManager::GetComponent<Transform2D>(HierarchyWindow::CurrentGameObjectID);
@@ -237,21 +252,26 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
             mySpriteMoveVector = {0, 0};
         }
     }
+    else
+    {
+        HierarchyWindow::CurrentGameObjectID = pickedID;
+        InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
 
-    HierarchyWindow::CurrentGameObjectID = pickedID;
-    InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
+        if (pickedID)
+            HierarchyWindow::OpenParents(pickedID);
+    }
 }
 
 
 void Eclipse::Editor::SceneWindow::ObjectSnappingGizmo()
 {
-    ImGui::Checkbox("Snap##MoreSnappingIDSThatShouldBEUSED!!!ANDITISNOW:D", &myIsSnapping);
+    ImGui::Checkbox("Snap##MoreSnappingIDS", &myIsSnapping);
 
     if (myIsSnapping)
     {
         ImGui::Dummy({30, 0});
         ImGui::SetNextItemWidth(75);
-        ImGui::DragFloat("SnappDistance##SnappingDistanceIDSCENEWINDOW", &mySnappingDistance, 0.01f);
+        ImGui::DragFloat("SnappDistance##SnappingDistance", &mySnappingDistance, 0.01f);
     }
 
     ImGui::SetCursorPosX(0);

@@ -31,15 +31,15 @@ namespace Eclipse
         if (!parentTransform)
             return;
 
-        Math::Mat3x3f parentTransformMatrix = Math::Mat3x3f::CreateTranslation(parentTransform->GetLocalPosition());
-        parentTransformMatrix *= Math::Mat3x3f::CreateRotation(-parentTransform->GetLocalRotation());
+        Math::Mat3x3f parentTransformMatrix = Math::Mat3x3f::CreateTranslation(parentTransform->GetPosition());
+        parentTransformMatrix *= Math::Mat3x3f::CreateRotation(-parentTransform->GetRotation());
         //parentTransformMatrix *= Math::Mat3x3f::CreateScale(parentTransform->GetLocalScale());
 
         aTransform *= parentTransformMatrix;
 
-        GameObject* parent = aParent->GetParent();
-        if (parent && parent->transform)
-            AddParentTransform(parent, aTransform);
+        // GameObject* parent = aParent->GetParent();
+        // if (parent && parent->transform)
+        //     AddParentTransform(parent, aTransform);
     }
 
     Math::Matrix3x3f Transform2D::GetTransformMatrix()

@@ -50,9 +50,12 @@ namespace Eclipse
 	{
 		if (!aGO)
 		{
-			for (int i = 0; i < myChildIndex; ++i)
-				parent->children[i] = parent->children[i + 1];
-			parent->children.pop_back();
+			if (parent && !parent->children.empty())
+			{
+				for (int i = myChildIndex; i < parent->children.size() - 1; ++i)
+					parent->children[i] = parent->children[i + 1];
+				parent->children.pop_back();	
+			}
 			
 			myChildIndex = 0;
 			parent = nullptr;

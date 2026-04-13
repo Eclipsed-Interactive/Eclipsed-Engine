@@ -31,6 +31,15 @@
 
 namespace Eclipse::Editor
 {
+    void HierarchyWindow::OpenParents(unsigned aParentID)
+    {
+        if (GameObject* parent = ComponentManager::GetGameObject(aParentID)->GetParent())
+        {
+            gameobjectIdsThatAreOpen.emplace(parent->GetID());
+            OpenParents(parent->GetID());
+        }
+    }
+
     void HierarchyWindow::HierarchyButton(GameObject* aGameObject, float totalIndent)
     {
         unsigned id = aGameObject->GetID();
@@ -73,9 +82,7 @@ namespace Eclipse::Editor
         }
 
         if (id == CurrentGameObjectID)
-        {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
-        }
 
         ImGui::SetCursorPosX(totalIndent + 24);
         std::string buttonName = std::string(aGameObject->GetName() + "##" + std::to_string(id));
@@ -83,6 +90,9 @@ namespace Eclipse::Editor
         ImVec2 textSize = ImGui::CalcTextSize(itemName);
         bool clickedButton = ImGui::Button(buttonName.c_str(), ImVec2(textSize.x + 10, 20));
 
+        if (id == CurrentGameObjectID)
+            ImGui::PopStyleColor();
+        
         if (ImGui::IsItemHovered())
         {
             gameobjectrightclicked = true;
@@ -94,19 +104,14 @@ namespace Eclipse::Editor
             }
         }
 
-        if (id == CurrentGameObjectID)
-            clickedButton = false;
-
         if (clickedButton)
         {
             CurrentGameObjectID = id;
             InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
         }
+
         ImGui::PopFont();
-        if (id == CurrentGameObjectID && !clickedButton)
-        {
-            ImGui::PopStyleColor();
-        }
+
 
         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
         {
@@ -224,14 +229,11 @@ namespace Eclipse::Editor
 
             aChild->SetParent(aParent);
 
-            Math::Matrix3x3f newParentWorldMatrix = aParent->transform->GetTransformMatrix();
+            Math::Matrix3x3f newParentWorldMatrix = Math::Matrix3x3f::CreateTranslation(aParent->transform->GetPosition());
             Math::Matrix3x3f ParentRotationMatrix = Math::Matrix3x3f::CreateRotation(-aParent->transform->GetRotation());
             
-            Math::Vector3f worldPosVec3(worldPosition.x, worldPosition.y, 1);
-
-            Math::Vector3f localPosVec3 = worldPosVec3;
+            Math::Vector3f localPosVec3(worldPosition.x, worldPosition.y, 1);
             
-            localPosVec3 = localPosVec3 * ParentRotationMatrix;
             localPosVec3 = localPosVec3 * newParentWorldMatrix.GetInverse();
             localPosVec3 = localPosVec3 * ParentRotationMatrix.GetInverse();
             
@@ -403,9 +405,9 @@ namespace Eclipse::Editor
                 if (ComponentManager::myEntityIdToEntity.find(currentObject) != ComponentManager::myEntityIdToEntity.end())
                 {
                     GameObject* gameobject = ComponentManager::myEntityIdToEntity.at(currentObject);
-                    gameobject->Delete();
                     RecursiveDeleteChildren(gameobject);
 
+                    gameobject->Delete();
                     gameobjectIdsThatAreOpen.erase(currentObject);
                     HierarchyWindow::CurrentGameObjectID = 0;
                 }

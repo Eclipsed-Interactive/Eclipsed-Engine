@@ -19,6 +19,8 @@ namespace Eclipse
 		static void Save(const char* aPath);
 		static void Load(const char* aPath);
 
+		static void UnloadScene();
+
 		static void WriteMember(rapidjson::Value& aValue, Reflection::AbstractSerializedVariable* aSerializedVariable, rapidjson::Document::AllocatorType& alloc);
 		static void LoadComponent(const std::string& componentName, const rapidjson::Value& aValue);
 

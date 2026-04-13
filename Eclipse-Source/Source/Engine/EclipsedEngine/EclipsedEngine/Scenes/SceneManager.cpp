@@ -23,7 +23,9 @@ namespace Eclipse
 	void SceneManager::LoadScene(const std::string& nameOrPath)
 	{
 		if (nameOrPath.empty()) return;
-
+		
+		SetActiveSceneType(Default);
+		
 		std::string path = nameOrPath;
 		if (!std::filesystem::path(nameOrPath).has_extension()) {
 			path += ".scene";
@@ -32,7 +34,7 @@ namespace Eclipse
 		std::string fullPath = (PathManager::GetAssetsPath() / path).generic_string();
 		if (std::filesystem::exists(path) || std::filesystem::exists(fullPath))
 		{
-			ActiveScene = nameOrPath;
+			myActiveScene = nameOrPath;
 			SceneLoader::Load(fullPath.c_str());
 		}
 		else
@@ -43,16 +45,21 @@ namespace Eclipse
 
 	void SceneManager::LoadScene(unsigned idx)
 	{
-		if (scenePaths.empty()) return;
+		if (myScenePaths.empty()) return;
 
-		SceneLoader::Load((PathManager::GetAssetsPath() / scenePaths[idx]).generic_string().c_str());
+		SceneLoader::Load((PathManager::GetAssetsPath() / myScenePaths[idx]).generic_string().c_str());
 
-		ActiveScene = std::filesystem::path(scenePaths[idx]).filename().stem().string();
+		myActiveScene = std::filesystem::path(myScenePaths[idx]).filename().stem().string();
+	}
+
+	void SceneManager::UnloadScene()
+	{
+		SceneLoader::UnloadScene();
 	}
 
 	void SceneManager::ReloadActiveScene()
 	{
-		LoadScene(ActiveScene);
+		LoadScene(myActiveScene);
 	}
 
 	void SceneManager::SaveScenes()
@@ -61,9 +68,9 @@ namespace Eclipse
 
 	void SceneManager::SaveActiveScene()
 	{
-		if (ActiveScene.empty()) return;
+		if (myActiveScene.empty()) return;
 		
-		SceneLoader::Save(ActiveScene.c_str());
+		SceneLoader::Save(myActiveScene.c_str());
 	}
 
 	void SceneManager::AddScene(const std::string& aPath)
@@ -71,8 +78,8 @@ namespace Eclipse
 		std::filesystem::path path = std::filesystem::relative(aPath, PathManager::GetAssetsPath());
 
 		std::string name = path.filename().stem().string();
-		nameToIdx[name] = (unsigned)scenePaths.size();
-		scenePaths.push_back(path.generic_string());
+		myNameToIdx[name] = (unsigned)myScenePaths.size();
+		myScenePaths.push_back(path.generic_string());
 	}
 
 	void SceneManager::LoadSceneData()
@@ -84,20 +91,20 @@ namespace Eclipse
 
 		for (int i = 0; i < sceneIndex.size(); i++)
 		{
-			nameToIdx[std::filesystem::path(sceneIndex[i]).filename().stem().generic_string()] = i;
-			scenePaths.push_back(sceneIndex[i]);
+			myNameToIdx[std::filesystem::path(sceneIndex[i]).filename().stem().generic_string()] = i;
+			myScenePaths.push_back(sceneIndex[i]);
 		}
 	}
 
 	void SceneManager::SaveSceneData()
 	{
-		Settings::BuildSettings::SetSceneIndex(scenePaths);
+		Settings::BuildSettings::SetSceneIndex(myScenePaths);
 		Settings::BuildSettings::Save();
 	}
 
 	void SceneManager::ClearScene()
 	{
-		ActiveScene = "";
+		myActiveScene = "";
 
 		CommandListManager::ResetAllCommandLists();
 
@@ -107,10 +114,25 @@ namespace Eclipse
 		PhysicsEngine::CleanUp();
 	}
 
-	std::unordered_map<std::string, unsigned>& SceneManager::GetNameToIdx() { return nameToIdx; }
-	std::vector<std::string>& SceneManager::GetScenePaths() { return scenePaths; }
+	std::unordered_map<std::string, unsigned>& SceneManager::GetNameToIdx() { return myNameToIdx; }
+	std::vector<std::string>& SceneManager::GetScenePaths() { return myScenePaths; }
 	const char* SceneManager::GetActiveScene() 
 	{ 
-		return ActiveScene.c_str(); 
+		return myActiveScene.c_str(); 
+	}
+
+	void SceneManager::SetActiveScene(const char* anActiveScene)
+	{
+		myActiveScene = anActiveScene;
+	}
+
+	SceneManager::SceneType SceneManager::GetActiveSceneType()
+	{
+		return myActiveSceneType;
+	}
+
+	void SceneManager::SetActiveSceneType(SceneType aType)
+	{
+		myActiveSceneType = aType;
 	}
 }
