@@ -83,10 +83,8 @@ add_subdirectory(Source/Engine/Modules/PhysicsEngine)
 add_subdirectory(Source/Engine/EclipsedEngine)
 
 add_subdirectory(Source/Launcher)
-add_subdirectory(Source/Hub)
-
 if(ECLIPSED_EDITOR)
-    add_subdirectory(Source/Tools/EclipsedHub)
+    add_subdirectory(Source/Hub)
 endif()
 
 if(INCLUDE_GAME)
