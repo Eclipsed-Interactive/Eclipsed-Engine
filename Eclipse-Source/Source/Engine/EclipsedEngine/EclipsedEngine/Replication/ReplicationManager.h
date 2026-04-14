@@ -6,8 +6,6 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
-#include "steamsdk/steam_api.h"
-
 namespace Eclipse
 {
     class SteamP2PNetworkingClient;

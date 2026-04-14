@@ -5,6 +5,7 @@
 /Eclipse-Source/[Ll]ocal/
 RPS-Project/
 
-/Eclipse-Source/Source/Externals/steamsdk*
+/Eclipse-Source/Source/Externals/steamsdk/*
+!/Eclipse-Source/Source/Externals/steamsdk/CurlSteam.bat
 
 GameBuild/

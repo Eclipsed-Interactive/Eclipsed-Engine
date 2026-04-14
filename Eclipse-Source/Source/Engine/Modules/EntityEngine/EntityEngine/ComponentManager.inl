@@ -131,7 +131,7 @@ namespace Eclipse
         component->gameObject = myEntityIdToEntity.at(aGOID);
         component->myComponentComponentID = typeIndex;
 
-        myComponentsToStart.emplace_back(component);
+        myComponentsToStartBuffer.emplace_back(component);
 
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;

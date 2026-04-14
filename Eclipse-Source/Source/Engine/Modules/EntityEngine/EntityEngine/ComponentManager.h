@@ -14,7 +14,7 @@
 #define GetComp(Type, GOID)\
 ComponentManager::GetComponent<Type>(GOID)
 
-#define MAX_COMPONENT_MEMORY_BYTES 2'000'000
+#define MAX_COMPONENT_MEMORY_BYTES 20'000'000
 
 namespace Eclipse
 {

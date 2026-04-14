@@ -60,6 +60,7 @@ namespace Eclipse
         free(myComponentData);
 
         myComponentMemoryTracker = 0;
+        myComponentsToStartBuffer.clear();
         myComponentsToStart.clear();
 
         for (auto& [id, obj] : myEntityIdToEntity)
@@ -75,16 +76,21 @@ namespace Eclipse
 
     void ComponentManager::AwakeComponents()
     {
-        for (size_t i = 0; i < myComponents.size(); ++i)
-            if (myComponents[i]->myIsOwner)
-                myComponents[i]->Awake();
+        for (size_t i = 0; i < myComponentsToStart.size(); ++i)
+            if (myComponentsToStart[i]->myIsOwner)
+                myComponentsToStart[i]->Awake();
     }
 
     void ComponentManager::StartComponents()
     {
-        for (size_t i = 0; i < myComponents.size(); ++i)
-            if (myComponents[i]->myIsOwner)
-                myComponents[i]->Start();
+        for (size_t i = 0; i < myComponentsToStart.size(); ++i)
+        {
+            if (myComponentsToStart[i]->myIsOwner)
+            {
+                myComponentsToStart[i]->Start();
+                myComponentsToStart[i]->HasStarted = true;
+            }
+        }
     }
 
     void ComponentManager::EditorUpdateComponents()
@@ -97,24 +103,26 @@ namespace Eclipse
     void ComponentManager::EarlyUpdateComponents()
     {
         for (size_t i = 0; i < myComponents.size(); ++i)
-            if (myComponents[i]->myIsOwner)
+            if (myComponents[i]->myIsOwner && myComponents[i]->HasStarted)
                 myComponents[i]->EarlyUpdate();
     }
 
     void ComponentManager::UpdateComponents()
     {
         for (size_t i = 0; i < myComponents.size(); ++i)
-            if (myComponents[i]->myIsOwner)
+            if (myComponents[i]->myIsOwner && myComponents[i]->HasStarted)
                 myComponents[i]->Update();
     }
 
     void ComponentManager::LateUpdateComponents()
     {
         for (auto& component : myComponents)
-            component->OnDrawGizmos();
+            if (component->HasStarted)
+                component->OnDrawGizmos();
+            
 
         for (auto& component : myComponents)
-            if (component->myIsOwner)
+            if (component->myIsOwner && component->HasStarted)
                 component->LateUpdate();
     }
     
@@ -197,7 +205,7 @@ namespace Eclipse
         component->gameObject = myEntityIdToEntity.at(aGOID);
         component->myComponentComponentID = typeIndex;
 
-        myComponentsToStart.emplace_back(component);
+        myComponentsToStartBuffer.emplace_back(component);
 
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
@@ -345,18 +353,33 @@ namespace Eclipse
                 myComponents.pop_back();
             }
 
-            int componentToStartSize = 0;
-            for (int i = myComponentsToStart.size() - 1; i >= 0; i--)
             {
-                auto& component = myComponentsToStart[i];
-                if (component->IsDeleted)
+                int componentToStartSize = 0;
+                for (int i = myComponentsToStart.size() - 1; i >= 0; i--)
                 {
-                    std::swap(component, myComponentsToStart[myComponentsToStart.size() - componentToStartSize - 1]);
-                    componentToStartSize++;
+                    auto& component = myComponentsToStart[i];
+                    if (component->IsDeleted)
+                    {
+                        std::swap(component, myComponentsToStart[myComponentsToStart.size() - componentToStartSize - 1]);
+                        componentToStartSize++;
+                    }
                 }
+                myComponentsToStart.resize(myComponentsToStart.size() - componentToStartSize);
             }
 
-            myComponentsToStart.resize(myComponentsToStart.size() - componentToStartSize);
+            {
+                int componentToStartSize = 0;
+                for (int i = myComponentsToStartBuffer.size() - 1; i >= 0; i--)
+                {
+                    auto& component = myComponentsToStartBuffer[i];
+                    if (component->IsDeleted)
+                    {
+                        std::swap(component, myComponentsToStartBuffer[myComponentsToStartBuffer.size() - componentToStartSize - 1]);
+                        componentToStartSize++;
+                    }
+                }
+                myComponentsToStartBuffer.resize(myComponentsToStartBuffer.size() - componentToStartSize);
+            }
 
             SortComponents();
 
