@@ -127,31 +127,39 @@ namespace Eclipse::Editor
 		gameobjectJson.SetObject();
 
 		GameObject* pickedGameobject = ComponentManager::GetGameObject(aObjectID);
+
+		Math::Vector2f oldLocalPosition;
+		float oldLocalRotation;
+		Math::Vector2f oldLocalScale;
 		
-            
 		Transform2D* transform = pickedGameobject->transform;
+		if (transform)
+		{
+			// Save old transform to unparent it
+			oldLocalPosition = transform->GetLocalPosition();
+			oldLocalRotation = transform->GetLocalRotation();
+			oldLocalScale = transform->GetLocalScale();
 
-		// Save old transform to unparent it
-		Math::Vector2f oldLocalPosition = transform->GetLocalPosition();
-		float oldLocalRotation = transform->GetLocalRotation();
-		Math::Vector2f oldLocalScale = transform->GetLocalScale();
+			// Get the global position of the copied object
+			Math::Vector2f globalPosition = transform->GetPosition();
+			float globalRotation = transform->GetRotation();
+			Math::Vector2f globalScale = transform->GetScale();
 
-		// Get the global position of the copied object
-		Math::Vector2f globalPosition = transform->GetPosition();
-		float globalRotation = transform->GetRotation();
-		Math::Vector2f globalScale = transform->GetScale();
-
-		// Apply the global as local on the copied object. The new object will have this transform
-		transform->SetPosition(globalPosition);
-		transform->SetRotation(globalRotation);
-		transform->SetScale(globalScale);
+			// Apply the global as local on the copied object. The new object will have this transform
+			transform->SetPosition(globalPosition);
+			transform->SetRotation(globalRotation);
+			transform->SetScale(globalScale);
+		}
 
 		CopyGameObject(aObjectID, gameobjectJson, jsonAllocator);
 
-		// Reset to old locals
-		transform->SetPosition(oldLocalPosition);
-		transform->SetRotation(oldLocalRotation);
-		transform->SetScale(oldLocalScale);
+		if (transform)
+		{
+			// Reset to old locals
+			transform->SetPosition(oldLocalPosition);
+			transform->SetRotation(oldLocalRotation);
+			transform->SetScale(oldLocalScale);
+		}
 
 		gameObjectArrayJson.PushBack(gameobjectJson, jsonAllocator);
 		d.AddMember("Gameobjects", gameObjectArrayJson, jsonAllocator);

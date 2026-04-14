@@ -1,43 +1,40 @@
 #ifdef ECLIPSED_EDITOR
 #include "HierarchyWindow.h"
 
+#include "rapidjson/stringbuffer.h"
 #include "ImGui/imgui.h"
+
 #include "EntityEngine/ComponentManager.h"
-#include "EclipsedEngine/Components/Transform2D.h"
-#include "EclipsedEngine/Components/UI/Canvas.h"
-#include "EclipsedEngine/Components/UI/UIImage.h"
-#include "EclipsedEngine/Components/UI/Button.h"
-#include "EclipsedEngine/Components/UI/TextRenderer.h"
-#include "EclipsedEngine/Components/UI/RectTransform.h"
-#include "CoreEngine/Input/Input.h"
-#include "EntityEngine/ECS.hpp"
 #include "EntityEngine/GameObject.h"
 
-#include "Editor/Common/EditorActions.h"
+#include "EclipsedEngine/Components/UI/RectTransform.h"
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
+#include "EclipsedEngine/Components/Transform2D.h"
+#include "EclipsedEngine/Components/UI/UIImage.h"
+#include "EclipsedEngine/Components/UI/Canvas.h"
+#include "EclipsedEngine/Components/UI/Button.h"
+
 #include "Editor/Windows/WindowTypes/AssetWindow/AssetWindow.h"
-#include "rapidjson/stringbuffer.h"
-
-#include "CoreEngine/Clipboard.h"
-#include "EclipsedEngine/Scenes/SceneLoader.h"
-#include "EclipsedEngine/Editor/EditorUIManager.h"
-
-#include "EntityEngine/ComponentManager.h"
+#include "Editor/Windows/WindowTypes/InspectorWindow.h"
+#include "Editor/Common/EditorActions.h"
+#include "Editor/EditorUIManager.h"
 
 #include "Font-Awesome/7/IconsFontAwesome7.h"
-
-#include "InspectorWindow.h"
-
-#include "Editor/EditorRuntime.h"
 
 namespace Eclipse::Editor
 {
     void HierarchyWindow::OpenParents(unsigned aParentID)
     {
-        if (GameObject* parent = ComponentManager::GetGameObject(aParentID)->GetParent())
-        {
-            gameobjectIdsThatAreOpen.emplace(parent->GetID());
-            OpenParents(parent->GetID());
-        }
+        GameObject* gameobject = ComponentManager::GetGameObject(aParentID);
+        if (!gameobject)
+            return;
+        
+        GameObject* parent = gameobject->GetParent();
+        if (!parent)
+            return;
+        
+        gameobjectIdsThatAreOpen.emplace(parent->GetID());
+        OpenParents(parent->GetID());
     }
 
     void HierarchyWindow::HierarchyButton(GameObject* aGameObject, float totalIndent)
@@ -92,7 +89,7 @@ namespace Eclipse::Editor
 
         if (id == CurrentGameObjectID)
             ImGui::PopStyleColor();
-        
+
         if (ImGui::IsItemHovered())
         {
             gameobjectrightclicked = true;
@@ -224,31 +221,35 @@ namespace Eclipse::Editor
         if (aChild->transform && aParent->transform)
         {
             Math::Vector2f worldPosition = aChild->transform->GetPosition();
-            float worldRotation = aChild->transform->GetRotation();
+            float worldRotation = aChild->transform->GetRotation() * Math::rad2Deg;
             Math::Vector2f worldScale = aChild->transform->GetScale();
 
             aChild->SetParent(aParent);
 
             Math::Matrix3x3f newParentWorldMatrix = Math::Matrix3x3f::CreateTranslation(aParent->transform->GetPosition());
             Math::Matrix3x3f ParentRotationMatrix = Math::Matrix3x3f::CreateRotation(-aParent->transform->GetRotation());
-            
+
             Math::Vector3f localPosVec3(worldPosition.x, worldPosition.y, 1);
-            
+
             localPosVec3 = localPosVec3 * newParentWorldMatrix.GetInverse();
             localPosVec3 = localPosVec3 * ParentRotationMatrix.GetInverse();
-            
+
             aChild->transform->SetPosition({localPosVec3.x, localPosVec3.y});
 
-            float parentWorldRotation = aParent->transform->GetRotation();
+            float parentWorldRotation = aParent->transform->GetRotation() * Math::rad2Deg;
             float localRotation = worldRotation - parentWorldRotation;
             aChild->transform->SetRotation(localRotation);
-            
+
             Math::Vector2f parentWorldScale = aParent->transform->GetScale();
             Math::Vector2f localScale = {
                 worldScale.x / parentWorldScale.x,
                 worldScale.y / parentWorldScale.y
             };
             aChild->transform->SetScale(localScale);
+        }
+        else
+        {
+            aChild->SetParent(aParent);
         }
 
         if (auto* recttransform = aChild->GetComponent<RectTransform>())
@@ -258,7 +259,7 @@ namespace Eclipse::Editor
                 recttransform->myCanvas->canvasCameraTransform.PositionOffset = {0.f, 0.f};
                 recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
                 recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = {1.f, 1.f};
-                
+
                 if (aChild->GetChildCount())
                     SetCanvasForChildren(recttransform->myCanvas, aChild->GetChildren());
             }
@@ -295,13 +296,13 @@ namespace Eclipse::Editor
                     GameObject* gameobject = ComponentManager::GetGameObject(SelectedGameobjectID);
 
                     Transform2D* transform = gameobject->transform;
-                    
+
                     Math::Vector2f globalPosition = transform->GetPosition();
-                    float globalRotation = transform->GetRotation();
+                    float globalRotation = transform->GetRotation() * Math::rad2Deg;
                     Math::Vector2f globalScale = transform->GetScale();
 
                     gameobject->SetParent(nullptr);
-                    
+
                     transform->SetPosition(globalPosition);
                     transform->SetRotation(globalRotation);
                     transform->SetScale(globalScale);
@@ -323,7 +324,7 @@ namespace Eclipse::Editor
                     GameObject* obj = ComponentManager::CreateGameObject();
                     Transform2D* transform = obj->AddComponent<Transform2D>();
                     transform->SetScale(Math::Vector2f(20, 20));
-                    
+
                     obj->AddComponent<SpriteRenderer2D>();
 
                     obj->SetName("New Sprite");

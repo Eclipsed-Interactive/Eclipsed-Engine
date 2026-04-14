@@ -6,10 +6,10 @@ namespace Eclipse
 {
     struct CameraBuffer
     {
-        Math::Vector2f cameraPosition;
-        Math::Vector2f cameraScale;
+        Math::Vector2f cameraPosition{0.f, 0.f};
+        Math::Vector2f cameraScale = {1.f, 1.f};
+        float cameraRotation = 0.f;
 
-        float cameraRotation;
         float resolutionRatio;
 
         float Padding[2];

@@ -146,7 +146,14 @@ namespace Eclipse::Editor
 
 				SteamGeneral::Get().Init();
 
-				SceneLoader::Save(SceneManager::GetActiveScene());
+				if (SceneManager::GetActiveSceneType() == SceneManager::Default)
+					SceneLoader::Save(SceneManager::GetActiveScene());
+				else if (SceneManager::GetActiveSceneType() == SceneManager::Prefab)
+				{
+					std::filesystem::path filePath = SceneManager::GetActiveScene();
+					filePath.replace_filename("");
+					HierarchyWindow::CreatePrefab(SceneManager::ActivePrefabEditSceneID, filePath);
+				}
 
 				ImGui::End();
 				return;
@@ -169,7 +176,37 @@ namespace Eclipse::Editor
 				isPaused = false;
 
 				SteamGeneral::Get().ShutDown();
-				SceneManager::ReloadActiveScene();
+
+				if (SceneManager::GetActiveSceneType() == SceneManager::Default)
+					SceneManager::ReloadActiveScene();
+				else if (SceneManager::GetActiveSceneType() == SceneManager::Prefab)
+				{
+					std::filesystem::path filePath = SceneManager::GetActiveScene();
+					
+					{
+						std::ifstream stream(filePath);
+						if (!stream.is_open())
+							return;
+
+						SceneManager::UnloadScene();
+						PhysicsEngine::InitWorld();
+
+						SceneManager::SetActiveSceneType(SceneManager::Prefab);
+						SceneManager::SetActiveScene(filePath.generic_string().c_str());
+
+                
+						size_t prefSize = std::filesystem::file_size(filePath);
+						char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
+						stream.read(data, prefSize);
+						memset(data + prefSize, '\0', 1);
+						stream.close();
+
+						GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+						SceneManager::ActivePrefabEditSceneID = gameobject->GetID();
+
+						free(data);
+					}
+				}
 			}
 		}
 

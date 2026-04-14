@@ -86,7 +86,7 @@ namespace Eclipse
     }
     float Transform2D::GetRotation()
     {
-        return GlobalRotation;
+        return GlobalRotation * Math::deg2Rad;
     }
     Math::Vector2f Transform2D::GetScale()
     {
