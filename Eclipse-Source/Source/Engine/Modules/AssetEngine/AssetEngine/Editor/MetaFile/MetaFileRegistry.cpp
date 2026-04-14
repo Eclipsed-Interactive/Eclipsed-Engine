@@ -35,6 +35,8 @@ namespace Eclipse
 
 	std::string MetaFileRegistry::GetGUID(const std::filesystem::path& aPath)
 	{
+		if (MetaFileExists(aPath)) return "";
+
 		std::filesystem::path path = GetMetaFilePath(aPath);
 
 		std::ifstream in(path);
