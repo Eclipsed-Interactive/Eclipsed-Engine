@@ -75,8 +75,6 @@ namespace Eclipse::Reflection
 	template<typename T>
 	inline int SerializedVariable<T>::GetImGuiType() const
 	{
-		auto& t = typeid(T);
-
 		if (types.find(typeid(T)) != types.end())
 		{
 			return types.at(typeid(T));

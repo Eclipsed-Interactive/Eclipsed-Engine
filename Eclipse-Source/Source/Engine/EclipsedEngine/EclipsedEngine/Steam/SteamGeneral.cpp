@@ -14,8 +14,7 @@ namespace Eclipse
     {
         OthersteamID = aCallback->m_steamIDFriend;
 
-        
-        Replication::ReplicationManager::Start(true);
+        SceneManager::LoadScene(1);
     }
 
     bool SteamGeneral::SetRichPresence( const char *pchKey, const char *pchValue)
@@ -25,11 +24,11 @@ namespace Eclipse
 
     void SteamGeneral::Update() 
     {
-        if (Input::GetKeyDown(Keycode::U))
-        {
-            std::cout << "startedServer" << std::endl;
-            Replication::ReplicationManager::Start(false);
-        }
+        // if (Input::GetKeyDown(Keycode::U))
+        // {
+        //     std::cout << "startedServer" << std::endl;
+        //     Replication::ReplicationManager::Start(false);
+        // }
         
         SteamAPI_RunCallbacks();
     }
@@ -43,8 +42,6 @@ namespace Eclipse
             assert(false && "Steam initialization failed");
             return;
         }
-
-        SetRichPresence("connect", "1");
     }
 
     void SteamGeneral::ShutDown()

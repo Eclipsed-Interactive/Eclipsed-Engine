@@ -20,6 +20,10 @@ namespace Eclipse
 		{
 			EDITOR_WINDOW_BASE_2(SceneWindow, "Scene")
 
+		public:
+			static void ZoomToObject(unsigned aObject);
+			static void ResetCamera();
+			
 		private:
 			void GizmoManager(Eclipse::Transform2D* aTransform);
 
@@ -27,7 +31,6 @@ namespace Eclipse
 
 			void SpriteSelector();
 
-			void ZoomToObject();
 			void ScrollManager();
 			void MouseManager();
 			void SpriteDragging();
@@ -71,7 +74,8 @@ namespace Eclipse
 
 		private:
 
-			float totalYScroll = 0;
+			static inline float totalYScroll = 0;
+			
 			float lastScroll = 0;
 			bool mouseIsDown = false;
 

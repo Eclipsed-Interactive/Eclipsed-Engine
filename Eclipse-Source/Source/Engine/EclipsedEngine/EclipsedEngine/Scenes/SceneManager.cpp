@@ -1,7 +1,6 @@
 #include "SceneManager.h"
 
 #include "rapidjson/document.h"
-#include "rapidjson/prettywriter.h"
 
 #include "SceneLoader.h"
 
@@ -14,7 +13,6 @@
 #include "CoreEngine/Settings/BuildSettings.h"
 #include "CoreEngine/Settings/EditorSettings.h"
 
-#include <fstream>
 //#include "CoreEngine/Settings/.h"
 #include "CoreEngine/Debug/DebugLogger.h"
 

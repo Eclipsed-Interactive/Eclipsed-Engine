@@ -119,13 +119,13 @@ namespace Eclipse
         for (auto& component : myComponents)
             if (component->HasStarted)
                 component->OnDrawGizmos();
-            
+
 
         for (auto& component : myComponents)
             if (component->myIsOwner && component->HasStarted)
                 component->LateUpdate();
     }
-    
+
     void ComponentManager::RenderComponents()
     {
 #ifdef ECLIPSED_EDITOR
@@ -133,7 +133,6 @@ namespace Eclipse
 #endif
         for (auto& component : myComponents)
             component->Render();
-        
     }
 
     void ComponentManager::AfterRenderUpdateComponents()
@@ -149,27 +148,27 @@ namespace Eclipse
         {
             const double UpdatePriorityD0 = aComp0->GetUpdatePriority();
             const double UpdatePriorityD1 = aComp1->GetUpdatePriority();
-            
+
             const double ZindexD0 = aComp0->GetZIndex();
             const double ZindexD1 = aComp1->GetZIndex();
 
             const double ZindexSmallD0 = ZindexD0 * 0.00000000000001f;
             const double ZindexSmallD1 = ZindexD1 * 0.00000000000001f;
-            
+
             return UpdatePriorityD0 - ZindexSmallD0 > UpdatePriorityD1 - ZindexSmallD1;
         });
 
-        myEntityIDToVectorOfComponentIDs.clear();
-
-        for (int i = 0; i < (int)myComponents.size()/* - 1*/; i++)
-        {
-            Component* comp = myComponents[i];
-
-            auto& mapOfComponentsGO = myEntityIDToVectorOfComponentIDs[comp->gameObject->GetID()];
-            RegisteredTypeIndex index = comp->myComponentComponentID;
-
-            mapOfComponentsGO[index].emplace_back(static_cast<ComponentIndex>(i));
-        }
+        // myEntityIDToVectorOfComponentIDs.clear();
+        //
+        // for (int i = 0; i < (int)myComponents.size()/* - 1*/; i++)
+        // {
+        //     Component* comp = myComponents[i];
+        //
+        //     auto& mapOfComponentsGO = myEntityIDToVectorOfComponentIDs[comp->gameObject->GetID()];
+        //     RegisteredTypeIndex index = comp->myComponentComponentID;
+        //
+        //     mapOfComponentsGO[index].emplace_back(static_cast<ComponentIndex>(i));
+        // }
     }
 
     Eclipse::Component* ComponentManager::AddComponent(GameObjectID aGOID, Eclipse::Component* (__cdecl*createFunc)(unsigned char* address), size_t size)
@@ -210,7 +209,7 @@ namespace Eclipse
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
 
-        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(static_cast<unsigned>(componentIndex));
+        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(component);
         myComponents.back()->myComponentIndex = componentIndex;
 
         //CreateComponentReplicated(component);
@@ -233,14 +232,13 @@ namespace Eclipse
         if (entityIDComponents.find(aUniqueComponentID) == entityIDComponents.end())
             return;
 
-        std::vector<unsigned>& componentIndex = entityIDComponents.at(aUniqueComponentID);
+        std::vector<Component*>& componentIndex = entityIDComponents.at(aUniqueComponentID);
 
         unsigned indexToDelete = -1;
         unsigned compIndex = 0;
         for (int i = 0; i < componentIndex.size(); i++)
         {
-            compIndex = componentIndex[i];
-            Component* component = myComponents[compIndex];
+            Component* component = componentIndex[i];
 
             if (component->myInstanceComponentID != aComponentID)
                 continue;
@@ -288,7 +286,7 @@ namespace Eclipse
         {
             for (auto& component : goComponents.second)
             {
-                components.emplace_back(myComponents[component]);
+                components.emplace_back(component);
             }
         }
 
@@ -313,76 +311,72 @@ namespace Eclipse
         if (gameobjectsToRemove.empty())
             return;
 
+        unsigned componentsDeleted = 0;
         for (int goID : gameobjectsToRemove)
         {
-            std::vector<int> componentsToRemove;
-
             for (auto& componentsAtGO : myEntityIDToVectorOfComponentIDs.at(goID))
             {
-                for (auto& componentAtGO : componentsAtGO.second)
+                for (auto& component : componentsAtGO.second)
                 {
-                    Component*& component = myComponents[componentAtGO];
-
                     DeleteReplicatedComponent(component->myInstanceComponentID);
 
                     component->IsDeleted = true;
 
                     component->OnDestroy();
                     component->~Component();
-
                     component = nullptr;
 
-                    //memset(component, 0, sizeof(component));
-
-                    componentsToRemove.emplace_back(componentAtGO);
+                    componentsDeleted++;
                 }
             }
+        }
 
-            int sizeOfComponents = myComponents.size();
-            int sizeOfComponentsRemove = componentsToRemove.size();
-            int sizeAfterRemoval = (sizeOfComponents - sizeOfComponentsRemove);
+        for (int i = 0; i < myComponents.size(); i++)
+        {
+            auto& component = myComponents[i];
+            if (!component->IsDeleted)
+                continue;
+            
+            Component* backComponent = myComponents.back();
+            if (!backComponent->IsDeleted)
+                std::swap(myComponents[i], myComponents.back());
+            
+            myComponents.pop_back();
+            i--;
+        }
 
-            std::sort(componentsToRemove.begin(), componentsToRemove.end());
-
-            std::vector<bool> used(sizeOfComponents, false);
-
-            for (int i = sizeOfComponentsRemove - 1; i >= 0; i--)
+        {
+            int componentToStartSize = 0;
+            for (int i = myComponentsToStart.size() - 1; i >= 0; i--)
             {
-                int componentIndex = componentsToRemove[i];
-                std::swap(myComponents[componentIndex], myComponents.back());
-                myComponents.pop_back();
-            }
-
-            {
-                int componentToStartSize = 0;
-                for (int i = myComponentsToStart.size() - 1; i >= 0; i--)
+                auto& component = myComponentsToStart[i];
+                if (component->IsDeleted)
                 {
-                    auto& component = myComponentsToStart[i];
-                    if (component->IsDeleted)
-                    {
-                        std::swap(component, myComponentsToStart[myComponentsToStart.size() - componentToStartSize - 1]);
-                        componentToStartSize++;
-                    }
+                    std::swap(component, myComponentsToStart[myComponentsToStart.size() - componentToStartSize - 1]);
+                    componentToStartSize++;
                 }
-                myComponentsToStart.resize(myComponentsToStart.size() - componentToStartSize);
             }
+            myComponentsToStart.resize(myComponentsToStart.size() - componentToStartSize);
+        }
 
+        {
+            int componentToStartSize = 0;
+            for (int i = myComponentsToStartBuffer.size() - 1; i >= 0; i--)
             {
-                int componentToStartSize = 0;
-                for (int i = myComponentsToStartBuffer.size() - 1; i >= 0; i--)
+                auto& component = myComponentsToStartBuffer[i];
+                if (component->IsDeleted)
                 {
-                    auto& component = myComponentsToStartBuffer[i];
-                    if (component->IsDeleted)
-                    {
-                        std::swap(component, myComponentsToStartBuffer[myComponentsToStartBuffer.size() - componentToStartSize - 1]);
-                        componentToStartSize++;
-                    }
+                    std::swap(component, myComponentsToStartBuffer[myComponentsToStartBuffer.size() - componentToStartSize - 1]);
+                    componentToStartSize++;
                 }
-                myComponentsToStartBuffer.resize(myComponentsToStartBuffer.size() - componentToStartSize);
             }
+            myComponentsToStartBuffer.resize(myComponentsToStartBuffer.size() - componentToStartSize);
+        }
 
-            SortComponents();
+        SortComponents();
 
+        for (int goID : gameobjectsToRemove)
+        {
             delete myEntityIdToEntity.at(goID);
             myEntityIdToEntity.erase(goID);
         }
@@ -417,21 +411,19 @@ namespace Eclipse
 
     void ComponentManager::BeginCollisions(GameObjectID aGOID)
     {
-        auto& components = myEntityIDToVectorOfComponentIDs[aGOID];
+        auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& component : components)
-            for (auto& [_, componentsIndex] : components)
-                for (auto& componentIndex : componentsIndex)
-                    myComponents[componentIndex]->OnCollisionEnter();
+        for (auto& [_, components] : allComponents)
+            for (auto& component : components)
+                component->OnCollisionEnter();
     }
 
     void ComponentManager::EndCollisions(GameObjectID aGOID)
     {
-        auto& components = myEntityIDToVectorOfComponentIDs[aGOID];
+        auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& component : components)
-            for (auto& [_, componentsIndex] : components)
-                for (auto& componentIndex : componentsIndex)
-                    myComponents[componentIndex]->OnCollisionExit();
+        for (auto& [_, components] : allComponents)
+            for (auto& component : components)
+                component->OnCollisionExit();
     }
 }

@@ -95,5 +95,7 @@ namespace Eclipse::Replication
         static inline asio::io_context ioContext;
 
         static inline std::string IP = "";
+
+        static inline bool ClickedHostButton = false;
     };
 }

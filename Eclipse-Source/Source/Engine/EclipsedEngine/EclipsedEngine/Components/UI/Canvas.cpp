@@ -9,15 +9,17 @@ namespace Eclipse
 {
     void Canvas::SetCanvasTransformProperties()
     {
-        int isScene;
-        GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGlobalUniform(UniformType::Int, "IsSceneWindow", &isScene);
-
         CameraBuffer* cameraBuffer = nullptr;
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
 
         //canvasCameraTransform.Rotation = gameObject->transform->GetRotation();
 
-        canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->cameraScale.x * cameraBuffer->resolutionRatio * 1.7777777777f, cameraBuffer->cameraScale.y) * 2.f;
+        if (IsScene)
+            canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->cameraScale.x * cameraBuffer->resolutionRatio * 1.7777777777f, cameraBuffer->cameraScale.y) * 2.f;
+        else
+            canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->resolutionRatio * 1.7777777777f, 1) * 2.f;
+        
+        
 
         canvasCameraTransform.ScaleMultiplier *= gameObject->transform->GetScale();
         Math::Vector2f scenePosition = cameraBuffer->cameraPosition;

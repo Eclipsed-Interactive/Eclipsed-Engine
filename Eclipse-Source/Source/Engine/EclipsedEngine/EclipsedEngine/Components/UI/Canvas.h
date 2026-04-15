@@ -31,5 +31,7 @@ namespace Eclipse
         static inline bool drawCanvasGizmos = true;
 
         CanvasBuffer myCanvasBuffer;
+
+        static inline bool IsScene = false;
     };
 }

@@ -14,6 +14,7 @@
 #include "CoreEngine/Files/FileWatcher.h"
 
 #include "CoreEngine/Settings/EditorSettings.h"
+#include "Editor/Windows/WindowTypes/SceneWindow.h"
 
 namespace Eclipse::Editor
 {
@@ -385,6 +386,8 @@ namespace Eclipse::Editor
             {
                 SceneManager::LoadScene(fifo.filePath.generic_string());
                 Settings::EditorSettings::SetLastActiveScene(fifo.filePath.generic_string());
+
+                SceneWindow::ResetCamera();
             }
             break;
         case Utilities::FileInfo::FileType_Prefab:
@@ -409,6 +412,8 @@ namespace Eclipse::Editor
                 GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
                 SceneManager::ActivePrefabEditSceneID = gameobject->GetID();
 
+                SceneWindow::ResetCamera();
+                
                 free(data);
             }
             break;

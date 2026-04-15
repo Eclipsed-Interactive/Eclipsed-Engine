@@ -44,7 +44,7 @@ namespace Eclipse
         void Draw();
 
         void SetFont(const char* aFont);
-        void SetFontSize(int aFontSize);
+        void SetFontSize(float aFontSize);
 
         void SetText(const char* aText);
 
@@ -56,17 +56,18 @@ namespace Eclipse
 
         void OnDrawGizmos() override;
         
-        SERIALIZED_FIELD_DEFAULT(std::string, myText, "EEE");
+        SERIALIZED_FIELD_DEFAULT(std::string, myText, "TEXT");
         SERIALIZED_FIELD_DEFAULT(Math::Color, myTextColor, Math::Color(1, 1, 1, 1));
 
         //SERIALIZED_FIELD_DEFAULT(std::string, myFontPath, (PathManager::GetEngineAssetsPath() / "Fonts/Quicksand-VariableFont_wght.ttf").generic_string());
         SERIALIZED_FIELD(Font, font);
         
-        SERIALIZED_FIELD_DEFAULT(int, myFontSize, 48);
+        SERIALIZED_FIELD_STEP_DEFAULT(float, myFontSize, 0.1f, 48.f);
 
-        SERIALIZED_FIELD_DEFAULT(Math::Vector2f, myRect, Math::Vector2f(1.f, 1.f));
-        SERIALIZED_FIELD_DEFAULT(float, myCharacterSpacing, 1.f);
-        SERIALIZED_FIELD_DEFAULT(float, myEnterSpacing, 1.f);
+        SERIALIZED_FIELD_STEP_DEFAULT(Math::Vector2f, myRect, 0.1f, Math::Vector2f(1.f, 1.f));
+        SERIALIZED_FIELD_STEP_DEFAULT(float, myCharacterSpacing, 0.1f, 1.f);
+        SERIALIZED_FIELD_STEP_DEFAULT(float, myEnterSpacing, 0.1f, 1.f);
+        SERIALIZED_FIELD_STEP_DEFAULT(float, mySpaceSpacing, 0.1f, 1.f);
 
         int myLastFontSize = 48;
 

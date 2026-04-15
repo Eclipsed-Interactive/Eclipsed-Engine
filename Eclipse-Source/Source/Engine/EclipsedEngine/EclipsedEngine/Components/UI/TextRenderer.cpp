@@ -48,7 +48,6 @@ namespace Eclipse
 
 		if (myLastFontSize != myFontSize)
 		{
-			SetFontSize(myFontSize);
 			myLastFontSize = myFontSize;
 		}
 
@@ -433,7 +432,7 @@ namespace Eclipse
 			char character = textInConstChar[i];
 			if (character == ' ')
 			{
-				float spaceOffset = myTransformBuffer.Scale.x * 500.f * 0.5f * myCharacterSpacing * myFontSize;
+				float spaceOffset = myTransformBuffer.Scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize * mySpaceSpacing;
 				lineOffsets.back() += spaceOffset;
 				continue;
 			}
@@ -484,7 +483,7 @@ namespace Eclipse
 			}
 			else if (character == ' ')
 			{
-				textOffset.x += myTransformBuffer.Scale.x * 500.f * myCharacterSpacing * myFontSize;
+				textOffset.x += myTransformBuffer.Scale.x * 50.f * myCharacterSpacing * myFontSize * mySpaceSpacing;
 				continue;
 			}
 		
@@ -545,17 +544,14 @@ namespace Eclipse
 		}
 	}
 
-	void TextRenderer::SetFontSize(int aFontSize)
+	void TextRenderer::SetFontSize(float aFontSize)
 	{
 		myFontSize = aFontSize;
-
-		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 	}
 
 	void TextRenderer::SetFont(const char* aFont)
 	{
-		//myFontPath = aFont;
-		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		
 	}
 
 	void TextRenderer::SetText(const char* aText)

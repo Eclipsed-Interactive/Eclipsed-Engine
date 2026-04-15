@@ -2,10 +2,11 @@
 
 #include "EclipsedEngine/Input/Input.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
-#include "CoreEngine/Debug/DebugLogger.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 
 #include "EclipsedEngine/Editor/Windows/WindowTypes/GameWindow.h"
+#include "Scenes/SceneManager.h"
+#include "Steam/SteamGeneral.h"
 
 namespace Eclipse
 {
@@ -37,7 +38,7 @@ namespace Eclipse
 		Math::Vector2f mousePos = Input::GetGameMousePos();
 		Math::Vector2f translatedMousePos = mousePos * refRes - refRes * 0.5f;
 
-		std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;
+		//std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;
 		
 		bool x = translatedMousePos.x < topRightCorner.x && translatedMousePos.x > lowerLeftCorner.x;
 		bool y = translatedMousePos.y < topRightCorner.y && translatedMousePos.y > lowerLeftCorner.y;
@@ -60,6 +61,9 @@ namespace Eclipse
 
 	void Button::Print()
 	{
-		std::cout << "clickButton" << std::endl;
+		SceneManager::LoadScene(1);
+		Replication::ReplicationManager::ClickedHostButton = true;
+
+		SteamGeneral::SetRichPresence("connect", "1");
 	}
 }
