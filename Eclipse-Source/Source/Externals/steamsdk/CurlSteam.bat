@@ -54,7 +54,7 @@ if not exist "win64" (
 )
 cd win64
 
-curl -s https://eclipsed.se/sdk/steam_api64.lib -o steam_api64.lib
+curl -s https://eclipsed.se/sdk/lib/win64/steam_api64.lib -o steam_api64.lib
 
 echo SteamSDK acquired
 
