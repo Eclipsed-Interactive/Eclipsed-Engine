@@ -8,7 +8,7 @@ namespace Eclipse
 {
     void PolygonCollider2D::CreateCollider()
     {
-        
+        OnTransformDirty();
     }
 
     void PolygonCollider2D::AddPoint(const Math::Vector2f& aPoint)

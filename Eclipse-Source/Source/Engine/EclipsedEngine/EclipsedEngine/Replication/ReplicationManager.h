@@ -6,8 +6,6 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
-#include "steamsdk/steam_api.h"
-
 namespace Eclipse
 {
     class SteamP2PNetworkingClient;
@@ -97,5 +95,7 @@ namespace Eclipse::Replication
         static inline asio::io_context ioContext;
 
         static inline std::string IP = "";
+
+        static inline bool ClickedHostButton = false;
     };
 }

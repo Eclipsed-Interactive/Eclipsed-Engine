@@ -48,7 +48,6 @@ namespace Eclipse
 
 		if (myLastFontSize != myFontSize)
 		{
-			SetFontSize(myFontSize);
 			myLastFontSize = myFontSize;
 		}
 
@@ -77,7 +76,8 @@ namespace Eclipse
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 		
 		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv * ((float)myFontSize * 0.005f);
-
+		// if (!IsScene)
+		// 	myTransformBuffer.Scale *= { 2.f, 2.f };
 		
 		Math::Vector2f multiplier;
 		if (IsScene)
@@ -432,7 +432,8 @@ namespace Eclipse
 			char character = textInConstChar[i];
 			if (character == ' ')
 			{
-				lineOffsets.back() += myTransformBuffer.Scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize;
+				float spaceOffset = myTransformBuffer.Scale.x * 50.f * 0.5f * myCharacterSpacing * myFontSize * mySpaceSpacing;
+				lineOffsets.back() += spaceOffset;
 				continue;
 			}
 			else if (character == '\n')
@@ -482,7 +483,7 @@ namespace Eclipse
 			}
 			else if (character == ' ')
 			{
-				textOffset.x += myTransformBuffer.Scale.x * 50.f * myCharacterSpacing * myFontSize;
+				textOffset.x += myTransformBuffer.Scale.x * 50.f * myCharacterSpacing * myFontSize * mySpaceSpacing;
 				continue;
 			}
 		
@@ -527,25 +528,30 @@ namespace Eclipse
 
 			CanvasBuffer* canvasBuffer;
 			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
-			if (!IsScene && !transform->myCanvas->WorldSpace)
-				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+			
+			if (!IsScene)
+			{
+				if (!transform->myCanvas->WorldSpace)
+					canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+				else
+					canvasBuffer->canvasPositionOffset = {0, 0};
+            
+			}
+			
 			GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
 			
 			TextSprite::Get().Render();
 		}
 	}
 
-	void TextRenderer::SetFontSize(int aFontSize)
+	void TextRenderer::SetFontSize(float aFontSize)
 	{
 		myFontSize = aFontSize;
-
-		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
 	}
 
 	void TextRenderer::SetFont(const char* aFont)
 	{
-		//myFontPath = aFont;
-		//myFont = &TextManager::Get().GetFont(myFontPath->c_str(), myFontSize);
+		
 	}
 
 	void TextRenderer::SetText(const char* aText)

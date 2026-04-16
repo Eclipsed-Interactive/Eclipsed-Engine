@@ -14,7 +14,7 @@
 #define GetComp(Type, GOID)\
 ComponentManager::GetComponent<Type>(GOID)
 
-#define MAX_COMPONENT_MEMORY_BYTES 2'000'000
+#define MAX_COMPONENT_MEMORY_BYTES 20'000'000
 
 namespace Eclipse
 {
@@ -134,7 +134,7 @@ namespace Eclipse
 		static inline size_t myComponentMemoryTracker = 0;
 		static inline uint8_t* myComponentData;
 
-		static inline std::vector<Component*> myRenderComponents;
+		//static inline std::vector<Component*> myRenderComponents;
 		static inline std::vector<Component*> myComponents;
 
 		static inline std::vector<Component*> myComponentsToStartBuffer;
@@ -142,7 +142,7 @@ namespace Eclipse
 
 		// Gameobject to components
 		static inline std::unordered_map<unsigned, GameObject*> myEntityIdToEntity;
-		static inline std::unordered_map<unsigned, std::unordered_map<unsigned, std::vector<ComponentIndex>>> myEntityIDToVectorOfComponentIDs;
+		static inline std::unordered_map<unsigned, std::unordered_map<unsigned, std::vector<Component*>>> myEntityIDToVectorOfComponentIDs;
 
 		static inline std::vector<unsigned> gameobjectsToRemove;
 

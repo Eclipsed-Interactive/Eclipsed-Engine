@@ -13,18 +13,25 @@
 #include "EntityEngine/ComponentManager.h"
 #include "CoreEngine/Clipboard.h"
 
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 #include "CoreEngine/ChatGPT_Dump/Base64.hpp"
 
 #include "EclipsedEngine/ECS/SpawnObject.h"
-
-#include "CoreEngine/Debug/DebugLogger.h"
 
 namespace Eclipse::Editor
 {
 	void EditorActions::SaveScene()
 	{
-		SceneManager::SaveActiveScene();
+		switch (SceneManager::GetActiveSceneType())
+		{
+		case SceneManager::Default:
+			SceneManager::SaveActiveScene();
+			break;
+		case SceneManager::Prefab:
+			std::filesystem::path filePath = SceneManager::GetActiveScene();
+			filePath.replace_filename("");
+			HierarchyWindow::CreatePrefab(SceneManager::ActivePrefabEditSceneID, filePath);
+			break;
+		}
 	}
 	void EditorActions::Save()
 	{
@@ -34,7 +41,7 @@ namespace Eclipse::Editor
 		}
 		else if (false)
 		{
-			// Save active thingy like sprite editor
+			// Save active like sprite editor
 		}
 
 	}
@@ -119,7 +126,40 @@ namespace Eclipse::Editor
 		rapidjson::Value gameobjectJson(rapidjson::kObjectType);
 		gameobjectJson.SetObject();
 
+		GameObject* pickedGameobject = ComponentManager::GetGameObject(aObjectID);
+
+		Math::Vector2f oldLocalPosition;
+		float oldLocalRotation;
+		Math::Vector2f oldLocalScale;
+		
+		Transform2D* transform = pickedGameobject->transform;
+		if (transform)
+		{
+			// Save old transform to unparent it
+			oldLocalPosition = transform->GetLocalPosition();
+			oldLocalRotation = transform->GetLocalRotation();
+			oldLocalScale = transform->GetLocalScale();
+
+			// Get the global position of the copied object
+			Math::Vector2f globalPosition = transform->GetPosition();
+			float globalRotation = transform->GetRotation();
+			Math::Vector2f globalScale = transform->GetScale();
+
+			// Apply the global as local on the copied object. The new object will have this transform
+			transform->SetPosition(globalPosition);
+			transform->SetRotation(globalRotation);
+			transform->SetScale(globalScale);
+		}
+
 		CopyGameObject(aObjectID, gameobjectJson, jsonAllocator);
+
+		if (transform)
+		{
+			// Reset to old locals
+			transform->SetPosition(oldLocalPosition);
+			transform->SetRotation(oldLocalRotation);
+			transform->SetScale(oldLocalScale);
+		}
 
 		gameObjectArrayJson.PushBack(gameobjectJson, jsonAllocator);
 		d.AddMember("Gameobjects", gameObjectArrayJson, jsonAllocator);

@@ -1,18 +1,20 @@
 #pragma once
 
-#include "EntityEngine/GameObject.h"
-#include "AssetEngine/Assets/Prefab.h"
-
-#include "AssetEngine/Data/PrefabData.h"
-
 #include <vector>
+
 #include "rapidjson/document.h"
 
-#include "Replication/ReplicationManager.h"
+#include "EclipsedEngine/Replication/ReplicationManager.h"
+
+#include "EclipsedEngine/Components/Transform2D.h"
+#include "EntityEngine/GameObject.h"
+
+#include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/Data/PrefabData.h"
 
 #include "CoreEngine/Macros/defines.h"
 
-#include "EclipsedEngine/Components/Transform2D.h"
+
 
 namespace Eclipse
 {
@@ -31,13 +33,14 @@ namespace Eclipse
             int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated);
     };
 
-    ECLIPSED_API inline GameObject*& Instantiate(Prefab& aPrefab, GameObject* instagator, bool Replicated = false)
+    ECLIPSED_API inline GameObject*& Instantiate(Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
     {
         GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(aPrefab.GetData()->data);
         gameobject->prefabAssetID = aPrefab.GetAssetID();
         gameobject->IsPrefab = true;
 
-        gameobject->transform->SetPosition(instagator->transform->GetPosition());
+        if (instagator)
+            gameobject->transform->SetPosition(instagator->transform->GetPosition());
         
         if (Replicated)
             Replication::ReplicationManager::SendPrefabObject(gameobject, aPrefab);

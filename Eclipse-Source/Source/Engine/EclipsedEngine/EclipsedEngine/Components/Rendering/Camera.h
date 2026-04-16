@@ -19,12 +19,14 @@ namespace Eclipse
 
         void UpdateCameraTransform();
 
-        static inline class Camera* main;
+        SERIALIZED_FIELD_STEP_DEFAULT(float, CameraZoom, 0.01f, 1.f);
 
+        static inline class Camera* main;
         bool created;
 
         static inline bool drawCameraGizmos = false;
 
         CameraBuffer myCameraBuffer;
+
     };
 }

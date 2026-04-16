@@ -178,8 +178,14 @@ namespace Eclipse
 
         CanvasBuffer* canvasBuffer;
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
-        if (!IsScene && !transform->myCanvas->WorldSpace)
-            canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+        if (!IsScene)
+        {
+            if (!transform->myCanvas->WorldSpace)
+                canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+            else
+                canvasBuffer->canvasPositionOffset = {0, 0};
+            
+        }
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(2, *canvasBuffer);
 
         Sprite::Get().Render();

@@ -40,12 +40,12 @@ namespace Eclipse
 
         for (auto& components : entityIDComponents)
         {
-            T* dynamicedComponent = dynamic_cast<T*>(myComponents.at(components.second.back()));
+            T* dynamicedComponent = dynamic_cast<T*>(components.second.back());
             if (dynamicedComponent)
             {
                 for (auto& curComponent : components.second)
                 {
-                    T* component = static_cast<T*>(myComponents.at(curComponent));
+                    T* component = static_cast<T*>(curComponent);
                     aComponents.emplace_back(component);
                 }
             }
@@ -63,7 +63,7 @@ namespace Eclipse
         {
             for (auto& component : components.second)
             {
-                T* dynamicedComponent = dynamic_cast<T*>(myComponents.at(component));
+                T* dynamicedComponent = dynamic_cast<T*>(component);
                 if (dynamicedComponent)
                     return dynamicedComponent;
             }
@@ -131,12 +131,12 @@ namespace Eclipse
         component->gameObject = myEntityIdToEntity.at(aGOID);
         component->myComponentComponentID = typeIndex;
 
-        myComponentsToStart.emplace_back(component);
+        myComponentsToStartBuffer.emplace_back(component);
 
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
 
-        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(static_cast<unsigned>(componentIndex));
+        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(component);
         myComponents.back()->myComponentIndex = componentIndex;
         
 

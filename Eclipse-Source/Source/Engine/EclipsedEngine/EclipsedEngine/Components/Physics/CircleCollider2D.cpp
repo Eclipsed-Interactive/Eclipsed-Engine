@@ -11,6 +11,8 @@ namespace Eclipse
 	void CircleCollider2D::CreateCollider()
 	{
 		PhysicsEngine::CreateCircleCollider(myInternalCollider, myBodyRef, myInternalRadius, myLayer);
+
+		OnTransformDirty();
 	}
 
 	void CircleCollider2D::DeltaChanges()

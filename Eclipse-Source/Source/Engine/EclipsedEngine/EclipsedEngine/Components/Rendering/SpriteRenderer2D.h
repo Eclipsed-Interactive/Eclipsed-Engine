@@ -57,10 +57,11 @@ namespace Eclipse
         bool mirroredX = false;
         bool mirroredY = false;
 
+        TransformBuffer myTransformBuffer;
+        SpriteBuffer mySpriteBuffer;
+        
         MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, SpriteRenderer2D);
         SERIALIZED_FIELD(Material, material);
 
-        TransformBuffer myTransformBuffer;
-        SpriteBuffer mySpriteBuffer;
     };
 }

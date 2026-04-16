@@ -30,7 +30,7 @@ namespace Eclipse
 
         myCameraBuffer.cameraPosition = gameObject->transform->GetPosition();
         myCameraBuffer.cameraRotation = gameObject->transform->GetRotation();
-        myCameraBuffer.cameraScale = gameObject->transform->GetScale();
+        myCameraBuffer.cameraScale = { CameraZoom, CameraZoom };
 
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(0, myCameraBuffer);
 
@@ -48,7 +48,7 @@ namespace Eclipse
         {
             main = this;
 
-            gameObject->transform->AddFunctionToRunOnDirtyUpdate([&]() { UpdateCameraTransform(); });
+            gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { UpdateCameraTransform(); });
 
             created = true;
         }

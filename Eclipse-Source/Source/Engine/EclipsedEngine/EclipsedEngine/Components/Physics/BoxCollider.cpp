@@ -24,6 +24,8 @@ namespace Eclipse
 	{
 		SetScale(HalfExtents);
 		PhysicsEngine::CreateBoxCollider(myInternalCollider, myBodyRef, myHalfExtents, myLayer);
+
+		OnTransformDirty();
 	}
 
 	void BoxCollider2D::SetScale(const Math::Vector2f& aHalfExtents)

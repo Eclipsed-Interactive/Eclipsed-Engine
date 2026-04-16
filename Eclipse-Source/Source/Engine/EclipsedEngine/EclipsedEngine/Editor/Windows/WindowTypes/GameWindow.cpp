@@ -16,6 +16,7 @@
 #include <array>
 #include <sstream>
 
+#include "Components/UI/Canvas.h"
 #include "CoreEngine/MainSingleton.h"
 #include "CoreEngine/Settings/GraphicsSettings.h"
 
@@ -84,8 +85,9 @@ namespace Eclipse::Editor
 
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->BindFrameBuffer(myGameFrameBuffer);
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer();
-
+		
 		BaseRenderComponent::IsScene = false;
+		Canvas::IsScene = false;
 		
 		if (myCurrentWindowMode != FreeAspect)
 			UpdateSpecifiedRes();

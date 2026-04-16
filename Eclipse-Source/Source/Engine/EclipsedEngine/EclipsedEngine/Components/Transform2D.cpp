@@ -31,15 +31,15 @@ namespace Eclipse
         if (!parentTransform)
             return;
 
-        Math::Mat3x3f parentTransformMatrix = Math::Mat3x3f::CreateTranslation(parentTransform->GetLocalPosition());
-        parentTransformMatrix *= Math::Mat3x3f::CreateRotation(-parentTransform->GetLocalRotation());
+        Math::Mat3x3f parentTransformMatrix = Math::Mat3x3f::CreateTranslation(parentTransform->GetPosition());
+        parentTransformMatrix *= Math::Mat3x3f::CreateRotation(-parentTransform->GetRotation());
         //parentTransformMatrix *= Math::Mat3x3f::CreateScale(parentTransform->GetLocalScale());
 
         aTransform *= parentTransformMatrix;
 
-        GameObject* parent = aParent->GetParent();
-        if (parent && parent->transform)
-            AddParentTransform(parent, aTransform);
+        // GameObject* parent = aParent->GetParent();
+        // if (parent && parent->transform)
+        //     AddParentTransform(parent, aTransform);
     }
 
     Math::Matrix3x3f Transform2D::GetTransformMatrix()
@@ -49,12 +49,19 @@ namespace Eclipse
     
     Math::Matrix3x3f Transform2D::GetTransform() const
     {
-        Math::Mat3x3f mat = Math::Mat3x3f::CreateTranslation(GetLocalPosition());
-        mat *= Math::Mat3x3f::CreateRotation(-GetLocalRotation());
+        Math::Mat3x3f mat = GetLocalTransformMatrix();
 
         GameObject* parent = gameObject->GetParent();
         if (parent && parent->transform)
             AddParentTransform(parent, mat);
+
+        return mat;
+    }
+
+    Math::Matrix3x3f Transform2D::GetLocalTransformMatrix() const
+    {
+        Math::Mat3x3f mat = Math::Mat3x3f::CreateTranslation(GetLocalPosition());
+        mat *= Math::Mat3x3f::CreateRotation(-GetLocalRotation());
 
         return mat;
     }
@@ -79,7 +86,7 @@ namespace Eclipse
     }
     float Transform2D::GetRotation()
     {
-        return GlobalRotation;
+        return GlobalRotation * Math::deg2Rad;
     }
     Math::Vector2f Transform2D::GetScale()
     {
@@ -174,9 +181,14 @@ namespace Eclipse
         myIsDirty = true;
     }
 
-    void Transform2D::AddFunctionToRunOnDirtyUpdate(const std::function<void()>& aFunction)
+    void Transform2D::AddFunctionToRunOnDirtyUpdate(Component* aComponent, const std::function<void()>& aFunction)
     {
-        myFunctionsToRunOnDirtyUpdate.push_back(aFunction);
+        myFunctionsToRunOnDirtyUpdate.push_back({aComponent, aFunction});
+    }
+
+    void Transform2D::ChildingObject(GameObject* aChild, GameObject* aParent)
+    {
+        
     }
 
     void Transform2D::UpdateTransforms()
@@ -184,11 +196,13 @@ namespace Eclipse
         Math::Vector3f PositionV3(position->x, position->y, 1.f);
         GlobalRotation = rotation;
         GlobalScale = scale;
-
+        
         GameObject* parent = gameObject->GetParent();
         if (parent && parent->transform)
         {
-            GlobalTransformationMatrix = parent->transform->GetTransform();
+            GlobalTransformationMatrix = Math::Matrix3x3f();
+            AddParentTransform(parent, GlobalTransformationMatrix);
+            
             PositionV3 = PositionV3 * GlobalTransformationMatrix;
             GlobalPosition.x = PositionV3.x;
             GlobalPosition.y = PositionV3.y;
@@ -197,7 +211,10 @@ namespace Eclipse
             AddParentScale(parent, GlobalScale);
         }
         else
+        {
+            GlobalTransformationMatrix = GetTransform();            
             GlobalPosition = position;
+        }
     }
 
 
@@ -230,9 +247,29 @@ namespace Eclipse
     void Transform2D::DirtyUpdate()
     {
         UpdateTransforms();
-        
+
+        std::vector<unsigned> indeciesToDelete;
+        unsigned currentIndex = 0;
         for (auto& func : myFunctionsToRunOnDirtyUpdate)
-            func();
+        {
+            if (func.component->IsDeleted)
+            {
+                indeciesToDelete.emplace_back(currentIndex);
+                continue;
+            }
+            func.function();
+
+            currentIndex++;
+        }
+
+        for (auto index : indeciesToDelete)
+        {
+            for (int i = index; i < indeciesToDelete.size() - 1; ++i)
+                myFunctionsToRunOnDirtyUpdate[i] = myFunctionsToRunOnDirtyUpdate[i++];
+            
+            myFunctionsToRunOnDirtyUpdate.pop_back();
+        }
+
 
         for (const auto& child : gameObject->GetChildren())
         {

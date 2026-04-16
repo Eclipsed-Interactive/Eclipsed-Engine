@@ -11,6 +11,8 @@ namespace Eclipse
 	void CapsuleCollider2D::CreateCollider()
 	{
 		PhysicsEngine::CreateCapsuleCollider(myInternalCollider, myBodyRef, Radius, HalfHeight, myLayer);
+
+		OnTransformDirty();
 	}
 
 	void CapsuleCollider2D::EditorUpdate()

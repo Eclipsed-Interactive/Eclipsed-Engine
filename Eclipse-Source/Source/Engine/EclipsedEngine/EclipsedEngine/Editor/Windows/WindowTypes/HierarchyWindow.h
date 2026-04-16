@@ -19,6 +19,7 @@ namespace Eclipse
 			EDITOR_WINDOW_BASE_2(HierarchyWindow, "Hierarchy")
 
 		public:
+			static void OpenParents(unsigned aParentID);
 			void HierarchyButton(GameObject* aGameObject, float totalIndent);
 			void AssignParentChildren(GameObject* targetGO, GameObject* aGameObject);
 			void Update() override;
@@ -34,7 +35,7 @@ namespace Eclipse
 
 			bool CheckCopomentType(GameObject* aGameobject, GameObject* aParent);
 
-			std::set<unsigned> gameobjectIdsThatAreOpen;
+			static inline std::set<unsigned> gameobjectIdsThatAreOpen;
 
 			unsigned SelectedGameobjectID;
 			

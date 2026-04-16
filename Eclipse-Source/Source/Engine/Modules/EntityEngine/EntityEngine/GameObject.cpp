@@ -48,10 +48,22 @@ namespace Eclipse
 	}
 	void GameObject::SetParent(GameObject* aGO)
 	{
-		parent = aGO;
-		if (!parent)
+		if (!aGO)
+		{
+			if (parent && !parent->children.empty())
+			{
+				for (int i = myChildIndex; i < parent->children.size() - 1; ++i)
+					parent->children[i] = parent->children[i + 1];
+				parent->children.pop_back();	
+			}
+			
+			myChildIndex = 0;
+			parent = nullptr;
+
 			return;
-		
+		}
+
+		parent = aGO;
 		parent->children.emplace_back(this);
 		SetChildIndex(parent->GetChildCount() - 1);
 	}
@@ -64,6 +76,19 @@ namespace Eclipse
 	{
 		return children;
 	}
+
+	void GameObject::RemoveChild(int index)
+	{
+		GameObject* child = children[index];
+
+		child->myChildIndex = 0;
+		child->parent = nullptr;
+
+		for (int i = 0; i < index; ++i)
+			children[i] = children[i + 1];
+		children.pop_back();
+	}
+	
 	void GameObject::AddChild(GameObject* aChild)
 	{
 		children.emplace_back(aChild);

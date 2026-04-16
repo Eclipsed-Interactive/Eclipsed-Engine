@@ -215,11 +215,8 @@ namespace Eclipse
 			}
 		}
 	}
-
-	void SceneLoader::Load(const char* aPath)
+	void SceneLoader::UnloadScene()
 	{
-		using namespace rapidjson;
-
 		CommandListManager::ResetAllCommandLists();
 
 		ComponentManager::Clear();
@@ -227,8 +224,15 @@ namespace Eclipse
 		Replication::ReplicationManager::ClearList();
 
 		PhysicsEngine::CleanUp();
-		PhysicsEngine::InitWorld();
+	}
+	
+	void SceneLoader::Load(const char* aPath)
+	{
+		using namespace rapidjson;
 
+		UnloadScene();
+		PhysicsEngine::InitWorld();
+		
 		std::ifstream ifs(aPath);
 		if (!ifs.is_open()) {
 			return;

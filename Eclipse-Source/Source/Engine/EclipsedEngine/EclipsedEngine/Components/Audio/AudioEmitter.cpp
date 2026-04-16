@@ -13,7 +13,7 @@ namespace Eclipse
 
 		if (EnableSpatial) {
 			Transform2D* trans = gameObject->transform;
-			trans->AddFunctionToRunOnDirtyUpdate(
+			trans->AddFunctionToRunOnDirtyUpdate(this,
 				[this]() {
 					this->UpdateAudioPosition();
 				}

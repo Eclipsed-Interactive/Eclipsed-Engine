@@ -35,17 +35,11 @@
 #include <filesystem>
 
 #include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
+#include "Input/Input.h"
 
-void Eclipse::Editor::SceneWindow::ZoomToObject()
+void Eclipse::Editor::SceneWindow::ZoomToObject(unsigned aObject)
 {
-    if (!HierarchyWindow::CurrentGameObjectID)
-        return;
-    if (!InputMapper::ReadValue("ZoomToObject"))
-        return;
-    if (ImGui::IsAnyItemActive())
-        return;
-
-    Transform2D* transform = ComponentManager::GetComponent<Transform2D>(HierarchyWindow::CurrentGameObjectID);
+    Transform2D* transform = ComponentManager::GetComponent<Transform2D>(aObject);
     if (transform)
     {
         myInspectorPosition = transform->GetPosition();
@@ -54,14 +48,21 @@ void Eclipse::Editor::SceneWindow::ZoomToObject()
         return;
     }
 
-    RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(HierarchyWindow::CurrentGameObjectID);
+    RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(aObject);
     if (rectTransform)
     {
-        myInspectorPosition = rectTransform->Position;
+        myInspectorPosition = rectTransform->myCanvas->gameObject->transform->GetPosition();
         myInspectorScale = Math::Vector2f(1, 1);
         totalYScroll = 0;
         return;
     }
+}
+
+void Eclipse::Editor::SceneWindow::ResetCamera()
+{
+    myInspectorPosition = {0, 0};
+    myInspectorScale = Math::Vector2f(1, 1);
+    totalYScroll = 0;
 }
 
 void Eclipse::Editor::SceneWindow::ScrollManager()
@@ -201,6 +202,7 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
     canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
     BaseRenderComponent::IsScene = true;
+    Canvas::IsScene = true;
 
     CommandListManager::GetSpriteCommandList().Execute();
     CommandListManager::GetUICommandList().Execute();
@@ -217,6 +219,21 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
             char* data = (char*)ClipBoard::GetClipboardData();
             GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
             HierarchyWindow::CurrentGameObjectID = gameobject->GetID();
+
+            
+            GameObject* pickedGameobject = ComponentManager::GetGameObject(pickedID);
+            
+            Transform2D* transform = pickedGameobject->transform;
+            Math::Vector2f globalPosition = transform->GetPosition();
+            float globalRotation = transform->GetRotation();
+            Math::Vector2f globalScale = transform->GetScale();
+                    
+            Transform2D* childTransform = gameobject->transform;
+            childTransform->SetPosition(globalPosition);
+            childTransform->SetRotation(globalRotation);
+            childTransform->SetScale(globalScale);
+
+            gameobject->SetParent(nullptr);
         }
 
         Transform2D* transform = ComponentManager::GetComponent<Transform2D>(HierarchyWindow::CurrentGameObjectID);
@@ -237,21 +254,26 @@ void Eclipse::Editor::SceneWindow::SpriteSelector()
             mySpriteMoveVector = {0, 0};
         }
     }
+    else
+    {
+        HierarchyWindow::CurrentGameObjectID = pickedID;
+        InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
 
-    HierarchyWindow::CurrentGameObjectID = pickedID;
-    InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
+        if (pickedID)
+            HierarchyWindow::OpenParents(pickedID);
+    }
 }
 
 
 void Eclipse::Editor::SceneWindow::ObjectSnappingGizmo()
 {
-    ImGui::Checkbox("Snap##MoreSnappingIDSThatShouldBEUSED!!!ANDITISNOW:D", &myIsSnapping);
+    ImGui::Checkbox("Snap##MoreSnappingIDS", &myIsSnapping);
 
     if (myIsSnapping)
     {
         ImGui::Dummy({30, 0});
         ImGui::SetNextItemWidth(75);
-        ImGui::DragFloat("SnappDistance##SnappingDistanceIDSCENEWINDOW", &mySnappingDistance, 0.01f);
+        ImGui::DragFloat("SnappDistance##SnappingDistance", &mySnappingDistance, 0.01f);
     }
 
     ImGui::SetCursorPosX(0);
@@ -315,7 +337,9 @@ void Eclipse::Editor::SceneWindow::Update()
     }
 
     MouseManager();
-    ZoomToObject();
+
+    if (HierarchyWindow::CurrentGameObjectID && ImGui::IsKeyPressed(ImGuiKey_F, false) && !ImGui::IsAnyItemActive())
+        ZoomToObject(HierarchyWindow::CurrentGameObjectID);
 
     if (HierarchyWindow::CurrentGameObjectID)
     {
@@ -373,6 +397,7 @@ void Eclipse::Editor::SceneWindow::Update()
     GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->GetBuffer<CanvasBuffer>(canvasBuffer);
     canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
     BaseRenderComponent::IsScene = true;
+    Canvas::IsScene = true;
 
 
     CommandListManager::GetSpriteCommandList().Execute();

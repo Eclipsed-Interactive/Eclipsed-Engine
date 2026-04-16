@@ -9,7 +9,7 @@ namespace Eclipse
 {
 	void AudioListener::Awake()
 	{
-		gameObject->transform->AddFunctionToRunOnDirtyUpdate([this]() {UpdatePositionalData();});
+		gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [this]() {UpdatePositionalData();});
 	}
 
 	// TODO: Fix so it supports rotation and object velocity.
