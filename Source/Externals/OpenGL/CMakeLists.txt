@@ -15,8 +15,8 @@ add_library(Opengl STATIC ${OPENGL_SOURCES})
 target_include_directories(Opengl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(Opengl INTERFACE
-    "${CMAKE_SOURCE_DIR}/Tools/Libs/GLFW/glfw3.lib"
-    "${CMAKE_SOURCE_DIR}/Tools/Libs/GLFW/glfw3_mt.lib"
+    "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/GLFW/glfw3.lib"
+    "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/GLFW/glfw3_mt.lib"
 )
 
 if(${ECLIPSED_EDITOR})

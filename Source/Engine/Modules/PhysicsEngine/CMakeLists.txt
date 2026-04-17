@@ -6,7 +6,7 @@ target_include_directories(PhysicsEngine PRIVATE ${CoreEngine_Include})
 target_link_libraries(PhysicsEngine PRIVATE CoreEngine)
 
 # ---- Box2D
-target_link_directories(PhysicsEngine PUBLIC "${CMAKE_SOURCE_DIR}/Tools/Libs/box2d")
+target_link_directories(PhysicsEngine PUBLIC "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/box2d")
 target_link_libraries(PhysicsEngine PUBLIC debug box2d-d)
 target_link_libraries(PhysicsEngine PUBLIC optimized box2d)
 

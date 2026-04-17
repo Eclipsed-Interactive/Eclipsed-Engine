@@ -36,7 +36,7 @@ add_dependencies(Hub Launcher)
 
 target_include_directories(Hub PUBLIC ${CMAKE_SOURCE_DIR}/Source/Externals/OpenGL)
 target_link_libraries(Hub PUBLIC Opengl)
-target_link_libraries(Hub PUBLIC "${CMAKE_SOURCE_DIR}/Tools/Libs/GLFW/nvml.lib")
+target_link_libraries(Hub PUBLIC "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/GLFW/nvml.lib")
 
 set_target_properties(Hub PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${OUTPUT}"

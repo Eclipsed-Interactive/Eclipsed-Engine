@@ -6,7 +6,7 @@ target_include_directories(FMOD INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_directories(FMOD INTERFACE "${CMAKE_SOURCE_DIR}/Tools/Libs/fmod")
+target_link_directories(FMOD INTERFACE "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/fmod")
 
 target_link_libraries(FMOD INTERFACE
     "fsbank_vc"

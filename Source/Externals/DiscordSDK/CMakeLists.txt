@@ -39,7 +39,7 @@ endif()
 
 target_include_directories(DiscordSDK PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_directories(DiscordSDK PUBLIC "${CMAKE_SOURCE_DIR}/Tools/Libs/discord_sdk")
+target_link_directories(DiscordSDK PUBLIC "${CMAKE_SOURCE_DIR}/Thirdparty/Libs/discord_sdk")
 target_link_libraries(DiscordSDK PUBLIC "discord_game_sdk")
 
 set_target_properties(DiscordSDK PROPERTIES FOLDER "Externals")
