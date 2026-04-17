@@ -5,9 +5,11 @@
 #include "CoreEngine/Math/Vector/Vector2.h"
 #include "CoreEngine/Math/Color.h"
 
+#include "CoreEngine/Macros/defines.h"
+
 namespace Eclipse
 {
-    class DebugDrawer
+    class ECLIPSED_API DebugDrawer
     {
     public:
         DebugDrawer() = default;

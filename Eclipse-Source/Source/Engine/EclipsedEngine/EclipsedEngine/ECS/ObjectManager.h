@@ -30,7 +30,7 @@ namespace Eclipse
 
         static void PasteGameObject(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator);
         static void PasteGameObjectSpecifiedIds(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator,
-            int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated);
+            int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated);
     };
 
     ECLIPSED_API inline GameObject*& Instantiate(Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
@@ -52,5 +52,10 @@ namespace Eclipse
     ECLIPSED_API inline void Destroy(Component* component)
     {
         ComponentManager::DeleteComponent(component->gameObject->GetID(), component->myComponentComponentID, component->myInstanceComponentID);   
+    }
+
+    ECLIPSED_API inline GameObject* Find(const char* aName)
+    {
+        return ComponentManager::FindObjectByName(aName);
     }
 }

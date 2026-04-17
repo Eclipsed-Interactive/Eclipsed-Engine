@@ -1,4 +1,4 @@
-#include "SpawnObject.h"
+#include "ObjectManager.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/rapidjson.h"
@@ -123,8 +123,7 @@ namespace Eclipse
         return nullptr;
     }
 
-    GameObject* InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(const char* aData,
-                                                                                 int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated)
+    GameObject* InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(const char* aData, int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated)
     {
         rapidjson::Document d;
         d.SetObject();
@@ -144,7 +143,7 @@ namespace Eclipse
         for (auto& gameobject : d["Gameobjects"].GetArray())
         {
             GameObject* newGameobject;
-            PasteGameObjectSpecifiedIds(newGameobject, gameobject, jsonAllocator, aGameobjectID, aComponentsID, fromReplicated);
+            PasteGameObjectSpecifiedIds(newGameobject, gameobject, jsonAllocator, aGameobjectID, aComponentsID, 0, fromReplicated);
 
             if (newGameobject->GetChildCount() > 0)
                 StartChildren(newGameobject->GetChildren());
@@ -171,27 +170,27 @@ namespace Eclipse
     }
 
     void InternalSpawnObjectClass::PasteGameObjectSpecifiedIds(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator,
-                                                               int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated)
+                                                               int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated)
     {
         aGameObject = ComponentManager::CreateGameObject(aGameobjectID);
         aGameObject->SetName(gameobject["Name"].GetString());
         aGameObject->SetIsOwner(false);
 
-        int iterator = 0;
         for (auto& componentJson : gameobject["Components"].GetArray())
         {
-            auto coIt = componentJson.MemberBegin();
-
-            std::string str = coIt->name.GetString();
             bool isReplicated = false;
-            if (componentJson.HasMember("IsReplicated"))
+            auto coIt = componentJson.MemberBegin();
+            if (fromReplicated && componentJson.HasMember("IsReplicated"))
             {
                 isReplicated = componentJson["IsReplicated"].GetBool();
-                if (!isReplicated && fromReplicated)
+                if (!isReplicated)
                     continue;
             }
+            
 
-            int ComponentID = aComponentsID[iterator++];
+            std::string str = coIt->name.GetString();
+            
+            int ComponentID = aComponentsID[currentIndex++];
 
             Component* component;
             component = ComponentRegistry::GetAddComponent(coIt->name.GetString())(*aGameObject, ComponentID);
@@ -221,7 +220,7 @@ namespace Eclipse
             for (auto& child : childArray)
             {
                 GameObject* newGameObject;
-                PasteGameObject(newGameObject, child, anAllocator);
+                PasteGameObjectSpecifiedIds(newGameObject, child, anAllocator, aGameobjectID + 1, aComponentsID, currentIndex, fromReplicated);
 
                 aGameObject->AddChild(newGameObject);
             }

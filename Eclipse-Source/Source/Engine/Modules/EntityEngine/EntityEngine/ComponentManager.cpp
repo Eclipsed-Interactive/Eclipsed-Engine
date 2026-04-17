@@ -209,7 +209,7 @@ namespace Eclipse
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
 
-        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(component);
+        myEntityIDToVectorOfComponentIDs[aGOID].emplace_back(component);
         myComponents.back()->myComponentIndex = componentIndex;
 
         //CreateComponentReplicated(component);
@@ -229,16 +229,11 @@ namespace Eclipse
 
         auto& entityIDComponents = myEntityIDToVectorOfComponentIDs.at(aGOID);
 
-        if (entityIDComponents.find(aUniqueComponentID) == entityIDComponents.end())
-            return;
-
-        std::vector<Component*>& componentIndex = entityIDComponents.at(aUniqueComponentID);
-
-        unsigned indexToDelete = -1;
-        unsigned compIndex = 0;
-        for (int i = 0; i < componentIndex.size(); i++)
+        bool DeletedAComponent = false;
+        unsigned indexToDelete = 0;
+        for (int i = 0; i < entityIDComponents.size(); i++)
         {
-            Component* component = componentIndex[i];
+            Component* component = entityIDComponents[i];
 
             if (component->myInstanceComponentID != aComponentID)
                 continue;
@@ -252,22 +247,38 @@ namespace Eclipse
 
             indexToDelete = i;
 
+            DeletedAComponent = true;
+
             break;
         }
 
-        if (indexToDelete == -1)
+        if (!DeletedAComponent)
             return;
 
-        componentIndex[indexToDelete] = componentIndex.back();
-        componentIndex.pop_back();
+        entityIDComponents[indexToDelete] = entityIDComponents.back();
+        entityIDComponents.pop_back();
 
-        if (!componentIndex.size())
-            entityIDComponents.erase(aUniqueComponentID);
+        for (auto& component : myComponents)
+        {
+            if (component->IsDeleted)
+            {
+                component = myComponents.back();
+                break;
+            }
+        }
 
-        myComponents[compIndex] = myComponents.back();
         myComponents.pop_back();
 
         SortComponents();
+    }
+
+    GameObject* ComponentManager::FindObjectByName(const char* aName)
+    {
+        for (auto& [id, gameobject] : myEntityIdToEntity)
+            if (gameobject->GetName() == aName)
+                return gameobject;
+
+        return nullptr;
     }
 
     const std::vector<Component*>& ComponentManager::GetAllComponents()
@@ -280,17 +291,7 @@ namespace Eclipse
         if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
             return {};
 
-        std::vector<Component*> components;
-
-        for (auto& goComponents : myEntityIDToVectorOfComponentIDs.at(aGOID))
-        {
-            for (auto& component : goComponents.second)
-            {
-                components.emplace_back(component);
-            }
-        }
-
-        return components;
+        return myEntityIDToVectorOfComponentIDs.at(aGOID);
     }
 
     bool ComponentManager::HasGameObject(GameObjectID aGOID)
@@ -314,20 +315,17 @@ namespace Eclipse
         unsigned componentsDeleted = 0;
         for (int goID : gameobjectsToRemove)
         {
-            for (auto& componentsAtGO : myEntityIDToVectorOfComponentIDs.at(goID))
+            for (auto& component : myEntityIDToVectorOfComponentIDs.at(goID))
             {
-                for (auto& component : componentsAtGO.second)
-                {
-                    DeleteReplicatedComponent(component->myInstanceComponentID);
+                DeleteReplicatedComponent(component->myInstanceComponentID);
 
-                    component->IsDeleted = true;
+                component->IsDeleted = true;
 
-                    component->OnDestroy();
-                    component->~Component();
-                    component = nullptr;
+                component->OnDestroy();
+                component->~Component();
+                component = nullptr;
 
-                    componentsDeleted++;
-                }
+                componentsDeleted++;
             }
         }
 
@@ -336,11 +334,11 @@ namespace Eclipse
             auto& component = myComponents[i];
             if (!component->IsDeleted)
                 continue;
-            
+
             Component* backComponent = myComponents.back();
             if (!backComponent->IsDeleted)
                 std::swap(myComponents[i], myComponents.back());
-            
+
             myComponents.pop_back();
             i--;
         }
@@ -413,17 +411,15 @@ namespace Eclipse
     {
         auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& [_, components] : allComponents)
-            for (auto& component : components)
-                component->OnCollisionEnter();
+        for (auto& component : allComponents)
+            component->OnCollisionEnter();
     }
 
     void ComponentManager::EndCollisions(GameObjectID aGOID)
     {
         auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& [_, components] : allComponents)
-            for (auto& component : components)
-                component->OnCollisionExit();
+        for (auto& component : allComponents)
+            component->OnCollisionExit();
     }
 }

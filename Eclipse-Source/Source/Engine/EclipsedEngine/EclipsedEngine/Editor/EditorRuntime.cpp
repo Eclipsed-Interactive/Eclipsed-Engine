@@ -175,6 +175,8 @@ namespace Eclipse::Editor
 				isPlaying = false;
 				isPaused = false;
 
+				Replication::ReplicationManager::CloseConnection("Disconnect : Quit Game");
+				
 				SteamGeneral::Get().ShutDown();
 
 				if (SceneManager::GetActiveSceneType() == SceneManager::Default)

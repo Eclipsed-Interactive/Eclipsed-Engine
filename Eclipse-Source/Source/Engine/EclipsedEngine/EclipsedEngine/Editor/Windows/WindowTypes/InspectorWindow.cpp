@@ -20,7 +20,7 @@
 #include "EclipsedEngine/Editor/Windows/WindowTypes/AssetWindow/AssetWindow.h"
 #include "EclipsedEngine/Editor/Common/DragAndDrop.h"
 
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 
 #include <sstream>
 #include <fstream>
