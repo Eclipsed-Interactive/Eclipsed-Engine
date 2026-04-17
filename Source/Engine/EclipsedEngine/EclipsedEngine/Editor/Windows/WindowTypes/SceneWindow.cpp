@@ -30,7 +30,7 @@
 
 #include "CoreEngine/Clipboard.h"
 
-#include "EclipsedEngine/ECS/ObjectManager.h"
+#include "EclipsedEngine/ECS/SpawnObject.h"
 
 #include <filesystem>
 

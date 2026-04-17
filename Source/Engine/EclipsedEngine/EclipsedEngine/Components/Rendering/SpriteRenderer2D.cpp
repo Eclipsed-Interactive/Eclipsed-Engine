@@ -92,13 +92,13 @@ namespace Eclipse
 
 	void SpriteRenderer2D::Draw(unsigned aProgramID)
 	{
-		if (!hasMaterial || IsDeleted)
+		if (!hasMaterial)
 			return;
 
-		// unsigned shaderID = material->GetShaderProgramID();
-		//
-		// if (aProgramID)
-		// 	shaderID = aProgramID;
+		unsigned shaderID = material->GetShaderProgramID();
+
+		if (aProgramID)
+			shaderID = aProgramID;
 
 		if (sprite->IsValid())
 		{

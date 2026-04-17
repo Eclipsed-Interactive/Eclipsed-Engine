@@ -8,8 +8,6 @@
 
 #include "NetworkEngine/Shared/Message.h"
 
-#include <iostream>
-
 namespace Eclipse
 {
     class SteamP2PNetworkingServer
@@ -17,12 +15,6 @@ namespace Eclipse
     public:
         SteamP2PNetworkingServer(const std::function<void(const NetMessage& aNetMessage)>& aHandleRecieve) : myConnection(0), myListenSocket(0), HandleRecieve(aHandleRecieve)
         {
-        }
-
-        void CloseConnection(const char* aReason)
-        {
-            SteamNetworkingSockets()->CloseConnection(myConnection, 1, aReason, true);
-            SteamNetworkingSockets()->CloseListenSocket(myListenSocket);
         }
 
         void Send(NetMessage& message)
@@ -85,11 +77,8 @@ namespace Eclipse
         switch (aInfo->m_info.m_eState)
         {
         case k_ESteamNetworkingConnectionState_Connecting:
+            // IMPORTANT: Accept immediately when in Connecting state
             SteamNetworkingSockets()->AcceptConnection(aInfo->m_hConn);
-            break;
-
-        case k_ESteamNetworkingConnectionState_Connected:
-            Replication::ReplicationManager::SteamNetorkingReady();
             break;
 
         case k_ESteamNetworkingConnectionState_ProblemDetectedLocally:

@@ -21,7 +21,7 @@ namespace Eclipse
         for (int i = 0; i < myComponents.size(); i++)
         {
             auto& component = myComponents[i];
-
+            
             T* dynamicedComponent = dynamic_cast<T*>(component);
             if (dynamicedComponent)
                 aComponents.emplace_back(static_cast<T*>(i));
@@ -34,13 +34,21 @@ namespace Eclipse
         if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
             return;
 
+        //unsigned typeIndex = GetComponentID<T>();
+
         auto& entityIDComponents = myEntityIDToVectorOfComponentIDs.at(aGOID);
 
-        for (auto& component : entityIDComponents)
+        for (auto& components : entityIDComponents)
         {
-            T* dynamicedComponent = dynamic_cast<T*>(component);
+            T* dynamicedComponent = dynamic_cast<T*>(components.second.back());
             if (dynamicedComponent)
-                aComponents.emplace_back(dynamicedComponent);
+            {
+                for (auto& curComponent : components.second)
+                {
+                    T* component = static_cast<T*>(curComponent);
+                    aComponents.emplace_back(component);
+                }
+            }
         }
     }
 
@@ -51,11 +59,14 @@ namespace Eclipse
             return nullptr;
 
         auto& entityIDComponents = myEntityIDToVectorOfComponentIDs.at(aGOID);
-        for (auto& component : entityIDComponents)
+        for (auto& components : entityIDComponents)
         {
-            T* dynamicCastComponent = dynamic_cast<T*>(component);
-            if (dynamicCastComponent)
-                return dynamicCastComponent;
+            for (auto& component : components.second)
+            {
+                T* dynamicedComponent = dynamic_cast<T*>(component);
+                if (dynamicedComponent)
+                    return dynamicedComponent;
+            }
         }
 
         return nullptr;
@@ -93,7 +104,7 @@ namespace Eclipse
         return component;
     }
 
-    template <typename T>
+    template<typename T>
     inline T* ComponentManager::AddComponentWithID(unsigned aGOID, unsigned aComponentID, bool IsReplicated)
     {
         uint8_t* base = static_cast<uint8_t*>(myComponentData);
@@ -125,9 +136,9 @@ namespace Eclipse
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
 
-        myEntityIDToVectorOfComponentIDs[aGOID].emplace_back(component);
+        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(component);
         myComponents.back()->myComponentIndex = componentIndex;
-
+        
 
         if (IsReplicated)
             CreateComponentReplicated(component);

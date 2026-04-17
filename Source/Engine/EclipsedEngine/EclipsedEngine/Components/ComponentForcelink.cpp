@@ -36,6 +36,7 @@ void Eclipse::ComponentForcelink::LinkComponents()
 {
 	
 	COMP_REG(Transform2D);
+	COMP_REG(Collider2D);
 	COMP_REG(BoxCollider2D);
 	COMP_REG(CapsuleCollider2D);
 	COMP_REG(CircleCollider2D);

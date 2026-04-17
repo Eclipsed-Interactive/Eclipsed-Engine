@@ -15,7 +15,7 @@
 
 #include "CoreEngine/ChatGPT_Dump/Base64.hpp"
 
-#include "EclipsedEngine/ECS/ObjectManager.h"
+#include "EclipsedEngine/ECS/SpawnObject.h"
 
 namespace Eclipse::Editor
 {
@@ -193,12 +193,7 @@ namespace Eclipse::Editor
 	{
 		if (true)
 		{
-			if (!HierarchyWindow::CurrentGameObjectID)
-				return;
-			
 			char* data = (char*)ClipBoard::GetClipboardData();
-			if (!data)
-				return;
 			GameObject* newGameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
 			HierarchyWindow::CurrentGameObjectID = newGameobject->GetID();
 		}

@@ -43,6 +43,8 @@ namespace Eclipse
 		{
 			//StartRecieve();
 			memset(recieveBuffer, 0, sizeof(recieveBuffer));
+
+						
 		}
 
 		void Update()
