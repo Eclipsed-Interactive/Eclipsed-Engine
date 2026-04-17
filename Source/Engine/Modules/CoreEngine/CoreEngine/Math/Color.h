@@ -8,8 +8,19 @@ namespace Eclipse::Math
 	class Color final
 	{
 	public:
-		Color(float R = 1.f, float G = 1.f, float B = 1.f, float A = 1.f);
-		Color(int aHexValue);
+		Color() = default;
+		
+		Color(float R, float G, float B, float A)
+		: r(R), g(G), b(B), a(A)
+		{
+
+		}
+		Color(int aHexValue)
+		{
+			r = ((aHexValue >> 16) & 0xFF) / 255.f;
+			g = ((aHexValue >> 8) & 0xFF) / 255.f;
+			b = ((aHexValue) & 0xFF) / 255.f;
+		}
 
 		int32_t GetHexValue() 
 		{

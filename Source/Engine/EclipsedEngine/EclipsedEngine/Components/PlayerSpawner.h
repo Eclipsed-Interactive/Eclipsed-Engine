@@ -4,7 +4,7 @@
 
 #include "EclipsedEngine/Components/Component.h"
 
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 #include "Input/Input.h"
 
 namespace Eclipse
@@ -17,14 +17,21 @@ namespace Eclipse
         void Start() override
         {
             if (Replication::ReplicationManager::ClickedHostButton)
+            {
                 Replication::ReplicationManager::Start(false);
+                Instantiate(soulForgePrefab, gameObject, true);
+            }
             else
+            {
                 Replication::ReplicationManager::Start(true);
+                Instantiate(soulSuckerPrefab, gameObject, true);
+            }
 
-            Instantiate(playerPrefab, gameObject, true);
+            
         }
         
-        SERIALIZED_FIELD(Prefab, playerPrefab);
+        SERIALIZED_FIELD(Prefab, soulForgePrefab);
+        SERIALIZED_FIELD(Prefab, soulSuckerPrefab);
 
     };
 }

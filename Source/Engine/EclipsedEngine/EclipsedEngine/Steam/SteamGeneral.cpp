@@ -7,7 +7,7 @@ namespace Eclipse
     
     void SteamGeneral::RelayNetworkInitilized(SteamRelayNetworkStatus_t* aCallback)
     {
-        Replication::ReplicationManager::RelayNetworkReady();
+        std::cout << "Steam networking Ready" << std::endl;
     }
     
     void SteamGeneral::FriendClickedJoinedGame(GameRichPresenceJoinRequested_t* aCallback)

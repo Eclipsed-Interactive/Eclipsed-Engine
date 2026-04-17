@@ -41,6 +41,8 @@ namespace Eclipse::Replication
         static void Start(bool isClient);
         static void Update();
 
+        static void CloseConnection(const char* aReason);
+
         static void ClearList() { PossibleReplicatedVariableList.clear(); RealReplicatedVariableList.clear(); };
 
         static void EmplaceReplicatedVariable(unsigned ComponentID, BaseReplicatedVariable* Variable)
@@ -56,7 +58,7 @@ namespace Eclipse::Replication
 
         static void ClientConnected();
         static void ServerConnected();
-        static void RelayNetworkReady();
+        static void SteamNetorkingReady();
 
 
     public:

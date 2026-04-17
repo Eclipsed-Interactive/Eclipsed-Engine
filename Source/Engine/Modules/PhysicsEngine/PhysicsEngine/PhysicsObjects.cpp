@@ -33,6 +33,8 @@ namespace Eclipse
         bodyDefine.userData = aUserData;
 
         *aBody = b2CreateBody(myWorld, &bodyDefine);
+
+        SetBodyMass(aBody, 1.f);
     }
 
     void PhysicsEngine::CreateBoxCollider(b2ShapeId* aShape, const b2BodyId* aBodyID, const Math::Vector2f& aHalfExtents, Layer aLayer)
@@ -121,6 +123,17 @@ namespace Eclipse
     {
         b2DestroyBody(*aBody);
         *aBody = b2BodyId();
+    }
+
+    void PhysicsEngine::SetBodyMass(b2BodyId* aBody, float aMass)
+    {
+        b2MassData massData;
+        
+        massData.center = b2Vec2(0, 0);
+        massData.mass = aMass;
+        massData.rotationalInertia = aMass / 6.f;
+        
+        b2Body_SetMassData(*aBody, massData);
     }
 
     void PhysicsEngine::DeleteShape(b2ShapeId* aShape)
