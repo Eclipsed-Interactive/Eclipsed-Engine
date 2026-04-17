@@ -13,7 +13,7 @@ echo === Begun: Generating slnx file ===
 cd Tools/Setup
 
 set CUR_DIR=%~dp0
-MoveSLN.exe ENGINE %CUR_DIR%/Temp/Binary/Eclipsed-Engine.slnx ../..
+MoveSLN.exe %CUR_DIR%/Temp/Binary/ ../.. Eclipsed-Engine
 echo === Completed: Completed generating slnx file ===
 
 echo.

@@ -5,7 +5,7 @@ echo.
 
 setlocal
 
-cd ../Eclipse-Source\Source\Externals\steamsdk\
+cd Source/Externals/steamsdk/
 call ./CurlSteam.bat
 
 endlocal
