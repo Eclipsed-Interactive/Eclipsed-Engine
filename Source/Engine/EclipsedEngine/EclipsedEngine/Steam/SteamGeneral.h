@@ -1,0 +1,32 @@
+#pragma once
+
+#include "steamsdk/steam_api.h"
+#include "steamsdk/isteamfriends.h"
+
+namespace Eclipse
+{
+    class SteamGeneral
+    {
+    public:
+        SteamGeneral() = default;
+
+        static bool SetRichPresence(const char *pchKey, const char *pchValue);
+        
+        void Update();
+        void Init();
+        void ShutDown();
+
+        static SteamGeneral& Get()
+        {
+            static SteamGeneral instance;
+            return instance;
+        }
+
+        static inline CSteamID OthersteamID = CSteamID();
+        
+    private:
+        STEAM_CALLBACK(SteamGeneral, FriendClickedJoinedGame, GameRichPresenceJoinRequested_t);
+        STEAM_CALLBACK(SteamGeneral, RelayNetworkInitilized, SteamRelayNetworkStatus_t);
+
+    };
+}

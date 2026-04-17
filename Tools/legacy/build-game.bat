@@ -1,1 +1,0 @@
-cmake --build ../Eclipse-Source/build/ --config Release

@@ -1,12 +1,17 @@
-/Eclipse-Source/build/
-/Eclipse-Source/Bin/
-/Eclipse-Source/.vs/
-/Eclipse-Source/[Ll]ibrary/
-/Eclipse-Source/[Ll]ocal/
+
+.vs/
+
+[Ll]ibrary/
+[Ll]ocal/
+[Tt]emp/
+[Bb]in/
+[Bb]uild/
+
+*.slnx
+
 RPS-Project/
 
-/Eclipse-Source/Source/Externals/steamsdk/*
-!/Eclipse-Source/Source/Externals/steamsdk/CurlSteam.bat
-.ini
+Source/Externals/steamsdk/*
+!Source/Externals/steamsdk/CurlSteam.bat
 
 GameBuild/

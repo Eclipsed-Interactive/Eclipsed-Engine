@@ -1,0 +1,14 @@
+#pragma once
+
+#undef BASE_MACRO_NAME
+
+#undef EXPAND
+
+#undef GET_ARG_COUNT
+#undef GET_ARG_COUNT_IMPL
+
+#undef COMBINE
+#undef GET_MACRO_NAME
+
+#undef BASE_SELECTION
+#undef BASE_SELECTION_IMPL
