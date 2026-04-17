@@ -218,7 +218,7 @@ namespace Eclipse
     }
 
 
-    void Transform2D::AfterRenderUpdate()
+    void Transform2D::EditorUpdate()
     {
         if (position->x != lastPosition.x || position->y != lastPosition.y)
         {

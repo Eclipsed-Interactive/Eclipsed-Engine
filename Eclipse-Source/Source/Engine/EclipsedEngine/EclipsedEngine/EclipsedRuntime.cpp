@@ -121,7 +121,6 @@ namespace Eclipse
 
         ComponentManager::EarlyUpdateComponents();
         ComponentManager::UpdateComponents();
-        ComponentManager::LateUpdateComponents();
 
         AudioManager::Update();
 
@@ -151,7 +150,8 @@ namespace Eclipse
 
         PhysicsEngine::DrawPhysicsObjects();
         ComponentManager::RenderComponents();
-        ComponentManager::AfterRenderUpdateComponents();
+        ComponentManager::EditorLateUpdateComponents();
+        ComponentManager::LateUpdateComponents();
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->Render();
     }
 

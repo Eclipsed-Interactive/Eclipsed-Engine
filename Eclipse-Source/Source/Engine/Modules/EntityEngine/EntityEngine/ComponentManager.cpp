@@ -96,8 +96,7 @@ namespace Eclipse
     void ComponentManager::EditorUpdateComponents()
     {
         for (size_t i = 0; i < myComponents.size(); ++i)
-            if (myComponents[i]->myIsOwner)
-                myComponents[i]->EditorUpdate();
+            myComponents[i]->EditorUpdate();
     }
 
     void ComponentManager::EarlyUpdateComponents()
@@ -112,6 +111,12 @@ namespace Eclipse
         for (size_t i = 0; i < myComponents.size(); ++i)
             if (myComponents[i]->myIsOwner && myComponents[i]->HasStarted)
                 myComponents[i]->Update();
+    }
+
+    void ComponentManager::EditorLateUpdateComponents()
+    {
+        for (auto& component : myComponents)
+            component->EditorLateUpdate();
     }
 
     void ComponentManager::LateUpdateComponents()
@@ -133,12 +138,6 @@ namespace Eclipse
 #endif
         for (auto& component : myComponents)
             component->Render();
-    }
-
-    void ComponentManager::AfterRenderUpdateComponents()
-    {
-        for (auto& component : myComponents)
-            component->AfterRenderUpdate();
     }
 
     void ComponentManager::SortComponents()

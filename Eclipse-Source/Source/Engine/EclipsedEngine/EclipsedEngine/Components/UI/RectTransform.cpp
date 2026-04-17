@@ -35,7 +35,7 @@ namespace Eclipse
         myFunctionsToRunOnDirtyUpdate.push_back(aFunction);
     }
 
-    void RectTransform::AfterRenderUpdate()
+    void RectTransform::EditorUpdate()
     {
         if (Position->x != lastPosition.x || Position->y != lastPosition.y)
         {
