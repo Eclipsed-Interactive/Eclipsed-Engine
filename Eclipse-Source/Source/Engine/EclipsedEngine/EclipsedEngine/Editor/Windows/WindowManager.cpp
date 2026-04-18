@@ -82,11 +82,11 @@ namespace Eclipse::Editor
 							std::filesystem::path CDPath = PathManager::GetEngineRoot().parent_path().parent_path() / "Tools";
 							system(("cd " + CDPath.generic_string() + " && start build-game-editor.bat Release").c_str());
 						}
-						// else if (ImGui::MenuItem("Build Game Debug EXE"))
-						// {
-						// 	std::filesystem::path CDPath = PathManager::GetEngineRoot().parent_path().parent_path() / "Tools";
-						// 	system(("cd " + CDPath.generic_string() + " && start build-game-editor.bat Debug").c_str());
-						// }
+						 else if (ImGui::MenuItem("Build Game Debug EXE"))
+						 {
+						 	std::filesystem::path CDPath = PathManager::GetEngineRoot().parent_path().parent_path() / "Tools";
+						 	system(("cd " + CDPath.generic_string() + " && start build-game-editor.bat Debug").c_str());
+						 }
 
 						ImGui::EndMenu();
 					}

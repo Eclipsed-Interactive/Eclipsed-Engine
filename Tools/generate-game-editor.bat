@@ -9,4 +9,4 @@ if "%*"=="" (
 
 cd %1
 
-cmake -G "Visual Studio 17 2022" -T host=x64 -S . -B Library/Engine-Build -DPROJECT_DIR="%1" -DENGINE_PATH="%2" -DECLIPSED_EDITOR=ON
+cmake -G "Visual Studio 18 2026" -T host=x64 -S . -B Library/Engine-Build -DPROJECT_DIR="%1" -DENGINE_PATH="%2" -DECLIPSED_EDITOR=ON

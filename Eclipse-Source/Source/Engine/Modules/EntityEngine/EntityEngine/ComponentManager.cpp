@@ -2,6 +2,8 @@
 
 #include "CoreEngine/IDGenerator.h"
 
+#include <iostream>
+
 namespace Eclipse
 {
     void ComponentManager::Init()
@@ -274,8 +276,13 @@ namespace Eclipse
     GameObject* ComponentManager::FindObjectByName(const char* aName)
     {
         for (auto& [id, gameobject] : myEntityIdToEntity)
+        {
             if (gameobject->GetName() == aName)
+            {
+                std::cout << "foundName" << std::endl;
                 return gameobject;
+            }
+        }
 
         return nullptr;
     }

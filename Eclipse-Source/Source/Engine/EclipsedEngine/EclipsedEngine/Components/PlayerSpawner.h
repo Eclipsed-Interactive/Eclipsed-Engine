@@ -19,15 +19,14 @@ namespace Eclipse
             if (Replication::ReplicationManager::ClickedHostButton)
             {
                 Replication::ReplicationManager::Start(false);
-                Instantiate(soulForgePrefab, gameObject, true);
             }
             else
             {
                 Replication::ReplicationManager::Start(true);
-                Instantiate(soulSuckerPrefab, gameObject, true);
             }
 
-            
+            Instantiate(soulSuckerPrefab, gameObject, true);
+            Instantiate(soulForgePrefab, gameObject, true);
         }
         
         SERIALIZED_FIELD(Prefab, soulForgePrefab);
