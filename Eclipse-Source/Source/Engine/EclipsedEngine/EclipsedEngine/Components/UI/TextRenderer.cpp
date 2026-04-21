@@ -109,6 +109,8 @@ namespace Eclipse
 		gameObject->GetComponent<RectTransform>()->AddFunctionToRunOnDirtyUpdate([&](){
 			TransformUpdate();
 		});
+
+		font = Resources::GetDefaultFont();
 	}
 
 	//void TextRenderer::DrawInspector()
