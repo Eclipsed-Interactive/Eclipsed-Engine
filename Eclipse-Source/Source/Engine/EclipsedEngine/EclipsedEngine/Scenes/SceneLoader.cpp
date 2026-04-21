@@ -188,7 +188,7 @@ namespace Eclipse
 	Canvas* SceneLoader::GetParentCanvas(GameObject* BaseObject)
 	{
 		Canvas* canvas = BaseObject->GetComponent<Canvas>();
-		if (BaseObject->GetParent())
+		if (!canvas && BaseObject->GetParent())
 			canvas = GetParentCanvas(BaseObject->GetParent());
 		
 		return canvas;

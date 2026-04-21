@@ -2,9 +2,11 @@
 
 #include <chrono>
 
+#include "CoreEngine/Macros/defines.h"
+
 namespace Eclipse
 {
-	class Time
+	class ECLIPSED_API Time
 	{
 	public:
 		Time() = delete;

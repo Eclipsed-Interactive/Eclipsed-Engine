@@ -46,7 +46,10 @@ namespace Eclipse
     {
 #ifndef ECLIPSED_EDITOR
         SteamGeneral::Get().Init();
+
+        //renderThread = std::thread();
 #endif
+
 
         AudioManager::Init();
 

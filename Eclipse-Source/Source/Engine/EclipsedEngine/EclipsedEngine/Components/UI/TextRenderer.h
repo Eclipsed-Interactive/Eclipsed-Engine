@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Components/Rendering/BaseRenderComponent.h"
+#include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
 #include "AssetEngine/Assets/VertexShader.h"
@@ -11,6 +11,8 @@
 #include "CoreEngine/GraphicsBuffers/TextBuffer.h"
 #include "CoreEngine/GraphicsBuffers/TextMaterialBuffer.h"
 #include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
+
+#include "CoreEngine/Macros/defines.h"
 
 
 namespace Eclipse
@@ -29,7 +31,7 @@ namespace Eclipse
         Math::Color color;
     };
 
-    class TextRenderer : public BaseRenderComponent
+    class ECLIPSED_API TextRenderer : public BaseRenderComponent
     {
         COMPONENT_BASE_2(TextRenderer, 0)
 
