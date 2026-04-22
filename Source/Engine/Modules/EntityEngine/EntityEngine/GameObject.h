@@ -61,7 +61,7 @@ namespace Eclipse
 		class Transform2D* transform = nullptr;
 
 		bool IsPrefab = false;
-		std::string prefabAssetID;
+		size_t prefabAssetID;
 	private:
 
 		GameObject* parent = nullptr;

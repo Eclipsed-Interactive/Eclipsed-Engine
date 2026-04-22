@@ -12,7 +12,7 @@ namespace Eclipse
 {
 	struct AssetMetaSettings
 	{
-		std::string guid;
+		size_t guid;
 		std::string fileName;
 
 		template <class Archive>

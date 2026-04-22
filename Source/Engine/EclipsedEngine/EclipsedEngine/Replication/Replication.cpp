@@ -146,8 +146,8 @@ namespace Eclipse::Replication
 
 		if (Variable->IsAsset)
 		{
-			std::string AssetID = "";
-			memcpy(&AssetID, message.data + offset, 32);
+			size_t AssetID = 0;
+			memcpy(&AssetID, message.data + offset, 8);
 			RefreshAsset(Variable->myReflectVariable, AssetID);
 		}
 		else
@@ -176,9 +176,9 @@ namespace Eclipse::Replication
 
 		CommandListManager::GetHappenAtBeginCommandList().Enqueue([message]() {
 
-			char* prefabID = (char*)malloc(32);
-			memcpy(prefabID, message.data, 32);
-			memset(prefabID + 32, 0, 1);
+			size_t prefabID = 0;
+			memcpy(&prefabID, message.data, 8);
+			memset(&prefabID + 32, 0, 1);
 			int offset = 32;
 
 			unsigned componentCount;
@@ -240,7 +240,7 @@ namespace Eclipse::Replication
 	}
 
 
-	void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, std::string aAssetID)
+	void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, const size_t& aAssetID)
 	{
 		aVariable->ResolveTypeInfo();
 

@@ -10,5 +10,6 @@ namespace Eclipse
 	{
 	public:
 		static std::string Generate();
+		static size_t GetGuidFromPath(const std::string path);
 	};
 }

@@ -51,8 +51,9 @@ set_target_properties(Opengl PROPERTIES FOLDER "Externals")
 
 add_custom_command(TARGET Opengl POST_BUILD
     COMMAND python ${CMAKE_SOURCE_DIR}/Tools/Build/post_build.py
+            "${CMAKE_SOURCE_DIR}"
             "${CMAKE_SOURCE_DIR}/Source/Engine"
-            "${CMAKE_SOURCE_DIR}/Bin/Headers"
+            "${CMAKE_SOURCE_DIR}/Bin"
             "${CMAKE_SOURCE_DIR}/Assets"
     COMMENT "Running post-build script"
 )

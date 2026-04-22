@@ -61,6 +61,6 @@ public:                                                          \
                                                                   \
     _Asset##Data* GetData() { return data; }                     \
     bool IsValid() const { return isValid; }                     \
-    const std::string& GetAssetID() const { return data->assetID; } \
+    const size_t& GetAssetID() const { return data->assetID; } \
 private:                                                          \
     bool isValid = false;

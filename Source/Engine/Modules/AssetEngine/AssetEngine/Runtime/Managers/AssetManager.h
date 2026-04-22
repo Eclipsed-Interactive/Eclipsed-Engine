@@ -36,23 +36,23 @@ namespace Eclipse
 	class AssetManager
 	{
 	public:
-		AssetType Get(const std::string& aGuid, std::ifstream& in);
+		AssetType Get(const size_t& aGuid, std::ifstream& in);
 
 		void Update();
-		bool CleanUp(const std::string& aGuid);
+		bool CleanUp(const size_t& aGuid);
 
 	protected:
 		Loader& GetLoader();
 
-		AssetType Load(const std::string& aGuid, std::ifstream& in);
-		AssetType ConstructAsset(const std::string& guid);
+		AssetType Load(const size_t& aGuid, std::ifstream& in);
+		AssetType ConstructAsset(const size_t& guid);
 
 	protected:
-		std::unordered_map<std::string, Handle*> idToAssetHandle;
+		std::unordered_map<size_t, Handle*> idToAssetHandle;
 	};
 
 	template<typename AssetType, typename Handle, typename Loader>
-	inline AssetType AssetManager<AssetType, Handle, Loader>::Get(const std::string& aGuid, std::ifstream& in)
+	inline AssetType AssetManager<AssetType, Handle, Loader>::Get(const size_t& aGuid, std::ifstream& in)
 	{
 		if (idToAssetHandle.find(aGuid) != idToAssetHandle.end()) return ConstructAsset(aGuid);
 		else return Load(aGuid, in);
@@ -84,7 +84,7 @@ namespace Eclipse
 	}
 
 	template<typename AssetType, typename Handle, typename Loader>
-	inline bool AssetManager<AssetType, Handle, Loader>::CleanUp(const std::string& aGuid)
+	inline bool AssetManager<AssetType, Handle, Loader>::CleanUp(const size_t& aGuid)
 	{
 		auto it = idToAssetHandle.find(aGuid);
 		if (it != idToAssetHandle.end())
@@ -106,7 +106,7 @@ namespace Eclipse
 	}
 
 	template<typename AssetType, typename Handle, typename Loader>
-	inline AssetType AssetManager<AssetType, Handle, Loader>::Load(const std::string& aGuid, std::ifstream& in)
+	inline AssetType AssetManager<AssetType, Handle, Loader>::Load(const size_t& aGuid, std::ifstream& in)
 	{
 		if (!in.is_open()) return {};
 
@@ -116,7 +116,7 @@ namespace Eclipse
 	}
 
 	template<typename AssetType, typename Handle, typename Loader>
-	inline AssetType AssetManager<AssetType, Handle, Loader>::ConstructAsset(const std::string& aGuid)
+	inline AssetType AssetManager<AssetType, Handle, Loader>::ConstructAsset(const size_t& aGuid)
 	{
 		return AssetType(idToAssetHandle[aGuid]);
 	}

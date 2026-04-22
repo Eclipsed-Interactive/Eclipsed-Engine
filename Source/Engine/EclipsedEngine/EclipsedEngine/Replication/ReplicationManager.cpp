@@ -178,18 +178,18 @@ namespace Eclipse::Replication
         outMessage = NetMessage::BuildGameObjectMessage(aComponent->gameObject->GetID(), MessageType::Msg_AddComponent, Data, DataAmount, true, aStartLater);
     }
 
-    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const char* PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
+    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const size_t& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
     {
         char Data[512];
 
-        const int guidSize = 32;
+        const int guidSize = 8;
         int componentsCount = aComponentIDs.size();
         int totalComponentPrefabsize = aComponentIDs.size() * sizeof(unsigned);
         int DataAmount = guidSize + sizeof(componentsCount) + totalComponentPrefabsize;
 
         int offset = 0;
 
-        memcpy(Data, PrefabAssetID, guidSize);
+        memcpy(Data, &PrefabAssetID, guidSize);
         offset += guidSize;
         memcpy(Data + offset, &componentsCount, sizeof(componentsCount));
         offset += sizeof(componentsCount);
@@ -209,7 +209,7 @@ namespace Eclipse::Replication
             componentIDs.emplace_back(component->myInstanceComponentID);
 
         NetMessage message;
-        Replication::ReplicationManager::CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID().c_str(), componentIDs, message);
+        Replication::ReplicationManager::CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID(), componentIDs, message);
 
         if (Eclipse::MainSingleton::Exists<SteamP2PNetworkingServer>())
         {

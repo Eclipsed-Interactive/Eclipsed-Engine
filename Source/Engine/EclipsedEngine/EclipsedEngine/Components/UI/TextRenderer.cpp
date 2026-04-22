@@ -19,8 +19,8 @@ namespace Eclipse
 {
 	TextMaterial::TextMaterial()
 	{
-		std::string VtxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.pglsl.meta").generic_string());
-		std::string PxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.vglsl.meta").generic_string());
+		size_t VtxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.pglsl.meta").generic_string());
+		size_t PxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.vglsl.meta").generic_string());
 
 		pixelShader = Resources::Get<PixelShader>(VtxShaderGUID);
 		vertexShader = Resources::Get<VertexShader>(PxShaderGUID);
@@ -379,7 +379,7 @@ namespace Eclipse
 
 			//Math::Vector2f CanvasPosition = canvasScaleRelationOneDiv * tranform->myCanvas->canvasCameraTransform.PositionOffset * 0.5f;
 		
-			DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
+			//DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
 		}
 	}
 

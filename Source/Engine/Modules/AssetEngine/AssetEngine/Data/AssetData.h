@@ -5,7 +5,7 @@
 namespace Eclipse
 {
 	struct AssetData {
-		std::string assetID = "";
+		size_t assetID = 0;
 		int refCount = 0;
 	};
 }

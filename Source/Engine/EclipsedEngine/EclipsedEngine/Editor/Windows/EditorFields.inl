@@ -129,7 +129,7 @@ namespace Eclipse::Editor
 
 			if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Material))
 			{
-				std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 				aValue = Resources::Get<Material>(guid);
 
 				aValue.Create();
@@ -172,7 +172,7 @@ namespace Eclipse::Editor
 
 			if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Texture))
 			{
-				std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 				aValue = Resources::Get<Texture>(guid);
 				return true;
 			}

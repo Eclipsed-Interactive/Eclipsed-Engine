@@ -61,7 +61,8 @@ namespace Eclipse
 		else
 		{
 			MetaFileRegistry::CreateMetaFile(aPath);
-			settings.guid = GuidGenerator::Generate();
+			std::string path = std::filesystem::relative(PathManager::GetAssetsPath(), aPath).generic_string();
+			settings.guid = GuidGenerator::GetGuidFromPath(path);
 
 			std::ofstream metafile(metaFilePath);
 			cereal::JSONOutputArchive ar(metafile);

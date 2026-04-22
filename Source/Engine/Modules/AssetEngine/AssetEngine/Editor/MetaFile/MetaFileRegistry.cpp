@@ -33,9 +33,9 @@ namespace Eclipse
 		return k;
 	}
 
-	std::string MetaFileRegistry::GetGUID(const std::filesystem::path& aPath)
+	size_t MetaFileRegistry::GetGUID(const std::filesystem::path& aPath)
 	{
-		if (MetaFileExists(aPath)) return "";
+		if (!MetaFileExists(aPath)) return 0;
 
 		std::filesystem::path path = GetMetaFilePath(aPath);
 
@@ -48,7 +48,7 @@ namespace Eclipse
 		return settings.guid;
 	}
 
-	std::string MetaFileRegistry::GetGUIDMeta(const std::filesystem::path& aPath)
+	size_t MetaFileRegistry::GetGUIDMeta(const std::filesystem::path& aPath)
 	{
 		std::ifstream in(aPath);
 		cereal::JSONInputArchive ar(in);

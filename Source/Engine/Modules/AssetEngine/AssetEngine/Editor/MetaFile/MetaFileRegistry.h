@@ -13,7 +13,7 @@ namespace Eclipse
 		static std::filesystem::path CreateMetaFile(const std::filesystem::path& aPath);
 		static bool MetaFileExists(const std::filesystem::path& aPath);
 
-		static std::string GetGUID(const std::filesystem::path& aPath);
-		static std::string GetGUIDMeta(const std::filesystem::path& aPath);
+		static size_t GetGUID(const std::filesystem::path& aPath);
+		static size_t GetGUIDMeta(const std::filesystem::path& aPath);
 	};
 }

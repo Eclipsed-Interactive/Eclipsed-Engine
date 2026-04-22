@@ -1,6 +1,7 @@
 #include "GuidGenerator.h"
 
 #include <random>
+#include "CoreEngine/Hash.h"
 
 namespace Eclipse
 {
@@ -17,5 +18,10 @@ namespace Eclipse
 		}
 
 		return ss.str();
+	}
+
+	size_t GuidGenerator::GetGuidFromPath(const std::string path)
+	{
+		return Hash::fnv1a_64(path);
 	}
 }

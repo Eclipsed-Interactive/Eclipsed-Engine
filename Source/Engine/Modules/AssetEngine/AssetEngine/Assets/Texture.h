@@ -66,7 +66,7 @@ namespace Eclipse
 			return data;
 		} bool IsValid() const {
 			return isValid;
-		} const std::string& GetAssetID() const {
+		} const size_t& GetAssetID() const {
 			return data->assetID;
 		} private: bool isValid = false;;
 

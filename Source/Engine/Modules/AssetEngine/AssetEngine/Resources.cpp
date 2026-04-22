@@ -17,7 +17,7 @@ namespace Eclipse
 		EventSystem::Subscribe("UnloadAsset", Resources::TryCleanUp);
 	}
 
-	void Resources::TryCleanUp(const std::string& aGuid)
+	void Resources::TryCleanUp(const size_t& aGuid)
 	{
 		if(CleanUp<VertexShader>(aGuid)) return;
 		else if(CleanUp<PixelShader>(aGuid)) return;

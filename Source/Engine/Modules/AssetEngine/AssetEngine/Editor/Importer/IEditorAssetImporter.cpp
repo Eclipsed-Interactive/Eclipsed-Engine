@@ -64,7 +64,7 @@ namespace Eclipse
 		archive(metafile);
 
 		
-		std::filesystem::path exportFolderPath = PathManager::GetProjectRoot() / "Local/Artifacts" / metafile.guid.substr(0, 2) / metafile.guid;
+		std::filesystem::path exportFolderPath = PathManager::GetProjectRoot() / "Local/Artifacts" / std::to_string(metafile.guid).substr(0, 2) / std::to_string(metafile.guid);
 
 		auto time0 = std::filesystem::last_write_time(exportFolderPath).time_since_epoch().count();
 		auto time1 = std::filesystem::last_write_time(metafilepath).time_since_epoch().count();
