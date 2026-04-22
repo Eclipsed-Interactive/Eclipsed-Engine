@@ -24,6 +24,13 @@
 #include "ImGui/ImGui_Impl.h"
 
 #include "EclipsedEngine/Components/ComponentForcelink.h"
+#include "EclipsedEngine/Steam/SteamGeneral.h"
+#include "EntityEngine/ComponentManager.h"
+
+#include "EclipsedEngine/Editor/Windows/WindowTypes/HierarchyWindow.h"
+
+#include "PhysicsEngine/PhysicsEngine.h"
+#include "EclipsedEngine/ECS/SpawnObject.h"
 
 namespace Eclipse::Editor
 {
