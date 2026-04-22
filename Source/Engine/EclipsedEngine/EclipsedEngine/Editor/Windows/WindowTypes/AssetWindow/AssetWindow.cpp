@@ -16,6 +16,9 @@
 #include "CoreEngine/Settings/EditorSettings.h"
 #include "Editor/Windows/WindowTypes/SceneWindow.h"
 
+#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "PhysicsEngine/PhysicsEngine.h"
+
 namespace Eclipse::Editor
 {
     void AssetWindow::Open()

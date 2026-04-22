@@ -21,6 +21,10 @@
 
 #include "AssetEngine/Editor/Importer/EditorAssetImporter.h"
 
+#include "ImGui/ImGui_Impl.h"
+
+#include "EclipsedEngine/Components/ComponentForcelink.h"
+
 namespace Eclipse::Editor
 {
 	void EditorRuntime::Init(const std::string& path)
