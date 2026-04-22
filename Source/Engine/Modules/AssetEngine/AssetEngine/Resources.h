@@ -72,12 +72,8 @@ namespace Eclipse
         else if constexpr (std::is_same<T, Material>::value) return materialManager.CleanUp(aGuid);
         else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.CleanUp(aGuid);
 
-<<<<<<< HEAD
 		return {};
 	}
-=======
-        return {};
-    }
 
     template <typename T>
     inline T Resources::GetDefault(DefaultType type)
@@ -116,5 +112,4 @@ namespace Eclipse
 
         return T();
     }
->>>>>>> parent of 4ffb776 (Merge branch 'main' into updating-asset-engine)
 }
