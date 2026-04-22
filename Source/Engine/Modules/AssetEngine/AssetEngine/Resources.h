@@ -36,9 +36,9 @@ namespace Eclipse
 	};
 
     template <typename T>
-    inline T Resources::Get(const std::string& aGuid)
+    inline T Resources::Get(const size_t& aGuid)
     {
-        if (aGuid.empty()) return {};
+        if (aGuid == 0) return {};
 
         std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / aGuid.substr(0, 2) / aGuid;
         if (!std::filesystem::exists(exportFolderPath)) return {};
@@ -60,7 +60,7 @@ namespace Eclipse
 	}
 
     template <typename T>
-    inline bool Resources::CleanUp(const std::string& aGuid)
+    inline bool Resources::CleanUp(const size_t& aGuid)
     {
         if constexpr (std::is_same<T, Texture>::value) return textureManager.CleanUp(aGuid);
         else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.CleanUp(aGuid);
@@ -70,42 +70,4 @@ namespace Eclipse
 
 		return {};
 	}
-
-    template <typename T>
-    inline T Resources::GetDefault(DefaultType type)
-    {
-        switch (type)
-        {
-        case Sprite:
-            {
-                std::string guid = "c88768d2848748424f797159699b3d5c";
-
-                std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-                std::ifstream in(exportFolderPath, std::ios::binary);
-
-                AssetType type = AssetType::Unknown;
-                in.read(reinterpret_cast<char*>(&type), sizeof(int));
-
-                if (!in.is_open()) return {};
-
-                return materialManager.Get(guid, in);
-            }
-        case UI:
-            {
-                std::string guid = "e1e8f217c7b6de20962af363b3b21646";
-
-                std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-                std::ifstream in(exportFolderPath, std::ios::binary);
-
-                AssetType type = AssetType::Unknown;
-                in.read(reinterpret_cast<char*>(&type), sizeof(int));
-
-                if (!in.is_open()) return {};
-
-                return materialManager.Get(guid, in);
-            }
-        }
-
-        return T();
-    }
 }
