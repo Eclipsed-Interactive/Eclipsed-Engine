@@ -11,7 +11,7 @@ set_target_properties(EclipsedEngine PROPERTIES
     FOLDER "Engine"
 )
 
-# target_include_directories(EclipsedEngine PRIVATE "${CMAKE_SOURCE_DIR}/Source/Externals/asio")
+target_include_directories(EclipsedEngine PRIVATE "${CMAKE_SOURCE_DIR}/Source/Externals/asio")
 
 target_link_libraries(EclipsedEngine PUBLIC 
     AssetEngine
