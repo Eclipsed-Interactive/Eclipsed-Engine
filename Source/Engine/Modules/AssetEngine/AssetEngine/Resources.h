@@ -72,8 +72,8 @@ namespace Eclipse
         else if constexpr (std::is_same<T, Material>::value) return materialManager.CleanUp(aGuid);
         else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.CleanUp(aGuid);
 
-		return {};
-	}
+        return {};
+    }
 
     template <typename T>
     inline T Resources::GetDefault(DefaultType type)
