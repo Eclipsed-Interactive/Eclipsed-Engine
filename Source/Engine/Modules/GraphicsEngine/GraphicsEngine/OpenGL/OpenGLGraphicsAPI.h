@@ -23,8 +23,6 @@ namespace Eclipse
 	{
 	public:
 		OpenGLGraphicsEngine() { myGraphicsBuffer = new OpenGLGraphicsBuffer(); }
-
-		static inline unsigned gpuTimeQuery = 0;
 		
 		ErrorCode Init();
 		void BeginFrame();

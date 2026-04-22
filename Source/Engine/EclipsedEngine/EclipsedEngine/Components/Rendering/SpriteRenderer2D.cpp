@@ -74,7 +74,7 @@ namespace Eclipse
 
 		if (!hasMaterial)
 		{
-			material = Resources::GetDefaultSpriteMaterial();
+			material = Resources::GetDefault<Material>(Sprite);
 			material->Create();
 
 			hasMaterial = true;

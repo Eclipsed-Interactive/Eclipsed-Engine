@@ -2,8 +2,6 @@
 
 #include "CoreEngine/IDGenerator.h"
 
-#include <iostream>
-
 namespace Eclipse
 {
     void ComponentManager::Init()
@@ -98,7 +96,8 @@ namespace Eclipse
     void ComponentManager::EditorUpdateComponents()
     {
         for (size_t i = 0; i < myComponents.size(); ++i)
-            myComponents[i]->EditorUpdate();
+            if (myComponents[i]->myIsOwner)
+                myComponents[i]->EditorUpdate();
     }
 
     void ComponentManager::EarlyUpdateComponents()
@@ -113,12 +112,6 @@ namespace Eclipse
         for (size_t i = 0; i < myComponents.size(); ++i)
             if (myComponents[i]->myIsOwner && myComponents[i]->HasStarted)
                 myComponents[i]->Update();
-    }
-
-    void ComponentManager::EditorLateUpdateComponents()
-    {
-        for (auto& component : myComponents)
-            component->EditorLateUpdate();
     }
 
     void ComponentManager::LateUpdateComponents()
@@ -140,6 +133,12 @@ namespace Eclipse
 #endif
         for (auto& component : myComponents)
             component->Render();
+    }
+
+    void ComponentManager::AfterRenderUpdateComponents()
+    {
+        for (auto& component : myComponents)
+            component->AfterRenderUpdate();
     }
 
     void ComponentManager::SortComponents()
@@ -210,7 +209,7 @@ namespace Eclipse
         myComponents.emplace_back(component);
         size_t componentIndex = myComponents.size() - 1;
 
-        myEntityIDToVectorOfComponentIDs[aGOID].emplace_back(component);
+        myEntityIDToVectorOfComponentIDs[aGOID][typeIndex].emplace_back(component);
         myComponents.back()->myComponentIndex = componentIndex;
 
         //CreateComponentReplicated(component);
@@ -230,11 +229,16 @@ namespace Eclipse
 
         auto& entityIDComponents = myEntityIDToVectorOfComponentIDs.at(aGOID);
 
-        bool DeletedAComponent = false;
-        unsigned indexToDelete = 0;
-        for (int i = 0; i < entityIDComponents.size(); i++)
+        if (entityIDComponents.find(aUniqueComponentID) == entityIDComponents.end())
+            return;
+
+        std::vector<Component*>& componentIndex = entityIDComponents.at(aUniqueComponentID);
+
+        unsigned indexToDelete = -1;
+        unsigned compIndex = 0;
+        for (int i = 0; i < componentIndex.size(); i++)
         {
-            Component* component = entityIDComponents[i];
+            Component* component = componentIndex[i];
 
             if (component->myInstanceComponentID != aComponentID)
                 continue;
@@ -248,43 +252,22 @@ namespace Eclipse
 
             indexToDelete = i;
 
-            DeletedAComponent = true;
-
             break;
         }
 
-        if (!DeletedAComponent)
+        if (indexToDelete == -1)
             return;
 
-        entityIDComponents[indexToDelete] = entityIDComponents.back();
-        entityIDComponents.pop_back();
+        componentIndex[indexToDelete] = componentIndex.back();
+        componentIndex.pop_back();
 
-        for (auto& component : myComponents)
-        {
-            if (component->IsDeleted)
-            {
-                component = myComponents.back();
-                break;
-            }
-        }
+        if (!componentIndex.size())
+            entityIDComponents.erase(aUniqueComponentID);
 
+        myComponents[compIndex] = myComponents.back();
         myComponents.pop_back();
 
         SortComponents();
-    }
-
-    GameObject* ComponentManager::FindObjectByName(const char* aName)
-    {
-        for (auto& [id, gameobject] : myEntityIdToEntity)
-        {
-            if (gameobject->GetName() == aName)
-            {
-                std::cout << "foundName" << std::endl;
-                return gameobject;
-            }
-        }
-
-        return nullptr;
     }
 
     const std::vector<Component*>& ComponentManager::GetAllComponents()
@@ -297,7 +280,17 @@ namespace Eclipse
         if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
             return {};
 
-        return myEntityIDToVectorOfComponentIDs.at(aGOID);
+        std::vector<Component*> components;
+
+        for (auto& goComponents : myEntityIDToVectorOfComponentIDs.at(aGOID))
+        {
+            for (auto& component : goComponents.second)
+            {
+                components.emplace_back(component);
+            }
+        }
+
+        return components;
     }
 
     bool ComponentManager::HasGameObject(GameObjectID aGOID)
@@ -321,17 +314,20 @@ namespace Eclipse
         unsigned componentsDeleted = 0;
         for (int goID : gameobjectsToRemove)
         {
-            for (auto& component : myEntityIDToVectorOfComponentIDs.at(goID))
+            for (auto& componentsAtGO : myEntityIDToVectorOfComponentIDs.at(goID))
             {
-                DeleteReplicatedComponent(component->myInstanceComponentID);
+                for (auto& component : componentsAtGO.second)
+                {
+                    DeleteReplicatedComponent(component->myInstanceComponentID);
 
-                component->IsDeleted = true;
+                    component->IsDeleted = true;
 
-                component->OnDestroy();
-                component->~Component();
-                component = nullptr;
+                    component->OnDestroy();
+                    component->~Component();
+                    component = nullptr;
 
-                componentsDeleted++;
+                    componentsDeleted++;
+                }
             }
         }
 
@@ -340,11 +336,11 @@ namespace Eclipse
             auto& component = myComponents[i];
             if (!component->IsDeleted)
                 continue;
-
+            
             Component* backComponent = myComponents.back();
             if (!backComponent->IsDeleted)
                 std::swap(myComponents[i], myComponents.back());
-
+            
             myComponents.pop_back();
             i--;
         }
@@ -417,15 +413,17 @@ namespace Eclipse
     {
         auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& component : allComponents)
-            component->OnCollisionEnter();
+        for (auto& [_, components] : allComponents)
+            for (auto& component : components)
+                component->OnCollisionEnter();
     }
 
     void ComponentManager::EndCollisions(GameObjectID aGOID)
     {
         auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
-        for (auto& component : allComponents)
-            component->OnCollisionExit();
+        for (auto& [_, components] : allComponents)
+            for (auto& component : components)
+                component->OnCollisionExit();
     }
 }

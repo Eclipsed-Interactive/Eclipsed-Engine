@@ -8,56 +8,60 @@
 
 namespace Eclipse
 {
-	class Resources
-	{
-	public:
-		static void Init();
+    enum DefaultType
+    {
+        Sprite,
+        UI
+    };
 
-		template <typename T>
-		static T Get(const size_t& aGuid);
+    class Resources
+    {
+    public:
+        static void Init();
 
-		template <typename T>
-		static bool CleanUp(const size_t& aGuid);
+        template <typename T>
+        static T Get(const size_t& aGuid);
 
-		static void TryCleanUp(const size_t& aGuid);
+        template <typename T>
+        static bool CleanUp(const size_t& aGuid);
 
-		static Material GetDefaultUIMaterial();
-		static Material GetDefaultSpriteMaterial();
-		static Font GetDefaultFont();
+        static void TryCleanUp(const size_t& aGuid);
+        template <typename T>
+        static T GetDefault(DefaultType type);
 
-	private:
-		static VertexShaderManager vertexShaderManager;
-		static PixelShaderManager pixelShaderManager;
-		static MaterialManager materialManager;
-		static TextureManager textureManager;
-		static PrefabManager prefabManager;
-		static FontManager fontManager;
-		static AudioClipManager audioClipManager;
-	};
+    private:
+        static VertexShaderManager vertexShaderManager;
+        static PixelShaderManager pixelShaderManager;
+        static MaterialManager materialManager;
+        static TextureManager textureManager;
+        static PrefabManager prefabManager;
+        static FontManager fontManager;
+        static AudioClipManager audioClipManager;
+    };
 
     template <typename T>
     inline T Resources::Get(const size_t& aGuid)
     {
         if (aGuid == 0) return {};
 
-        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / aGuid.substr(0, 2) / aGuid;
+        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / std::to_string(aGuid).substr(0, 2) / std::to_string(aGuid);
         if (!std::filesystem::exists(exportFolderPath)) return {};
 
-		std::ifstream in(exportFolderPath, std::ios::binary);
+        std::ifstream in(exportFolderPath, std::ios::binary);
 
-		AssetType type = AssetType::Unknown;
-		in.read(reinterpret_cast<char*>(&type), sizeof(int));
+        AssetType type = AssetType::Unknown;
+        in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		if constexpr (std::is_same<T, Texture>::value) return textureManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, PixelShader>::value) return pixelShaderManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, Material>::value) return materialManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, AudioClip>::value) return audioClipManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.Get(aGuid, in);
-		else if constexpr (std::is_same<T, Font>::value) return fontManager.Get(aGuid, in);
+        if constexpr (std::is_same<T, Texture>::value) return textureManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, PixelShader>::value) return pixelShaderManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, Material>::value) return materialManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, AudioClip>::value) return audioClipManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.Get(aGuid, in);
+        else if constexpr (std::is_same<T, Font>::value) return fontManager.Get(aGuid, in);
 
-		return {};
-	}
+        return {};
+    }
 
     template <typename T>
     inline bool Resources::CleanUp(const size_t& aGuid)
@@ -68,6 +72,49 @@ namespace Eclipse
         else if constexpr (std::is_same<T, Material>::value) return materialManager.CleanUp(aGuid);
         else if constexpr (std::is_same<T, Prefab>::value) return prefabManager.CleanUp(aGuid);
 
+<<<<<<< HEAD
 		return {};
 	}
+=======
+        return {};
+    }
+
+    template <typename T>
+    inline T Resources::GetDefault(DefaultType type)
+    {
+        //switch (type)
+        //{
+        //case Sprite:
+        //    {
+        //        std::string guid = "c88768d2848748424f797159699b3d5c";
+
+        //        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
+        //        std::ifstream in(exportFolderPath, std::ios::binary);
+
+        //        AssetType type = AssetType::Unknown;
+        //        in.read(reinterpret_cast<char*>(&type), sizeof(int));
+
+        //        if (!in.is_open()) return {};
+
+        //        return materialManager.Get(guid, in);
+        //    }
+        //case UI:
+        //    {
+        //        std::string guid = "e1e8f217c7b6de20962af363b3b21646";
+
+        //        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
+        //        std::ifstream in(exportFolderPath, std::ios::binary);
+
+        //        AssetType type = AssetType::Unknown;
+        //        in.read(reinterpret_cast<char*>(&type), sizeof(int));
+
+        //        if (!in.is_open()) return {};
+
+        //        return materialManager.Get(guid, in);
+        //    }
+        //}
+
+        return T();
+    }
+>>>>>>> parent of 4ffb776 (Merge branch 'main' into updating-asset-engine)
 }

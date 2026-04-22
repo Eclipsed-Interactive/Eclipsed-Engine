@@ -187,7 +187,7 @@ namespace Eclipse::Editor
     Canvas* HierarchyWindow::GetParentCanvas(GameObject* BaseObject)
     {
         Canvas* canvas = BaseObject->GetComponent<Canvas>();
-        if (!canvas && BaseObject->GetParent())
+        if (BaseObject->GetParent())
             canvas = GetParentCanvas(BaseObject->GetParent());
 
         return canvas;
@@ -259,6 +259,9 @@ namespace Eclipse::Editor
                 recttransform->myCanvas->canvasCameraTransform.PositionOffset = {0.f, 0.f};
                 recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
                 recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = {1.f, 1.f};
+
+                if (aChild->GetChildCount())
+                    SetCanvasForChildren(recttransform->myCanvas, aChild->GetChildren());
             }
         }
 

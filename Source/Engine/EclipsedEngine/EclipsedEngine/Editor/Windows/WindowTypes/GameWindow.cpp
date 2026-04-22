@@ -114,56 +114,9 @@ namespace Eclipse::Editor
 
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 		
-
-
-
-
-		{
-			int glAvaiblable = 0;
-			glGetQueryObjectiv(OpenGLGraphicsEngine::gpuTimeQuery, GL_QUERY_RESULT_AVAILABLE, &glAvaiblable);
-
-			bool hasStartedQuery = false;
-
-			static bool first = true;
-			if (glAvaiblable == GL_TRUE || first)
-			{
-				unsigned timeElapsed = 0;
-				glGetQueryObjectuiv(OpenGLGraphicsEngine::gpuTimeQuery, GL_QUERY_RESULT, &timeElapsed);
-
-				totaltimeElapsed += timeElapsed;
-
-				glBeginQuery(GL_TIME_ELAPSED, OpenGLGraphicsEngine::gpuTimeQuery);
-				hasStartedQuery = true;
-
-				if (++currentCount >= totalCount)
-				{
-					unsigned avrageGPUTime = totaltimeElapsed / totalCount;
-
-					double miliseconds = avrageGPUTime / 1e6;
-
-					std::cout << "Scene GPU time, " << std::fixed << std::setprecision(2) << miliseconds << "ms" << std::endl;
-
-					currentCount = 0;
-					totaltimeElapsed = 0;
-				}
-			}
-
-			CommandListManager::GetSpriteCommandList().Execute();
-			CommandListManager::GetUICommandList().Execute();
-			if (myDrawGameGizmos) CommandListManager::GetDebugDrawCommandList().Execute();
-
-			if (hasStartedQuery)
-				glEndQuery(GL_TIME_ELAPSED);
-
-
-			first = false;
-		}
-
-
-
-
-
-
+		CommandListManager::GetSpriteCommandList().Execute();
+		CommandListManager::GetUICommandList().Execute();
+		if (myDrawGameGizmos) CommandListManager::GetDebugDrawCommandList().Execute();
 
 		if (windowSize.x != myLastWindowResolution.x || windowSize.y != myLastWindowResolution.y)
 		{
@@ -215,55 +168,9 @@ namespace Eclipse::Editor
 
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer<CameraBuffer>(0);
 
-
-
-
-
-
-		{
-			int glAvaiblable = 0;
-			glGetQueryObjectiv(OpenGLGraphicsEngine::gpuTimeQuery, GL_QUERY_RESULT_AVAILABLE, &glAvaiblable);
-
-			bool hasStartedQuery = false;
-
-			static bool first = true;
-			if (glAvaiblable == GL_TRUE || first)
-			{
-				unsigned timeElapsed = 0;
-				glGetQueryObjectuiv(OpenGLGraphicsEngine::gpuTimeQuery, GL_QUERY_RESULT, &timeElapsed);
-
-				totaltimeElapsed += timeElapsed;
-
-				glBeginQuery(GL_TIME_ELAPSED, OpenGLGraphicsEngine::gpuTimeQuery);
-				hasStartedQuery = true;
-
-				if (++currentCount >= totalCount)
-				{
-					unsigned avrageGPUTime = totaltimeElapsed / totalCount;
-
-					double miliseconds = avrageGPUTime / 1e6;
-
-					std::cout << "Scene GPU time, " << std::fixed << std::setprecision(2) << miliseconds << "ms" << std::endl;
-
-					currentCount = 0;
-					totaltimeElapsed = 0;
-				}
-			}
-
-			CommandListManager::GetSpriteCommandList().Execute();
-			CommandListManager::GetUICommandList().Execute();
-			if (myDrawGameGizmos) CommandListManager::GetDebugDrawCommandList().Execute();
-
-			if (hasStartedQuery)
-				glEndQuery(GL_TIME_ELAPSED);
-
-
-			first = false;
-		}
-
-
-
-
+		CommandListManager::GetSpriteCommandList().Execute();
+		CommandListManager::GetUICommandList().Execute();
+		if (myDrawGameGizmos) CommandListManager::GetDebugDrawCommandList().Execute();
 
 		if (windowSize.x != myLastWindowResolution.x || windowSize.y != myLastWindowResolution.y)
 		{

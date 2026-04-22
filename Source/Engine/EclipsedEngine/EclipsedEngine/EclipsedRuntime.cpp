@@ -46,10 +46,7 @@ namespace Eclipse
     {
 #ifndef ECLIPSED_EDITOR
         SteamGeneral::Get().Init();
-
-        //renderThread = std::thread();
 #endif
-
 
         AudioManager::Init();
 
@@ -124,6 +121,7 @@ namespace Eclipse
 
         ComponentManager::EarlyUpdateComponents();
         ComponentManager::UpdateComponents();
+        ComponentManager::LateUpdateComponents();
 
         AudioManager::Update();
 
@@ -153,8 +151,7 @@ namespace Eclipse
 
         PhysicsEngine::DrawPhysicsObjects();
         ComponentManager::RenderComponents();
-        ComponentManager::EditorLateUpdateComponents();
-        ComponentManager::LateUpdateComponents();
+        ComponentManager::AfterRenderUpdateComponents();
         GraphicsEngine::Get<OpenGLGraphicsEngine>()->Render();
     }
 

@@ -3,8 +3,6 @@
 #include "CoreEngine/Engine.h"
 #include "CoreEngine/Macros/defines.h"
 
-#include <thread>
-
 namespace Eclipse
 {
 	class ECLIPSED_API EclipsedRuntime
@@ -28,7 +26,5 @@ namespace Eclipse
 
 	private:
 		Engine engine;
-
-		//std::thread renderThread;
 	};
 }

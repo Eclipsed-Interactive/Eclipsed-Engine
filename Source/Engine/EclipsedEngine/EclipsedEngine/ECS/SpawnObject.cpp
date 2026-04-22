@@ -9,9 +9,6 @@
 #include "EclipsedEngine/Reflection/Reflection.h"
 #include "EclipsedEngine/Scenes/SceneLoader.h"
 
-#include <Components/UI/RectTransform.h>
-#include <Components/UI/Canvas.h>
-
 namespace Eclipse
 {
     void InternalSpawnObjectClass::StartChildren(std::vector<GameObject*>& aChildComponents)
@@ -33,15 +30,6 @@ namespace Eclipse
                 //component->ComponentCreated();
             }
         }
-    }
-
-    Canvas* GetParentCanvas(GameObject* BaseObject)
-    {
-        Canvas* canvas = BaseObject->GetComponent<Canvas>();
-        if (!canvas && BaseObject->GetParent())
-            canvas = GetParentCanvas(BaseObject->GetParent());
-
-        return canvas;
     }
 
     void InternalSpawnObjectClass::PasteGameObject(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator)
@@ -83,16 +71,6 @@ namespace Eclipse
                 PasteGameObject(newGameObject, child, anAllocator);
 
                 aGameObject->AddChild(newGameObject);
-
-                if (auto* recttransform = newGameObject->GetComponent<RectTransform>())
-                {
-                    if (recttransform->myCanvas = GetParentCanvas(newGameObject))
-                    {
-                        recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
-                        recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
-                        recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
-                    }
-                }
             }
         }
     }
