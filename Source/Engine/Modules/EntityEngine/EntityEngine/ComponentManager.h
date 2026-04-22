@@ -61,7 +61,7 @@ namespace Eclipse
 		static void StartComponents();
 
 		static void EditorUpdateComponents();
-		static void AfterRenderUpdateComponents();
+		static void EditorLateUpdateComponents();
 
 		static void EarlyUpdateComponents();
 		static void UpdateComponents();

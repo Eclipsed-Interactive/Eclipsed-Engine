@@ -44,7 +44,7 @@ namespace Eclipse
 
         if (!hasMaterial)
         {
-            material = Resources::GetDefault<Material>(UI);
+            material = Resources::GetDefaultUIMaterial();
             material->Create();
 
             hasMaterial = true;

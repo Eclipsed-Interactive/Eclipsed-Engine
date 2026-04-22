@@ -18,7 +18,7 @@ namespace Eclipse
         void AddParentPosition(GameObject* aParent, Math::Vector2f& aPosition) const;
         
     public:
-        void AfterRenderUpdate() override;
+        void EditorUpdate() override;
 
         
         Math::Vector2f GetPosition() const;

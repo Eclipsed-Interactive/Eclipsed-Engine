@@ -21,7 +21,7 @@ namespace Eclipse
 	public:
 		void OnComponentAddedNoCreations();
 
-		void AfterRenderUpdate() override;
+		void EditorUpdate() override;
 		void DirtyUpdate();
 
 		//Global
