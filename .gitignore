@@ -1,11 +1,19 @@
-/Eclipse-Source/build/
-/Eclipse-Source/Bin/
-/Eclipse-Source/.vs/
-/Eclipse-Source/[Ll]ibrary/
-/Eclipse-Source/[Ll]ocal/
+
+.vs/
+
+[Ll]ibrary/
+[Ll]ocal/
+[Tt]emp/
+[Bb]in/
+
+*.slnx
+
 RPS-Project/
 
-/Eclipse-Source/Source/Externals/steamsdk/*
-!/Eclipse-Source/Source/Externals/steamsdk/CurlSteam.bat
+Source/Externals/steamsdk/*
+!Source/Externals/steamsdk/CurlSteam.bat
+
 
 GameBuild/
+
+*.pyc
