@@ -62,9 +62,8 @@ namespace Eclipse::Editor
 					if (ImGui::BeginMenu("Game")) {
 						if (ImGui::MenuItem("Generate Game"))
 						{
-							auto te = ("cd " + (PathManager::GetProjectRoot() / "Tools").generic_string() + " && "
-								"generate-game-editor.bat " + PathManager::GetProjectRoot().generic_string() + " " + PathManager::GetEngineRoot().parent_path().generic_string());
-
+							auto te = PathManager::GetEngineRoot();
+							 
 							system(("cd " + (PathManager::GetProjectRoot() / "Tools").generic_string() + " && "
 								"generate-game-editor.bat " + PathManager::GetProjectRoot().generic_string() + " " + PathManager::GetEngineRoot().parent_path().generic_string()).c_str());
 						}

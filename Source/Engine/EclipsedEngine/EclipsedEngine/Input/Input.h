@@ -3,6 +3,8 @@
 #include "CoreEngine/Macros/defines.h"
 #include "CoreEngine/Input/Input.h"
 
+BEGIN_IMPL
+
 namespace Eclipse
 {
 	namespace Core

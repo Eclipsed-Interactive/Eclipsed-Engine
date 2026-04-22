@@ -48,3 +48,11 @@ set_source_files_properties("${CMAKE_SOURCE_DIR}/Source/Externals/OpenGL/glad/gl
 set_target_properties(Opengl PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(Opengl PROPERTIES C_STANDARD 11)
 set_target_properties(Opengl PROPERTIES FOLDER "Externals")
+
+add_custom_command(TARGET Opengl POST_BUILD
+    COMMAND python ${CMAKE_SOURCE_DIR}/Tools/Build/post_build.py
+            "${CMAKE_SOURCE_DIR}/Source/Engine"
+            "${CMAKE_SOURCE_DIR}/Bin/Headers"
+            "${CMAKE_SOURCE_DIR}/Assets"
+    COMMENT "Running post-build script"
+)

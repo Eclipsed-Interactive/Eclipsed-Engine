@@ -1,13 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <functional>
-
 #include "EclipsedEngine/Components/Component.h"
 
-#include <CoreEngine/Math/Vector/Vector2.h>
-
 #include "AssetEngine/Assets/AudioClip.h"
+
 
 namespace FMOD {
 	class Channel;

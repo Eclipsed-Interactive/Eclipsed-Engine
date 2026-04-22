@@ -200,6 +200,8 @@ void OpenProjectAtPath(const char* path)
 	std::string args = std::string("\"") + path + "\"";
 	std::string cmdLine = exePath + " " + args;
 
+	//system(std::string(path) + "/Tools/")
+
 	if (CreateProcess(
 		NULL,
 		&cmdLine[0],

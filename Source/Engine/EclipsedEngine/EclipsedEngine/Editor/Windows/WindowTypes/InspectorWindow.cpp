@@ -199,6 +199,6 @@ void Eclipse::Editor::InspectorWindow::DrawTextureAssetInspector()
 void Eclipse::Editor::InspectorWindow::DrawMaterialAssetInspector()
 {
 	std::filesystem::path path = MetaFileRegistry::GetMetaFilePath(AssetWindow::ActivePath);
-
+	ImGui::Text("Hejsan kompis!");
 }
 #endif

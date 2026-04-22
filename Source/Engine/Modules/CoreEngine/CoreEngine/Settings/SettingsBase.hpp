@@ -12,6 +12,8 @@
 #include "CoreEngine/PathManager.h"
 #include "CoreEngine/EventSystem/EventSystem.h"
 
+// Im working with this now
+
 #define BASE_SETTINGS(_SETTING, _NAME)																		\
 _SETTING() = default;																						\
 ~_SETTING() = default; 																						\

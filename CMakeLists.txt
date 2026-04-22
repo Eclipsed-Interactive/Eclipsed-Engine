@@ -58,6 +58,10 @@ endif()
 # endif()
 
 
+add_compile_definitions(BEGIN_IMPL=//)
+add_compile_definitions(END_IMPL=//)
+
+
 # ---- Externals
 add_subdirectory(Source/Externals/DiscordSDK)
 add_subdirectory(Source/Externals/fmod)
@@ -89,6 +93,16 @@ if(INCLUDE_GAME)
     add_subdirectory(${PROJECT_DIR}  ${PROJECT_DIR}/Library/Game)
 endif()
 
+message(${CMAKE_SOURCE_DIR})
+
+# add_custom_target(post_build
+#     COMMAND python ${CMAKE_SOURCE_DIR}/Tools/Build/export-headers.py
+#             --config $<CONFIG>
+#             --input "${CMAKE_SOURCE_DIR}/Source/Engine"
+#             --output "${CMAKE_SOURCE_DIR}/Bin/Headers"
+#     COMMENT "Running post-build script"
+#     DEPENDS EclipsedEngine Launcher
+# )
 
 
 

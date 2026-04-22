@@ -1,10 +1,9 @@
 #pragma once
 
+#include "EclipsedEngine/Components/Component.h"
+
 #include <vector>
 #include <string>
-
-
-#include "EclipsedEngine/Components/Component.h"
 
 namespace FMOD::Studio {
 	class Bank;

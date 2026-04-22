@@ -5,9 +5,9 @@ setlocal
 echo === Begun: Generating engine project ===
 echo.
 
-call Tools/Setup/Engine/generate-engine-cmake.bat
+call Tools/Setup/generate-engine-cmake.bat
 echo.
-call Tools/Setup/Engine/copy-engine-dlls.bat
+call Tools/Setup/copy-engine-dlls.bat
 
 echo === Begun: Generating slnx file ===
 cd Tools/Setup
