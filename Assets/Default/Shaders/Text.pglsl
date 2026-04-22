@@ -1,0 +1,50 @@
+#version 460 core
+
+layout(std140, binding=5) uniform TextMaterialBuffer
+{
+   vec4 color;
+};
+
+layout(std140, binding=35) uniform EditorBuffer
+{
+   vec4 pixelPickColor;
+   int notOverrideColor;
+};
+
+uniform sampler2D TextTexture;
+
+// Ins
+in vec2 outTexCoord;
+
+// Outs
+out vec4 frag_colour;
+
+void main() 
+{
+   vec4 textureAlbedo = texture(TextTexture, outTexCoord);
+   vec4 finalColor = vec4(textureAlbedo.r, textureAlbedo.r, textureAlbedo.r, textureAlbedo.r);
+
+
+   vec4 colorAlbedo;
+   if(notOverrideColor == 0)
+   {
+      colorAlbedo = vec4(pixelPickColor.rgb, 1);
+      if(textureAlbedo.r > 0)
+      {
+         colorAlbedo.a = 1;
+      }
+      else
+      {
+         colorAlbedo.a = 0;
+      }
+   }
+   else
+   {
+      colorAlbedo = finalColor * color;
+   }
+
+
+
+   frag_colour = colorAlbedo;
+   //frag_colour = vec4(TestValue, 1, 1);
+}

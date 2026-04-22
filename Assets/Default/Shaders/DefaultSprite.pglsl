@@ -1,0 +1,46 @@
+#version 460 core
+
+struct Material 
+{
+   sampler2D albedo;
+};
+uniform Material material;
+
+layout(std140, binding=5) uniform MaterialBuffer
+{
+   vec4 color;
+   vec4 spriteRect; // x, y, width, height
+};
+
+layout(std140, binding=35) uniform EditorBuffer
+{
+   vec4 pixelPickColor;
+   int notOverrideColor;
+};
+
+// Ins
+in vec2 outTexCoord;
+
+// Outs
+out vec4 frag_colour;
+
+void main() 
+{
+   vec2 modifiedUV = vec2(
+      spriteRect.x + outTexCoord.x * spriteRect.z,
+      spriteRect.y + outTexCoord.y * spriteRect.w
+   );
+
+   vec4 colorAlbedo;
+   if(notOverrideColor == 0)
+   {
+      colorAlbedo = vec4(pixelPickColor.rgb, 1);
+   }
+   else
+   {
+      vec4 textureAlbedo = texture(material.albedo, modifiedUV);
+      colorAlbedo = textureAlbedo * color;
+   }
+
+   frag_colour = colorAlbedo;
+}
