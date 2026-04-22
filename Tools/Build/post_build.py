@@ -1,7 +1,7 @@
 import sys
 
-from Tools.Build.export_assets import export_assets
-from Tools.Build.pack_assets import pack_assets
+from export_assets import export_assets
+from pack_assets import pack_assets
 
 from copy_files import copy_files
 
