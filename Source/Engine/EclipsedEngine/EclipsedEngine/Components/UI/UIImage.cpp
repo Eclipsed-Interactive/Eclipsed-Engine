@@ -44,10 +44,10 @@ namespace Eclipse
 
         if (!hasMaterial)
         {
-            material = Resources::GetDefaultUIMaterial();
+            /*material = Resources::GetDefaultUIMaterial();
             material->Create();
 
-            hasMaterial = true;
+            hasMaterial = true;*/
         }
     }
 

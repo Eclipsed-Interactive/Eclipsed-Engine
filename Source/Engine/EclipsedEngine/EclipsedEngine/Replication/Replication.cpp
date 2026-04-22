@@ -11,7 +11,7 @@
 #include "EclipsedEngine/Replication/ReplicationManager.h"
 #include "EclipsedEngine/Replication/ReplicatedVariable.h"
 
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 
 #include "AssetEngine/Resources.h"
 

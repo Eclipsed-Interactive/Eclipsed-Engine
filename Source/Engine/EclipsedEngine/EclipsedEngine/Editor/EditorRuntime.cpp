@@ -30,7 +30,7 @@
 #include "EclipsedEngine/Editor/Windows/WindowTypes/HierarchyWindow.h"
 
 #include "PhysicsEngine/PhysicsEngine.h"
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 
 namespace Eclipse::Editor
 {

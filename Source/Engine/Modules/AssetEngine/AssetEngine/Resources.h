@@ -21,9 +21,9 @@ namespace Eclipse
 
 		static void TryCleanUp(const size_t& aGuid);
 
-		static Material GetDefaultUIMaterial();
-		static Material GetDefaultSpriteMaterial();
-		static Font GetDefaultFont();
+		//static Material GetDefaultUIMaterial();
+		//static Material GetDefaultSpriteMaterial();
+		//static Font GetDefaultFont();
 
 	private:
 		static VertexShaderManager vertexShaderManager;

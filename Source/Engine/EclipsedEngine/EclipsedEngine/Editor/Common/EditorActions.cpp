@@ -15,7 +15,7 @@
 
 #include "CoreEngine/ChatGPT_Dump/Base64.hpp"
 
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 
 namespace Eclipse::Editor
 {

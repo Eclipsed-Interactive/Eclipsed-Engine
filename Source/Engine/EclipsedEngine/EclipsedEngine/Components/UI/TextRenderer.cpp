@@ -110,7 +110,7 @@ namespace Eclipse
 			TransformUpdate();
 		});
 
-		font = Resources::GetDefaultFont();
+		//font = Resources::GetDefaultFont();
 	}
 
 	//void TextRenderer::DrawInspector()

@@ -74,10 +74,10 @@ namespace Eclipse
 
 		if (!hasMaterial)
 		{
-			material = Resources::GetDefaultSpriteMaterial();
-			material->Create();
+			//material = Resources::GetDefaultSpriteMaterial();
+			//material->Create();
 
-			hasMaterial = true;
+			//hasMaterial = true;
 		}
 	}
 

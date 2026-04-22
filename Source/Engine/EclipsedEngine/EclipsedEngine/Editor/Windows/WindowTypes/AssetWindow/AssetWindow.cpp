@@ -16,7 +16,7 @@
 #include "CoreEngine/Settings/EditorSettings.h"
 #include "Editor/Windows/WindowTypes/SceneWindow.h"
 
-#include "EclipsedEngine/ECS/SpawnObject.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 #include "PhysicsEngine/PhysicsEngine.h"
 
 namespace Eclipse::Editor
