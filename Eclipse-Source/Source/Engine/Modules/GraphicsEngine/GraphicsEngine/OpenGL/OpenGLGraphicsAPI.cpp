@@ -169,6 +169,8 @@ namespace Eclipse
 
         myGraphicsBuffer = new OpenGLGraphicsBuffer();
 
+        glGenQueries(1, &gpuTimeQuery);
+
         return errorCode;
     }
 

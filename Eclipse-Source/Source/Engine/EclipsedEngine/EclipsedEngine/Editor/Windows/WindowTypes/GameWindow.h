@@ -43,5 +43,12 @@ namespace Eclipse::Editor
 		float menuHeight = 0;
 
 		bool myDrawGameGizmos = false;
+
+
+
+		unsigned totalCount = 20;
+		unsigned currentCount = 0;
+
+		unsigned totaltimeElapsed = 0;
 	};
 }
