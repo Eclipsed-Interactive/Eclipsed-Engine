@@ -1,18 +1,11 @@
-
-.vs/
-
-[Ll]ibrary/
-[Ll]ocal/
-[Tt]emp/
-[Bb]in/
-
-*.slnx
-
+/Eclipse-Source/build/
+/Eclipse-Source/Bin/
+/Eclipse-Source/.vs/
+/Eclipse-Source/[Ll]ibrary/
+/Eclipse-Source/[Ll]ocal/
 RPS-Project/
 
-Source/Externals/steamsdk/*
-!Source/Externals/steamsdk/CurlSteam.bat
-
-__pycache__
+/Eclipse-Source/Source/Externals/steamsdk/*
+!/Eclipse-Source/Source/Externals/steamsdk/CurlSteam.bat
 
 GameBuild/
