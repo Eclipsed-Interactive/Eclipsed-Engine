@@ -40,7 +40,7 @@ namespace Eclipse
     {
         if (aGuid == 0) return {};
 
-        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / aGuid.substr(0, 2) / aGuid;
+        std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / std::to_string(aGuid).substr(0, 2) / std::to_string(aGuid);
         if (!std::filesystem::exists(exportFolderPath)) return {};
 
 		std::ifstream in(exportFolderPath, std::ios::binary);

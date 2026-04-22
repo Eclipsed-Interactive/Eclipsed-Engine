@@ -2,7 +2,8 @@
 #pragma once
 
 #include "EclipsedEngine/Editor/Windows/WindowBase.h"
-
+#include "EclipsedEngine/Components/UI/Canvas.h"
+#include <filesystem>
 #include <vector>
 
 #include <rapidjson/document.h>

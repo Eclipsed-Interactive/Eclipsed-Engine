@@ -49,7 +49,7 @@ namespace Eclipse
 			BeforeComponentConstruction = aBeforeComponentConstruction;
 			AfterComponentConstruction = aAfterComponentConstruction;
 		}
-		
+
 		static void Init();
 
 		static void OnAddedAllComponentsLoadScene();
@@ -69,15 +69,15 @@ namespace Eclipse
 		static void RenderComponents();
 
 		static void SortComponents();
-		
-		static void SortRenderComponents();
+
+		//static void SortRenderComponents();
 
 		static void BeginCollisions(unsigned aGOID);
 		static void EndCollisions(unsigned aGOID);
 
 		template <typename T>
 		static void GetAllComponentsOfTypePtr(std::vector<int>& aComponents);
-		
+
 		template <typename T>
 		static void GetAllComponentsOfType(unsigned aGOID, std::vector<T*>& aComponents);
 
@@ -91,9 +91,11 @@ namespace Eclipse
 
 		static void DeleteComponent(unsigned aGOID, unsigned aUniqueComponentID, unsigned aComponentID);
 
+		static GameObject* FindObjectByName(const char* aName);
 
-		static Eclipse::Component* AddComponent(unsigned aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
-		static Eclipse::Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
+
+		static Component* AddComponent(unsigned aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
 
 
 		template <typename T>
@@ -142,7 +144,7 @@ namespace Eclipse
 
 		// Gameobject to components
 		static inline std::unordered_map<unsigned, GameObject*> myEntityIdToEntity;
-		static inline std::unordered_map<unsigned, std::unordered_map<unsigned, std::vector<Component*>>> myEntityIDToVectorOfComponentIDs;
+		static inline std::unordered_map<unsigned, std::vector<Component*>> myEntityIDToVectorOfComponentIDs;
 
 		static inline std::vector<unsigned> gameobjectsToRemove;
 

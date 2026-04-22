@@ -2,6 +2,11 @@
 
 #include "EclipsedEngine/Editor/Windows/WindowBase.h"
 
+namespace Eclipse
+{
+	class Component;
+}
+
 namespace Eclipse::Editor
 {
 	enum ActiveItemTypes_
@@ -48,6 +53,6 @@ namespace Eclipse::Editor
 		static inline bool lockInspector = false;
 		static inline ActiveItemTypes_ activeType;
 
-		class Eclipse::Component* myComponentRightClicked = nullptr;
+		Eclipse::Component* myComponentRightClicked = nullptr;
 	};
 }

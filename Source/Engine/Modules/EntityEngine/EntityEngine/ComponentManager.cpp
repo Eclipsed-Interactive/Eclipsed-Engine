@@ -2,6 +2,7 @@
 
 #include "CoreEngine/IDGenerator.h"
 
+#include <assert.h>
 #include <iostream>
 
 namespace Eclipse
@@ -37,10 +38,10 @@ namespace Eclipse
             return;
 
         std::sort(myComponentsToStart.begin(), myComponentsToStart.end(), [&](Component* aComp0, Component* aComp1)
-        {
-            bool hasPriority = aComp0->GetUpdatePriority() > aComp1->GetUpdatePriority();
-            return hasPriority;
-        });
+            {
+                bool hasPriority = aComp0->GetUpdatePriority() > aComp1->GetUpdatePriority();
+                return hasPriority;
+            });
 
         AwakeComponents();
         StartComponents();
@@ -146,18 +147,18 @@ namespace Eclipse
     {
         // this is a work around so render components does not need to exist should be a separate list
         std::sort(myComponents.begin(), myComponents.end(), [&](Component* aComp0, Component* aComp1)
-        {
-            const double UpdatePriorityD0 = aComp0->GetUpdatePriority();
-            const double UpdatePriorityD1 = aComp1->GetUpdatePriority();
+            {
+                const double UpdatePriorityD0 = aComp0->GetUpdatePriority();
+                const double UpdatePriorityD1 = aComp1->GetUpdatePriority();
 
-            const double ZindexD0 = aComp0->GetZIndex();
-            const double ZindexD1 = aComp1->GetZIndex();
+                const double ZindexD0 = aComp0->GetZIndex();
+                const double ZindexD1 = aComp1->GetZIndex();
 
-            const double ZindexSmallD0 = ZindexD0 * 0.00000000000001f;
-            const double ZindexSmallD1 = ZindexD1 * 0.00000000000001f;
+                const double ZindexSmallD0 = ZindexD0 * 0.00000000000001f;
+                const double ZindexSmallD1 = ZindexD1 * 0.00000000000001f;
 
-            return UpdatePriorityD0 - ZindexSmallD0 > UpdatePriorityD1 - ZindexSmallD1;
-        });
+                return UpdatePriorityD0 - ZindexSmallD0 > UpdatePriorityD1 - ZindexSmallD1;
+            });
 
         // myEntityIDToVectorOfComponentIDs.clear();
         //
@@ -172,7 +173,7 @@ namespace Eclipse
         // }
     }
 
-    Eclipse::Component* ComponentManager::AddComponent(GameObjectID aGOID, Eclipse::Component* (__cdecl*createFunc)(unsigned char* address), size_t size)
+    Eclipse::Component* ComponentManager::AddComponent(GameObjectID aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size)
     {
         Component* component = AddComponentWithID(aGOID, Component::GetNextComponentID(), createFunc, size);
         component->OnComponentAdded();
@@ -180,7 +181,7 @@ namespace Eclipse
         return component;
     }
 
-    Eclipse::Component* ComponentManager::AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl*createFunc)(unsigned char* address), size_t size)
+    Eclipse::Component* ComponentManager::AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size)
     {
         uint8_t* base = static_cast<uint8_t*>(myComponentData);
         uint8_t* ptrToComponent = base + myComponentMemoryTracker;
