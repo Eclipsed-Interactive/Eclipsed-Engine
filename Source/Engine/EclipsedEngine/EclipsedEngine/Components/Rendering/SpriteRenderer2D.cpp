@@ -33,7 +33,7 @@ namespace Eclipse
 	void SpriteRenderer2D::SetYMirror(bool aMirror) { mirroredY = aMirror; }
 
 #pragma region --- Set Sprite
-	void SpriteRenderer2D::SetSprite(const std::string& aGuid)
+	void SpriteRenderer2D::SetSprite(const size_t& aGuid)
 	{
 		sprite = Resources::Get<Eclipse::Texture>(aGuid);
 		hasSprite = true;
@@ -49,7 +49,7 @@ namespace Eclipse
 		REPLICATEGARANTIED(sprite);
 	}
 #pragma endregion
-	void SpriteRenderer2D::SetMaterial(const std::string& aGuid)
+	void SpriteRenderer2D::SetMaterial(const size_t& aGuid)
 	{
 		material = Resources::Get<Eclipse::Material>(aGuid);
 		hasMaterial = true;

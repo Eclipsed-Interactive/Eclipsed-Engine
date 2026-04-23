@@ -12,6 +12,6 @@ namespace Eclipse
 	class AudioImporter : public IEditorAssetImporter
 	{
 	public:
-		void Export(const std::string& guid, std::ofstream& outStream, const std::filesystem::path& aPath) override;
+		void Export(const size_t& guid, std::ofstream& outStream, const std::filesystem::path& aPath) override;
 	};
 }

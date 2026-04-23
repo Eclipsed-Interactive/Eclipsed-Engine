@@ -319,7 +319,7 @@ namespace Eclipse::Editor
 			Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
 			myInspectorPosition -= Math::Vector2f(mouseDragdelta.x, -mouseDragdelta.y);
 
-			GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::Get<OpenGLGraphicsEngine>()->MouseCursor::Grab);
+			//GraphicsEngine::Get<OpenGLGraphicsEngine>()->SetCursor(GraphicsEngine::Get<OpenGLGraphicsEngine>()->MouseCursor::Grab);
 		}
 
 		if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
@@ -782,7 +782,7 @@ namespace Eclipse::Editor
 	{
 		myActivePath = aPath;
 
-		std::string textureGuid = Eclipse::MetaFileRegistry::GetGUID(aPath);
+		size_t textureGuid = Eclipse::MetaFileRegistry::GetGUID(aPath);
 		myTexture = Resources::Get<Texture>(textureGuid);
 		
 		LoadMeta(aPath);

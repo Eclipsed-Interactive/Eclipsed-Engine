@@ -7,6 +7,7 @@
 #include "cereal/archives/json.hpp"
 
 #include <fstream>
+#include <string>
 
 #include "AssetEngine/Editor/Importer/ImportSettings/AssetImportSettings.h"
 #include "AssetEngine/Editor/GUID/GuidGenerator.h"
@@ -28,7 +29,7 @@ namespace Eclipse
 	{
 		const std::filesystem::path metafilePath = MetaFileRegistry::GetMetaFilePath(aPath);
 
-		std::string guid = "";
+		size_t guid = 0;
 		if (MetaFileRegistry::MetaFileExists(aPath))
 		{
 			guid = MetaFileRegistry::GetGUID(aPath);
@@ -64,7 +65,7 @@ namespace Eclipse
 		archive(metafile);
 
 		
-		std::filesystem::path exportFolderPath = PathManager::GetProjectRoot() / "Local/Artifacts" / metafile.guid.substr(0, 2) / metafile.guid;
+		std::filesystem::path exportFolderPath = PathManager::GetProjectRoot() / "Local/Artifacts" / std::to_string(metafile.guid).substr(0, 2) / std::to_string(metafile.guid);
 
 		auto time0 = std::filesystem::last_write_time(exportFolderPath).time_since_epoch().count();
 		auto time1 = std::filesystem::last_write_time(metafilepath).time_since_epoch().count();
@@ -72,11 +73,11 @@ namespace Eclipse
 		return time0 == time1;
 	}
 
-	std::filesystem::path IEditorAssetImporter::GetArtifactPath(const std::string& aGuid)
+	std::filesystem::path IEditorAssetImporter::GetArtifactPath(const size_t& aGuid)
 	{
-		std::filesystem::path folder = PathManager::GetArtifactsPath() / aGuid.substr(0, 2);
+		std::filesystem::path folder = PathManager::GetArtifactsPath() / std::to_string(aGuid).substr(0, 2);
 		std::filesystem::create_directories(folder);
 
-		return folder / aGuid;
+		return folder / std::to_string(aGuid);
 	}
 }

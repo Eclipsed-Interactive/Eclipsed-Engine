@@ -17,3 +17,4 @@ Source/Externals/steamsdk/*
 GameBuild/
 
 *.pyc
+*.pyc

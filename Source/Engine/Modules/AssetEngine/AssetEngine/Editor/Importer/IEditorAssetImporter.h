@@ -19,12 +19,12 @@ namespace Eclipse
 
 		void Import(const std::filesystem::path& aPath);
 
-		virtual void Export(const std::string& guid, std::ofstream& outStream, const std::filesystem::path& aPath) = 0;
+		virtual void Export(const size_t& guid, std::ofstream& outStream, const std::filesystem::path& aPath) = 0;
 
 		bool ArtifactUpToData(const std::filesystem::path& aPath);
 
 	protected:
-		std::filesystem::path GetArtifactPath(const std::string& guid);
+		std::filesystem::path GetArtifactPath(const size_t& guid);
 
 		template<typename T = AssetMetaSettings>
 		T LoadOrCreateMeta(const std::filesystem::path& aPath);
@@ -61,7 +61,7 @@ namespace Eclipse
 		else
 		{
 			MetaFileRegistry::CreateMetaFile(aPath);
-			settings.guid = GuidGenerator::Generate();
+			settings.guid = GuidGenerator::Generate(aPath.generic_string());
 
 			std::ofstream metafile(metaFilePath);
 			cereal::JSONOutputArchive ar(metafile);

@@ -14,7 +14,7 @@
 
 namespace Eclipse
 {
-	void MaterialImporter::Export(const std::string& guid, std::ofstream& outStream, const std::filesystem::path& aPath)
+	void MaterialImporter::Export(const size_t& guid, std::ofstream& outStream, const std::filesystem::path& aPath)
 	{
 		SerializedMaterial data = ValidateJsonFile<SerializedMaterial>(aPath);
 

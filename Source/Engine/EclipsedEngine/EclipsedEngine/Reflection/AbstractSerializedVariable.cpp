@@ -122,7 +122,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Material))
 				{
-					std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 					*mat = Resources::Get<Material>(guid);
 
 					mat->Create();
@@ -144,7 +144,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Audio))
 				{
-					std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 					AudioClip clips = Resources::Get<AudioClip>(guid);
 					*clip = clips;
 				}
@@ -164,7 +164,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Texture))
 				{
-					std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 					*texture = Resources::Get<Texture>(guid);
 				}
 			} break;
@@ -183,7 +183,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Prefab))
 				{
-					std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 					*prefab = Resources::Get<Prefab>(guid);
 				}
 			} break;
@@ -202,7 +202,7 @@ namespace Eclipse::Reflection
 
 					if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Font))
 					{
-						std::string guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+						size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
 						*font = Resources::Get<Font>(guid);
 					}
 				} break;

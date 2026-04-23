@@ -6,7 +6,7 @@
 
 namespace Eclipse
 {
-	void FontImporter::Export(const std::string& guid, std::ofstream& outStream, const std::filesystem::path& aPath)
+	void FontImporter::Export(const size_t& guid, std::ofstream& outStream, const std::filesystem::path& aPath)
 	{
 		std::ifstream in(aPath, std::ios::binary);
 		size_t size = file_size(aPath);

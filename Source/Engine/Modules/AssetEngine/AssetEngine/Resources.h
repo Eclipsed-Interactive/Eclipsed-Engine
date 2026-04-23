@@ -14,12 +14,12 @@ namespace Eclipse
 		static void Init();
 
 		template <typename T>
-		static T Get(const std::string& aGuid);
+		static T Get(const size_t& aGuid);
 
 		template <typename T>
-		static bool CleanUp(const std::string& aGuid);
+		static bool CleanUp(const size_t& aGuid);
 
-		static void TryCleanUp(const std::string& aGuid);
+		static void TryCleanUp(const size_t& aGuid);
 
 		static Material GetDefaultUIMaterial();
 		static Material GetDefaultSpriteMaterial();
@@ -36,11 +36,11 @@ namespace Eclipse
 	};
 
 	template <typename T>
-	inline T Resources::Get(const std::string& aGuid)
+	inline T Resources::Get(const size_t& aGuid)
 	{
-		if (aGuid.empty()) return {};
+		if (aGuid == 0) return {};
 
-		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / aGuid.substr(0, 2) / aGuid;
+		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / std::to_string(aGuid).substr(0, 2) / std::to_string(aGuid);
 		if (!std::filesystem::exists(exportFolderPath)) return {};
 
 		std::ifstream in(exportFolderPath, std::ios::binary);
@@ -60,7 +60,7 @@ namespace Eclipse
 	}
 
 	template <typename T>
-	inline bool Resources::CleanUp(const std::string& aGuid)
+	inline bool Resources::CleanUp(const size_t& aGuid)
 	{
 		if constexpr (std::is_same<T, Texture>::value) return textureManager.CleanUp(aGuid);
 		else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.CleanUp(aGuid);
@@ -73,46 +73,49 @@ namespace Eclipse
 
 	inline Material Resources::GetDefaultUIMaterial()
 	{
-		std::string guid = "e1e8f217c7b6de20962af363b3b21646";
+		//std::string guid = "e1e8f217c7b6de20962af363b3b21646";
 
-		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-		std::ifstream in(exportFolderPath, std::ios::binary);
+		//std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
+		//std::ifstream in(exportFolderPath, std::ios::binary);
 
-		AssetType type = AssetType::Unknown;
-		in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		//AssetType type = AssetType::Unknown;
+		//in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		if (!in.is_open()) return {};
+		//if (!in.is_open()) return {};
 
-		return materialManager.Get(guid, in);
+		//return materialManager.Get(guid, in);
+		return {};
 	}
 
 	inline Material Resources::GetDefaultSpriteMaterial()
 	{
-		std::string guid = "c88768d2848748424f797159699b3d5c";
+		//std::string guid = "c88768d2848748424f797159699b3d5c";
 
-		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-		std::ifstream in(exportFolderPath, std::ios::binary);
+		//std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
+		//std::ifstream in(exportFolderPath, std::ios::binary);
 
-		AssetType type = AssetType::Unknown;
-		in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		//AssetType type = AssetType::Unknown;
+		//in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		if (!in.is_open()) return {};
+		//if (!in.is_open()) return {};
 
-		return materialManager.Get(guid, in);
+		//return materialManager.Get(guid, in);
+		return {};
 	}
 
 	inline Font Resources::GetDefaultFont()
 	{
-		std::string guid = "d2375640d637f31af06a4cce8da53056";
+		//std::string guid = "d2375640d637f31af06a4cce8da53056";
 
-		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-		std::ifstream in(exportFolderPath, std::ios::binary);
+		//std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
+		//std::ifstream in(exportFolderPath, std::ios::binary);
 
-		AssetType type = AssetType::Unknown;
-		in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		//AssetType type = AssetType::Unknown;
+		//in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		if (!in.is_open()) return {};
+		//if (!in.is_open()) return {};
 
-		return fontManager.Get(guid, in);
+		//return fontManager.Get(guid, in);
+		return {};
 	}
 }

@@ -9,6 +9,6 @@ namespace Eclipse
 	class GuidGenerator
 	{
 	public:
-		static std::string Generate();
+		static size_t Generate(const std::string& someData);
 	};
 }

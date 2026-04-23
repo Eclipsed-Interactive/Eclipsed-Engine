@@ -32,7 +32,7 @@ namespace Eclipse::Replication
             static inline unsigned myComponentsToRecieved = 9999;
 
             // Placing here cause other is bad.
-            static void RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, std::string aAssetID);
+            static void RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, size_t aAssetID);
         };
 
 

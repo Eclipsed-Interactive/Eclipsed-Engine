@@ -376,7 +376,7 @@ namespace Eclipse
 				aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_AudioClip
 				)
 			{
-				std::string id = val.GetString();
+				size_t id = val.GetUint64();
 
 				if (aSerializedVariable->GetType() == Reflection::AbstractSerializedVariable::SerializedType_Font)
 				{

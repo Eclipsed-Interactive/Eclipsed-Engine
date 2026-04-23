@@ -8,25 +8,25 @@ namespace Eclipse
 	{
 		MaterialData* data = new MaterialData;
 
-		std::string textureGuid = "";
-		std::string pixelShaderGuid = "";
-		std::string vertexShaderGuid = "";
+		size_t textureGuid = 0;
+		size_t pixelShaderGuid = 0;
+		size_t vertexShaderGuid = 0;
 
-		int textureNameSize = 0;
-		int pixelShaderNameSize = 0;
-		int vertexShaderNameSize = 0;
+		//int textureNameSize = 0;
+		//int pixelShaderNameSize = 0;
+		//int vertexShaderNameSize = 0;
 
-		in.read(reinterpret_cast<char*>(&textureNameSize), sizeof(int));
-		in.read(reinterpret_cast<char*>(&pixelShaderNameSize), sizeof(int));
-		in.read(reinterpret_cast<char*>(&vertexShaderNameSize), sizeof(int));
+		//in.read(reinterpret_cast<char*>(&textureNameSize), sizeof(int));
+		//in.read(reinterpret_cast<char*>(&pixelShaderNameSize), sizeof(int));
+		//in.read(reinterpret_cast<char*>(&vertexShaderNameSize), sizeof(int));
 
-		textureGuid.resize(textureNameSize);
-		pixelShaderGuid.resize(pixelShaderNameSize);
-		vertexShaderGuid.resize(vertexShaderNameSize);
+		//textureGuid.resize(textureNameSize);
+		//pixelShaderGuid.resize(pixelShaderNameSize);
+		//vertexShaderGuid.resize(vertexShaderNameSize);
 
-		in.read(textureGuid.data(), textureNameSize);
-		in.read(pixelShaderGuid.data(), pixelShaderNameSize);
-		in.read(vertexShaderGuid.data(), vertexShaderNameSize);
+		in.read(reinterpret_cast<char*>(&textureGuid), sizeof(size_t));
+		in.read(reinterpret_cast<char*>(&pixelShaderGuid), sizeof(size_t));
+		in.read(reinterpret_cast<char*>(&vertexShaderGuid), sizeof(size_t));
 
 		data->texture = Resources::Get<Texture>(textureGuid);
 		data->pixelShader = Resources::Get<PixelShader>(pixelShaderGuid);

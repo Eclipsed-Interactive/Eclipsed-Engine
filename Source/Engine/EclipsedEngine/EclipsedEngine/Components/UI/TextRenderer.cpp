@@ -19,8 +19,8 @@ namespace Eclipse
 {
 	TextMaterial::TextMaterial()
 	{
-		std::string VtxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.pglsl.meta").generic_string());
-		std::string PxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.vglsl.meta").generic_string());
+		size_t VtxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.pglsl.meta").generic_string());
+		size_t PxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.vglsl.meta").generic_string());
 
 		pixelShader = Resources::Get<PixelShader>(VtxShaderGUID);
 		vertexShader = Resources::Get<VertexShader>(PxShaderGUID);

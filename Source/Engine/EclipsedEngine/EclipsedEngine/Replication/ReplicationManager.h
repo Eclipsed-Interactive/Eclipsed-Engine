@@ -66,7 +66,7 @@ namespace Eclipse::Replication
         static void CreateGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void DeleteGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void CreateComponentMessage(Eclipse::Component* aComponent, NetMessage& outMessage, bool aStartLater = false);
-        static void CreatePrefabMessage(unsigned aGOID, const char* PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
+        static void CreatePrefabMessage(unsigned aGOID, const size_t& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
     public:
         // Direct send functions
         static void SendPrefabObject(GameObject* gameobject, Prefab& aPrefab);

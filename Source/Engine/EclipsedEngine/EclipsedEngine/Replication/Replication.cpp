@@ -147,7 +147,7 @@ namespace Eclipse::Replication
 
         if (Variable->IsAsset)
         {
-            std::string AssetID = "";
+            size_t AssetID = 0;
             memcpy(&AssetID, message.data + offset, 32);
             RefreshAsset(Variable->myReflectVariable, AssetID);
         }
@@ -177,22 +177,22 @@ namespace Eclipse::Replication
 
         CommandListManager::GetHappenAtBeginCommandList().Enqueue([message]()
         {
-            char* prefabID = (char*)malloc(32);
-            memcpy(prefabID, message.data, 32);
-            memset(prefabID + 32, 0, 1);
-            int offset = 32;
+            //char* prefabID = (char*)malloc(32);
+            //memcpy(prefabID, message.data, 32);
+            //memset(prefabID + 32, 0, 1);
+            //int offset = 32;
 
-            unsigned componentCount;
-            memcpy(&componentCount, message.data + offset, sizeof(unsigned));
-            offset += sizeof(unsigned);
+            //unsigned componentCount;
+            //memcpy(&componentCount, message.data + offset, sizeof(unsigned));
+            //offset += sizeof(unsigned);
 
-            std::vector<unsigned> componentsIDs;
-            componentsIDs.resize(componentCount);
-            memcpy(componentsIDs.data(), message.data + offset, sizeof(unsigned) * componentCount);
+            //std::vector<unsigned> componentsIDs;
+            //componentsIDs.resize(componentCount);
+            //memcpy(componentsIDs.data(), message.data + offset, sizeof(unsigned) * componentCount);
 
-            Eclipse::Prefab prefab = Eclipse::Resources::Get<Eclipse::Prefab>(prefabID);
+            //Eclipse::Prefab prefab = Eclipse::Resources::Get<Eclipse::Prefab>(prefabID);
 
-            InstatiateNetworkSentPrefab(prefab, message.MetaData.GameObjectID, componentsIDs);
+            //InstatiateNetworkSentPrefab(prefab, message.MetaData.GameObjectID, componentsIDs);
         });
     }
 
@@ -239,7 +239,7 @@ namespace Eclipse::Replication
     }
 
 
-    void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, std::string aAssetID)
+    void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, size_t aAssetID)
     {
         aVariable->ResolveTypeInfo();
 
