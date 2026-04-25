@@ -10,15 +10,10 @@ namespace Eclipse::Editor
 	template<typename>
 	inline constexpr bool always_false_v = false;
 
-	template<typename T>
+	template<typename FieldName, typename EditorName = int>
 	struct EditorFieldDrawer {
-		static bool Draw(T&) {
-			static_assert(always_false_v<T>, R"(The implementation dont exists, please view the output window.
-The error you want to keep an eye out for look like this:
-	[
-		T = Eclipse::Math::Color
-	])");
-		}
+		static bool DrawField(FieldName&) { return false; }
+		static bool DrawEditor(EditorName&) { return false; }
 	};
 
 	template<typename T>

@@ -14,7 +14,7 @@
 #include "EclipsedEngine/Components/Audio/AudioEmitter.h"
 
 #include "SpriteEditor.h"
-
+#include "AssetEngine/AssetDatabase.h"
 #include "ImGui/imgui.h"
 
 #include "EclipsedEngine/Editor/Windows/WindowTypes/AssetWindow/AssetWindow.h"
@@ -24,6 +24,9 @@
 
 #include <sstream>
 #include <fstream>
+
+#include "EclipsedEngine/Editor/Windows/EditorField.h"
+#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 
 void Eclipse::Editor::InspectorWindow::Update()
 {
@@ -178,11 +181,49 @@ void Eclipse::Editor::InspectorWindow::DrawAssetInspector()
 {
 	ImGui::Text(AssetWindow::ActivePath.filename().string().c_str());
 
+	const std::string sPath = AssetWindow::ActivePath.generic_string();
+
 	Utilities::FileInfo info = Utilities::FileInfo::GetFileInfo(AssetWindow::ActivePath);
+	switch (info.type)
+	{
+
+	case Utilities::FileInfo::FileType_Texture:
+	{
+		const size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(sPath.c_str()).guid;
+		Texture texture = Resources::Get<Texture>(guid);
+		EditorFieldDrawer<Texture>::DrawEditor(texture);
+	} break;
+
+	case Utilities::FileInfo::FileType_Material:
+	{
+		SerializedMaterial data = {};
+		{
+			std::ifstream file(AssetWindow::ActivePath);
+
+			cereal::JSONInputArchive ar(file);
+			ar(data);
+		}
+
+		if (EditorFieldDrawer<Material, SerializedMaterial>::DrawEditor(data))
+		{
+			std::ofstream file(AssetWindow::ActivePath);
+
+			cereal::JSONOutputArchive ar(file);
+			ar(data);
+		}
+	} break;
+
+	}
+
+
+
 	if (info.type == Utilities::FileInfo::FileType_Texture)
 		DrawTextureAssetInspector();
 	else if (info.type == Utilities::FileInfo::FileType_Material)
-		DrawMaterialAssetInspector();
+	{
+		Material mat;
+		
+	}
 
 }
 

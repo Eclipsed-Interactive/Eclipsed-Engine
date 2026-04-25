@@ -5,7 +5,8 @@
 #include "AssetEngine/Editor/Importer/ImportSettings/AssetImportSettings.h"
 #include <cereal/archives/json.hpp>
 
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+#include "AssetEngine/AssetDatabase.h"
+#include "CoreEngine/MainSingleton.h"
 #include "AssetEngine/Editor/GUID/GuidGenerator.h"
 
 namespace Eclipse
@@ -36,39 +37,40 @@ namespace Eclipse
 	template<typename T>
 	inline T IEditorAssetImporter::LoadOrCreateMeta(const std::filesystem::path& aPath)
 	{
-		T settings;
+		//T settings;
 
-		std::filesystem::path metaFilePath = MetaFileRegistry::GetMetaFilePath(aPath);
-		if (std::filesystem::exists(metaFilePath))
-		{
-			
-			try
-			{
-				std::ifstream in(metaFilePath);
-				cereal::JSONInputArchive ar(in);
-				ar(settings);
-			}
-			catch(cereal::Exception e)
-			{
-				AssetMetaSettings tempSettings;
+		//std::filesystem::path metaFilePath = MetaFileRegistry::GetMetaFilePath(aPath);
+		//if (std::filesystem::exists(metaFilePath))
+		//{
+		//	
+		//	try
+		//	{
+		//		std::ifstream in(metaFilePath);
+		//		cereal::JSONInputArchive ar(in);
+		//		ar(settings);
+		//	}
+		//	catch(cereal::Exception e)
+		//	{
+		//		AssetMetaSettings tempSettings;
 
-				std::ifstream in(metaFilePath);
-				cereal::JSONInputArchive ar(in);
-				ar(tempSettings);
-				settings.guid = tempSettings.guid;
-			}
-		}
-		else
-		{
-			MetaFileRegistry::CreateMetaFile(aPath);
-			settings.guid = GuidGenerator::Generate(aPath.generic_string());
+		//		std::ifstream in(metaFilePath);
+		//		cereal::JSONInputArchive ar(in);
+		//		ar(tempSettings);
+		//		settings.guid = tempSettings.guid;
+		//	}
+		//}
+		//else
+		//{
+		//	MetaFileRegistry::CreateMetaFile(aPath);
+		//	settings.guid = GuidGenerator::Generate(aPath.generic_string());
+		//	settings.fileName = aPath.filename().stem().string();
 
-			std::ofstream metafile(metaFilePath);
-			cereal::JSONOutputArchive ar(metafile);
-			ar(settings);
-		}
+		//	std::ofstream metafile(metaFilePath);
+		//	cereal::JSONOutputArchive ar(metafile);
+		//	ar(settings);
+		//}
 
-		return settings;
+		return {};
 	}
 
 	template<typename T>

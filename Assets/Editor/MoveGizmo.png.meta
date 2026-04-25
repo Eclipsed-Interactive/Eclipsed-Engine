@@ -1,7 +1,9 @@
 {
     "value0": {
-        "cereal_class_version": 0,
-        "guid": "a647b65ecf40dbb358cbce78c15dda4a",
-        "fileName": ""
+        "cereal_class_version": 1,
+        "guid": 7436029193226426661,
+        "type": 1,
+        "fileName": "TX Tileset Grass",
+        "fileExtension": ".png"
     }
 }

@@ -47,6 +47,7 @@ namespace Eclipse::Editor
 
 	private:
 		Utilities::DirectoryTree dirTree;
+		Utilities::DirectoryTree engineTree;
 
 		Utilities::FileNode* Active_View_Node;
 		Utilities::FileNode* Active_Hierarchy_Node;

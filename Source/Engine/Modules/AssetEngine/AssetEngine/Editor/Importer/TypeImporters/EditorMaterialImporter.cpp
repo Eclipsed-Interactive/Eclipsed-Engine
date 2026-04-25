@@ -1,7 +1,5 @@
 #include "EditorMaterialImporter.h"
 
-#include "AssetEngine/Editor/MetaFile/AssetMetaManager.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 #include "AssetEngine/Editor/GUID/GuidGenerator.h"
 
 #include "AssetEngine/Editor/Importer/ImportSettings/AssetImportSettings.h"
@@ -21,16 +19,8 @@ namespace Eclipse
 		int type = (int)AssetType::Material;
 		outStream.write(reinterpret_cast<const char*>(&type), sizeof(int));
 
-		const int textureNameSize = data.textureGuid.size();
-		const int pixelShaderNameSize = data.pixelShaderGuid.size();
-		const int vertexShaderNameSize = data.vertexShaderGuid.size();
-
-		outStream.write(reinterpret_cast<const char*>(&textureNameSize), sizeof(int));
-		outStream.write(reinterpret_cast<const char*>(&pixelShaderNameSize), sizeof(int));
-		outStream.write(reinterpret_cast<const char*>(&vertexShaderNameSize), sizeof(int));
-
-		outStream.write(data.textureGuid.c_str(), data.textureGuid.size());
-		outStream.write(data.pixelShaderGuid.c_str(), data.pixelShaderGuid.size());
-		outStream.write(data.vertexShaderGuid.c_str(), data.vertexShaderGuid.size());
+		outStream.write(reinterpret_cast<const char*>(&data.textureGuid), sizeof(size_t));
+		outStream.write(reinterpret_cast<const char*>(&data.pixelShaderGuid), sizeof(size_t));
+		outStream.write(reinterpret_cast<const char*>(&data.vertexShaderGuid), sizeof(size_t));
 	}
 }

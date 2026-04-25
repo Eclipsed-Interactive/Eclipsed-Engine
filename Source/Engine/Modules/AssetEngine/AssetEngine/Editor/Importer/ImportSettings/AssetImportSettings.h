@@ -13,12 +13,14 @@ namespace Eclipse
 	struct AssetMetaSettings
 	{
 		size_t guid;
+		std::string fileName = "";
 
 		template <class Archive>
 		void serialize(Archive& ar)
 		{
 			ar(
-				CEREAL_NVP(guid)
+				CEREAL_NVP(guid),
+				CEREAL_NVP(fileName)
 			);
 		}
 	};

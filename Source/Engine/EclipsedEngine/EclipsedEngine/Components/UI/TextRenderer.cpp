@@ -11,7 +11,8 @@
 
 #include "OpenGL/glad/glad.h"
 
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+#include "AssetEngine/AssetDatabase.h"
+#include "CoreEngine/MainSingleton.h"
 #include "CoreEngine/GraphicsBuffers/TextMaterialBuffer.h"
 #include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
 
@@ -19,8 +20,9 @@ namespace Eclipse
 {
 	TextMaterial::TextMaterial()
 	{
-		size_t VtxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.pglsl.meta").generic_string());
-		size_t PxShaderGUID = MetaFileRegistry::GetGUIDMeta((PathManager::GetEngineAssetsPath() / "Default/Shaders/Text.vglsl.meta").generic_string());
+		
+		size_t VtxShaderGUID = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData<Assets::AssetMetaData>("Engine/Assets/Default/Shaders/Text.vglsl").guid;
+		size_t PxShaderGUID = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData<Assets::AssetMetaData>("Engine/Assets/Default/Shaders/Text.pglsl").guid;
 
 		pixelShader = Resources::Get<PixelShader>(VtxShaderGUID);
 		vertexShader = Resources::Get<VertexShader>(PxShaderGUID);

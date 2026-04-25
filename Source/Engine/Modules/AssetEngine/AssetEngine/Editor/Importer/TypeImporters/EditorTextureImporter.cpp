@@ -6,6 +6,8 @@
 #include "AssetEngine/Helper/STB_Helper.h"
 #include "AssetEngine/Data/TextureData.h"
 #include "AssetEngine/SupportedTypes.h"
+#include "CoreEngine/MainSingleton.h"
+#include "AssetEngine/AssetDatabase.h"
 
 namespace Eclipse
 {
@@ -26,7 +28,9 @@ namespace Eclipse
 		outStream.write(reinterpret_cast<const char*>(pixelData), data.width * data.height * data.channels);
 		STB_Helper::FreeData_STB(pixelData);
 
-		TextureAssetMetaSettings texMetaSettings = LoadOrCreateMeta<TextureAssetMetaSettings>(aPath);
+
+
+		const Assets::TextureMetaData& meta = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(aPath.generic_string().c_str());
 		int dataAmount = texMetaSettings.spriteRects.size();
 		outStream.write(reinterpret_cast<const char*>(&dataAmount), sizeof(int));
 		outStream.write(reinterpret_cast<const char*>(texMetaSettings.spriteRects.data()), dataAmount);

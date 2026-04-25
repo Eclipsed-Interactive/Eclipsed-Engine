@@ -20,6 +20,9 @@
 #include "CoreEngine/Settings/EditorSettings.h"
 
 #include "AssetEngine/Editor/Importer/EditorAssetImporter.h"
+#include "AssetEngine/AssetDatabase.h"
+
+#include "CoreEngine/MainSingleton.h"
 
 namespace Eclipse::Editor
 {
@@ -28,6 +31,17 @@ namespace Eclipse::Editor
 		PathManager::Init(path);
 
 		ComponentForcelink::LinkComponents();
+
+		{ // register asses
+			MainSingleton::RegisterInstance<Assets::AssetDatabase>();
+
+			std::string engineAssetsPath = PathManager::GetEngineAssetsPath().generic_string();
+			MainSingleton::GetInstance<Assets::AssetDatabase>().ImportAssets(engineAssetsPath.c_str(), "Engine/", 1);
+
+			std::string projectAssetsPath = PathManager::GetAssetsPath().generic_string();
+			MainSingleton::GetInstance<Assets::AssetDatabase>().ImportAssets(projectAssetsPath.c_str(), "Project/", 2);
+		}
+
 
 		EditorAssetImporter::ImportAll(PathManager::GetAssetsPath());
 		eclipseRuntime.StartEngine(path);
@@ -176,7 +190,7 @@ namespace Eclipse::Editor
 				isPaused = false;
 
 				Replication::ReplicationManager::CloseConnection("Disconnect : Quit Game");
-				
+
 				SteamGeneral::Get().ShutDown();
 
 				if (SceneManager::GetActiveSceneType() == SceneManager::Default)
@@ -184,7 +198,7 @@ namespace Eclipse::Editor
 				else if (SceneManager::GetActiveSceneType() == SceneManager::Prefab)
 				{
 					std::filesystem::path filePath = SceneManager::GetActiveScene();
-					
+
 					{
 						std::ifstream stream(filePath);
 						if (!stream.is_open())
@@ -196,7 +210,7 @@ namespace Eclipse::Editor
 						SceneManager::SetActiveSceneType(SceneManager::Prefab);
 						SceneManager::SetActiveScene(filePath.generic_string().c_str());
 
-                
+
 						size_t prefSize = std::filesystem::file_size(filePath);
 						char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
 						stream.read(data, prefSize);

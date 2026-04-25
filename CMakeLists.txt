@@ -11,6 +11,7 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/custom-build)
 project(Eclipsed-Engine LANGUAGES CXX)
 
 add_compile_definitions(LEAN_AND_MEAN)
+add_compile_definitions(DEV_ENV)
 
 option(ECLIPSED_EDITOR "Enables the editor" TRUE)
 option(INCLUDE_GAME "Includes game" FALSE)

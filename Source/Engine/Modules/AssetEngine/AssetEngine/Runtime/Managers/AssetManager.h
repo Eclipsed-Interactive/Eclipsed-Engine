@@ -86,6 +86,8 @@ namespace Eclipse
 	template<typename AssetType, typename Handle, typename Loader>
 	inline bool AssetManager<AssetType, Handle, Loader>::CleanUp(const size_t& aGuid)
 	{
+		if (idToAssetHandle.empty()) return false;
+
 		auto it = idToAssetHandle.find(aGuid);
 		if (it != idToAssetHandle.end())
 		{

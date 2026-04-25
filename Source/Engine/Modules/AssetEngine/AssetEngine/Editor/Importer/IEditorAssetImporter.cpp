@@ -1,7 +1,6 @@
 #include "IEditorAssetImporter.h"
 
 #include "AssetEngine/SupportedTypes.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 
 #include "cereal/cereal.hpp"
 #include "cereal/archives/json.hpp"
@@ -13,6 +12,9 @@
 #include "AssetEngine/Editor/GUID/GuidGenerator.h"
 
 #include "CoreEngine/PathManager.h"
+#include "AssetEngine/AssetDatabase.h"
+
+#include "CoreEngine/MainSingleton.h"
 
 using namespace std::filesystem;
 
@@ -20,6 +22,7 @@ namespace Eclipse
 {
 	bool IEditorAssetImporter::CanImport(const std::filesystem::path& aPath) const
 	{
+		return false;
 		std::string ext = aPath.extension().generic_string();
 
 		return GetAssetTypeFromExtension(ext) != AssetType::Unknown;
@@ -27,22 +30,15 @@ namespace Eclipse
 
 	void IEditorAssetImporter::Import(const std::filesystem::path& aPath)
 	{
-		const std::filesystem::path metafilePath = MetaFileRegistry::GetMetaFilePath(aPath);
+		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+		const std::filesystem::path metafilePath = database.GetMetaFilePath(aPath.generic_string().c_str());
 
-		size_t guid = 0;
-		if (MetaFileRegistry::MetaFileExists(aPath))
-		{
-			guid = MetaFileRegistry::GetGUID(aPath);
-		}
-		else
-		{
-			AssetMetaSettings importSettings = LoadOrCreateMeta<AssetMetaSettings>(aPath);
-			guid = importSettings.guid;
-		}
+		const size_t guid = database.GetMetaData<Assets::AssetMetaData>(aPath.generic_string().c_str()).guid;
 
 		std::filesystem::path artifactPath = GetArtifactPath(guid);
 
-		if (!exists(artifactPath) || last_write_time(artifactPath) < last_write_time(aPath) ||
+		bool fileExists = std::filesystem::exists(artifactPath);
+		if (!fileExists || last_write_time(artifactPath) < last_write_time(aPath) ||
 			last_write_time(artifactPath) < last_write_time(metafilePath))
 		{
 			std::ofstream out(artifactPath, std::ios::binary);
@@ -55,7 +51,8 @@ namespace Eclipse
 		std::filesystem::path metafilepath = aPath;
 		if (aPath.extension() != ".meta")
 		{
-			metafilepath = MetaFileRegistry::GetMetaFilePath(aPath);
+			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+			metafilepath = database.GetMetaFilePath(aPath.generic_string().c_str());
 		}
 
 		std::ifstream in(metafilepath);

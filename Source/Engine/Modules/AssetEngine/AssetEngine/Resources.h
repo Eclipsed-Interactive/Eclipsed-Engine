@@ -46,7 +46,7 @@ namespace Eclipse
 		std::ifstream in(exportFolderPath, std::ios::binary);
 
 		AssetType type = AssetType::Unknown;
-		in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		in.read(reinterpret_cast<char*>(&type), sizeof(int)); 
 
 		if constexpr (std::is_same<T, Texture>::value) return textureManager.Get(aGuid, in);
 		else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.Get(aGuid, in);
@@ -62,6 +62,8 @@ namespace Eclipse
 	template <typename T>
 	inline bool Resources::CleanUp(const size_t& aGuid)
 	{
+		std::cout << aGuid << std::endl;
+
 		if constexpr (std::is_same<T, Texture>::value) return textureManager.CleanUp(aGuid);
 		else if constexpr (std::is_same<T, VertexShader>::value) return vertexShaderManager.CleanUp(aGuid);
 		else if constexpr (std::is_same<T, PixelShader>::value) return pixelShaderManager.CleanUp(aGuid);

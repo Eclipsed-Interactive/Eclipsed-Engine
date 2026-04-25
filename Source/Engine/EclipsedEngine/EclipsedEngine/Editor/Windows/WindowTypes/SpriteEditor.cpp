@@ -25,8 +25,8 @@
 #include "AssetEngine/Resources.h"
 
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
-
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+#include "AssetEngine/AssetDatabase.h"
+#include "CoreEngine/MainSingleton.h"
 
 #undef min
 
@@ -782,7 +782,7 @@ namespace Eclipse::Editor
 	{
 		myActivePath = aPath;
 
-		size_t textureGuid = Eclipse::MetaFileRegistry::GetGUID(aPath);
+		size_t textureGuid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(aPath.generic_string().c_str()).guid;
 		myTexture = Resources::Get<Texture>(textureGuid);
 		
 		LoadMeta(aPath);

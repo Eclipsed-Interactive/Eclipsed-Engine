@@ -14,9 +14,9 @@
 namespace Eclipse
 {
 	struct SerializedMaterial {
-		std::string vertexShaderGuid;
-		std::string pixelShaderGuid;
-		std::string textureGuid;
+		size_t vertexShaderGuid;
+		size_t pixelShaderGuid;
+		size_t textureGuid;
 
 		template <class Archive>
 		void serialize(Archive& ar)

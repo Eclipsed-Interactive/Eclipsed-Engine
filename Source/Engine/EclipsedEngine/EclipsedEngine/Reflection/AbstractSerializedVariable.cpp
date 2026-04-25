@@ -9,10 +9,11 @@
 #include "AssetEngine/Assets/Prefab.h"
 #include "AssetEngine/Resources.h"
 
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 #include "ReflectionTypeChecks.h"
 #include "EntityEngine/Component.h"
 
+#include "CoreEngine/MainSingleton.h"
+#include "AssetEngine/AssetDatabase.h"
 
 #include "EclipsedEngine/Editor/Windows/EditorField.h"
 
@@ -122,7 +123,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Material))
 				{
-					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 					*mat = Resources::Get<Material>(guid);
 
 					mat->Create();
@@ -144,7 +145,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Audio))
 				{
-					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 					AudioClip clips = Resources::Get<AudioClip>(guid);
 					*clip = clips;
 				}
@@ -164,7 +165,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Texture))
 				{
-					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 					*texture = Resources::Get<Texture>(guid);
 				}
 			} break;
@@ -183,7 +184,7 @@ namespace Eclipse::Reflection
 
 				if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Prefab))
 				{
-					size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+					size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 					*prefab = Resources::Get<Prefab>(guid);
 				}
 			} break;
@@ -202,7 +203,7 @@ namespace Eclipse::Reflection
 
 					if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Font))
 					{
-						size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+						size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 						*font = Resources::Get<Font>(guid);
 					}
 				} break;

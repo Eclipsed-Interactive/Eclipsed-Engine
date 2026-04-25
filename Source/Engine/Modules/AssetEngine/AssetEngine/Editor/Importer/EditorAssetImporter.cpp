@@ -1,8 +1,6 @@
 #include "EditorAssetImporter.h"
 
 #include "AssetEngine/SupportedTypes.h"
-#include "AssetEngine/Editor/MetaFile/AssetMetaManager.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 
 namespace Eclipse
 {

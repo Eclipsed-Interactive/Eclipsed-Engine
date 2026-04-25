@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <string>
 
+#include <cereal/cereal.hpp>
+
 namespace Eclipse
 {
 	enum class AssetType
@@ -22,6 +24,7 @@ namespace Eclipse
 
 		Prefab,
 	};
+
 
 	inline std::unordered_map<std::string, AssetType> extensionToAssetType =
 	{
