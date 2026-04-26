@@ -33,7 +33,8 @@ namespace Eclipse
 		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 		const std::filesystem::path metafilePath = database.GetMetaFilePath(aPath.generic_string().c_str());
 
-		const size_t guid = database.GetMetaData<Assets::AssetMetaData>(aPath.generic_string().c_str()).guid;
+		Assets::AssetMetaData d = database.GetMetaData(aPath.generic_string().c_str());
+		const size_t guid = 0;
 
 		std::filesystem::path artifactPath = GetArtifactPath(guid);
 

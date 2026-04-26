@@ -26,7 +26,8 @@
 #include <fstream>
 
 #include "EclipsedEngine/Editor/Windows/EditorField.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
+
+
 
 void Eclipse::Editor::InspectorWindow::Update()
 {

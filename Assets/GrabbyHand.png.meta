@@ -1,9 +1,13 @@
 {
     "value0": {
         "cereal_class_version": 1,
-        "guid": 7436029193226426661,
+        "guid": 17490362058871065106,
         "type": 1,
-        "fileName": "TX Tileset Grass",
-        "fileExtension": ".png"
+        "fileName": "GrabbyHand",
+        "fileExtension": ".png",
+        "width": -858993460,
+        "height": -858993460,
+        "channels": -858993460,
+        "spriteRects": []
     }
 }

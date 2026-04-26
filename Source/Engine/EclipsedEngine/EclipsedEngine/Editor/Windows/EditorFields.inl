@@ -20,6 +20,8 @@
 #include "EclipsedEngine/Editor/Common/DragAndDrop.h"
 #include "CoreEngine/Files/FileInfo.h"
 
+#include "CoreEngine/MainSingleton.h"
+#include "AssetEngine/AssetDatabase.h"
 #include "AssetEngine/Resources.h"
 
 namespace Eclipse::Editor
@@ -128,7 +130,7 @@ namespace Eclipse::Editor
 
 			if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Material))
 			{
-				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 				aValue = Resources::Get<Material>(guid);
 
 				aValue.Create();
@@ -144,7 +146,7 @@ namespace Eclipse::Editor
 			std::string psName = std::to_string(aValue.pixelShaderGuid);
 			if (Editor::DragAndDrop::BeginTarget(std::string("Pixel Shader: " + psName).c_str(), Utilities::FileInfo::FileType_PixelShader))
 			{
-				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 				aValue.pixelShaderGuid = guid;
 				wasChanged = true;
 			}
@@ -154,7 +156,7 @@ namespace Eclipse::Editor
 			std::string vsName = std::to_string(aValue.vertexShaderGuid);
 			if (Editor::DragAndDrop::BeginTarget(std::string("Vertex Shader: " + vsName).c_str(), Utilities::FileInfo::FileType_VertexShader))
 			{
-				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 				aValue.vertexShaderGuid = guid;
 				wasChanged = true;
 			}
@@ -164,7 +166,7 @@ namespace Eclipse::Editor
 			std::string tName = std::to_string(aValue.textureGuid);
 			if (Editor::DragAndDrop::BeginTarget(std::string("Texture: " + tName). c_str(), Utilities::FileInfo::FileType_Texture))
 			{
-				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 				aValue.textureGuid = guid;
 				wasChanged = true;
 			}
@@ -219,7 +221,7 @@ namespace Eclipse::Editor
 
 			if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Texture))
 			{
-				size_t guid = MetaFileRegistry::GetGUID(Editor::DragAndDrop::payloadBuffer);
+				size_t guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(Editor::DragAndDrop::payloadBuffer).guid;
 				aValue = Resources::Get<Texture>(guid);
 				return true;
 			}

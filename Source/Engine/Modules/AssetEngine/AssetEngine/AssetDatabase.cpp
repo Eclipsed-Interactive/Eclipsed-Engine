@@ -72,7 +72,7 @@ namespace Eclipse::Assets
 		return path;
 	}
 
-	const MetaVariant& AssetDatabase::GetMetaData(size_t aGuid)
+	const AssetMetaData& AssetDatabase::GetMetaData(size_t aGuid)
 	{
 		auto it = myAssets.find(aGuid);
 		if (it == myAssets.end()) return AssetMetaData();
@@ -80,8 +80,8 @@ namespace Eclipse::Assets
 			return it->second;
 		}
 	}
-	
-	const MetaVariant& AssetDatabase::GetMetaData(const char* aPath)
+
+	const AssetMetaData& AssetDatabase::GetMetaData(const char* aPath)
 	{
 		size_t guid = 0;
 		if (std::filesystem::exists(aPath))

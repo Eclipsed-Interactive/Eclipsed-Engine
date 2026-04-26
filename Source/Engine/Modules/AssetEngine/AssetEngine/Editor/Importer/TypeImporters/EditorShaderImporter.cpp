@@ -1,7 +1,5 @@
 #include "AssetEngine/Editor/Importer/TypeImporters/EditorShaderImporter.h"
 
-#include "AssetEngine/Editor/MetaFile/AssetMetaManager.h"
-#include "AssetEngine/Editor/MetaFile/MetaFileRegistry.h"
 #include "AssetEngine/Editor/GUID/GuidGenerator.h"
 
 #include "AssetEngine/Editor/Importer/ImportSettings/AssetImportSettings.h"

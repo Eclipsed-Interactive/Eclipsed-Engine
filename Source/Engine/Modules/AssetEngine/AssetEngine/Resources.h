@@ -75,34 +75,32 @@ namespace Eclipse
 
 	inline Material Resources::GetDefaultUIMaterial()
 	{
-		//std::string guid = "e1e8f217c7b6de20962af363b3b21646";
+		size_t guid = 1879607668924786934;
 
-		//std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-		//std::ifstream in(exportFolderPath, std::ios::binary);
+		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / std::to_string(guid).substr(0, 2) / std::to_string(guid);
+		std::ifstream in(exportFolderPath, std::ios::binary);
 
-		//AssetType type = AssetType::Unknown;
-		//in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		AssetType type = AssetType::Unknown;
+		in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		//if (!in.is_open()) return {};
+		if (!in.is_open()) return {};
 
-		//return materialManager.Get(guid, in);
-		return {};
+		return materialManager.Get(guid, in);
 	}
 
 	inline Material Resources::GetDefaultSpriteMaterial()
 	{
-		//std::string guid = "c88768d2848748424f797159699b3d5c";
+		size_t guid = 5899453476647207916;
 
-		//std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / guid.substr(0, 2) / guid;
-		//std::ifstream in(exportFolderPath, std::ios::binary);
+		std::filesystem::path exportFolderPath = PathManager::GetArtifactsPath() / std::to_string(guid).substr(0, 2) / std::to_string(guid);
+		std::ifstream in(exportFolderPath, std::ios::binary);
 
-		//AssetType type = AssetType::Unknown;
-		//in.read(reinterpret_cast<char*>(&type), sizeof(int));
+		AssetType type = AssetType::Unknown;
+		in.read(reinterpret_cast<char*>(&type), sizeof(int));
 
-		//if (!in.is_open()) return {};
+		if (!in.is_open()) return {};
 
-		//return materialManager.Get(guid, in);
-		return {};
+		return materialManager.Get(guid, in);
 	}
 
 	inline Font Resources::GetDefaultFont()

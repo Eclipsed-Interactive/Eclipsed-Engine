@@ -73,7 +73,8 @@ namespace Eclipse
         myEntityIdToEntity.clear();
         myEntityIDToVectorOfComponentIDs.clear();
 
-        Init();
+        // TODO: MAKES NO SENSE. 
+       /*WHY? -> */ Init(); // <- Made by Simon.
     }
 
     void ComponentManager::AwakeComponents()

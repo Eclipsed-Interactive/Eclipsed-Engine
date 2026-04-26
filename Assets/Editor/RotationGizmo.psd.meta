@@ -1,9 +1,13 @@
 {
     "value0": {
         "cereal_class_version": 1,
-        "guid": 7436029193226426661,
+        "guid": 15099939555042007614,
         "type": 1,
-        "fileName": "TX Tileset Grass",
-        "fileExtension": ".png"
+        "fileName": "RotationGizmo",
+        "fileExtension": ".psd",
+        "width": -858993460,
+        "height": -858993460,
+        "channels": -858993460,
+        "spriteRects": []
     }
 }

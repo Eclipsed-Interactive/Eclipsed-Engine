@@ -30,9 +30,9 @@ namespace Eclipse
 
 
 
-		const Assets::TextureMetaData& meta = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(aPath.generic_string().c_str());
-		int dataAmount = texMetaSettings.spriteRects.size();
+		const Assets::AssetMetaData& meta = MainSingleton::GetInstance<Assets::AssetDatabase>().GetMetaData(aPath.generic_string().c_str());
+		int dataAmount = meta.spriteRects.size();
 		outStream.write(reinterpret_cast<const char*>(&dataAmount), sizeof(int));
-		outStream.write(reinterpret_cast<const char*>(texMetaSettings.spriteRects.data()), dataAmount);
+		outStream.write(reinterpret_cast<const char*>(meta.spriteRects.data()), dataAmount);
 	}
 }
