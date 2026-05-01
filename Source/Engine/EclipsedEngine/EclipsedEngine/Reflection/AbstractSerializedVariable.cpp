@@ -258,7 +258,7 @@ namespace Eclipse::Reflection
 				break;
 			}
 
-			ImGui::SetCursorPosX(startPos.x);
+			//ImGui::SetCursorPosX(startPos.x);
 		}
 
 		pComponent->OnDrawInspector();

@@ -6,8 +6,7 @@
 #include "CoreEngine/PathManager.h"
 #include "EclipsedEngine/Editor/EditorUIManager.h"
 
-#include "EclipsedEngine/Editor/Windows/WindowTypes/InspectorWindow.h"
-#include "EclipsedEngine/Editor/Windows/WindowTypes/HierarchyWindow.h"
+#include "EclipsedEngine/Editor/Windows/WindowTypes/Inspector/InspectorWindow.h"
 #include "EclipsedEngine/Editor/Common/DragAndDrop.h"
 #include "CoreEngine/Math/CommonMath.h"
 
@@ -15,6 +14,8 @@
 
 #include "CoreEngine/Settings/EditorSettings.h"
 #include "Editor/Windows/WindowTypes/SceneWindow.h"
+
+#include "EclipsedEngine/Editor/SelectionContext.h"
 
 namespace Eclipse::Editor
 {
@@ -128,13 +129,10 @@ namespace Eclipse::Editor
 
 				Active_Hierarchy_Node = dirTree.GetNode(child->info.filePath);
 				ActivePath = child->info.filePath;
-				InspectorWindow::SetActiveType(ActiveItemTypes_Asset);
 				ActiveEntryIndex = entryIndex;
 
-
 				ctxMenu.SetActivePath(ActivePath);
-
-				HierarchyWindow::CurrentGameObjectID = 0;
+				SelectionContext::SetActiveContext(AssetTarget(ActivePath));
 			}
 
 			if (ImGui::IsItemClicked())
@@ -316,7 +314,7 @@ namespace Eclipse::Editor
 				else
 					pathToPlacePrefab = PathManager::GetAssetsPath();
 
-				HierarchyWindow::CreatePrefab(draggedEntityID, pathToPlacePrefab);
+				//HierarchyWindow::CreatePrefab(draggedEntityID, pathToPlacePrefab);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -372,12 +370,11 @@ namespace Eclipse::Editor
 		if (ImGui::IsItemHovered() && (ImGui::IsMouseReleased(ImGuiMouseButton_Left) || ImGui::IsMouseClicked(ImGuiMouseButton_Right)))
 		{
 			ActivePath = node->info.filePath;
-			InspectorWindow::SetActiveType(ActiveItemTypes_Asset);
+			SelectionContext::SetActiveContext(AssetTarget(ActivePath));
+
 			ActiveEntryIndex = entryIndex;
 
 			ctxMenu.SetActivePath(ActivePath);
-
-			HierarchyWindow::CurrentGameObjectID = 0;
 		}
 
 		float currentWidth = ImGui::GetItemRectMax().x;
@@ -426,7 +423,7 @@ namespace Eclipse::Editor
 				return;
 
 			SceneManager::UnloadScene();
-			PhysicsEngine::InitWorld();
+			//PhysicsEngine::InitWorld();
 
 			SceneManager::SetActiveSceneType(SceneManager::Prefab);
 			SceneManager::SetActiveScene(fifo.filePath.generic_string().c_str());
@@ -438,8 +435,8 @@ namespace Eclipse::Editor
 			memset(data + prefSize, '\0', 1);
 			stream.close();
 
-			GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
-			SceneManager::ActivePrefabEditSceneID = gameobject->GetID();
+			//GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+			//SceneManager::ActivePrefabEditSceneID = gameobject->GetID();
 
 			SceneWindow::ResetCamera();
 

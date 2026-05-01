@@ -21,6 +21,7 @@ namespace Eclipse
 	namespace Editor {
 		class HierarchyWindow;
 		class InspectorWindow;
+		class GameObjectInspector;
 		class EditorActions;
 	}
 
@@ -32,6 +33,7 @@ namespace Eclipse
 	{
 		friend class Editor::EditorActions;
 		friend class Editor::HierarchyWindow;
+		friend class Editor::GameObjectInspector;
 		friend class Editor::InspectorWindow;
 		friend class SceneLoader;
 

@@ -15,11 +15,13 @@
 #include "EclipsedEngine/Components/UI/Button.h"
 
 #include "Editor/Windows/WindowTypes/AssetWindow/AssetWindow.h"
-#include "Editor/Windows/WindowTypes/InspectorWindow.h"
+//#include "Editor/Windows/WindowTypes/InspectorWindow.h"
 #include "Editor/Common/EditorActions.h"
 #include "Editor/EditorUIManager.h"
 
 #include "Font-Awesome/7/IconsFontAwesome7.h"
+
+#include "EclipsedEngine/Editor/SelectionContext.h"
 
 namespace Eclipse::Editor
 {
@@ -104,7 +106,7 @@ namespace Eclipse::Editor
         if (clickedButton)
         {
             CurrentGameObjectID = id;
-            InspectorWindow::SetActiveType(ActiveItemTypes_GameObject);
+            SelectionContext::SetActiveContext(GameObjectTarget{ CurrentGameObjectID });
         }
 
         ImGui::PopFont();
@@ -322,7 +324,7 @@ namespace Eclipse::Editor
                     Transform2D* transform = obj->AddComponent<Transform2D>();
                     transform->SetScale(Math::Vector2f(20, 20));
 
-                    obj->AddComponent<SpriteRenderer2D>();
+                    //obj->AddComponent<SpriteRenderer2D>();
 
                     obj->SetName("New Sprite");
                 }
@@ -408,6 +410,8 @@ namespace Eclipse::Editor
                     gameobject->Delete();
                     gameobjectIdsThatAreOpen.erase(currentObject);
                     HierarchyWindow::CurrentGameObjectID = 0;
+
+                    SelectionContext::SetActiveContext(GameObjectTarget{ CurrentGameObjectID });
                 }
             }
         }
