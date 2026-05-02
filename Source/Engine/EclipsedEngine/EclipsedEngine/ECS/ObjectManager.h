@@ -9,8 +9,7 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EntityEngine/GameObject.h"
 
-#include "AssetEngine/Assets/Prefab.h"
-#include "AssetEngine/Data/PrefabData.h"
+#include "AssetEngine/AssetManager.h"
 
 #include "CoreEngine/Macros/defines.h"
 
@@ -33,10 +32,10 @@ namespace Eclipse
             int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated);
     };
 
-    ECLIPSED_API inline GameObject*& Instantiate(Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
+    ECLIPSED_API inline GameObject*& Instantiate(Assets::Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
     {
-        GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(aPrefab.GetData()->data);
-        gameobject->prefabAssetID = aPrefab.GetAssetID();
+        GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(aPrefab.dataPtr->data);
+        gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
         gameobject->IsPrefab = true;
 
         if (instagator)
@@ -45,8 +44,8 @@ namespace Eclipse
         if (Replicated)
             Replication::ReplicationManager::SendPrefabObject(gameobject, aPrefab);
         
-        aPrefab.GetData()->gameobject = gameobject;
-        return aPrefab.GetData()->gameobject;
+        aPrefab.dataPtr->gameobject = gameobject;
+        return aPrefab.dataPtr->gameobject;
     }
 
     ECLIPSED_API inline void Destroy(Component* component)

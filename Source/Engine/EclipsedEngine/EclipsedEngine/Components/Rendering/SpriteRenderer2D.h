@@ -9,7 +9,7 @@
 #include "CoreEngine/Math/Vector/Vector2.h"
 #include "CoreEngine/Math/Color.h"
 
-#include "AssetEngine/Assets/Material.h"
+#include "AssetEngine/AssetManager.h"
 #include "CoreEngine/Macros/defines.h"
 #include "CoreEngine/GraphicsBuffers/SpriteBuffer.h"
 #include "CoreEngine/GraphicsBuffers/TransformBuffer.h"
@@ -31,14 +31,14 @@ namespace Eclipse
         void Render() override;
         void Draw(unsigned aProgramID = 0);
 
-        Texture GetSprite();
+        Assets::Texture GetSprite();
 
-        void SetSprite(const size_t& aGuid);
-        void SetSprite(const Texture& aSprite);
+        void SetSprite(const Assets::GUID& aGuid);
+        void SetSprite(const Assets::Texture& aSprite);
 
-        void SetMaterial(const size_t& aGuid);
-        void SetMaterial(const Material& aMaterial);
-        Material* GetMaterial() { return nullptr; }
+        void SetMaterial(const Assets::GUID& aGuid);
+        void SetMaterial(const Assets::Material& aMaterial);
+        Assets::Material* GetMaterial() { return nullptr; }
 
         void SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax);
 
@@ -60,8 +60,8 @@ namespace Eclipse
         TransformBuffer myTransformBuffer;
         SpriteBuffer mySpriteBuffer;
         
-        MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, SpriteRenderer2D);
-        SERIALIZED_FIELD(Material, material);
+        MANUAL_REPLICATED_SERIALIZED_FIELD(Assets::Texture, sprite, SpriteRenderer2D);
+        SERIALIZED_FIELD(Assets::Material, material);
 
     };
 }

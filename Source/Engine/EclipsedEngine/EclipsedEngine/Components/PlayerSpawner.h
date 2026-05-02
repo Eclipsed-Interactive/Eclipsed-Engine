@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/Assets/Prefab/PrefabAsset.h"
 
 #include "EclipsedEngine/Components/Component.h"
 
@@ -29,8 +29,8 @@ namespace Eclipse
             Instantiate(soulForgePrefab, gameObject, true);
         }
         
-        SERIALIZED_FIELD(Prefab, soulForgePrefab);
-        SERIALIZED_FIELD(Prefab, soulSuckerPrefab);
+        SERIALIZED_FIELD(Assets::Prefab, soulForgePrefab);
+        SERIALIZED_FIELD(Assets::Prefab, soulSuckerPrefab);
 
     };
 }

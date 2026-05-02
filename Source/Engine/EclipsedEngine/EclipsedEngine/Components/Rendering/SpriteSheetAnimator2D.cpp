@@ -15,11 +15,11 @@ namespace Eclipse
        if (!mySpriteRenderer)
            return;
 
-       Texture sprite = mySpriteRenderer->GetSprite();
+       Assets::Texture sprite = mySpriteRenderer->GetSprite();
        if (!sprite.IsValid())
            return;
 
-       const std::vector<Math::RectSizePos>& spriteRects = sprite.GetRects();
+       const std::vector<Math::RectSizePos>& spriteRects = sprite.GetSpriteRects();
        if (spriteRects.empty())
            return;
 
@@ -57,7 +57,7 @@ namespace Eclipse
                }
            }
 
-           const std::vector<Math::RectSizePos>& spriteRects = mySpriteRenderer->GetSprite().GetRects();
+           const std::vector<Math::RectSizePos>& spriteRects = mySpriteRenderer->GetSprite().GetSpriteRects();
 
            if (spriteRects.empty())
                return;
@@ -73,11 +73,11 @@ namespace Eclipse
        if (!mySpriteRenderer)
            return;
 
-       Texture sprite = mySpriteRenderer->GetSprite();
+       Assets::Texture sprite = mySpriteRenderer->GetSprite();
        if (!sprite.IsValid())
            return;
 
-       const std::vector<Math::RectSizePos>& spriteRects = sprite.GetRects();
+       const std::vector<Math::RectSizePos>& spriteRects = sprite.GetSpriteRects();
        if (spriteRects.empty())
            return;
 

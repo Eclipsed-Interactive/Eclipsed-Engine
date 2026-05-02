@@ -2,7 +2,6 @@
 
 #include "GraphicsEngine/RenderCommands/CommandList.h"
 
-#include "AssetEngine/Resources.h"
 #include "GraphicsEngine/TextSprite.h"
 #include "GraphicsEngine/OpenGL/OpenGLGraphicsAPI.h"
 

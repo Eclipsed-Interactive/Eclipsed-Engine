@@ -10,7 +10,7 @@
 #include "EclipsedEngine/Components/Component.h"
 #include "EntityEngine/GameObject.h"
 
-#include "AssetEngine/Data/AssetData.h"
+//#include "AssetEngine/Data/AssetData.h"
 //#include "AssetEngine/Models/AssetDatas/Handles/AssetHandle.h"
 
 namespace Eclipse::Replication

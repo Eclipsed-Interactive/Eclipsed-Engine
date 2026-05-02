@@ -19,8 +19,8 @@
 #include "CoreEngine/Settings/GraphicsSettings.h"
 #include "CoreEngine/Settings/EditorSettings.h"
 
-#include "AssetEngine/Editor/Importer/EditorAssetImporter.h"
-#include "AssetEngine/AssetDatabase.h"
+#include "AssetEngine/Pipeline/AssetDataBase.h"
+//#include "AssetEngine/AssetDatabase.h"
 
 #include "CoreEngine/MainSingleton.h"
 
@@ -35,11 +35,8 @@ namespace Eclipse::Editor
 		{ // register asses
 			MainSingleton::RegisterInstance<Assets::AssetDatabase>();
 
-			std::string engineAssetsPath = PathManager::GetEngineAssetsPath().generic_string();
-			MainSingleton::GetInstance<Assets::AssetDatabase>().ImportAssets(engineAssetsPath.c_str(), "Engine/", 1);
-
-			std::string projectAssetsPath = PathManager::GetAssetsPath().generic_string();
-			MainSingleton::GetInstance<Assets::AssetDatabase>().ImportAssets(projectAssetsPath.c_str(), "Project/", 2);
+			MainSingleton::GetInstance<Assets::AssetDatabase>().ProcessSource(PathManager::GetEngineAssetsPath(), "Engine/");
+			MainSingleton::GetInstance<Assets::AssetDatabase>().ProcessSource(PathManager::GetAssetsPath(), "Project/");
 		}
 
 

@@ -8,11 +8,11 @@
 
 #include <typeindex>
 
-#include "AssetEngine/Assets/Material.h"
-#include "AssetEngine/Assets/AudioClip.h"
-#include "AssetEngine/Assets/Font.h"
-#include "AssetEngine/Assets/Texture.h"
-#include "AssetEngine/Assets/Prefab.h"
+//#include "AssetEngine/Assets/Material.h"
+//#include "AssetEngine/Assets/AudioClip.h"
+//#include "AssetEngine/Assets/Font.h"
+//#include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/Assets/Texture/TextureAsset.h"
 
 #include "CoreEngine/Math/Random.h"
 
@@ -149,31 +149,31 @@ namespace Eclipse::Reflection
 			sizePerElement = sizeof(T);
 		}
 
-		else if constexpr (std::is_same<T, Eclipse::Material>::value)
-		{
-			type = SerializedType_Material;
-			sizePerElement = sizeof(Eclipse::Material);
-		}
-		else if constexpr (std::is_same<T, Eclipse::AudioClip>::value)
-		{
-			type = SerializedType_AudioClip;
-			sizePerElement = sizeof(Eclipse::AudioClip);
-		}
-		else if constexpr (std::is_same<T, Eclipse::Texture>::value)
+		//else if constexpr (std::is_same<T, Assets::Material>::value)
+		//{
+		//	type = SerializedType_Material;
+		//	sizePerElement = sizeof(Assets::Material);
+		//}
+		//else if constexpr (std::is_same<T, Assets::AudioClip>::value)
+		//{
+		//	type = SerializedType_AudioClip;
+		//	sizePerElement = sizeof(Assets::AudioClip);
+		//}
+		else if constexpr (std::is_same<T, Assets::Texture>::value)
 		{
 			type = SerializedType_Texture;
-			sizePerElement = sizeof(Eclipse::Texture);
+			sizePerElement = sizeof(Assets::Texture);
 		}
-		else if constexpr (std::is_same<T, Eclipse::Prefab>::value)
-		{
-			type = SerializedType_Prefab;
-			sizePerElement = sizeof(Eclipse::Prefab);
-		}
-		else if constexpr (std::is_same<T, Eclipse::Font>::value)
-		{
-			type = SerializedType_Font;
-			sizePerElement = sizeof(Eclipse::Font);
-		}
+		//else if constexpr (std::is_same<T, Assets::Prefab>::value)
+		//{
+		//	type = SerializedType_Prefab;
+		//	sizePerElement = sizeof(Assets::Prefab);
+		//}
+		//else if constexpr (std::is_same<T, Assets::Font>::value)
+		//{
+		//	type = SerializedType_Font;
+		//	sizePerElement = sizeof(Assets::Font);
+		//}
 
 		else if constexpr (std::is_same<T, Math::Color>::value)
 		{

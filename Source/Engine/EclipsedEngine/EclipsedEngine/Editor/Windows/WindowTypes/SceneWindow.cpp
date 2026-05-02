@@ -354,7 +354,7 @@ void Eclipse::Editor::SceneWindow::Update()
 			::Eclipse::Transform2D* transform = GetComp(::Eclipse::Transform2D, SelectionContext::GetCurrentData<GameObjectTarget>());
 
 			DebugDrawer::Get().Begin();
-			Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetTextureSizeNormilized();
+			Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetSizeNormalized();
 			Math::Vector2f size = mySelectedObject->spriteRectMax - mySelectedObject->spriteRectMin;
 			float aspectScale = size.y / size.x;
 

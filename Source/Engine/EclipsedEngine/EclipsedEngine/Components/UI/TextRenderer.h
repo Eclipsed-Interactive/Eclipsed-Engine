@@ -3,9 +3,8 @@
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
-#include "AssetEngine/Assets/VertexShader.h"
-#include "AssetEngine/Assets/PixelShader.h"
-#include "AssetEngine/Assets/Font.h"
+#include "AssetEngine/Assets/Shader/ShaderAsset.h"
+#include "AssetEngine/Assets/Font/FontAsset.h"
 
 #include "CoreEngine/PathManager.h"
 #include "CoreEngine/GraphicsBuffers/TextBuffer.h"
@@ -23,8 +22,7 @@ namespace Eclipse
         TextMaterial();
         void Use(unsigned textureID);
 
-        VertexShader vertexShader;
-        PixelShader pixelShader;
+        Assets::Shader shader;
 
         unsigned programID = 0;
 
@@ -62,7 +60,7 @@ namespace Eclipse
         SERIALIZED_FIELD_DEFAULT(Math::Color, myTextColor, Math::Color(1, 1, 1, 1));
 
         //SERIALIZED_FIELD_DEFAULT(std::string, myFontPath, (PathManager::GetEngineAssetsPath() / "Fonts/Quicksand-VariableFont_wght.ttf").generic_string());
-        SERIALIZED_FIELD(Font, font);
+        SERIALIZED_FIELD(Assets::Font, font);
         
         SERIALIZED_FIELD_STEP_DEFAULT(float, myFontSize, 0.1f, 48.f);
 

@@ -35,7 +35,7 @@ namespace Eclipse
 	void AudioEmitter::Play() {
 		isPlaying = true;
 		channel->setPaused(isPlaying);
-		AudioManager::PlayAudio(audioClip->data->sound, &channel);
+		AudioManager::PlayAudio(audioClip->dataPtr->sound, &channel);
 	}
 
 	void AudioEmitter::Resume() {
@@ -48,7 +48,7 @@ namespace Eclipse
 		channel->setPaused(true);
 	}
 
-	void AudioEmitter::SetAudioClip(AudioClip clip)
+	void AudioEmitter::SetAudioClip(Assets::Audio clip)
 	{
 		audioClip = clip;
 

@@ -11,9 +11,7 @@
 
 #include <vector>
 #include <string>
-#include "AssetEngine/Assets/Material.h"
-#include "AssetEngine/Assets/AudioClip.h"
-#include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/AssetManager.h"
 
 #include "PhysicsEngine/PhysicsEngineSettings.h"
 
@@ -21,8 +19,6 @@
 #include "CoreEngine/Files/FileInfo.h"
 
 #include "CoreEngine/MainSingleton.h"
-#include "AssetEngine/AssetDatabase.h"
-#include "AssetEngine/Resources.h"
 
 namespace Eclipse::Editor
 {
@@ -116,10 +112,10 @@ namespace Eclipse::Editor
 		}
 	};
 
-	template<>
-	struct EditorFieldDrawer<Material, SerializedMaterial>
+	/*template<>
+	struct EditorFieldDrawer<Assets::Material, Assets::MaterialData>
 	{
-		static bool DrawField(Material& aValue)
+		static bool DrawField(Assets::Material& aValue)
 		{
 			std::string name = "No material.";
 
@@ -235,7 +231,7 @@ namespace Eclipse::Editor
 
 			return false;
 		}
-	};
+	};*/
 
 	template<>
 	struct EditorFieldDrawer<Layer>

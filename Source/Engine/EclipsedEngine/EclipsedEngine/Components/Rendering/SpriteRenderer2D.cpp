@@ -10,7 +10,6 @@
 
 #include "OpenGL/glad/glad.h"
 
-#include "AssetEngine/Resources.h"
 #include "CoreEngine/GraphicsBuffers/EditorBuffer.h"
 
 namespace Eclipse
@@ -33,15 +32,16 @@ namespace Eclipse
 	void SpriteRenderer2D::SetYMirror(bool aMirror) { mirroredY = aMirror; }
 
 #pragma region --- Set Sprite
-	void SpriteRenderer2D::SetSprite(const size_t& aGuid)
+	void SpriteRenderer2D::SetSprite(const Assets::GUID& aGuid)
 	{
-		sprite = Resources::Get<Eclipse::Texture>(aGuid);
+		assert("No loading assets implemented.");
+		//sprite = Resources::Get<Eclipse::Texture>(aGuid);
 		hasSprite = true;
 
 		REPLICATEGARANTIED(sprite);
 	}
 
-	void SpriteRenderer2D::SetSprite(const Eclipse::Texture& aSprite)
+	void SpriteRenderer2D::SetSprite(const Assets::Texture& aSprite)
 	{
 		sprite = aSprite;
 		hasSprite = true;
@@ -49,20 +49,21 @@ namespace Eclipse
 		REPLICATEGARANTIED(sprite);
 	}
 #pragma endregion
-	void SpriteRenderer2D::SetMaterial(const size_t& aGuid)
+	void SpriteRenderer2D::SetMaterial(const Assets::GUID& aGuid)
 	{
-		material = Resources::Get<Eclipse::Material>(aGuid);
+		assert("No loading assets implemented.");
+		//material = Resources::Get<Assets::Material>(aGuid);
 		hasMaterial = true;
 	}
 
-	void SpriteRenderer2D::SetMaterial(const Eclipse::Material& aMaterial)
+	void SpriteRenderer2D::SetMaterial(const Assets::Material& aMaterial)
 	{
 		material = aMaterial;
 		hasMaterial = true;
 	}
 
 
-	Texture SpriteRenderer2D::GetSprite()
+	Assets::Texture SpriteRenderer2D::GetSprite()
 	{
 		return sprite;
 	}
@@ -74,8 +75,11 @@ namespace Eclipse
 
 		if (!hasMaterial)
 		{
-			material = Resources::GetDefaultSpriteMaterial();
-			material->Create();
+			// No material creating.
+			assert("No material creating when this is called.");
+
+			//material = Resources::GetDefaultSpriteMaterial();
+			//material->Create();
 
 			hasMaterial = true;
 		}
@@ -100,6 +104,9 @@ namespace Eclipse
 		// if (aProgramID)
 		// 	shaderID = aProgramID;
 
+		assert("No binding use or buffers.");
+
+#if 0
 		if (sprite->IsValid())
 		{
 			material->BindShader();
@@ -140,5 +147,6 @@ namespace Eclipse
 		GraphicsEngine::Get<OpenGLGraphicsEngine>()->GetGraphicsBuffer()->SetOrCreateBuffer(3, mySpriteBuffer);
 
 		Sprite::Get().Render();
+#endif
 	}
 }

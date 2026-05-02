@@ -1,6 +1,9 @@
 #pragma once
 
-namespace Eclipse
+#include "CoreEngine/Math/Vector/Vector2.h"
+#include <unordered_map>
+
+namespace Eclipse::Assets
 {
     struct Character
     {

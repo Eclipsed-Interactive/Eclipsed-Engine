@@ -7,7 +7,7 @@
 
 #include <CoreEngine/Math/Vector/Vector2.h>
 
-#include "AssetEngine/Assets/AudioClip.h"
+#include "AssetEngine/AssetManager.h"
 
 namespace FMOD {
 	class Channel;
@@ -38,7 +38,7 @@ namespace Eclipse
 		void Resume();
 		void Pause();
 
-		void SetAudioClip(AudioClip clip);
+		void SetAudioClip(Assets::Audio clip);
 
 		void SetVolume(float aVolume);
 		float GetVolume() const;
@@ -47,7 +47,7 @@ namespace Eclipse
 		void UpdateAudioPosition();
 
 	public:
-		SERIALIZED_FIELD(AudioClip, audioClip);
+		SERIALIZED_FIELD(Assets::Audio, audioClip);
 
 		SERIALIZED_FIELD_DEFAULT(bool, EnableSpatial, true);
 		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);

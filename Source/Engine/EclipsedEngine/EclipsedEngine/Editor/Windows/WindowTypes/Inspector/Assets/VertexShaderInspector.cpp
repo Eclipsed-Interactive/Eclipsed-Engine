@@ -1,6 +1,5 @@
 #include "VertexShaderInspector.h"
-
-#include "AssetEngine/SupportedTypes.h"
+#include "AssetEngine/SupportedAssets.h"
 #include "ImGui/ImGui.h"
 
 namespace Eclipse::Editor
@@ -10,7 +9,7 @@ namespace Eclipse::Editor
 		if (!std::holds_alternative<AssetTarget>(target)) return false;
 
 		AssetTarget asset = std::get<AssetTarget>(target);
-		return GetAssetTypeFromExtension(asset.extension().string()) == AssetType::VertexShader;
+		return Assets::GetAssetTypeFromExtension(asset.extension().string()) == Assets::AssetType::VertexShader;
 	}
 
 	void VertexShaderInspector::Draw(const InspectableTarget& target)

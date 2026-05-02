@@ -5,6 +5,7 @@
 #include "asio/asio.hpp"
 
 #include "NetworkEngine/Shared/Message.h"
+#include "AssetEngine/Assets/Prefab/PrefabAsset.h"
 
 namespace Eclipse
 {
@@ -66,10 +67,10 @@ namespace Eclipse::Replication
         static void CreateGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void DeleteGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void CreateComponentMessage(Eclipse::Component* aComponent, NetMessage& outMessage, bool aStartLater = false);
-        static void CreatePrefabMessage(unsigned aGOID, const size_t& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
+        static void CreatePrefabMessage(unsigned aGOID, const Assets::GUID& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
     public:
         // Direct send functions
-        static void SendPrefabObject(GameObject* gameobject, Prefab& aPrefab);
+        static void SendPrefabObject(GameObject* gameobject, Assets::Prefab& aPrefab);
 
     private:
         static inline std::unordered_map<unsigned, std::vector<BaseReplicatedVariable*>>* BeforeReplicatedVariableList;

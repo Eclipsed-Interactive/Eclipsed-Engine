@@ -5,7 +5,7 @@
 
 #include "EntityEngine/Component.h"
 
-#include "AssetEngine/Assets/Prefab.h"
+#include "AssetEngine/Assets/Prefab/PrefabAsset.h"
 
 #include "NetworkEngine/Client/SteamP2PNetworkingClient.h"
 #include "NetworkEngine/Server/SteamP2PNetworkingServer.h"
@@ -188,18 +188,19 @@ namespace Eclipse::Replication
         outMessage = NetMessage::BuildGameObjectMessage(aComponent->gameObject->GetID(), MessageType::Msg_AddComponent, Data, DataAmount, true, aStartLater);
     }
 
-    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const size_t& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
+    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const Assets::GUID& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
     {
         char Data[512];
 
-        const int guidSize = 32;
+        const std::string guidStr = PrefabAssetID.ToString();
+        const int guidSize = guidStr.size();
         int componentsCount = aComponentIDs.size();
         int totalComponentPrefabsize = aComponentIDs.size() * sizeof(unsigned);
         int DataAmount = guidSize + sizeof(componentsCount) + totalComponentPrefabsize;
 
         int offset = 0;
 
-        memcpy(Data, &PrefabAssetID, guidSize);
+        memcpy(Data, guidStr.c_str(), guidSize);
         offset += guidSize;
         memcpy(Data + offset, &componentsCount, sizeof(componentsCount));
         offset += sizeof(componentsCount);
@@ -221,7 +222,7 @@ namespace Eclipse::Replication
             BuildComponentVector(child, aComponentIDs);
     }
 
-    void ReplicationManager::SendPrefabObject(GameObject* gameobject, Prefab& aPrefab)
+    void ReplicationManager::SendPrefabObject(GameObject* gameobject, Assets::Prefab& aPrefab)
     {
         std::vector<unsigned> componentIDs;
         BuildComponentVector(gameobject, componentIDs);

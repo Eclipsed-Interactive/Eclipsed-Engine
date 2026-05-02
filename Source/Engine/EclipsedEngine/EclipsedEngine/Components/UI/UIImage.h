@@ -3,8 +3,8 @@
 #include "Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
-#include "AssetEngine/Assets/Material.h"
-#include "AssetEngine/Assets/Texture.h"
+#include "AssetEngine/Assets/Material/MaterialAsset.h"
+#include "AssetEngine/Assets/Texture/TextureAsset.h"
 
 namespace Eclipse
 {
@@ -26,8 +26,8 @@ namespace Eclipse
         Math::Vector2f spriteRectMin = { 0.f, 0.f };
         Math::Vector2f spriteRectMax = { 1.f, 1.f };
 
-        MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
-        SERIALIZED_FIELD(Material, material);
+        MANUAL_REPLICATED_SERIALIZED_FIELD(Assets::Texture, sprite, UIImage);
+        SERIALIZED_FIELD(Assets::Material, material);
 
         TransformBuffer myTransformBuffer;
     };

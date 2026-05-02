@@ -1,6 +1,6 @@
 #include "MaterialInspector.h"
 
-#include "AssetEngine/SupportedTypes.h"
+#include "AssetEngine/SupportedAssets.h"
 #include "ImGui/ImGui.h"
 
 #include "EclipsedEngine/Editor/Windows/EditorField.h"
@@ -12,21 +12,21 @@ namespace Eclipse::Editor
 		if (!std::holds_alternative<AssetTarget>(target)) return false;
 
 		AssetTarget asset = std::get<AssetTarget>(target);
-		return GetAssetTypeFromExtension(asset.extension().string()) == AssetType::Material;
+		return Assets::GetAssetTypeFromExtension(asset.extension().string()) == Assets::AssetType::Material;
 	}
 
 	void MaterialInspector::Draw(const InspectableTarget& target)
 	{
 		AssetTarget asset = std::get<AssetTarget>(target);
 
-		SerializedMaterial data;
+		Assets::MaterialData data;
 		{ // Read material
 			std::ifstream in(asset);
 			cereal::JSONInputArchive ar(in);
 			ar(data);
 		}
 
-		bool wasChanged = EditorFieldDrawer<Material, SerializedMaterial>::DrawEditor(data);
+		bool wasChanged = EditorFieldDrawer<Assets::Material, Assets::MaterialData>::DrawEditor(data);
 		if (wasChanged)
 		{
 			std::ofstream out(asset);
