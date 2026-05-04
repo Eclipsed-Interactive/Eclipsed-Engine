@@ -19,7 +19,7 @@
 #include "CoreEngine/Settings/GraphicsSettings.h"
 #include "CoreEngine/Settings/EditorSettings.h"
 
-#include "AssetEngine/Pipeline/AssetDataBase.h"
+#include "AssetEngine/AssetManager.h"
 //#include "AssetEngine/AssetDatabase.h"
 
 #include "CoreEngine/MainSingleton.h"
@@ -33,14 +33,12 @@ namespace Eclipse::Editor
 		ComponentForcelink::LinkComponents();
 
 		{ // register asses
-			MainSingleton::RegisterInstance<Assets::AssetDatabase>();
+			MainSingleton::RegisterInstance<Assets::AssetManager>();
 
-			MainSingleton::GetInstance<Assets::AssetDatabase>().ProcessSource(PathManager::GetEngineAssetsPath(), "Engine/");
-			MainSingleton::GetInstance<Assets::AssetDatabase>().ProcessSource(PathManager::GetAssetsPath(), "Project/");
+			MainSingleton::GetInstance<Assets::AssetManager>().ImportAssets(PathManager::GetEngineAssetsPath(), "Engine/");
+			MainSingleton::GetInstance<Assets::AssetManager>().ImportAssets(PathManager::GetAssetsPath(), "Project/");
 		}
 
-
-		EditorAssetImporter::ImportAll(PathManager::GetAssetsPath());
 		eclipseRuntime.StartEngine(path);
 
 		if (std::filesystem::exists(PathManager::GetGameDllBuildPath() / "Game.dll")) GameLoader::LoadGameDLL();

@@ -2,9 +2,8 @@
 
 namespace Eclipse::Assets
 {
-    class BinaryWriter
+    class ProcessedData
     {
     public:
-
     };
 }

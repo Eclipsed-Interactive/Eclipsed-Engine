@@ -1,44 +1,48 @@
 #pragma once
 
-#include "AssetEngine/Loading/AssetLoader.h"
+#include <filesystem>
+#include "AssetTypes/IAssetType.h"
 
 #include "Assets/Asset.h"
-#include "Assets/Audio/AudioAsset.h"
-#include "Assets/Font/FontAsset.h"
-#include "Assets/Material/MaterialAsset.h"
-#include "Assets/Prefab/PrefabAsset.h"
-#include "Assets/Shader/ShaderAsset.h"
-#include "Assets/Texture/TextureAsset.h"
+#include "Assets/AudioAsset.h"
+#include "Assets/FontAsset.h"
+#include "Assets/MaterialAsset.h"
+#include "Assets/PrefabAsset.h"
+#include "Assets/TextureAsset.h"
+#include "Assets/Shader/PixelShaderAsset.h"
+#include "Assets/Shader/VertexShaderAsset.h"
 
-#include "GUID.h"
+#include "AssetEngine/Core/EditorAssetDatabase.h"
 
-
-
+#include "CoreEngine/MainSingleton.h"
 
 namespace Eclipse::Assets
 {
-	class Resources
-	{
-	public:
-		template<typename T>
-		T Get(GUID guid);
+    class AssetManager
+    {
+    public:
+        template<typename T>
+        T Load(const GUID& guid);
 
 
 
-	private:
-		static ShaderManager shaderManager;
-		static TextureManager  textureManager;
-		static MaterialManager  materialManager;
-		static PrefabManager prefabManager;
-		static FontManager  fontManager;
-		static AudioClipManager audioClipManager;
-	};
 
-	template<typename T>
-	inline T Resources::Get(GUID guid)
-	{
-		if constexpr(std::is_same<T, Texture>::value) return textureManager.Load()
 
-		return T();
-	}
+
+        // IFDEF EDITOR
+        void ImportAssets(const std::filesystem::path& path, const std::string& key = "Assets");
+
+        void RegisterTypes();
+
+        IAssetType* GetType(AssetType assetType);
+
+        std::unordered_map<AssetType, IAssetType*> types;
+    };
+
+    template<typename T>
+    inline T AssetManager::Load(const GUID& guid)
+    {
+        const AssetMeta& meta = MainSingleton::GetInstance<AssetDatabase>().GetProcessedFile(guid);
+        GetType(meta.type)->Load(meta);
+    }
 }

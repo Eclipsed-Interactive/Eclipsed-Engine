@@ -1,6 +1,8 @@
 #pragma once
 
-#include "AssetEngine/GUID.h"
+#include <assert.h>
+
+#include "AssetEngine/Core/GUID.h"
 
 #include "CoreEngine/Settings/SettingsBase.hpp"
 

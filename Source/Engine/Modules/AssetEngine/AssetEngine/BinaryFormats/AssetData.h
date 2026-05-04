@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "AssetEngine/GUID.h"
+#include "AssetEngine/Core/GUID.h"
 
 namespace Eclipse::Assets
 {

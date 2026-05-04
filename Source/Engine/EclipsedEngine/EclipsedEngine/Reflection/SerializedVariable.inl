@@ -12,7 +12,7 @@
 //#include "AssetEngine/Assets/AudioClip.h"
 //#include "AssetEngine/Assets/Font.h"
 //#include "AssetEngine/Assets/Prefab.h"
-#include "AssetEngine/Assets/Texture/TextureAsset.h"
+#include "AssetEngine/Assets/TextureAsset.h"
 
 #include "CoreEngine/Math/Random.h"
 
