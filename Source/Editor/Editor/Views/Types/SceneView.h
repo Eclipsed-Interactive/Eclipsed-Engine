@@ -83,9 +83,6 @@ namespace Eclipse::Editor
 		bool draggingSprite = false;
 
 	private:
-		unsigned mySceneFrameBuffer = 0;
-		unsigned mySceneTexture = 0;
-
 		bool AlwaysRenderSpriteSelector = true;
 	};
 }

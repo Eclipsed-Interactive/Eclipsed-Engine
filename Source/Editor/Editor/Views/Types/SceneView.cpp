@@ -190,7 +190,10 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 		return;
 
 
+	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
+	device->Clear();
 	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+	
 	//GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
 
 	//BaseGraphicsBuffer* graphicsBuffer = GraphicsEngine::Get()->GetGraphicsBuffer();
@@ -372,7 +375,7 @@ void Eclipse::Editor::SceneView::Draw()
 	}
 
 	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-	device->BindFrameBuffer(mySceneFrameBuffer);
+	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 
 	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
@@ -426,9 +429,10 @@ void Eclipse::Editor::SceneView::Draw()
 	{
 		// REsize the texture.
 		//device->BindTexture()
-		//glBindTexture(GL_TEXTURE_2D, mySceneTexture);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, myWindowSize.x, myWindowSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		//glBindTexture(GL_TEXTURE_2D, 0);
+
+		device->BindTexture(sceneBuffer.textureIndex);
+		device->Test(myWindowSize);
+		device->BindTexture(0);
 	}
 
 	myLastWindowResolution = { myWindowSize.x, myWindowSize.y };
@@ -445,7 +449,7 @@ void Eclipse::Editor::SceneView::Draw()
 
 	ImVec2 CursorPos = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(ImVec2(CursorPos.x - 8, CursorPos.y - 7));
-	ImGui::Image(mySceneTexture, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::Image(sceneBuffer.textureIndex, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
 	if (ImGui::BeginDragDropTarget())
 	{

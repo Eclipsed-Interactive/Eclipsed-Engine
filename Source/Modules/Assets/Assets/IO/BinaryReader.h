@@ -4,10 +4,11 @@
 #include <fstream>
 
 #include "Assets/Core/GUID.h"
+#include "Assets.Core.hpp"
 
 namespace Eclipse::Assets
 {
-    class BinaryReader
+    class ASSET_API BinaryReader
     {
     public:
         BinaryReader() = default;

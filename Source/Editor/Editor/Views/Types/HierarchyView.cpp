@@ -407,7 +407,7 @@ namespace Eclipse::Editor
                 }
             }
         }
-
+        */
         for (const auto& [id, data] : ComponentManager::myEntityIdToEntity)
         {
             if (data == nullptr) continue;
@@ -416,6 +416,6 @@ namespace Eclipse::Editor
                 continue;
 
             HierarchyButton(data, 0.f);
-        }*/
+        }
     }
 }

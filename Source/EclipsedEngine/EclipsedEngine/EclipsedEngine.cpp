@@ -11,8 +11,11 @@
 #include "Assets/AssetImporter.h"
 #include "EclipsedEngine/Plugin/PluginManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
+#include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 
 #include "Core/EventSystem/EventSystem.h"
+
+#include "Renderer/RenderCommands/CommandList.h"
 
 namespace Eclipse
 {
@@ -35,12 +38,17 @@ namespace Eclipse
 		input = renderer->CreateInput();
 		input->Init();
 
-		PluginManager::Compile("C:/Users/zulto/Desktop/GamePlugin");
+		Graphics::CommandListManager::InitAllCommandLists();
 
-		//GameObject* gameobject = ComponentManager::CreateGameObject();
+		//PluginManager::Compile("C:/Users/zulto/Desktop/GamePlugin");
 
-		//gameobject->AddComponent<Transform2D>();
-		//gameobject->AddComponent<SpriteRenderer2D>();
+		GameObject* gameobject = ComponentManager::CreateGameObject();
+
+		auto t = gameobject->AddComponent<Transform2D>();
+		Math::Vector2f scale = { 100.f, 30.f };
+		t->SetScale(scale);
+		t->DirtyUpdate();
+		gameobject->AddComponent<SpriteRenderer2D>();
 
 		ImGui_Init();
 	}
@@ -65,6 +73,22 @@ namespace Eclipse
 	void Engine::EndFrame()
 	{
 		renderer->EndFrame();
+
+		Graphics::CommandListManager::ResetAllCommandLists();
+
+		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
+		//device->BindFrameBuffer({0,1});
+	}
+
+	void Engine::Update()
+	{
+		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
+		device->BindFrameBuffer(1);
+
+		ComponentManager::AwakeStartComponents();
+
+		ComponentManager::EarlyUpdateComponents();
+		ComponentManager::UpdateComponents();
 	}
 
 	void Engine::BeginFrame()
@@ -79,6 +103,16 @@ namespace Eclipse
 
 	void Engine::Render()
 	{
+		ComponentManager::RenderComponents();
+
+		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
+		device->SetViewport({ 1280, 720 });
+
+		device->BindFrameBuffer(1);
+		Graphics::CommandListManager::ExecuteAllCommandLists();
+		
+
+		device->BindFrameBuffer(0);
 		renderer->Render();
 
 		ImGui_Render();

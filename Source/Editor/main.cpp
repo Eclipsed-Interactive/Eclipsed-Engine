@@ -24,6 +24,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		Test_ImGui();
 
+		engine.Update();
+
 		editor.Render();
 		engine.Render();
 

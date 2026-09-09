@@ -8,13 +8,14 @@
 #include "Core/Files/FileWatcher.h"
 
 #include "Assets/AssetTypes.h"
+#include "Assets.Core.hpp"
 
 namespace Eclipse::Assets
 {
 	struct AssetMeta;
 	struct GUID;
 
-	class AssetManager
+	class ASSET_API AssetManager
 	{
 	public:
 		static void Init();

@@ -5,12 +5,13 @@
 #include <filesystem>
 
 #include "Assets/Core/GUID.h"
+#include "Assets.Core.hpp"
 
 #define DATA_SIZE_PAIR(data) &data, sizeof(data)
 
 namespace Eclipse::Assets
 {
-    class BinaryWriter
+    class ASSET_API BinaryWriter
     {
     public:
         BinaryWriter() = default;

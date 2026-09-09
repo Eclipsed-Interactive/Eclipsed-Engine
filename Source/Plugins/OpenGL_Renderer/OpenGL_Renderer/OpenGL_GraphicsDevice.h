@@ -20,6 +20,8 @@ namespace Eclipse::Graphics::OpenGL
 
 		void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = { 0, 0 }) override;
 
+		void Test(Math::Vector2f size) override;
+
 	public:
 		Sprite* CreateSprite() override;
 		TextSprite* CreateTextSprite() override;

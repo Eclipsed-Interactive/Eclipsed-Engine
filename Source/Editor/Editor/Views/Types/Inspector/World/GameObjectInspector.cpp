@@ -12,6 +12,8 @@
 #include "EclipsedEngine/Reflection/Reflection.h"
 #include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 
+#include "Editor/ImGui/ImGui_Impl.h"
+
 namespace Eclipse::Editor
 {
 	ImGuiTextFilter GameObjectInspector::filter{};
@@ -58,9 +60,7 @@ namespace Eclipse::Editor
 
 			counter++;
 
-			//ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
-
-			ImGui::Text(id.c_str());
+			ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
 
 			if (ImGui::IsItemHovered())
 			{

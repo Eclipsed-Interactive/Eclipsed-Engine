@@ -12,10 +12,12 @@
 #include "Assets/Assets/Shader/PixelShaderAsset.h"
 #include "Assets/Assets/Shader/VertexShaderAsset.h"
 
+#include "Assets.Core.hpp"
+
 namespace Eclipse::Assets
 {
 	class IAssetType;
-	class AssetTypeRegistry
+	class ASSET_API AssetTypeRegistry
 	{
 	public:
 		

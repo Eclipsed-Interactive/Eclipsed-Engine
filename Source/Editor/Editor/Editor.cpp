@@ -12,7 +12,9 @@
 
 #include "Assets/AssetImporter.h"
 #include "Core/PathManager.h"
+
 #include "EditorLayout.h"
+#include "EditorUI.h"
 
 namespace Eclipse::Editor
 {
@@ -23,6 +25,7 @@ namespace Eclipse::Editor
 
 		Assets::AssetImporter::ImportAssets(PathManager::GetEngineAssetsPath(), "Engine Assets");
 
+		EditorUI::Init();
 		EditorLayout::Init();
 	}
 
