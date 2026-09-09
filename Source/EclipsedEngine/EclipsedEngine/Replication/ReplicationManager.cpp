@@ -19,6 +19,7 @@
 #include <fstream>
 
 #include "Steam/SteamGeneral.h"
+#include "ECS/GameObject.h"
 
 namespace Eclipse::Replication
 {
@@ -216,7 +217,7 @@ namespace Eclipse::Replication
 
     void BuildComponentVector(GameObject* aGameobject, std::vector<unsigned>& aComponentIDs)
     {
-        std::vector<Component*> childComponent = aGameobject->GetComponents();
+        std::vector<Component*> childComponent = aGameobject->GetAllComponents();
 
         for (auto& component : childComponent)
             if (component->IsReplicated)

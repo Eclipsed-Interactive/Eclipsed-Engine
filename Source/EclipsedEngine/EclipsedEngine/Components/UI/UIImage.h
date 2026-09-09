@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Components/Rendering/BaseRenderComponent.h"
+#include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
 #include "Assets/Assets/MaterialAsset.h"
@@ -9,7 +9,7 @@
 
 namespace Eclipse
 {
-    class UIImage : public BaseRenderComponent
+    class ECL_API UIImage : public BaseRenderComponent
     {
         COMPONENT_BASE_2(UIImage, 0)
 

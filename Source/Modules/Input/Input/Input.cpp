@@ -3,7 +3,7 @@
 #include "OpenGL/GLFW/glfw3.h"
 #include "Core/MainSingleton.h"
 
-namespace Eclipse
+namespace Eclipse::Input
 {
 	std::bitset<MAX_KEYS> Input::currentKeys;
 	std::bitset<MAX_KEYS> Input::lastKeys;

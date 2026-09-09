@@ -18,7 +18,9 @@ namespace Eclipse::Assets
 	class AssetTypeRegistry
 	{
 	public:
+		
 		static void RegisterTypes();
+		static void RegisterType(AssetType type, IAssetType* instance);
 
 		static  IAssetType* GetType(AssetType assetType);
 

@@ -1,16 +1,15 @@
 #include "Camera.h"
 
-#include "Renderer/OpenGL/OpenGLGraphicsAPI.h"
-
 #include "ECS/ComponentManager.h"
 
 #include "EclipsedEngine/Components/Transform2D.h"
 
-#include "Renderer/OpenGL/DebugDrawers/DebugDrawer.h"
+//#include "Renderer/OpenGL/DebugDrawers/DebugDrawer.h"
 #include "Core/MainSingleton.h"
 #include "Core/Settings/EngineSettings.h"
 
-#include "Renderer/GraphicsEngine.h"
+#include "Renderer/IRenderer.h"
+#include "Renderer/RendererManager.h"
 
 namespace Eclipse
 {
@@ -32,15 +31,12 @@ namespace Eclipse
         if (Camera::main != this)
             return;
 
+        Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
         myCameraBuffer.cameraPosition = gameObject->transform->GetPosition();
         myCameraBuffer.cameraRotation = gameObject->transform->GetRotation();
         myCameraBuffer.cameraScale = { CameraZoom, CameraZoom };
 
-        GraphicsEngine::Get()->GetGraphicsBuffer()->SetOrCreateBuffer(0, myCameraBuffer);
-
-        // GraphicsEngine::Get()->UpdateGlobalUniform(UniformType::Vector2f, "cameraPosition", &position);
-        // GraphicsEngine::Get()->UpdateGlobalUniform(UniformType::Float, "cameraRotation", &rotation);
-        // GraphicsEngine::Get()->UpdateGlobalUniform(UniformType::Vector2f, "cameraScale", &scale);
+        buffer->SetOrCreateBuffer(0, myCameraBuffer);
     }
 
 
@@ -64,7 +60,7 @@ namespace Eclipse
             float sqrRotation = gameObject->transform->GetRotation();
             Math::Vector2f sqrSize = Math::Vector2f(0.5f  * 1.7777777777f, 0.5f);
 
-            DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
+            //DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
         }
     }
 }

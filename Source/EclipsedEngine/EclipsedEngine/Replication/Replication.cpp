@@ -72,7 +72,7 @@ namespace Eclipse::Replication
 
 	void ReplicationHelper::ClientHelp::StartReplicatedComponents()
 	{
-		CommandListManager::GetHappenAtBeginCommandList().Enqueue([]()
+		Graphics::CommandListManager::GetHappenAtBeginCommandList().Enqueue([]()
 			{
 				std::sort(ComponentsToStartOnDemand.begin(), ComponentsToStartOnDemand.end(), [&](Component* aComp0, Component* aComp1)
 					{
@@ -179,7 +179,7 @@ namespace Eclipse::Replication
 		if (ComponentManager::HasGameObject(message.MetaData.GameObjectID))
 			return;
 
-		CommandListManager::GetHappenAtBeginCommandList().Enqueue([message]()
+		Graphics::CommandListManager::GetHappenAtBeginCommandList().Enqueue([message]()
 			{
 				char* prefabID = (char*)malloc(32);
 				memcpy(prefabID, message.data, 32);

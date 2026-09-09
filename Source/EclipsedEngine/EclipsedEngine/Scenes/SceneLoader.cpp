@@ -231,7 +231,7 @@ namespace Eclipse
 	}
 	void SceneLoader::UnloadScene()
 	{
-		CommandListManager::ResetAllCommandLists();
+		Graphics::CommandListManager::ResetAllCommandLists();
 
 		ComponentManager::Clear();
 		Reflection::ReflectionManager::ClearList();

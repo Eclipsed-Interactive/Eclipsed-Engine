@@ -48,7 +48,7 @@ void Eclipse::ComponentForcelink::LinkComponents()
 	COMP_REG(Camera);
 	COMP_REG(SpriteRenderer2D);
 	COMP_REG(SpriteSheetAnimator2D);
-	COMP_REG(TextRenderer);
+	//COMP_REG(TextRenderer);
 	
 	COMP_REG(Button);
 	COMP_REG(Canvas);

@@ -4,7 +4,6 @@
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 
-#include "EclipsedEngine/Editor/Windows/WindowTypes/GameWindow.h"
 #include "Scenes/SceneManager.h"
 #include "Steam/SteamGeneral.h"
 
@@ -17,9 +16,6 @@ namespace Eclipse
 
 		UpdateRectProperties();
 		
-		if (Input::GetMouseDown(Keycode::MOUSE_LEFT) && IsMouseInsideRect()) {
-			OnClickEvent.Invoke();
-		}
 	}
 
 	void Button::Awake()
@@ -35,7 +31,7 @@ namespace Eclipse
 
 		Math::Vector2f refRes = transform->myCanvas->ReferenceResolution.Get();
 		
-		Math::Vector2f mousePos = Input::GetGameMousePos();
+		Math::Vector2f mousePos = Input::Input::GetGameMousePos();
 		Math::Vector2f translatedMousePos = mousePos * refRes - refRes * 0.5f;
 
 		//std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;

@@ -141,7 +141,7 @@ namespace Eclipse
 	{
 		myActiveScene = "";
 
-		CommandListManager::ResetAllCommandLists();
+		Graphics::CommandListManager::ResetAllCommandLists();
 
 		ComponentManager::Clear();
 		Reflection::ReflectionManager::ClearList();

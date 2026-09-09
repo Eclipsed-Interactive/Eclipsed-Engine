@@ -1,47 +1,36 @@
 #include "Sprite.h"
 
-#include "OpenGL/glad/glad.h"
-
-namespace Eclipse
+namespace Eclipse::Graphics
 {
-    Sprite::Sprite()
-    {
-        glGenVertexArrays(1, &mySpriteBuffer);
-        glBindVertexArray(mySpriteBuffer);
+	unsigned& Sprite::GetVertexBufferID()
+	{
+		return myVTXbuffer;
+	}
 
-        glGenBuffers(1, &myVTXbuffer);
-        glGenBuffers(1, &myIDXbuffer);
+	unsigned Sprite::GetVertexBufferID() const
+	{
+		return myVTXbuffer;
+	}
 
-        glBindBuffer(GL_ARRAY_BUFFER, myVTXbuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myIDXbuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	unsigned& Sprite::GetIndexBufferID()
+	{
+		return myIDXbuffer;
+	}
 
-        {
-            // glVertexAttribPointer(shader layout index, total number of floats/ints/bools etc, GL_[your type], GL_FALSE, vertex stride, offset from last layout position start)
-            // Matrix4x4 would be index 0, 1, 2 and 3 set as in setting 4 float4's
+	unsigned Sprite::GetIndexBufferID() const
+	{
+		return myIDXbuffer;
+	}
 
-            size_t offset = 0;
-            // Position
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offset);
-            offset += 2 * sizeof(float);
 
-            // TexCoord
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offset);
-            offset += 2 * sizeof(float);
+	unsigned& Sprite::GetSpriteBufferID()
+	{
+		return mySpriteBuffer;
+	}
 
-            glEnableVertexAttribArray(1);
-            glEnableVertexAttribArray(0);
-        }
-
-        glBindVertexArray(0);
-    }
-
-    void Sprite::Render()
-    {
-        glBindVertexArray(mySpriteBuffer);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-    }
+	unsigned Sprite::GetSpriteBufferID() const
+	{
+		return mySpriteBuffer;
+	}
 }

@@ -5,6 +5,7 @@
 #include "EclipsedEngine/TypeIDGenerator.h"
 
 #include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 
 
 #define BASE_OBJECT_IMPL(TYPE)																\

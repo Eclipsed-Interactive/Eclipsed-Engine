@@ -133,7 +133,7 @@ namespace Eclipse
 			myEntityIdToEntity.emplace(aGOID, CreateGameObject(aGOID));
 
 #ifdef ECLIPSED_NETWORKING
-		BeforeComponentConstruction();
+		//BeforeComponentConstruction();
 #endif
 
 		T* component = new(ptrToComponent)T();
@@ -145,7 +145,7 @@ namespace Eclipse
 
 #ifdef ECLIPSED_NETWORKING
 		component->IsReplicated = IsReplicated;
-		AfterComponentConstruction();
+		//AfterComponentConstruction();
 #endif
 
 		component->gameObject = myEntityIdToEntity.at(aGOID);

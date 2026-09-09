@@ -4,8 +4,6 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Audio/AudioListener.h"
 
-#include "EclipsedEngine/Editor/ComponentInspectorDrawer.h"
-
 namespace Eclipse
 {
 	void AudioEmitter::Awake()

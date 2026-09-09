@@ -1,6 +1,6 @@
-#include "Renderer/RenderCommands/CommandList.h"
+#include "CommandList.h"
 
-namespace Eclipse
+namespace Eclipse::Graphics
 {
     void CommandList::Init()
     {

@@ -4,31 +4,27 @@
 
 #include "Core.Core.hpp"
 
-namespace Eclipse::Core
+namespace Eclipse
 {
 	class CORE_API Timer
 	{
 	public:
-		Timer();
-		~Timer() = default;
+		static void Init();
+		static void Update();
 
-	public:
-		void Init();
-		void Update();
+		static void SetTimeScale(float timeScale);
 
-		void SetTimeScale(float timeScale);
-
-		float GetDeltaTime();
-		float GetTotalTime();
-		float GetTimeScale();
+		static float GetDeltaTime();
+		static float GetTotalTime();
+		static float GetTimeScale();
 
 	private:
-		std::chrono::high_resolution_clock::time_point startTime;
-		std::chrono::high_resolution_clock clock;
-		std::chrono::duration<float> duration;
+		static std::chrono::high_resolution_clock::time_point startTime;
+		static std::chrono::high_resolution_clock clock;
+		static std::chrono::duration<float> duration;
 
-		float myDeltaTime;
-		float myTotalTime;
-		float myTimeScale;
+		static float myDeltaTime;
+		static float myTotalTime;
+		static float myTimeScale;
 	};
 }

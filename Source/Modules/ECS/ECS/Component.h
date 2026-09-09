@@ -11,9 +11,9 @@ namespace Eclipse
 {
 	namespace Editor
 	{
-		class SceneWindow;
+		class SceneView;
 		class GameObjectInspector;
-		class HierarchyWindow;
+		class HierarchyView;
 		class EditorActions;
 	}
 	namespace Reflection
@@ -34,8 +34,8 @@ namespace Eclipse
 	{
 		friend class ReplicatedVariable;
 		friend class Editor::EditorActions;
-		friend class Editor::HierarchyWindow;
-		friend class Editor::SceneWindow;
+		friend class Editor::HierarchyView;
+		friend class Editor::SceneView;
 		friend class Editor::GameObjectInspector;
 		friend class Reflection::ReflectionManager;
 		friend class Reflection::AbstractSerializedVariable;

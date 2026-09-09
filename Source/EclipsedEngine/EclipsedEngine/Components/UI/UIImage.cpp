@@ -10,14 +10,18 @@
 
 #include "Renderer/RenderCommands/CommandList.h"
 
-#include "Renderer/OpenGL/OpenGLGraphicsAPI.h"
-
 #ifdef ECL_EDITOR
-#include "Renderer/OpenGL/DebugDrawers/DebugDrawer.h"
-#include <Core/GraphicsBuffers/EditorBuffer.h>
-#include "EclipsedEngine/Editor/Windows/WindowTypes/GameWindow.h"
+//#include "Renderer/DebugDrawers/DebugDrawer.h"
+#include "Core/GraphicsBuffers/EditorBuffer.h"
 #endif // ECL_EDITOR
 
+#include "Core/GraphicsBuffers/EditorBuffer.h"
+
+#include "Renderer/IRenderer.h"
+#include "Renderer/IDrawer.h"
+#include "Renderer/RendererManager.h"
+
+#include "Renderer/RenderCommands/CommandList.h"
 
 namespace Eclipse
 {
@@ -43,7 +47,7 @@ namespace Eclipse
 			Math::Vector2f sqrPos = { posX, posY };
 			Math::Vector2f sqrSize = { sizeX, sizeY };
 
-			DebugDrawer::DrawSquare(sqrPos + transform->myCanvas->canvasCameraTransform.PositionOffset, 0, sqrSize, Math::Color(0x90D5FF));
+			//DebugDrawer::DrawSquare(sqrPos + transform->myCanvas->canvasCameraTransform.PositionOffset, 0, sqrSize, Math::Color(0x90D5FF));
 		}
 	}
 #endif // ECL_EDITOR
@@ -61,7 +65,7 @@ namespace Eclipse
 
 	void UIImage::Render()
 	{
-		CommandListManager::GetUICommandList().Enqueue([&]()
+		Graphics::CommandListManager::GetUICommandList().Enqueue([&]()
 			{
 				Draw();
 			});
@@ -83,7 +87,8 @@ namespace Eclipse
 		Math::Vector2f halfRefRes = referenceResolution * 0.5f;
 
 #ifdef ECL_EDITOR
-		Math::Vector2f resolution = Editor::GameWindow::myGameImageResolution;
+		//Math::Vector2f resolution = Editor::GameWindow::myGameImageResolution;
+		Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();;
 #else
 		Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();
 #endif
@@ -160,32 +165,25 @@ namespace Eclipse
 		// Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
 
 		Math::Vector2f size = spriteRectMax - spriteRectMin;
-		material->materialBuffer.spriteRect = { spriteRectMin.x, spriteRectMin.y, size.x, size.y };
+		material->GetBuffer().spriteRect = {spriteRectMin.x, spriteRectMin.y, size.x, size.y};
 
+		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+		graphicsDevice->BindMaterial(material);
 		if (sprite->IsValid())
-		{
-			material->BindShader();
-			sprite->Bind();
-			material->BindColor();
-		}
-		else
-		{
-			material->Use();
-		}
+			graphicsDevice->BindTexture(0, sprite);
 
 		TransformUpdate();
 
-
-		BaseGraphicsBuffer* graphicsBuffer = GraphicsEngine::Get()->GetGraphicsBuffer();
+		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		CanvasBuffer* canvasBuffer;
-		graphicsBuffer->GetBuffer<CanvasBuffer>(canvasBuffer);
+		buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
 
 #ifdef ECL_EDITOR
 		EditorBuffer* editorBuffer;
-		graphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+		buffer->GetBuffer<EditorBuffer>(editorBuffer);
 		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-		graphicsBuffer->SetOrCreateBuffer<EditorBuffer>(35);
+		buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 		if (!IsScene)
 		{
@@ -199,11 +197,10 @@ namespace Eclipse
 #endif
 
 
-		graphicsBuffer->SetOrCreateBuffer(5, material->materialBuffer);
-		graphicsBuffer->SetOrCreateBuffer(1, myTransformBuffer);
+		buffer->SetOrCreateBuffer(5, material->GetBuffer());
+		buffer->SetOrCreateBuffer(1, myTransformBuffer);
+		buffer->SetOrCreateBuffer(2, *canvasBuffer);
 
-		graphicsBuffer->SetOrCreateBuffer(2, *canvasBuffer);
-
-		Sprite::Get().Render();
+		//Sprite::Get().Render();
 	}
 }

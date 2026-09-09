@@ -1,21 +1,20 @@
 #include "Canvas.h"
 
-#include "Renderer/OpenGL/DebugDrawers/DebugDrawer.h"
-#include "Renderer/OpenGL/UniformVariableManager.h"
-
-#include "Renderer/OpenGL/OpenGLGraphicsAPI.h"
+#include "Renderer/UniformVariableManager.h"
 
 #include "Core/GraphicsBuffers/CameraBuffer.h"
 #include "EclipsedEngine/Components/Transform2D.h"
+#include "Renderer/IRenderer.h"
+#include "Renderer/RendererManager.h"
 
 namespace Eclipse
 {
     void Canvas::SetCanvasTransformProperties()
     {
         CameraBuffer* cameraBuffer = nullptr;
-        GraphicsEngine::Get()->GetGraphicsBuffer()->GetBuffer<CameraBuffer>(cameraBuffer);
 
-        //canvasCameraTransform.Rotation = gameObject->transform->GetRotation();
+        Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+        buffer->SetOrCreateBuffer<CameraBuffer>(0, cameraBuffer);
 
 #ifdef ECL_EDITOR
         if (IsScene)
@@ -53,7 +52,7 @@ namespace Eclipse
             float sqrRotation = gameObject->transform->GetRotation();
             Math::Vector2f sqrSize = Math::Vector2f(0.5f * sizeX, 0.5f * sizeY);
 
-            DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
+            //DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
         }
 #endif
     }
@@ -67,6 +66,8 @@ namespace Eclipse
     {
         Math::Vector2f resolution = ReferenceResolution;
         myCanvasBuffer.canvasScaleRelationOneDiv = {1.f / resolution.x, 1.f / resolution.y};
-        GraphicsEngine::Get()->GetGraphicsBuffer()->SetOrCreateBuffer(2, myCanvasBuffer);
+
+        Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+        buffer->SetOrCreateBuffer(2, myCanvasBuffer);
     }
 }

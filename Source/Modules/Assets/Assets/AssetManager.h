@@ -9,16 +9,16 @@
 
 #include "Assets/AssetTypes.h"
 
-#include "Assets.Core.hpp"
-
 namespace Eclipse::Assets
 {
 	struct AssetMeta;
 	struct GUID;
 
-	class ASSET_API AssetManager
+	class AssetManager
 	{
 	public:
+		static void Init();
+
 		static void CookAndPackageAssets();
 
 		static void EndFrame();

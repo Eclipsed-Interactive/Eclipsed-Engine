@@ -20,7 +20,7 @@ ComponentManager::GetComponent<Type>(GOID)
 namespace Eclipse
 {
 	namespace Editor {
-		class HierarchyWindow;
+		class HierarchyView;
 		class InspectorWindow;
 		class GameObjectInspector;
 		class EditorActions;
@@ -33,7 +33,7 @@ namespace Eclipse
 	class ECS_API ComponentManager
 	{
 		friend class Editor::EditorActions;
-		friend class Editor::HierarchyWindow;
+		friend class Editor::HierarchyView;
 		friend class Editor::GameObjectInspector;
 		friend class Editor::InspectorWindow;
 		friend class SceneLoader;

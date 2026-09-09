@@ -3,7 +3,7 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "Renderer/Sprite.h"
 
-#include "Renderer/OpenGL/OpenGLGraphicsAPI.h"
+#include "Renderer/IRenderer.h"
 #include "Renderer/RenderCommands/CommandList.h"
 
 #include "RenderCommands/RenderSprite2DCommand.h"
@@ -12,6 +12,10 @@
 
 #include "Core/GraphicsBuffers/EditorBuffer.h"
 
+#include "Renderer/IRenderer.h"
+#include "Renderer/IDrawer.h"
+#include "Renderer/RendererManager.h"
+#include "RenderCommands/RenderSprite2DCommand.h"
 namespace Eclipse
 {
 #ifdef ECLIPSED_NETWORKING
@@ -87,8 +91,7 @@ namespace Eclipse
 		if (!gameObject->transform)
 			return;
 
-		CommandListManager::GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
-		//DebugInformationCollector::UpdateRenderCalls();
+		Graphics::CommandListManager::GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
 	}
 
 	void SpriteRenderer2D::Draw(unsigned aProgramID)
@@ -101,17 +104,11 @@ namespace Eclipse
 		// if (aProgramID)
 		// 	shaderID = aProgramID;
 
+		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+		graphicsDevice->BindMaterial(material);
 		if (sprite->IsValid())
-		{
-			material->BindShader();
-			sprite->Bind();
-			material->BindColor();
-		}
-		else
-		{
-			material->Use();
-		}
-		
+			graphicsDevice->BindTexture(0, sprite);
+
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
 		myTransformBuffer.Scale = gameObject->transform->GetScale();
@@ -123,7 +120,7 @@ namespace Eclipse
 		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
 
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		material->materialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		material->GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 
 		Math::Vector2f scaleMultiplier;
 		if (sprite->IsValid())
@@ -136,19 +133,22 @@ namespace Eclipse
 		mySpriteBuffer.spriteScaleMultiplier = { scaleMultiplier.x, scaleMultiplier.y * aspectScale };
 		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
-		BaseGraphicsBuffer* graphicsBuffer = GraphicsEngine::Get()->GetGraphicsBuffer();
+		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 #ifdef ECL_EDITOR
 		EditorBuffer* editorBuffer;
-		graphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+		buffer->GetBuffer<EditorBuffer>(editorBuffer);
 		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-		graphicsBuffer->SetOrCreateBuffer<EditorBuffer>(35);
+		buffer->SetOrCreateBuffer<EditorBuffer>(35);
 #endif
-		graphicsBuffer->SetOrCreateBuffer(5, material->materialBuffer);
-		
-		graphicsBuffer->SetOrCreateBuffer(1, myTransformBuffer);
-		graphicsBuffer->SetOrCreateBuffer(3, mySpriteBuffer);
+		buffer->SetOrCreateBuffer(5, material->GetBuffer());
 
-		Sprite::Get().Render();
+		buffer->SetOrCreateBuffer(1, myTransformBuffer);
+		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
+
+
+		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+		Graphics::IDrawer* drawer = renderer.GetDrawer();
+		drawer->DrawSprite();
 	}
 }

@@ -3,7 +3,7 @@
 #include "ImGui/imgui.h"
 #include "EclipsedEngine/Components/Component.h"
 #include "SerializedVariable.h"
-#include "EclipsedEngine/Editor/ComponentInspectorDrawer.h"
+//#include "EclipsedEngine/Editor/ComponentInspectorDrawer.h"
 
 namespace Eclipse::Reflection
 {
@@ -35,11 +35,11 @@ namespace Eclipse::Reflection
 
 	void ReflectionManager::DrawInspector(Component* aComp, const char* name)
 	{
-		if (Editor::ComponentInspectorRegistry::InspectorExists(name))
-		{
-			Editor::ComponentInspectorRegistry::GetDrawFunction(aComp->GetComponentName())(aComp);
-			return;
-		}
+		//if (Editor::ComponentInspectorRegistry::InspectorExists(name))
+		//{
+		//	Editor::ComponentInspectorRegistry::GetDrawFunction(aComp->GetComponentName())(aComp);
+		//	return;
+		//}
 
 
 		if (registeredVariables.find(aComp) == registeredVariables.end()) return;

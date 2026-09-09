@@ -109,7 +109,7 @@ namespace Eclipse
 
     void PhysicsEngine::Update()
     {
-        const float deltaTime = Core::Timer::GetDeltaTime();
+        const float deltaTime = Timer::GetDeltaTime();
 
         b2World_Step(myWorld, deltaTime, mySubstepCount);
 

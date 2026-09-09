@@ -7,7 +7,7 @@
 
 namespace Eclipse
 {
-    class RectTransform : public Component
+    class ECL_API RectTransform : public Component
     {
         COMPONENT_BASE_2(RectTransform, UINT_MAX * 0.5f)
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Core/ImportedData.h"
-#include "Core/RuntimeAsset.h"
+#include "Assets/Core/ImportedData.h"
+#include "Assets/Core/RuntimeAsset.h"
 #include "Assets/Metadata/AssetMeta.h"
 
-#include "IO/BinaryWriter.h"
-#include "IO/BinaryReader.h"
+#include "Assets/IO/BinaryWriter.h"
+#include "Assets/IO/BinaryReader.h"
 
 #include "Assets/AssetTypes.h"
 

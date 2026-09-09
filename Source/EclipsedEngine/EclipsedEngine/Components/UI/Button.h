@@ -7,7 +7,7 @@
 
 namespace Eclipse
 {
-	class Button : public Component
+	class ECL_API Button : public Component
 	{
 		COMPONENT_BASE_2(Button, 0)
 

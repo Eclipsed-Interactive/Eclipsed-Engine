@@ -4,46 +4,29 @@
 
 namespace Eclipse::Assets
 {
-	Texture Material::GetTexture() const
+	Texture& Material::GetTexture() const
 	{
 		return dataPtr->texture;
 	}
 
-	PixelShader Material::GetPixelShader() const
+	PixelShader& Material::GetPixelShader() const
 	{
 		return dataPtr->pixelShader;
 	}
 
-	VertexShader Material::GetVertexShader() const
+	VertexShader& Material::GetVertexShader() const
 	{
 		return dataPtr->vertexShader;
 	}
 
-	void Material::BindTexture()
+
+	unsigned Material::GetProgramID() const
 	{
-		if (dataPtr->texture.IsValid())
-			dataPtr->texture.Bind();
+		return dataPtr->programID;
 	}
 
-	void Material::BindShader()
+	MaterialBuffer& Material::GetBuffer()
 	{
-		glUseProgram(dataPtr->programID);
-	}
-
-	void Material::BindColor()
-	{
-		materialBuffer.color = dataPtr->color;
-	}
-
-	void Material::Use()
-	{
-		BindShader();
-		BindTexture();
-		BindColor();
-	}
-
-	void Material::Create()
-	{
-
+		return materialBuffer;
 	}
 }

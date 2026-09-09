@@ -3,16 +3,20 @@
 #include "Timer.h"
 #include <chrono>
 
-namespace Eclipse::Core
+namespace Eclipse
 {
-    Timer::Timer() : duration(0)
-    {
-        Init();
-    }
+    std::chrono::high_resolution_clock::time_point Timer::startTime;
+    std::chrono::high_resolution_clock Timer::clock;
+    std::chrono::duration<float> Timer::duration;
+
+    float Timer::myDeltaTime;
+    float Timer::myTotalTime;
+    float Timer::myTimeScale;
 
     void Timer::Init()
     {
         startTime = clock.now();
+        duration = std::chrono::duration<float>(0);
     }
 
     void Timer::Update()

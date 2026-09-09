@@ -2,21 +2,21 @@
 
 #include "Core/MainSingleton.h"
 #include "AssetTypes/IAssetType.h"
-#include "IO/BinaryWriter.h"
+#include "Assets/IO/BinaryWriter.h"
 
 #include "AssetTypeRegistry.h"
 
 #include "Core/PathManager.h"
 
-#include "Assets/AudioAsset.h"
-#include "Assets/FontAsset.h"
-#include "Assets/MaterialAsset.h"
-#include "Assets/PrefabAsset.h"
-#include "Assets/TextureAsset.h"
-#include "Assets/Shader/PixelShaderAsset.h"
-#include "Assets/Shader/VertexShaderAsset.h"
+#include "Assets/Assets/AudioAsset.h"
+#include "Assets/Assets/FontAsset.h"
+#include "Assets/Assets/MaterialAsset.h"
+#include "Assets/Assets/PrefabAsset.h"
+#include "Assets/Assets/TextureAsset.h"
+#include "Assets/Assets/Shader/PixelShaderAsset.h"
+#include "Assets/Assets/Shader/VertexShaderAsset.h"
 
-#include "IO/BinaryReader.h"
+#include "Assets/IO/BinaryReader.h"
 
 #include "Core/AssetDatabase.h"
 #include "AssetLoader.h"
@@ -24,6 +24,7 @@
 #include "AssetFactory.h"
 
 #include "AssetDeletionQueue.h"
+#include "Assets.Core.hpp"
 
 namespace Eclipse::Assets
 {
@@ -56,6 +57,15 @@ namespace Eclipse::Assets
 	}
 
 
+
+	void AssetManager::Init()
+	{
+		MainSingleton::RegisterInstance<AssetDatabase>();
+		AssetDatabase& database = MainSingleton::GetInstance<AssetDatabase>();
+		database.ProcessSource(PathManager::GetEngineAssetsPath(), "Engine/");
+
+		AssetTypeRegistry::RegisterTypes();
+	}
 
 	void AssetManager::CookAndPackageAssets()
 	{
@@ -208,14 +218,6 @@ namespace Eclipse::Assets
 	template<typename T>
 	inline T AssetManager::Load(const GUID& guid)
 	{
-#ifdef ECL_EDITOR
-		AssetMeta& meta = MainSingleton::GetInstance<AssetDatabase>().GetProcessedFile(guid);
-		if (FileWasChanged(meta))
-		{
-			AssetImporter::ImportFile(meta);
-		}
-#endif
-
 		return AssetFactory::ConstructAsset<T>(AssetLoader::Load<T>(guid));
 	}
 	template<typename T>

@@ -1,12 +1,15 @@
 #pragma once    
 
-class RenderCommandBase
+namespace Eclipse::Graphics
 {
-public:
-    RenderCommandBase() = default;
-    virtual ~RenderCommandBase() = default;
+	class RenderCommandBase
+	{
+	public:
+		RenderCommandBase() = default;
+		virtual ~RenderCommandBase() = default;
 
-    virtual void Execute() = 0;
+		virtual void Execute() = 0;
 
-    RenderCommandBase* next = nullptr;
-};
+		RenderCommandBase* next = nullptr;
+	};
+}

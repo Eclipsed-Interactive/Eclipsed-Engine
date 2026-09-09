@@ -61,7 +61,7 @@ namespace Eclipse
 
     private:
 
-        static inline std::unordered_map<std::string, SingletonEntry> mySingletons;
+        static std::unordered_map<std::string, SingletonEntry> mySingletons;
     };
 
 }

@@ -3,7 +3,7 @@ include("${CMAKE_SOURCE_DIR}/CMake/common.cmake")
 SetProjectKey(Core)
 GenerateCoreApiFile(CORE_API)
 
-CreateStaticProject()
+CreateSharedProject()
 
 target_link_libraries(Core
     PUBLIC

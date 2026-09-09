@@ -6,7 +6,7 @@
 
 namespace Eclipse
 {
-    class Canvas : public Component
+    class ECL_API Canvas : public Component
     {
         COMPONENT_BASE_2(Canvas, 999999);
 

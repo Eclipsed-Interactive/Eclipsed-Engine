@@ -1,7 +1,6 @@
 #pragma once
 
 #include <filesystem>
-
 #include "Core.Core.hpp"
 
 namespace Eclipse
@@ -9,7 +8,8 @@ namespace Eclipse
 	class CORE_API PathManager
 	{
 	public:
-		static void Init(const std::string& projectPath);
+		static void Init();
+		static void SetProjectPath(const char* projectPath);
 
 		static bool ProjectSet();
 
@@ -19,7 +19,7 @@ namespace Eclipse
 		static std::filesystem::path GetEngineRoot() { return engineSourceRoot; }
 
 		static std::filesystem::path GetProjectPath() { return GetProjectRoot() / "Project"; }
-		
+
 		static std::filesystem::path GetEditorPath() { return GetProjectPath() / "Editor"; }
 		static std::filesystem::path GetAssetsPath() { return GetProjectPath() / "Assets"; }
 		static std::filesystem::path GetEngineAssetsPath() { return GetEngineRoot().parent_path() / "Assets"; }

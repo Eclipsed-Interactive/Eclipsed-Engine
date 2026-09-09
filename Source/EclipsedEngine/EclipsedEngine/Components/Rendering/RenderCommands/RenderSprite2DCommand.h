@@ -2,12 +2,10 @@
 
 #include "Renderer/RenderCommands/RenderCommand.h"
 
-
-
 namespace Eclipse
 {
     class SpriteRenderer2D;
-    class RenderSprite2DCommand : public RenderCommandBase
+    class RenderSprite2DCommand : public Graphics::RenderCommandBase
     {
     public:
         RenderSprite2DCommand(SpriteRenderer2D* aSpriteRend) : mySpriteRenderer(aSpriteRend)

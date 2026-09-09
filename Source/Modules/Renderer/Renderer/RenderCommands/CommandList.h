@@ -10,7 +10,7 @@
 
 #include "Renderer.Core.hpp"
 
-namespace Eclipse
+namespace Eclipse::Graphics
 {
     class RENDERER_API LambdaCommand : public RenderCommandBase
     {
@@ -77,7 +77,7 @@ namespace Eclipse
 
         RenderCommandBase* command = reinterpret_cast<RenderCommandBase*>(myData + commandCursor);
         commandCursor += commandSize;
-        ::new(command) CommandClass(std::forward<Args>(args)...);
+        //::new(command) CommandClass(std::forward<Args>(args)...);
         *myLink = command;
         myLink = &command->next;
     }

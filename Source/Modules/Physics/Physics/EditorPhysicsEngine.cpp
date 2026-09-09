@@ -6,6 +6,7 @@ namespace Eclipse
 {
     void PhysicsEngine::DrawPhysicsObjects()
     {
+        return;
         if (myDrawDebugShapes)
             b2World_Draw(myWorld, &myDebugDraw);
     }
