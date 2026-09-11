@@ -4,12 +4,14 @@
 #include <unordered_map>
 #include <Windows.h>
 
+#include "EclipsedEngine.Core.hpp"
+
 namespace Eclipse
 {
 	using Func = void(*)();
 	using dawd = void(*)(int d);
 
-	class Plugin
+	class ECL_API Plugin
 	{
 	public:
 		Plugin(const char* source);

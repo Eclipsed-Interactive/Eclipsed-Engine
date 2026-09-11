@@ -15,6 +15,7 @@ target_link_libraries(EclipsedEngine
         Renderer
         Physics
         Networking
+        Reflection
 
     PRIVATE
         ImGui

@@ -1,12 +1,12 @@
 //#include "GameCompiler.h"
 //
-//#include "EclipsedEngine/Core/PathManager.h"
+//#include "Core/PathManager.h"
 //#include "GameLoader.h"
 //#include <filesystem>
 //
 //#include "EclipsedEngine/Scenes/SceneManager.h"
 //
-//#include "EclipsedEngine/Core/Settings/BuildSettings.h"
+//#include "Core/Settings/BuildSettings.h"
 //
 //namespace Eclipse
 //{

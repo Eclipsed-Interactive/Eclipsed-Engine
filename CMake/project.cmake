@@ -64,12 +64,13 @@ function(CreateProject TYPE)
     )
 
     target_include_directories(${TARGET_NAME}
-        PRIVATE
-            "${ROOT}/${TARGET_NAME}"
+    PRIVATE
+        $<BUILD_INTERFACE:${ROOT}/${TARGET_NAME}>
 
-        PUBLIC
-            "${ROOT}"
-    )
+    PUBLIC
+        $<BUILD_INTERFACE:${ROOT}>
+        $<INSTALL_INTERFACE:include>
+)
 
     set_target_properties(${TARGET_NAME} PROPERTIES
         VS_INTELLECTUAL_PROPERTY "..."

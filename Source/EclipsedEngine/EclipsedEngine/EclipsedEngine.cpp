@@ -40,8 +40,6 @@ namespace Eclipse
 
 		Graphics::CommandListManager::InitAllCommandLists();
 
-		//PluginManager::Compile("C:/Users/zulto/Desktop/GamePlugin");
-
 		GameObject* gameobject = ComponentManager::CreateGameObject();
 
 		auto t = gameobject->AddComponent<Transform2D>();

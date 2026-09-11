@@ -1,6 +1,6 @@
 //#pragma once
 //
-//#include "EclipsedEngine/Core/BatchScript.h"
+//#include "Core/BatchScript.h"
 //
 //#include "EclipsedEngine.Core.hpp"
 //

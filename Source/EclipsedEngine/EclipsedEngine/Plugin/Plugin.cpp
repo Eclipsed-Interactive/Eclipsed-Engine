@@ -29,11 +29,21 @@ namespace Eclipse
 			"compile.bat"
 		);
 
-		generateScript.Run();
-		buildScript.Run();
+		generateScript.Run(true);
+		buildScript.Run(true);
 
-		std::string binPath = (PathManager::GetEngineRoot() / (name + ".dll")).generic_string();
-		dllModule = LoadLibraryA(binPath.c_str());
+		std::string dllPath = "";
+		std::string binPath = (std::filesystem::path(source) / "Bin").generic_string();
+		for (auto i : std::filesystem::recursive_directory_iterator(binPath))
+		{
+			if (i.path().extension() == ".dll")
+			{
+				dllPath = i.path().generic_string();
+				continue;
+			}
+		}
+
+		dllModule = LoadLibraryA(dllPath.c_str());
 		if (dllModule)
 		{
 			initFunc = GetMethod<Func>("Init");
@@ -55,4 +65,4 @@ namespace Eclipse
 		return name.c_str();
 	}
 
-}
+};

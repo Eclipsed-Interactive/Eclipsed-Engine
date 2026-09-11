@@ -16,6 +16,8 @@
 #include "EditorLayout.h"
 #include "EditorUI.h"
 
+#include "Editor/Game/GameModuleManager.h"
+
 namespace Eclipse::Editor
 {
 	void Editor::Init(void* imguiCtx)
@@ -27,6 +29,8 @@ namespace Eclipse::Editor
 
 		EditorUI::Init();
 		EditorLayout::Init();
+
+		//GameModuleManager::Load("C:/Users/zulto/Desktop/GamePlugin");
 	}
 
 	void Editor::Shutdown()
