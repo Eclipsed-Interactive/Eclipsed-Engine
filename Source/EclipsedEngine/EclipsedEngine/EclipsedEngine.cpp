@@ -16,6 +16,7 @@
 #include "Core/EventSystem/EventSystem.h"
 
 #include "Renderer/RenderCommands/CommandList.h"
+#include "Input/Input.h"
 
 namespace Eclipse
 {
@@ -35,24 +36,24 @@ namespace Eclipse
 
 		renderer->Init();
 
-		input = renderer->CreateInput();
-		input->Init();
-
 		Graphics::CommandListManager::InitAllCommandLists();
 
-		GameObject* gameobject = ComponentManager::CreateGameObject();
+		{ // TO be removed.
+			GameObject* gameobject = ComponentManager::CreateGameObject();
 
-		auto t = gameobject->AddComponent<Transform2D>();
-		Math::Vector2f scale = { 100.f, 30.f };
-		t->SetScale(scale);
-		t->DirtyUpdate();
-		gameobject->AddComponent<SpriteRenderer2D>();
+			auto t = gameobject->AddComponent<Transform2D>();
+			Math::Vector2f scale = { 100.f, 30.f };
+			t->SetScale(scale);
+			t->DirtyUpdate();
+			gameobject->AddComponent<SpriteRenderer2D>();
+		}
 
 		ImGui_Init();
 	}
 
 	void Engine::LateInit()
 	{
+		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 	}
 
@@ -92,9 +93,9 @@ namespace Eclipse
 	void Engine::BeginFrame()
 	{
 		Timer::Update();
+		Input::Input::Update();
 
 		renderer->BeginFrame();
-		input->Update();
 
 		ImGui_NewFrame();
 	}
@@ -109,6 +110,35 @@ namespace Eclipse
 		device->BindFrameBuffer(1);
 		Graphics::CommandListManager::ExecuteAllCommandLists();
 		
+		ImGui::SetNextWindowSize({ 300, 300 });
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::Begin("Input");
+		ImGui::Text("x: %u | y: %u", Input::Input::GetMousePos().x, Input::Input::GetMousePos().y);
+
+		ImGui::Text("Mouse: %.1f %.1f", io.MousePos.x, io.MousePos.y);
+		ImGui::Text("MouseDown: %d %d %d",
+			io.MouseDown[0],
+			io.MouseDown[1],
+			io.MouseDown[2]);
+
+		ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
+
+		ImGui::End();
+		ImGui::Begin("Inputt");
+
+		for (int key = ImGuiKey_NamedKey_BEGIN;
+			key < ImGuiKey_NamedKey_END;
+			key++)
+		{
+			if (ImGui::IsKeyPressed((ImGuiKey)key))
+			{
+				ImGui::Text("Key pressed: %s",
+					ImGui::GetKeyName((ImGuiKey)key));
+			}
+		}
+
+		ImGui::End();
 
 		device->BindFrameBuffer(0);
 		renderer->Render();

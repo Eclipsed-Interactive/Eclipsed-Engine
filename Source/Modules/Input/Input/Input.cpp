@@ -1,82 +1,173 @@
 #include "Input.h"
 
-#include "OpenGL/GLFW/glfw3.h"
 #include "Core/MainSingleton.h"
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 
 namespace Eclipse::Input
 {
-	std::bitset<MAX_KEYS> Input::currentKeys;
-	std::bitset<MAX_KEYS> Input::lastKeys;
+	AbstractInput* Input::input = nullptr;
 
-	std::bitset<MAX_KEYS> Input::pressedThisFrame;
-	std::bitset<MAX_KEYS> Input::releasedThisFrame;
+#ifdef ECL_EDITOR
+	std::vector<std::string> Input::gameViewWindows;
 
-	Math::Vector2f Input::currentGamePos;
+	Math::Vector2ui Input::GetActiveGameViewMousePos()
+	{
+		ImVec2 mouse = ImGui::GetMousePos();
 
-	Math::Vector2i Input::currentPos;
-	Math::Vector2i Input::lastPos;
-	Math::Vector2i Input::mouseDeltaPos;
+		for (const std::string& id : gameViewWindows)
+		{
+			ImGuiWindow* window = ImGui::FindWindowByName(id.c_str());
 
-	Math::Vector2i Input::mouseScrollDelta;
-	Math::Vector2i Input::normalizedMouseScrollDelta;
+			if (!window)
+				continue;
 
-	bool Input::mouseIsInside;
-	bool Input::windowFocused;
+			if (mouse.x >= window->Pos.x &&
+				mouse.x <= window->Pos.x + window->Size.x &&
+				mouse.y >= window->Pos.y &&
+				mouse.y <= window->Pos.y + window->Size.y)
+			{
+				return Math::Vector2ui(
+					mouse.x - window->Pos.x,
+					mouse.y - window->Pos.y
+				);
+			}
+		}
 
-	Input* GetInputPtrFromGlfwPtr(GLFWwindow* w) {
-		return (Input*)glfwGetWindowUserPointer(w);
+		return Math::Vector2ui(0, 0);
+	}
+#endif
+
+	void Input::Init(AbstractInput* inputInstance, void* imguiCtx)
+	{
+		ImGui::SetCurrentContext((ImGuiContext*)imguiCtx);
+
+		input = inputInstance;
+		input->Init();
 	}
 
 	void Input::Update()
 	{
-
-		// Mouse delta
-		//mouseScrollDelta = Math::Vector2i(0, 0);
-		normalizedMouseScrollDelta = Math::Vector2i(0, 0);
-
-		// Mouse pos 
-		mouseDeltaPos = currentPos - lastPos;
-		lastPos = currentPos;
-
-		// Buttons (keyboard and mouse buttons)
-		pressedThisFrame = currentKeys & ~lastKeys;
-		releasedThisFrame = ~currentKeys & lastKeys;
-
-		lastKeys = currentKeys;
-
-		if (pressedThisFrame[Keycode::SPACE])
-		{
-			return;
-		}
+		input->Update();
 	}
 
-	void Input::Init()
+	bool Input::GetKey(char aKey)
 	{
-		GLFWwindow* window = MainSingleton::GetInstance<GLFWwindow*>();
-		//glfwSetWindowUserPointer(window, this);
+		return input->GetKey(aKey);
+	}
 
-		glfwSetKeyCallback(window, [](GLFWwindow* w, int key, int scancode, int action, int mods) {
-			Input::OnKey_Callback(w, key, scancode, action, mods);
-			});
+	bool Input::GetKey(int aKey)
+	{
+		return input->GetKey(aKey);
+	}
 
-		glfwSetCursorPosCallback(window, [](GLFWwindow* w, double x, double y) {
-			Input::OnMousePos_Callback(w, x, y);
-			});
+	bool Input::GetKey(Keycode::Scancode aKey)
+	{
+		return input->GetKey(aKey);
+	}
 
-		glfwSetCursorEnterCallback(window, [](GLFWwindow* w, int entered) {
-			Input::OnMouseEnter_Callback(w, entered);
-			});
+	bool Input::GetKeyDown(char aKey)
+	{
+		return input->GetKeyDown(aKey);
+	}
 
-		glfwSetMouseButtonCallback(window, [](GLFWwindow* w, int button, int action, int mods) {
-			Input::OnMouseButton_Callback(w, button, action, mods);
-			});
+	bool Input::GetKeyDown(int aKey)
+	{
+		return input->GetKeyDown(aKey);
+	}
 
-		glfwSetWindowFocusCallback(window, [](GLFWwindow* w, int focused) {
-			Input::OnWindowFocus_Callback(w, focused);
-			});
+	bool Input::GetKeyDown(Keycode::Scancode aKey)
+	{
+		return input->GetKeyDown(aKey);
+	}
 
-		glfwSetScrollCallback(window, [](GLFWwindow* w, double xOffset, double yOffset) {
-			Input::OnMouseScroll_Callback(w, xOffset, yOffset);
-			});
+	bool Input::GetKeyUp(char aKey)
+	{
+		return input->GetKeyDown(aKey);
+	}
+
+	bool Input::GetKeyUp(int aKey)
+	{
+		return input->GetKeyUp(aKey);
+	}
+
+	bool Input::GetKeyUp(Keycode::Scancode aKey)
+	{
+		return input->GetKeyUp(aKey);
+	}
+
+	bool Input::GetAny()
+	{
+		return input->GetAny();
+	}
+
+	Keycode::Scancode Input::GetAnyKey()
+	{
+		return input->GetAnyKey();
+	}
+
+	bool Input::GetMouse(int aKey)
+	{
+		return input->GetMouse(aKey);
+	}
+
+	bool Input::GetMouse(Keycode::Scancode aKey)
+	{
+		return input->GetMouse(aKey);
+	}
+
+	bool Input::GetMouseDown(int aKey)
+	{
+		return input->GetMouseDown(aKey);
+	}
+
+	bool Input::GetMouseDown(Keycode::Scancode aKey)
+	{
+		return input->GetMouseDown(aKey);
+	}
+
+	bool Input::GetMouseUp(int aKey)
+	{
+		return input->GetMouseUp(aKey);
+	}
+
+	bool Input::GetMouseUp(Keycode::Scancode aKey)
+	{
+		return input->GetMouseUp(aKey);
+	}
+
+	const Math::Vector2i& Input::GetMousePos()
+	{
+#ifdef ECL_EDITOR
+		Math::Vector2ui pos = GetActiveGameViewMousePos();
+		return pos;
+#else
+		return input->GetMousePos();
+#endif
+	}
+
+	const Math::Vector2i& Input::GetMouseDeltaPos()
+	{
+		return input->GetMouseDeltaPos();
+	}
+
+	const Math::Vector2i& Input::GetScroll()
+	{
+		return input->GetScroll();
+	}
+
+	const Math::Vector2i& Input::GetNormalizedScroll()
+	{
+		return input->GetNormalizedScroll();
+	}
+
+	bool Input::IsWindowFocused()
+	{
+		return input->IsWindowFocused();
+	}
+
+	bool Input::IsMouseInside()
+	{
+		return input->IsMouseInside();
 	}
 }

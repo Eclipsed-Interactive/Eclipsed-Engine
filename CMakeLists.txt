@@ -81,3 +81,11 @@ set_property(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     PROPERTY VS_STARTUP_PROJECT Launcher
 )
+
+foreach(_tgt ALL_BUILD ZERO_CHECK)
+    if(TARGET ${_tgt})
+        set_target_properties(${_tgt} PROPERTIES
+            VS_INTERMEDIATE_DIRECTORY "${CMAKE_BINARY_DIR}/Intermediate/${_tgt}"
+        )
+    endif()
+endforeach()

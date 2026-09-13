@@ -102,6 +102,7 @@ namespace Eclipse::Editor
 		EditorViewInstance* instance = type->create(id);
 		activeViews.push_back(instance);
 
+		instance->view->SetID(std::string(instance->view->GetName()) + "##" + std::to_string(instance->id));
 		instance->view->OnOpen();
 	}
 

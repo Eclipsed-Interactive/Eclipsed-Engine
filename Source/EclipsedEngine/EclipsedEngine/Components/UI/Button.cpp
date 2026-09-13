@@ -27,19 +27,21 @@ namespace Eclipse
 
 	bool Button::IsMouseInsideRect()
 	{
-		auto transform = gameObject->GetComponent<RectTransform>();
+		//auto transform = gameObject->GetComponent<RectTransform>();
 
-		Math::Vector2f refRes = transform->myCanvas->ReferenceResolution.Get();
-		
-		Math::Vector2f mousePos = Input::Input::GetGameMousePos();
-		Math::Vector2f translatedMousePos = mousePos * refRes - refRes * 0.5f;
+		//Math::Vector2f refRes = transform->myCanvas->ReferenceResolution.Get();
+		//
+		//Math::Vector2f mousePos = Input::Input::GetGameMousePos();
+		//Math::Vector2f translatedMousePos = mousePos * refRes - refRes * 0.5f;
 
-		//std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;
-		
-		bool x = translatedMousePos.x < topRightCorner.x && translatedMousePos.x > lowerLeftCorner.x;
-		bool y = translatedMousePos.y < topRightCorner.y && translatedMousePos.y > lowerLeftCorner.y;
+		////std::cout << translatedMousePos.x << "     " << translatedMousePos.y << std::endl;
+		//
+		//bool x = translatedMousePos.x < topRightCorner.x && translatedMousePos.x > lowerLeftCorner.x;
+		//bool y = translatedMousePos.y < topRightCorner.y && translatedMousePos.y > lowerLeftCorner.y;
 
-		return x && y;
+		//return x && y;
+
+		return false;
 	}
 
 	void Button::UpdateRectProperties()

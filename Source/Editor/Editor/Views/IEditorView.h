@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string_view>
+#include <string>
+
 #define BASIC_VIEW(PrettyName)														\
 public:																			\
 	static constexpr const char* GetStaticName() { return PrettyName; }
@@ -11,12 +14,17 @@ namespace Eclipse::Editor
 	public:
 		virtual ~IEditorView() = default;
 
+		void SetID(std::string id);
+
 		virtual void Draw() = 0;
 
 		virtual void OnOpen() {}
 		virtual void OnClose() {}
 
 		virtual const char* GetName() const = 0;
+
+	protected:
+		std::string viewId;
 	};
 
 	template<typename T>

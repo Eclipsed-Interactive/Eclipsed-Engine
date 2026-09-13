@@ -145,7 +145,7 @@ endfunction()
 
 function(SetModuleOutputPaths)
 # if(BUILD_EDITOR)
-set_target_properties(${TARGET_NAME} PROPERTIES
+    set_target_properties(${TARGET_NAME} PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY                "${CMAKE_SOURCE_DIR}/Bin/Libs/$<CONFIG>"
             ARCHIVE_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_SOURCE_DIR}/Bin/Libs/$<CONFIG>"
             ARCHIVE_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_SOURCE_DIR}/Bin/Libs/$<CONFIG>"

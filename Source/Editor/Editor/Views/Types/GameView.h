@@ -9,6 +9,7 @@ namespace Eclipse::Editor
 		BASIC_VIEW("Game")
 
 	public:
+		void OnOpen() override;
 		void Draw() override {}
 	};
 }

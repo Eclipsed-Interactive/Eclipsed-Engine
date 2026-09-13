@@ -29,7 +29,6 @@ namespace Eclipse
 		void* GetImGuiContext();
 
 	private:
-		Input::AbstractInput* input;
 		Graphics::IRenderer* renderer;
 	};
 }

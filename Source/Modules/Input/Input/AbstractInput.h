@@ -13,44 +13,44 @@ namespace Eclipse::Input
 	class INPUT_API AbstractInput
 	{
 	public:
-		bool GetKey(char aKey);
-		bool GetKey(int aKey);
-		bool GetKey(Keycode::Scancode aKey);
+		virtual bool GetKey(char aKey) { return false; }
+		virtual bool GetKey(int aKey) { return false; }
+		virtual bool GetKey(Keycode::Scancode aKey) { return false; }
 
-		bool GetKeyDown(char aKey);
-		bool GetKeyDown(int aKey);
-		bool GetKeyDown(Keycode::Scancode aKey);
+		virtual bool GetKeyDown(char aKey) { return false; }
+		virtual bool GetKeyDown(int aKey) { return false; }
+		virtual bool GetKeyDown(Keycode::Scancode aKey) { return false; }
 
-		bool GetKeyUp(char aKey);
-		bool GetKeyUp(int aKey);
-		bool GetKeyUp(Keycode::Scancode aKey);
+		virtual bool GetKeyUp(char aKey) { return false; }
+		virtual bool GetKeyUp(int aKey) { return false; }
+		virtual bool GetKeyUp(Keycode::Scancode aKey) { return false; }
 
-		bool GetAny();
-		Keycode::Scancode GetAnyKey();
+		virtual bool GetAny() { return false; }
+		virtual Keycode::Scancode GetAnyKey() { return Keycode::UNKNOWN; }
 
-		bool GetMouse(int aKey);
-		bool GetMouse(Keycode::Scancode aKey);
+		virtual bool GetMouse(int aKey) { return false; }
+		virtual bool GetMouse(Keycode::Scancode aKey) { return false; }
 
-		bool GetMouseDown(int aKey);
-		bool GetMouseDown(Keycode::Scancode aKey);
+		virtual bool GetMouseDown(int aKey) { return false; }
+		virtual bool GetMouseDown(Keycode::Scancode aKey) { return false; }
 
-		bool GetMouseUp(int aKey);
-		bool GetMouseUp(Keycode::Scancode aKey);
-
-
-		const Math::Vector2f& GetGameMousePos();
-
-		const Math::Vector2i& GetMousePos();
-		const Math::Vector2i& GetMouseDeltaPos();
-
-		const Math::Vector2i& GetScroll();
-		const Math::Vector2i& GetNormalizedScroll();
+		virtual bool GetMouseUp(int aKey) { return false; }
+		virtual bool GetMouseUp(Keycode::Scancode aKey) { return false; }
 
 
-		bool IsWindowFocused();
-		bool IsMouseInside();
+		virtual const Math::Vector2f& GetGameMousePos() {return Math::Vector2f(FLT_MIN, FLT_MIN);}
 
-		void SetMousePositionEditor(const Math::Vector2f& aPosition);
+		virtual const Math::Vector2i& GetMousePos() {return Math::Vector2f(FLT_MIN, FLT_MIN);}
+		virtual const Math::Vector2i& GetMouseDeltaPos() {return Math::Vector2f(FLT_MIN, FLT_MIN);}
+
+		virtual const Math::Vector2i& GetScroll() {return Math::Vector2f(FLT_MIN, FLT_MIN);}
+		virtual const Math::Vector2i& GetNormalizedScroll() { return Math::Vector2f(FLT_MIN, FLT_MIN); }
+
+
+		virtual bool IsWindowFocused() { return false; }
+		virtual bool IsMouseInside() { return false; }
+
+		virtual void SetMousePositionEditor(const Math::Vector2f& aPosition) {}
 
 	public:
 		virtual void Init() = 0;
