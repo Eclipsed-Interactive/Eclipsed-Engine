@@ -13,4 +13,4 @@ target_link_libraries(Core
         stb_image
 )
 
-# SetFolder("Modules")
+SetFolder("Modules")

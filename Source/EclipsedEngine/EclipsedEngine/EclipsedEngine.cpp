@@ -110,36 +110,6 @@ namespace Eclipse
 		device->BindFrameBuffer(1);
 		Graphics::CommandListManager::ExecuteAllCommandLists();
 		
-		ImGui::SetNextWindowSize({ 300, 300 });
-
-		ImGuiIO& io = ImGui::GetIO();
-		ImGui::Begin("Input");
-		ImGui::Text("x: %u | y: %u", Input::Input::GetMousePos().x, Input::Input::GetMousePos().y);
-
-		ImGui::Text("Mouse: %.1f %.1f", io.MousePos.x, io.MousePos.y);
-		ImGui::Text("MouseDown: %d %d %d",
-			io.MouseDown[0],
-			io.MouseDown[1],
-			io.MouseDown[2]);
-
-		ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
-
-		ImGui::End();
-		ImGui::Begin("Inputt");
-
-		for (int key = ImGuiKey_NamedKey_BEGIN;
-			key < ImGuiKey_NamedKey_END;
-			key++)
-		{
-			if (ImGui::IsKeyPressed((ImGuiKey)key))
-			{
-				ImGui::Text("Key pressed: %s",
-					ImGui::GetKeyName((ImGuiKey)key));
-			}
-		}
-
-		ImGui::End();
-
 		device->BindFrameBuffer(0);
 		renderer->Render();
 

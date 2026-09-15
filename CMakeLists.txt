@@ -17,7 +17,7 @@ else()
     include(CMake/generate/game.cmake)
 endif()
 
-project(${PROJ_NAME} LANGUAGES C CXX)
+project(${PROJ_NAME} LANGUAGES C CXX CSharp)
 
 option(ENABLE_NETWORKING "Includes the network engine in game build." ON)
 if(${ENABLE_NETWORKING})
@@ -49,7 +49,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Source/Externals/steamsdk/CMakeLists.txt"
     add_compile_definitions(STEAMSDK_PRESENT)
 endif()
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Core)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Modules/Core)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Modules/Assets)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Modules/Audio)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Modules/Input)
@@ -73,6 +73,22 @@ foreach(DIR ${SUBDIRS})
         add_subdirectory("${DIR}")
   
         add_dependencies(Launcher ${DIR_NAME})
+        add_dependencies(Editor ${DIR_NAME})
+    endif()
+endforeach()
+
+
+
+file(GLOB SUBDIRS LIST_DIRECTORIES true
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Tools/*"
+)
+
+foreach(DIR ${SUBDIRS})
+    if(IS_DIRECTORY "${DIR}")
+        get_filename_component(DIR_NAME "${DIR}" NAME)
+
+        add_subdirectory("${DIR}")
+  
         add_dependencies(Editor ${DIR_NAME})
     endif()
 endforeach()

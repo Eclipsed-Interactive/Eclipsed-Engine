@@ -26,7 +26,7 @@ namespace Eclipse::Input
 		virtual bool GetKeyUp(Keycode::Scancode aKey) { return false; }
 
 		virtual bool GetAny() { return false; }
-		virtual Keycode::Scancode GetAnyKey() { return Keycode::UNKNOWN; }
+		Keycode::Scancode GetAnyKey();
 
 		virtual bool GetMouse(int aKey) { return false; }
 		virtual bool GetMouse(Keycode::Scancode aKey) { return false; }

@@ -24,7 +24,14 @@ namespace Eclipse::Editor
 		virtual const char* GetName() const = 0;
 
 	protected:
+		void Indent(int indent);
+		void Unindent(int indent);
+
+	protected:
 		std::string viewId;
+
+
+		int currentIndent = 0;
 	};
 
 	template<typename T>

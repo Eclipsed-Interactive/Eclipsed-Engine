@@ -14,4 +14,15 @@ namespace Eclipse::Input
 
 		lastKeys = currentKeys;
 	}
+
+	Keycode::Scancode AbstractInput::GetAnyKey()
+	{
+		for (size_t i = 0; i < MAX_KEYS; ++i)
+		{
+			if (pressedThisFrame[i])
+				return static_cast<Keycode::Scancode>(i);
+		}
+
+		return Keycode::UNKNOWN;
+	}
 }
