@@ -80,7 +80,7 @@ endforeach()
 
 set_property(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    PROPERTY VS_STARTUP_PROJECT Launcher
+    PROPERTY VS_STARTUP_PROJECT Editor
 )
 
 foreach(_tgt ALL_BUILD ZERO_CHECK)

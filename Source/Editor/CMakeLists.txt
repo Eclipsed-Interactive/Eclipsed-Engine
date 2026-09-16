@@ -7,4 +7,5 @@ GenerateExecutable()
 target_link_libraries(Editor PRIVATE 
     EclipsedEngine
     ImGui
+    Reflection
 )

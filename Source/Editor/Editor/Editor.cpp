@@ -17,19 +17,25 @@
 #include "EditorUI.h"
 
 #include "Editor/Game/GameModuleManager.h"
+#include "Reflection/ReflectionFileScanner.h"
 
 namespace Eclipse::Editor
 {
+	void Editor::EarlyInit()
+	{
+		ProjectManager::LoadOrSelectProject();
+	}
+
 	void Editor::Init(void* imguiCtx)
 	{
 		ImGui::SetCurrentContext((ImGuiContext*)imguiCtx);
-		ProjectManager::LoadOrSelectProject();
 
 		Assets::AssetImporter::ImportAssets(PathManager::GetEngineAssetsPath(), "Engine Assets");
 
 		EditorUI::Init();
 		EditorLayout::Init();
 
+		Reflection::ReflectionFileScanner::ScanAndReflectFiles(PathManager::GetAssetsPath().generic_string().c_str());
 		//GameModuleManager::Load("C:/Users/zulto/Desktop/GamePlugin");
 	}
 
