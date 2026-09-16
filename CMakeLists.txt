@@ -78,21 +78,6 @@ foreach(DIR ${SUBDIRS})
 endforeach()
 
 
-
-file(GLOB SUBDIRS LIST_DIRECTORIES true
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Tools/*"
-)
-
-foreach(DIR ${SUBDIRS})
-    if(IS_DIRECTORY "${DIR}")
-        get_filename_component(DIR_NAME "${DIR}" NAME)
-
-        add_subdirectory("${DIR}")
-  
-        add_dependencies(Editor ${DIR_NAME})
-    endif()
-endforeach()
-
 set_property(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     PROPERTY VS_STARTUP_PROJECT Launcher
