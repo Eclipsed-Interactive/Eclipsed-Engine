@@ -25,7 +25,6 @@ namespace Eclipse
 		EventSystem::Trigger("Engine-Load");
 
 		PathManager::Init();
-		PathManager::SetProjectPath("D:/Github/Project-Nova");
 
 		ComponentManager::Init();
 		Assets::AssetManager::Init();

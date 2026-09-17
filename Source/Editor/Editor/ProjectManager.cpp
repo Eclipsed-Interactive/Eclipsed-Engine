@@ -21,7 +21,6 @@ namespace Eclipse::Editor
 		{
 			path = Files::SelectFolderDialog();
 		}
-		else return path;
 
 
 		SaveProjectPath(path);

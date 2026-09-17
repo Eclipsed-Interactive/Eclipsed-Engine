@@ -9,10 +9,11 @@
 void Test_ImGui();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	Eclipse::Editor::Editor editor;
 	Eclipse::Engine engine;
+	editor.EarlyInit();
 	engine.Init();
 
-	Eclipse::Editor::Editor editor;
 	editor.Init(engine.GetImGuiContext());
 
 	engine.LateInit();
