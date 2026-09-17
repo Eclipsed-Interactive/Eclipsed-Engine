@@ -25,7 +25,7 @@ namespace Eclipse
 		EventSystem::Trigger("Engine-Load");
 
 		PathManager::Init();
-		PathManager::SetProjectPath("C:/Users/zulto/Desktop/MyFiles/Projects/Project-Nova");
+		PathManager::SetProjectPath("D:/Github/Project-Nova");
 
 		ComponentManager::Init();
 		Assets::AssetManager::Init();
@@ -42,7 +42,7 @@ namespace Eclipse
 			GameObject* gameobject = ComponentManager::CreateGameObject();
 
 			auto t = gameobject->AddComponent<Transform2D>();
-			Math::Vector2f scale = { 100.f, 30.f };
+			Math::Vector2f scale = { 10.f, 10.f };
 			t->SetScale(scale);
 			t->DirtyUpdate();
 			gameobject->AddComponent<SpriteRenderer2D>();

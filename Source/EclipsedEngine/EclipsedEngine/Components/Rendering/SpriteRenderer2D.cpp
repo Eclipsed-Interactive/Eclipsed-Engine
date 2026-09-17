@@ -8,14 +8,11 @@
 
 #include "RenderCommands/RenderSprite2DCommand.h"
 
-#include "OpenGL/glad/glad.h"
-
 #include "Core/GraphicsBuffers/EditorBuffer.h"
 
-#include "Renderer/IRenderer.h"
 #include "Renderer/IDrawer.h"
 #include "Renderer/RendererManager.h"
-#include "RenderCommands/RenderSprite2DCommand.h"
+
 namespace Eclipse
 {
 #ifdef ECLIPSED_NETWORKING
@@ -112,6 +109,7 @@ namespace Eclipse
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
 		myTransformBuffer.Scale = gameObject->transform->GetScale();
+		myTransformBuffer.Scale.x *= 0.5625f;
 
 		Math::Vector2f NewSpriteRectMax = spriteRectMax;
 		Math::Vector2f NewSpriteRectMin = spriteRectMin;

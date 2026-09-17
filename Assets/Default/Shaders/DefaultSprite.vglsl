@@ -44,7 +44,7 @@ void main()
    sin(totalRotation),cos(totalRotation));
    
    // ORIGINAL TRANSFORMATION (for collision compatibility)
-   vec2 scaledVertex=VertexPosition*(transform.size*.01*mirrored)*spriteScaleMultiplier;
+   vec2 scaledVertex=VertexPosition*(transform.size*.01*mirrored);
    vec2 rotatedVertex=scaledVertex*rotationMatrix;
    
    vec2 worldPosition=transform.position+rotatedVertex;
@@ -57,7 +57,7 @@ void main()
    logicalPosition*=cameraScale;
    
    // Apply aspect ratio correction only for display
-   logicalPosition.x*=resolutionRatio;
+   //logicalPosition.x*=resolutionRatio;
    
    gl_Position=vec4(logicalPosition,0.,1.);
 }
