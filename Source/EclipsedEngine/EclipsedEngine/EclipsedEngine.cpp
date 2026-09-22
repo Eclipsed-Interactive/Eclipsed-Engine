@@ -34,7 +34,7 @@ namespace Eclipse
 
 		renderer = &Graphics::RendererManager::LoadRenderer(Graphics::RendererAPI::OpenGL);
 
-		auto audioPath = "C:/Users/zulto/Desktop/MyFiles/Projects/Eclipsed-Engine/Bin/Plugins/Eclipsed.Audio_FMOD.dll";
+		auto audioPath = PathManager::GetEngineRoot() / "Plugins" / "Eclipsed.Audio_FMOD.dll";
 		Audio::AudioError error = Audio::AudioManager::LoadBackend(audioPath);
 		if (error == Audio::AudioError::Succeded)
 		{
