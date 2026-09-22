@@ -7,7 +7,6 @@ CreateSharedProject()
 
 target_link_libraries(Renderer PUBLIC 
     Core
-    OpenGL
     stb_image
     Assets
     Input

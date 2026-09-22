@@ -7,7 +7,7 @@ file(GLOB_RECURSE IMGUI_SOURCES
 add_library(ImGui STATIC ${IMGUI_SOURCES})
 
 target_link_libraries(ImGui
-    PUBLIC
+    PRIVATE
         OpenGL
 )
 
@@ -23,11 +23,9 @@ set_target_properties(ImGui PROPERTIES
     FOLDER "Externals"
     EXCLUDE_FROM_ALL TRUE
 
-    # Final .lib location
     ARCHIVE_OUTPUT_DIRECTORY
         "${CMAKE_SOURCE_DIR}/Bin/Libs/Externals/$<CONFIG>"
 
-    # Visual Studio intermediate files
     VS_INTERMEDIATE_DIRECTORY
         "${CMAKE_BINARY_DIR}/Intermediate/ImGui"
 )

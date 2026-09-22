@@ -7,9 +7,9 @@ CreateSharedProject()
 
 target_link_libraries(Assets PUBLIC 
     Core 
+    FreeType
     OpenGL
     fmod
-    FreeType
 )
 
 SetFolder("Modules")
