@@ -20,7 +20,7 @@ namespace Eclipse::Graphics
 		std::string rendererPath = "";
 		switch (api)
 		{
-		case Eclipse::Graphics::RendererAPI::OpenGL: rendererPath = (PathManager::GetEngineRoot() / "Eclipsed.OpenGL_Renderer.dll").generic_string();
+		case Eclipse::Graphics::RendererAPI::OpenGL: rendererPath = (PathManager::GetEngineRoot() / "Plugins" / "Eclipsed.OpenGL_Renderer.dll").generic_string();
 			break;
 		default:
 			break;

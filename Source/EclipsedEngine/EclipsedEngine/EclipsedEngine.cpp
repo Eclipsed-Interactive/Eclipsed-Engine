@@ -18,6 +18,8 @@
 #include "Renderer/RenderCommands/CommandList.h"
 #include "Input/Input.h"
 
+#include "Audio/AudioPluginLoader.h"
+
 namespace Eclipse
 {
 	void Engine::Init()
@@ -31,6 +33,15 @@ namespace Eclipse
 		Timer::Init();
 
 		renderer = &Graphics::RendererManager::LoadRenderer(Graphics::RendererAPI::OpenGL);
+
+		auto audioPath = "C:/Users/zulto/Desktop/MyFiles/Projects/Eclipsed-Engine/Bin/Plugins/Eclipsed.Audio_FMOD.dll";
+		Audio::AudioError error = Audio::AudioManager::LoadBackend(audioPath);
+		if (error == Audio::AudioError::Succeded)
+		{
+			audio = Audio::AudioManager::GetBackend();
+			audio->Initialize();
+		}
+
 		MainSingleton::AddInstance(renderer);
 
 		renderer->Init();
@@ -45,7 +56,7 @@ namespace Eclipse
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 
-		{ // TO be removed.
+		{ // TOFFLA
 			GameObject* gameobject = ComponentManager::CreateGameObject();
 
 			auto t = gameobject->AddComponent<Transform2D>();
@@ -80,6 +91,11 @@ namespace Eclipse
 
 	void Engine::Update()
 	{
+		if (audio)
+		{
+			audio->Update();
+		}
+
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		device->BindFrameBuffer(1);
 

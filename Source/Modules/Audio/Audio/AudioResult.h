@@ -8,6 +8,8 @@ namespace Eclipse::Audio
 
         None = 0,
 
+        Succeded,
+
         Unknown,
         InvalidArgument,
         InvalidState,

@@ -27,9 +27,9 @@ namespace Eclipse::Audio
 		void ResetBackend();
 
 	private:
-		FMOD::System* system;
-		FMOD::Studio::System* studioSystem;
+		FMOD::System* system = nullptr;
+		FMOD::Studio::System* studioSystem = nullptr;
 
-		bool isInitialized;
+		bool isInitialized = false;
 	};
 }
