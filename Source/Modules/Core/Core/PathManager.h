@@ -18,16 +18,17 @@ namespace Eclipse
 		static std::filesystem::path GetProjectRoot() { return projectRoot; }
 		static std::filesystem::path GetEngineRoot() { return engineSourceRoot; }
 
-		static std::filesystem::path GetProjectPath() { return GetProjectRoot() / "Project"; }
+		static std::filesystem::path GetEditorPath() { return GetProjectRoot() / "Editor"; }
+		static std::filesystem::path GetAssetsPath() { return GetProjectRoot() / "Content"; }
 
-		static std::filesystem::path GetEditorPath() { return GetProjectPath() / "Editor"; }
-		static std::filesystem::path GetAssetsPath() { return GetProjectPath() / "Assets"; }
+		// Fix this, the directory does not exist if published a build.
 		static std::filesystem::path GetEngineAssetsPath() { return GetEngineRoot().parent_path() / "Assets"; }
+		
 		static std::filesystem::path GetProjectLocalPath() { return GetProjectRoot() / "Temp"; }
 		static std::filesystem::path GetArtifactsPath() { return GetProjectLocalPath() / "Artifacts"; }
-		static std::filesystem::path GetGameDllBuildPath() { return GetProjectLocalPath(); }
+		static std::filesystem::path GetBuildPath() { return GetProjectRoot() / "Bin"; }
 
-		static std::filesystem::path GetSettingsPath() { return GetProjectPath() / "Settings"; }
+		static std::filesystem::path GetSettingsPath() { return GetProjectRoot() / "Settings"; }
 
 	private:
 		static inline std::filesystem::path engineSourceRoot;

@@ -7,7 +7,6 @@ CreateStaticProject()
 
 target_link_libraries(Audio
     PUBLIC
-        fmod
         Core
 )
 

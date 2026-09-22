@@ -6,16 +6,18 @@
 #include <fstream>
 #include <filesystem>
 
+#include "Core/PathManager.h"
+
 namespace Eclipse::Reflection
 {
-	void ReflectionGenerator::Clear()
+	void ReflectionGenerator::Clear(const std::filesystem::path& path)
 	{
-		std::filesystem::remove_all("Generated/");
+		std::filesystem::remove_all(path);
 	}
 
-	void Eclipse::Reflection::ReflectionGenerator::Generate()
+	void Eclipse::Reflection::ReflectionGenerator::Generate(const std::filesystem::path& path)
 	{
-		std::filesystem::create_directory("Generated");
+		std::filesystem::create_directory(PathManager::GetProjectRoot() / "Generated" / "Reflection");
 
 		for (auto [id, type] : TypeRegistry::GetAll())
 		{
@@ -27,10 +29,10 @@ namespace Eclipse::Reflection
 
 	void ReflectionGenerator::GenerateFile(const TypeDescriptor& descriptor)
 	{
-		std::ofstream file(
-			"Generated/" + descriptor.Name + ".ref.hpp",
-			std::ios::binary | std::ios::trunc
-		);
+		using namespace std::filesystem;
+
+		const path filepath = PathManager::GetProjectRoot() / "Generated" / "Reflection" / std::string(descriptor.Name + ".ref.hpp");
+		std::ofstream file(filepath, std::ios::binary | std::ios::trunc);
 
 		if (!file)
 			throw std::runtime_error("Failed to open reflection file");
@@ -65,10 +67,10 @@ namespace Eclipse::Reflection
 
 	void ReflectionGenerator::GenerateRegistratorFile()
 	{
-		std::ofstream file(
-			"Generated/ReflectionRegistrator.ref.hpp",
-			std::ios::binary | std::ios::trunc
-		);
+		using namespace std::filesystem;
+
+		const path filepath = PathManager::GetProjectRoot() / "Generated" / "Reflection" / "ReflectionRegistrator.ref.hpp";
+		std::ofstream file(filepath, std::ios::binary | std::ios::trunc);
 
 		if (!file)
 			throw std::runtime_error("Failed to open reflection registrator file");

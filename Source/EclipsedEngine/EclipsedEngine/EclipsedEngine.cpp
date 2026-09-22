@@ -37,6 +37,14 @@ namespace Eclipse
 
 		Graphics::CommandListManager::InitAllCommandLists();
 
+		ImGui_Init();
+	}
+
+	void Engine::LateInit()
+	{
+		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
+		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
+
 		{ // TO be removed.
 			GameObject* gameobject = ComponentManager::CreateGameObject();
 
@@ -46,14 +54,6 @@ namespace Eclipse
 			t->DirtyUpdate();
 			gameobject->AddComponent<SpriteRenderer2D>();
 		}
-
-		ImGui_Init();
-	}
-
-	void Engine::LateInit()
-	{
-		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
-		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 	}
 
 

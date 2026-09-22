@@ -11,7 +11,7 @@
 
 namespace Eclipse::Reflection
 {
-	void ReflectionFileScanner::ScanAndReflectFiles(const char* root)
+	void ReflectionFileScanner::ScanAndReflectFiles(const std::filesystem::path& root)
 	{
 		for (auto it : std::filesystem::recursive_directory_iterator(root))
 		{
@@ -25,7 +25,7 @@ namespace Eclipse::Reflection
 		}
 	}
 
-	void ReflectionFileScanner::ReflectFile(const char* path)
+	void ReflectionFileScanner::ReflectFile(const std::filesystem::path& path)
 	{
 		std::string source = ReadFile(path);
 
@@ -56,7 +56,7 @@ namespace Eclipse::Reflection
 
 			TypeDescriptor type;
 			type.Name = name;
-			type.FilePath = path;
+			type.FilePath = path.generic_string();
 
 			const std::string body = match[2];
 			auto fieldsBegin = std::sregex_iterator(
@@ -99,7 +99,7 @@ namespace Eclipse::Reflection
 		}
 	}
 
-	std::string ReflectionFileScanner::ReadFile(const char* path)
+	std::string ReflectionFileScanner::ReadFile(const std::filesystem::path& path)
 	{
 		std::ifstream file(path, std::ios::binary);
 

@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 #include <Windows.h>
-
 #include "EclipsedEngine.Core.hpp"
 
 namespace Eclipse

@@ -34,7 +34,6 @@ if(${ENABLE_DISCORD_SDK})
     add_compile_definitions(ENABLE_DISCORD_SDK)
 endif()
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/fmod)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/cereal)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/FreeType)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/stb_image)
@@ -69,6 +68,7 @@ file(GLOB SUBDIRS LIST_DIRECTORIES true
 foreach(DIR ${SUBDIRS})
     if(IS_DIRECTORY "${DIR}")
         get_filename_component(DIR_NAME "${DIR}" NAME)
+        string(REPLACE "-" "_" DIR_NAME "${DIR_NAME}")
 
         add_subdirectory("${DIR}")
   

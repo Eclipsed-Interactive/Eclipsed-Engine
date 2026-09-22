@@ -4,6 +4,13 @@ title Engine Generation
 
 setlocal
 
+echo Saving engine root as env variable: 
+
+setx ECLIPSED_ENGINE_ROOT "%~dp0\"
+
+echo.
+echo.
+
 echo ==== Begun: Generating project ====
 echo.
 

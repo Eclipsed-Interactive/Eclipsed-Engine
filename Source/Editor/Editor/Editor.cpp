@@ -17,7 +17,7 @@
 #include "EditorUI.h"
 
 #include "Editor/Game/GameModuleManager.h"
-#include "Reflection/ReflectionFileScanner.h"
+#include "Reflection/Reflection.h"
 
 namespace Eclipse::Editor
 {
@@ -35,7 +35,7 @@ namespace Eclipse::Editor
 		EditorUI::Init();
 		EditorLayout::Init();
 
-		Reflection::ReflectionFileScanner::ScanAndReflectFiles(PathManager::GetAssetsPath().generic_string().c_str());
+		//Reflection::Reflect(PathManager::GetProjectRoot() / "Generated" / "Reflection");
 		//GameModuleManager::Load("C:/Users/zulto/Desktop/GamePlugin");
 	}
 
