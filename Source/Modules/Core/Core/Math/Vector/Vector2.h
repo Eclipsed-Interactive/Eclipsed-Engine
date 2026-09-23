@@ -75,6 +75,11 @@ namespace Eclipse::Math
 			return Vector2(aScalar / aVec.x, aScalar / aVec.y);
 		}
 
+		friend Vector2 operator/(const Vector2& aVec0, const Vector2& aVec1)
+		{
+			return Vector2(aVec0.x / aVec1.x, aVec0.y / aVec1.y);
+		}
+
 	public:
 		T Dot(const Vector2& anotherVec) const;
 		static T Dot(const Vector2& aVec0, const Vector2& aVec1);

@@ -128,11 +128,11 @@ void Eclipse::Editor::SceneView::MouseManager()
 		ImGuiIO& io = ImGui::GetIO();
 		ImVec2 mouseDelta = io.MouseDelta;
 
-		float correctScaledWindowSizeY = myWindowSize.y;
-		float SizeXRatio = myWindowSize.x * (myWindowSize.y / myWindowSize.x);
+		//float SizeXRatio = myWindowSize.y / myWindowSize.x;
+		//float correctScaledWindowSizeY = 640.f * SizeXRatio;
 
 		Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
-		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / SizeXRatio, -mouseDragdelta.y / correctScaledWindowSizeY) * 2.f * (1.f / myInspectorScale);
+		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / 640.f, -mouseDragdelta.y / 360) * (1.f / myInspectorScale);
 
 		//GraphicsEngine::Get()->SetCursor(GraphicsEngine::MouseCursor::Grab);
 	}
@@ -386,12 +386,13 @@ void Eclipse::Editor::SceneView::Draw()
 	float lastInspectorRotation = cameraBuffer->cameraRotation;
 	Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
 
+	float aspectRatio = myWindowSize.y / myWindowSize.x;
+	cameraBuffer->resolutionRatio = aspectRatio;
+
 	cameraBuffer->cameraPosition = myInspectorPosition;
 	cameraBuffer->cameraRotation = myInspectorRotation;
 	cameraBuffer->cameraScale = myInspectorScale;
 
-	float aspectRatio = myWindowSize.y / myWindowSize.x;
-	cameraBuffer->resolutionRatio = aspectRatio;
 
 	device->SetViewport(myWindowSize);
 

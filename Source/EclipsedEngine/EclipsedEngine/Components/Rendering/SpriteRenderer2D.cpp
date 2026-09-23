@@ -109,7 +109,6 @@ namespace Eclipse
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
 		myTransformBuffer.Scale = gameObject->transform->GetScale();
-		myTransformBuffer.Scale.x *= 0.5625f;
 
 		Math::Vector2f NewSpriteRectMax = spriteRectMax;
 		Math::Vector2f NewSpriteRectMin = spriteRectMin;
