@@ -185,7 +185,7 @@ namespace Eclipse::Editor
 
 	bool EditorLayout::LoadLayoutFromProject(const char* layoutName)
 	{
-		const std::filesystem::path path = PathManager::GetProjectPath() / "Editor" / "Layouts" / (std::string(layoutName) + ".layout");
+		const std::filesystem::path path = PathManager::GetProjectRoot() / "Editor" / "Layouts" / (std::string(layoutName) + ".layout");
 		if (std::filesystem::exists(path))
 			return false;
 
@@ -243,7 +243,7 @@ namespace Eclipse::Editor
 
 	void EditorLayout::SaveNewLayout(std::string_view layoutName)
 	{
-		const std::string path = (PathManager::GetProjectPath() / "Editor/Layouts" / layoutName).generic_string() + ".layout";
+		const std::string path = (PathManager::GetProjectRoot() / "Editor/Layouts" / layoutName).generic_string() + ".layout";
 		SaveLayout(path.c_str());
 	}
 }

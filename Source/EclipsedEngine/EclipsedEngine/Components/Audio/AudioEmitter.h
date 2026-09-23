@@ -25,7 +25,7 @@ namespace Eclipse
 	{
 		BASE_SELECTION(AudioEmitter, 0)
 
-	public:
+	/*public:
 		void Awake() override;
 		void OnDestroy() override;
 
@@ -47,7 +47,7 @@ namespace Eclipse
 
 	private:
 		void InitAudio();
-		void UpdateAudioPosition();
+		void UpdateAudioPosition();*/
 
 	public:
 		SERIALIZED_FIELD(Assets::AudioClip, audioClip);

@@ -5,6 +5,7 @@
 namespace Eclipse
 {
 	namespace Graphics { class IRenderer; }
+	namespace Audio { class IAudioBackend; }
 	namespace Input { class AbstractInput; }
 
 	class ECL_API Engine
@@ -30,5 +31,6 @@ namespace Eclipse
 
 	private:
 		Graphics::IRenderer* renderer;
+		Audio::IAudioBackend* audio;
 	};
 }

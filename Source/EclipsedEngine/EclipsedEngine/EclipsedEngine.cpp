@@ -18,6 +18,8 @@
 #include "Renderer/RenderCommands/CommandList.h"
 #include "Input/Input.h"
 
+#include "Audio/AudioPluginLoader.h"
+
 namespace Eclipse
 {
 	void Engine::Init()
@@ -31,21 +33,20 @@ namespace Eclipse
 		Timer::Init();
 
 		renderer = &Graphics::RendererManager::LoadRenderer(Graphics::RendererAPI::OpenGL);
+
+		auto audioPath = PathManager::GetEngineRoot() / "Plugins" / "Eclipsed.Audio_FMOD.dll";
+		Audio::AudioError error = Audio::AudioManager::LoadBackend(audioPath);
+		if (error == Audio::AudioError::Succeded)
+		{
+			audio = Audio::AudioManager::GetBackend();
+			audio->Initialize();
+		}
+
 		MainSingleton::AddInstance(renderer);
 
 		renderer->Init();
 
 		Graphics::CommandListManager::InitAllCommandLists();
-
-		{ // TO be removed.
-			GameObject* gameobject = ComponentManager::CreateGameObject();
-
-			auto t = gameobject->AddComponent<Transform2D>();
-			Math::Vector2f scale = { 10.f, 10.f };
-			t->SetScale(scale);
-			t->DirtyUpdate();
-			gameobject->AddComponent<SpriteRenderer2D>();
-		}
 
 		ImGui_Init();
 	}
@@ -54,6 +55,16 @@ namespace Eclipse
 	{
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
+
+		{ // TOFFLA
+			GameObject* gameobject = ComponentManager::CreateGameObject();
+
+			auto t = gameobject->AddComponent<Transform2D>();
+			Math::Vector2f scale = { 10.f, 10.f };
+			t->SetScale(scale);
+			t->DirtyUpdate();
+			gameobject->AddComponent<SpriteRenderer2D>();
+		}
 	}
 
 
@@ -80,6 +91,11 @@ namespace Eclipse
 
 	void Engine::Update()
 	{
+		if (audio)
+		{
+			audio->Update();
+		}
+
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		device->BindFrameBuffer(1);
 

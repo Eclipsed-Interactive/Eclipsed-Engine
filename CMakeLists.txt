@@ -34,7 +34,6 @@ if(${ENABLE_DISCORD_SDK})
     add_compile_definitions(ENABLE_DISCORD_SDK)
 endif()
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/fmod)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/cereal)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/FreeType)
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Externals/stb_image)
@@ -69,6 +68,7 @@ file(GLOB SUBDIRS LIST_DIRECTORIES true
 foreach(DIR ${SUBDIRS})
     if(IS_DIRECTORY "${DIR}")
         get_filename_component(DIR_NAME "${DIR}" NAME)
+        string(REPLACE "-" "_" DIR_NAME "${DIR_NAME}")
 
         add_subdirectory("${DIR}")
   
@@ -83,10 +83,30 @@ set_property(
     PROPERTY VS_STARTUP_PROJECT Editor
 )
 
-foreach(_tgt ALL_BUILD ZERO_CHECK)
-    if(TARGET ${_tgt})
-        set_target_properties(${_tgt} PROPERTIES
-            VS_INTERMEDIATE_DIRECTORY "${CMAKE_BINARY_DIR}/Intermediate/${_tgt}"
-        )
-    endif()
-endforeach()
+# foreach(_tgt ALL_BUILD ZERO_CHECK)
+#     if(TARGET ${_tgt})
+#         set_target_properties(${_tgt} PROPERTIES
+#             VS_INTERMEDIATE_DIRECTORY "${CMAKE_BINARY_DIR}/Intermediate/${_tgt}"
+#         )
+#     endif()
+# endforeach()
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    list(APPEND CMAKE_VS_GLOBALS
+        "BaseIntermediateOutputPath=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/"
+        "IntermediateOutputPath=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
+        "IntDir=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
+    )
+endif()
+
+
+
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    list(APPEND CMAKE_VS_GLOBALS
+        "OutDir=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
+        "BaseIntermediateOutputPath=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/"
+        "IntermediateOutputPath=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
+        "IntDir=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
+    )
+endif()

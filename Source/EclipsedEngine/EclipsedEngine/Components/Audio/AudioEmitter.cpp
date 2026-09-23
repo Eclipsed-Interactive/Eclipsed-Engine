@@ -1,12 +1,12 @@
 #include "AudioEmitter.h"
 
-#include "Audio/AudioManager.h"
+//#include "Audio/AudioManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Audio/AudioListener.h"
 
 namespace Eclipse
 {
-	void AudioEmitter::Awake()
+	/*void AudioEmitter::Awake()
 	{
 		if (playOnAwake)
 			Play();
@@ -193,5 +193,5 @@ namespace Eclipse
 		};
 
 		channel->set3DAttributes(&pos, &vel);
-	}
+	}*/
 }
