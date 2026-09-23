@@ -108,11 +108,6 @@ void Eclipse::Editor::SceneView::MouseManager()
 
 		normalizedMousePosition.x = normalizedMousePosition.x * 2.f - 1;
 		normalizedMousePosition.y = normalizedMousePosition.y * 2.f - 1;
-
-		if (ImGui::IsMouseClicked(0))
-		{
-			int i = 0;
-		}
 	}
 
 	if (ImGui::IsWindowHovered())
@@ -123,22 +118,26 @@ void Eclipse::Editor::SceneView::MouseManager()
 		ScrollManager();
 	}
 
+	if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
+		mouseIsDown = false;
+
 	if (mouseIsDown)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImVec2 mouseDelta = io.MouseDelta;
 
-		//float SizeXRatio = myWindowSize.y / myWindowSize.x;
-		//float correctScaledWindowSizeY = 640.f * SizeXRatio;
+		//ImGui::DragFloat2("Mousedelta", &mouseDelta.x);
+
+		float ResolutionRatio = myWindowSize.x / myWindowSize.y;
+
+		Math::Vector2f Dividend = myWindowSize * 0.5f;
 
 		Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
-		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / 640.f, -mouseDragdelta.y / 360) * (1.f / myInspectorScale);
+
+		myInspectorPosition -= Math::Vector2f(mouseDragdelta.x / Dividend.y, -mouseDragdelta.y / (Dividend.x / ResolutionRatio)) * (1.f / myInspectorScale);
 
 		//GraphicsEngine::Get()->SetCursor(GraphicsEngine::MouseCursor::Grab);
 	}
-
-	if (!(ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2)))
-		mouseIsDown = false;
 
 	SpriteDragging();
 }
@@ -213,8 +212,9 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
 
 
-	Graphics::CommandListManager::GetSpriteCommandList().Execute();
-	Graphics::CommandListManager::GetUICommandList().Execute();
+	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	commandListManager->GetSpriteCommandList().Execute();
+	commandListManager->GetUICommandList().Execute();
 
 	//Math::Vector4ui colorValue = GraphicsEngine::Get()->ReadPixel({ windowRelativeMousePosition.x + 10, windowRelativeMousePosition.y - 8 });
 	Math::Vector4ui colorValue = { 0, 0, 0, 0 };
@@ -337,6 +337,7 @@ void Eclipse::Editor::SceneView::ObjectSnappingGizmo()
 
 void Eclipse::Editor::SceneView::Draw()
 {
+
 	ImVec2 windowSize = ImGui::GetWindowSize();
 	myWindowSize = { windowSize.x, windowSize.y };
 
@@ -376,6 +377,18 @@ void Eclipse::Editor::SceneView::Draw()
 
 	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
+	device->Clear();
+
+	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
+	{
+		// REsize the texture.
+		//device->BindTexture()
+
+		device->BindTexture(sceneBuffer.textureIndex);
+		device->Test(myWindowSize);
+		device->BindTexture(0);
+	}
+
 
 	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
@@ -404,7 +417,6 @@ void Eclipse::Editor::SceneView::Draw()
 	editorBuffer->notOverideColor = 1;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
-	device->Clear();
 
 	buffer->SetOrCreateBuffer<CameraBuffer>(0);
 
@@ -414,29 +426,19 @@ void Eclipse::Editor::SceneView::Draw()
 	BaseRenderComponent::IsScene = true;
 	Canvas::IsScene = true;
 
+	// isScene = 0;
+	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneView", &isScene);
 
-	Graphics::CommandListManager::GetSpriteCommandList().Execute();
-	Graphics::CommandListManager::GetUICommandList().Execute();
-	Graphics::CommandListManager::GetDebugDrawCommandList().Execute();
+	myLastWindowResolution = { myWindowSize.x, myWindowSize.y };
+
+	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	commandListManager->GetSpriteCommandList().Execute();
+	commandListManager->GetUICommandList().Execute();
+	commandListManager->GetDebugDrawCommandList().Execute();
 
 	cameraBuffer->cameraPosition = lastInspectorPosition;
 	cameraBuffer->cameraRotation = lastInspectorRotation;
 	cameraBuffer->cameraScale = lastInspectorScale;
-
-	// isScene = 0;
-	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneView", &isScene);
-
-	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
-	{
-		// REsize the texture.
-		//device->BindTexture()
-
-		device->BindTexture(sceneBuffer.textureIndex);
-		device->Test(myWindowSize);
-		device->BindTexture(0);
-	}
-
-	myLastWindowResolution = { myWindowSize.x, myWindowSize.y };
 
 
 	// if (Editor::DragAndDrop::BeginTarget("DND_PREFAB", Utilities::FileInfo::FileType_Prefab))

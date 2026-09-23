@@ -57,7 +57,7 @@ void main()
    logicalPosition*=cameraScale;
    
    // Apply aspect ratio correction only for display
-   //logicalPosition.x*=resolutionRatio;
+   logicalPosition.x*=resolutionRatio;
    
    gl_Position=vec4(logicalPosition,0.0,1.0);
 }

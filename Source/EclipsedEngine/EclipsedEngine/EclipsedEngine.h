@@ -2,9 +2,11 @@
 
 #include "EclipsedEngine.Core.hpp"
 
+#include "Renderer/RenderCommands/CommandList.h"
+
 namespace Eclipse
 {
-	namespace Graphics { class IRenderer; }
+	namespace Graphics { class IRenderer; class CommandListManager; }
 	namespace Audio { class IAudioBackend; }
 	namespace Input { class AbstractInput; }
 
@@ -18,6 +20,7 @@ namespace Eclipse
 		void EndFrame();
 		void Update();
 		void Render();
+		void LateRender();
 		bool ShouldClose();
 
 	private:
@@ -26,11 +29,15 @@ namespace Eclipse
 		void ImGui_Init();
 		void ImGui_Render();
 
+		Graphics::CommandListManager* GetCommandListManager();
+
 	public:
 		void* GetImGuiContext();
 
 	private:
-		Graphics::IRenderer* renderer;
-		Audio::IAudioBackend* audio;
+		Graphics::IRenderer* renderer = nullptr;
+		Audio::IAudioBackend* audio = nullptr;
+
+		Graphics::CommandListManager myCommandListManager;
 	};
 }

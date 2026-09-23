@@ -12,8 +12,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Eclipse::Editor::Editor editor;
 	Eclipse::Engine engine;
 	editor.EarlyInit();
-	engine.Init();
 
+	engine.Init();
 	editor.Init(engine.GetImGuiContext());
 
 	engine.LateInit();
@@ -27,12 +27,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		engine.Update();
 
-		editor.Render();
 		engine.Render();
+		editor.Render();
 
+		engine.LateRender();
 
-		editor.EndFrame();
 		engine.EndFrame();
+		editor.EndFrame();
 	}
 
 	editor.Shutdown();

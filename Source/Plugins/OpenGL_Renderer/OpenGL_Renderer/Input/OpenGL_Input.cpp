@@ -140,12 +140,13 @@ namespace Eclipse::OpenGL::Input
                 if (input)
                     input->OnMousePos_Callback(w, x, y);
 
-#ifdef ECL_EDITOR
-                ImGui::GetIO().AddMousePosEvent(
-                    (float)x,
-                    (float)y
-                );
-#endif
+                // Removed because moving camera in scene view, this makes camera jump a bunch of units in the oposite direction (Do not know why)
+//#ifdef ECL_EDITOR
+//                ImGui::GetIO().AddMousePosEvent(
+//                    (float)x,
+//                    (float)y
+//                );
+//#endif
             });
 
         glfwSetCursorEnterCallback(window, [](GLFWwindow* w, int entered)

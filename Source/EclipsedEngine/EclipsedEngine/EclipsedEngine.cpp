@@ -24,6 +24,7 @@ namespace Eclipse
 {
 	void Engine::Init()
 	{
+
 		EventSystem::Trigger("Engine-Load");
 
 		PathManager::Init();
@@ -46,7 +47,8 @@ namespace Eclipse
 
 		renderer->Init();
 
-		Graphics::CommandListManager::InitAllCommandLists();
+		myCommandListManager.InitAllCommandLists();
+		MainSingleton::AddInstance(myCommandListManager);
 
 		ImGui_Init();
 	}
@@ -83,7 +85,7 @@ namespace Eclipse
 	{
 		renderer->EndFrame();
 
-		Graphics::CommandListManager::ResetAllCommandLists();
+		myCommandListManager.ResetAllCommandLists();
 
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		//device->BindFrameBuffer({0,1});
@@ -113,6 +115,9 @@ namespace Eclipse
 		renderer->BeginFrame();
 
 		ImGui_NewFrame();
+
+		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		commandListManager->GetHappenAtBeginCommandList().Execute();
 	}
 
 	void Engine::Render()
@@ -120,18 +125,21 @@ namespace Eclipse
 		ComponentManager::RenderComponents();
 
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-		device->SetViewport({ 1280, 720 });
+		//device->SetViewport({ 1280, 720 });
 
-		device->BindFrameBuffer(1);
-		Graphics::CommandListManager::ExecuteAllCommandLists();
+		//device->BindFrameBuffer(1);
+		//Graphics::CommandListManager::ExecuteAllCommandLists();
 		
 		device->BindFrameBuffer(0);
-		renderer->Render();
+		device->Clear();
 
-		ImGui_Render();
+		renderer->Render();
 	}
 
-
+	void Engine::LateRender()
+	{
+		ImGui_Render();
+	}
 
 	void Engine::ImGui_Init()
 	{

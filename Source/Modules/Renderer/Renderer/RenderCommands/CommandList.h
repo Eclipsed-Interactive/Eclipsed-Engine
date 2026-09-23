@@ -85,19 +85,33 @@ namespace Eclipse::Graphics
     class CommandListManager
     {
     public:
-        static CommandList& GetUICommandList() { return UICommandList; }
-        static CommandList& GetSpriteCommandList() { return SpriteCommandList; }
-        static CommandList& GetDebugDrawCommandList() { return DebugDrawCommandList; }
-        static CommandList& GetHappenAtBeginCommandList() { return HappenAtBeginCommandList; }
+        CommandList& GetUICommandList() 
+        { 
+            return UICommandList; 
+        }
+        CommandList& GetSpriteCommandList() 
+        { 
+            auto testing = &SpriteCommandList;
 
-        static void ExecuteAllCommandLists()
+            return SpriteCommandList; 
+        }
+        CommandList& GetDebugDrawCommandList()
+        { 
+            return DebugDrawCommandList; 
+        }
+        CommandList& GetHappenAtBeginCommandList() 
+        { 
+            return HappenAtBeginCommandList; 
+        }
+
+        void ExecuteAllCommandLists()
         {
             SpriteCommandList.Execute();
             UICommandList.Execute();
             DebugDrawCommandList.Execute();
         }
 
-        static void InitAllCommandLists()
+        void InitAllCommandLists()
         {
             SpriteCommandList.Init();
             UICommandList.Init();
@@ -105,7 +119,7 @@ namespace Eclipse::Graphics
             HappenAtBeginCommandList.Init();
         }
 
-        static void ResetAllCommandLists()
+        void ResetAllCommandLists()
         {
             SpriteCommandList.Reset();
             UICommandList.Reset();
@@ -113,11 +127,10 @@ namespace Eclipse::Graphics
         }
 
     private:
-        static inline CommandList UICommandList;
-        static inline CommandList SpriteCommandList;
-        static inline CommandList DebugDrawCommandList;
+        CommandList UICommandList;
+        CommandList SpriteCommandList;
+        CommandList DebugDrawCommandList;
 
-
-        static inline CommandList HappenAtBeginCommandList;
+        CommandList HappenAtBeginCommandList;
     };
 }

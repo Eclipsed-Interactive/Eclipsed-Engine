@@ -88,7 +88,9 @@ namespace Eclipse
 		if (!gameObject->transform)
 			return;
 
-		Graphics::CommandListManager::GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
+		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+
+		commandListManager->GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
 	}
 
 	void SpriteRenderer2D::Draw(unsigned aProgramID)
