@@ -28,7 +28,7 @@ namespace Eclipse::Graphics
 
 		virtual void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = {0, 0}) = 0;
 
-		virtual void Test(Math::Vector2f size) = 0;
+		virtual void ChangeImageDimensions(Math::Vector2f size) = 0;
 
 	public:
 		virtual Sprite* CreateSprite() = 0;

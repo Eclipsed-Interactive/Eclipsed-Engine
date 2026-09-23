@@ -59,7 +59,7 @@ namespace Eclipse::Graphics::OpenGL
 		glViewport(pos.x, pos.y, size.x, size.y);
 	}
 
-	void OpenGL_GraphicsDevice::Test(Math::Vector2f size)
+	void OpenGL_GraphicsDevice::ChangeImageDimensions(Math::Vector2f size)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	}

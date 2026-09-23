@@ -28,5 +28,9 @@ namespace Eclipse
 
         CameraBuffer myCameraBuffer;
 
+        inline Math::Color GetClearColor() { return ClearColor; }
+
+    private:
+        Math::Color ClearColor = { 0.2392f, 0.4784f, 0.6f, 1 };
     };
 }

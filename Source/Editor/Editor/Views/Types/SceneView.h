@@ -5,6 +5,8 @@
 
 #include "Renderer/FrameBuffer.h"
 
+#include "Core/Math/Color.h"
+
 namespace Eclipse
 {
 	class Component;
@@ -63,6 +65,7 @@ namespace Eclipse::Editor
 		std::vector<std::vector<Component*>> myCopiedComponentsFromObjects;
 
 		Graphics::FrameBuffer sceneBuffer;
+		Math::Color ClearColor = { 0.2f, 0.2f, 0.2f, 1.f };
 
 	private:
 		bool myIsSnapping = false;

@@ -22,7 +22,7 @@
 #include "Core/Math/CommonMath.h"
 
 #include "EclipsedEngine/Components/UI/Canvas.h"
-#include "EclipsedEngine/Components/UI/RectTransform.h"
+#include "EclipsedEngine/Components/Rendering/Camera.h"
 
 #include "Core/Clipboard.h"
 
@@ -375,9 +375,15 @@ void Eclipse::Editor::SceneView::Draw()
 		}
 	}
 
+
+
+	// This is not using its own framebuffer but if left click then render and get mouse position color
+	SpriteSelector();
+
+
 	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
-	device->Clear();
+	device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
 	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
 	{
@@ -385,7 +391,7 @@ void Eclipse::Editor::SceneView::Draw()
 		//device->BindTexture()
 
 		device->BindTexture(sceneBuffer.textureIndex);
-		device->Test(myWindowSize);
+		device->ChangeImageDimensions(myWindowSize);
 		device->BindTexture(0);
 	}
 
@@ -408,9 +414,6 @@ void Eclipse::Editor::SceneView::Draw()
 
 
 	device->SetViewport(myWindowSize);
-
-	// This is not using its own framebuffer but if left click then render and get mouse position color
-	SpriteSelector();
 
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
@@ -441,18 +444,9 @@ void Eclipse::Editor::SceneView::Draw()
 	cameraBuffer->cameraScale = lastInspectorScale;
 
 
-	// if (Editor::DragAndDrop::BeginTarget("DND_PREFAB", Utilities::FileInfo::FileType_Prefab))
-	// {
-	// 	int i = 8;
-	// }
-	// if (Editor::DragAndDrop::BeginTarget("DND_SCENE", Utilities::FileInfo::FileType_Scene))
-	// {
-	// 	int i = 8;
-	// }
-
 	ImVec2 CursorPos = ImGui::GetCursorPos();
 	ImGui::SetCursorPos(ImVec2(CursorPos.x - 8, CursorPos.y - 7));
-	ImGui::Image(sceneBuffer.textureIndex, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::Image(sceneBuffer.textureIndex, ImVec2(myWindowSize.x, myWindowSize.y - 24), ImVec2(0, 1), ImVec2(1, 0));
 
 	if (ImGui::BeginDragDropTarget())
 	{

@@ -9,7 +9,7 @@ namespace Eclipse::Graphics::OpenGL
 	public:
 		void Clear(
 			ClearFlags flags = ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, 
-			const Math::Color& color = {0.f, 0.f, 0.f,0.f},
+			const Math::Color& color = {0.f, 0.f, 0.f, 0.f},
 			float depth = 1.f,
 			unsigned char stencil = 0	
 		) override;
@@ -20,7 +20,7 @@ namespace Eclipse::Graphics::OpenGL
 
 		void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = { 0, 0 }) override;
 
-		void Test(Math::Vector2f size) override;
+		void ChangeImageDimensions(Math::Vector2f size) override;
 
 	public:
 		Sprite* CreateSprite() override;
