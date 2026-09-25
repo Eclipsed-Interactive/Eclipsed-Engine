@@ -22,6 +22,8 @@ namespace Eclipse::Graphics::OpenGL
 
 		void ChangeImageDimensions(Math::Vector2f size) override;
 
+		Math::Vector4ui ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size = { 1, 1 }) override;
+
 	public:
 		Sprite* CreateSprite() override;
 		TextSprite* CreateTextSprite() override;

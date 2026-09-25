@@ -29,9 +29,10 @@ namespace Eclipse::Editor
 
 	protected:
 		std::string viewId;
-
-
 		int currentIndent = 0;
+
+	public:
+		unsigned ActiveImGuiFlag = 0;
 	};
 
 	template<typename T>

@@ -64,6 +64,18 @@ namespace Eclipse::Graphics::OpenGL
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	}
 
+	Math::Vector4ui OpenGL_GraphicsDevice::ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size)
+	{
+		//glBindFramebuffer(GL_READ_FRAMEBUFFER, aFrameBuffer);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		unsigned char data[4];
+		glReadPixels(Position.x, Position.y, Size.x, Size.y, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+		return Math::Vector4ui(data[0], data[1], data[2], data[3]);
+	}
+
 	Sprite* OpenGL_GraphicsDevice::CreateSprite()
 	{
 		Sprite* sprite = new Sprite;

@@ -7,6 +7,8 @@
 
 #include "Core/Math/Color.h"
 
+#include "Core/Math/Vector/Vector2.h"
+
 namespace Eclipse
 {
 	class Component;
@@ -34,6 +36,8 @@ namespace Eclipse::Editor
 		void ScrollManager();
 		void MouseManager();
 		void SpriteDragging();
+
+		Eclipse::Math::Vector2ui GetSceneViewMousePosition();
 
 	public:
 		void Draw() override;

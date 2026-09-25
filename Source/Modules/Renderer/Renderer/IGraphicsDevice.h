@@ -30,6 +30,8 @@ namespace Eclipse::Graphics
 
 		virtual void ChangeImageDimensions(Math::Vector2f size) = 0;
 
+		virtual Math::Vector4ui ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size = { 1, 1 }) = 0;
+
 	public:
 		virtual Sprite* CreateSprite() = 0;
 		virtual TextSprite* CreateTextSprite() = 0;

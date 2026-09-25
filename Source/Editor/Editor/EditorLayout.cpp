@@ -83,7 +83,9 @@ namespace Eclipse::Editor
 		{
 			std::string windowName = std::string(instance->view->GetName()) + "##" + std::to_string(instance->id);
 
-			if (ImGui::Begin(windowName.c_str(), &instance->open))
+			ImGuiWindowFlags flags = instance->view->ActiveImGuiFlag;
+
+			if (ImGui::Begin(windowName.c_str(), &instance->open, flags))
 			{
 				instance->view->Draw();
 			}

@@ -24,6 +24,9 @@ namespace Eclipse::Editor
 		if (target == 0)
 			return;
 
+		if (ComponentManager::myEntityIdToEntity.find(target) == ComponentManager::myEntityIdToEntity.end())
+			return;
+
 		GameObject* gameObject = ComponentManager::myEntityIdToEntity.at(target);
 		if (gameObject == nullptr) return;
 
