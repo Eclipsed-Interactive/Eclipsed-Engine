@@ -174,7 +174,8 @@ namespace Eclipse::Graphics::OpenGL
 		BindShader(material.GetProgramID());
 
 		Assets::Texture& texture = material.GetTexture();
-		BindTexture(0, texture); // Change to albedo slot
+		if(texture.dataPtr)
+			BindTexture(0, texture); // Change to albedo slot
 	}
 }
 

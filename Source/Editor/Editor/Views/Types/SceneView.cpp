@@ -93,24 +93,14 @@ void Eclipse::Editor::SceneView::ScrollManager()
 
 void Eclipse::Editor::SceneView::MouseManager()
 {
-	{
-		ImVec2 mousePos = ImGui::GetMousePos();
-		ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+	Math::Vector2i MousePosition = GetSceneViewMousePosition();
+	MousePosition.y = myWindowSize.y - MousePosition.y;
 
-		// cursorScreenPos.x -= 8;
-		// cursorScreenPos.y -= 8;
+	normalizedMousePosition.x = MousePosition.x / myWindowSize.x;
+	normalizedMousePosition.y = MousePosition.y / myWindowSize.y;
 
-		float mousePosX = mousePos.x - cursorScreenPos.x;
-		float mousePosY = myWindowSize.y - (mousePos.y - cursorScreenPos.y);
-
-		windowRelativeMousePosition = { static_cast<unsigned>(mousePosX), static_cast<unsigned>(mousePosY) };
-
-		normalizedMousePosition.x = windowRelativeMousePosition.x / myWindowSize.x;
-		normalizedMousePosition.y = windowRelativeMousePosition.y / myWindowSize.y;
-
-		normalizedMousePosition.x = normalizedMousePosition.x * 2.f - 1;
-		normalizedMousePosition.y = normalizedMousePosition.y * 2.f - 1;
-	}
+	normalizedMousePosition.x = normalizedMousePosition.x * 2.f - 1;
+	normalizedMousePosition.y = normalizedMousePosition.y * 2.f - 1;
 
 	if (ImGui::IsWindowHovered())
 	{
@@ -135,7 +125,8 @@ void Eclipse::Editor::SceneView::MouseManager()
 		//GraphicsEngine::Get()->SetCursor(GraphicsEngine::MouseCursor::Grab);
 	}
 
-	SpriteDragging();
+	if (!ImGui::IsMouseDown(1))
+		SpriteDragging();
 }
 
 void Eclipse::Editor::SceneView::SpriteDragging()
@@ -228,14 +219,14 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear();
 	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-	
+
 	//GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
 
 	//BaseGraphicsBuffer* graphicsBuffer = GraphicsEngine::Get()->GetGraphicsBuffer();
 
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
-	editorBuffer->notOverideColor = 0;
+	editorBuffer->PixelPicking = 1;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 	BaseRenderComponent::IsScene = true;
@@ -253,12 +244,10 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	commandListManager->GetUICommandList().Execute();
 
 
-	
+
 
 	Math::Vector2i MousePosition = GetSceneViewMousePosition();
-
-	//MousePosition.x = ImGui::GetContentRegionAvail().x - MousePosition.x;
-	MousePosition.y = ImGui::GetContentRegionAvail().y - MousePosition.y;
+	MousePosition.y = myWindowSize.y - MousePosition.y - 1.f;
 
 	Math::Vector4ui colorValue = device->ReadPixelOnFrameBuffer(0, MousePosition);
 	unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
@@ -332,51 +321,6 @@ void Eclipse::Editor::SceneView::ObjectSnappingGizmo()
 
 	ImGui::SetCursorPosX(0);
 }
-
-/*void Eclipse::Editor::SceneView::GizmoManager(::Eclipse::Transform2D* aTransform)
-{
-	Math::Vector2f transformPos = aTransform->GetPosition();
-	Math::Vector2f position = aTransform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f);
-
-	if (myGizmoMoveY)
-		DebugDrawer::DrawArrow(position, Math::Vector2f(0, 1.f), 0.2f, 0.04f, Math::Color(0.2f, 1, 0.2f, 1));
-	else
-		DebugDrawer::DrawArrow(position, Math::Vector2f(0, 1.f), 0.2f, 0.04f, Math::Color(0, 1, 0, 1));
-
-	if (myGizmoMoveX)
-		DebugDrawer::DrawArrow(position, Math::Vector2f(1.f, 0.f), 0.2f, 0.04f, Math::Color(1, 0.2f, 0.2f, 1));
-	else
-		DebugDrawer::DrawArrow(position, Math::Vector2f(1.f, 0.f), 0.2f, 0.04f, Math::Color(1, 0, 0, 1));
-
-	if (ImGui::IsMouseClicked(0))
-	{
-		float transformedGOPositionX = position.x - myInspectorPosition.x;
-		float transformedGOPositionY = position.y - myInspectorPosition.y;
-
-		float aspectRatio = myWindowSize.y / myWindowSize.x;
-
-		float normMousePosX = windowRelativeMousePosition.x / myWindowSize.x;
-		float normMousePosY = windowRelativeMousePosition.y / myWindowSize.y;
-
-		float transformedMousePositionX = normMousePosX;
-		float transformedMousePositionY = normMousePosY;
-
-		float mouseXDistance = transformedGOPositionX - transformedMousePositionX;
-		float mouseYDistance = transformedGOPositionY - transformedMousePositionY;
-
-		float absXPos = std::abs(mouseXDistance);
-		float absYPos = std::abs(mouseYDistance);
-
-		if (absXPos < 0.1f)
-		{
-			myGizmoMoveY = true;
-		}
-		if (absYPos < 0.1f)
-		{
-			myGizmoMoveX = true;
-		}
-	}
-}*/
 
 void Eclipse::Editor::SceneView::Draw()
 {
@@ -454,7 +398,7 @@ void Eclipse::Editor::SceneView::Draw()
 
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
-	editorBuffer->notOverideColor = 1;
+	editorBuffer->PixelPicking = 0;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);

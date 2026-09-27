@@ -55,7 +55,6 @@ namespace Eclipse::Editor
 		Math::Vector2f myWindowSize;
 		Math::Vector2f myLastWindowResolution = { 0, 0 };
 		Math::Vector2f normalizedMousePosition = { 0, 0 };
-		Math::Vector2ui windowRelativeMousePosition = { 0, 0 };
 
 	private:
 		Math::Vector2f mySpriteMouseDownPosition = { 0, 0 };

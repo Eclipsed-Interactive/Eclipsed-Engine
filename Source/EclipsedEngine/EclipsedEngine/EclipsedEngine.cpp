@@ -59,13 +59,22 @@ namespace Eclipse
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 
 		{ // TOFFLA
-			GameObject* gameobject = ComponentManager::CreateGameObject();
-
-			auto t = gameobject->AddComponent<Transform2D>();
 			Math::Vector2f scale = { 10.f, 10.f };
+
+
+			GameObject* gameobject = ComponentManager::CreateGameObject();
+			auto t = gameobject->AddComponent<Transform2D>();
 			t->SetScale(scale);
 			t->DirtyUpdate();
 			gameobject->AddComponent<SpriteRenderer2D>();
+
+
+			GameObject* gameobject2 = ComponentManager::CreateGameObject();
+			auto tt = gameobject2->AddComponent<Transform2D>();
+			tt->SetScale(scale);
+			tt->DirtyUpdate();
+			gameobject2->AddComponent<SpriteRenderer2D>();
+
 		}
 	}
 

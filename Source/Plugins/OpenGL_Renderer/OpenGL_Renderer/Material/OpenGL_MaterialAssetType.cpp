@@ -15,6 +15,8 @@ namespace Eclipse::Assets
 		defaultAssetsGuids[DefaultAssetType::MATERIAL_2D_SPRITE].FromString("304024b18cd756152dee092f1a43738d");
 		defaultAssetsGuids[DefaultAssetType::MATERIAL_UI].FromString("a4b24408a489129276bd23242d2946a8");
 		defaultAssetsGuids[DefaultAssetType::MATERIAL_TEXT].FromString("8cc226a548b15b488d94a6635dd92236");
+
+		defaultAssetsGuids[DefaultAssetType::PIXELPICK_MATERIAL].FromString("8d759cf451c92e0d95509e18cc339dae");
 	}
 
 	ImportedData OpenGL_MaterialAssetType::Import(const AssetMeta& file)

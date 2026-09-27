@@ -73,6 +73,8 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnComponentAdded()
 	{
+		PixelPickMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::PIXELPICK_MATERIAL);
+
 		if (material->IsValid()) hasMaterial = true;
 		if (sprite->IsValid()) hasSprite = true;
 
@@ -102,11 +104,6 @@ namespace Eclipse
 		//
 		// if (aProgramID)
 		// 	shaderID = aProgramID;
-
-		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
-		graphicsDevice->BindMaterial(material);
-		if (sprite->IsValid())
-			graphicsDevice->BindTexture(0, sprite);
 
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
@@ -145,6 +142,15 @@ namespace Eclipse
 		buffer->SetOrCreateBuffer(1, myTransformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
 
+
+		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+		if (editorBuffer->PixelPicking)
+			graphicsDevice->BindMaterial(PixelPickMaterial);
+		else
+			graphicsDevice->BindMaterial(material);
+
+		if (sprite->IsValid())
+			graphicsDevice->BindTexture(0, sprite);
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();

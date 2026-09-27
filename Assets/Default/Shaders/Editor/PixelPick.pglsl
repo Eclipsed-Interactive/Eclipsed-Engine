@@ -12,6 +12,12 @@ layout(std140, binding=5) uniform MaterialBuffer
    vec4 spriteRect; // x, y, width, height
 };
 
+layout(std140, binding=35) uniform EditorBuffer
+{
+   vec4 pixelPickColor;
+   int notOverrideColor;
+};
+
 // Ins
 in vec2 outTexCoord;
 
@@ -25,7 +31,11 @@ void main()
       spriteRect.y + outTexCoord.y * spriteRect.w
    );
 
-   vec4 textureAlbedo = texture(material.albedo, modifiedUV);
+   frag_colour = vec4(pixelPickColor.rgb, 1);
 
-   frag_colour = textureAlbedo;
+   vec4 textureAlbedo = texture(material.albedo, modifiedUV);
+   if(textureAlbedo.a < 0.15)
+   {
+      frag_colour.a = 0;
+   }
 }

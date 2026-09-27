@@ -13,6 +13,8 @@ namespace Eclipse::Assets
 		MATERIAL_2D_SPRITE,
 		MATERIAL_UI,
 		MATERIAL_TEXT,
+		PIXELPICK_MATERIAL,
+
 
 		TEXT_FONT
 	};

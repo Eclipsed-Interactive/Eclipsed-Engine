@@ -7,7 +7,7 @@ namespace Eclipse
     struct EditorBuffer
     {
         Math::Vector4f PixelPickColor;
-        int notOverideColor;
+        int PixelPicking = 1;
         float Padding[3];
     };
 }

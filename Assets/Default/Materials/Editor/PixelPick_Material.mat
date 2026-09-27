@@ -1,0 +1,14 @@
+{
+    "value0": {
+        "cereal_class_version": 0,
+        "vertex_shader": "8f3974aadc06d30a743b3176250e4961",
+        "pixel_shader": "2a0b288eb4009503a4ec2e7285334eea",
+        "texture": "",
+        "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+        }
+    }
+}
