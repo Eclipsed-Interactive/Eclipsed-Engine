@@ -40,9 +40,18 @@
 
 #include <ImGui/imgui_internal.h>
 
-void Eclipse::Editor::SceneView::ZoomToObject(unsigned aObject)
+void Eclipse::Editor::SceneView::TryZoomToObject()
 {
-	Transform2D* transform = ComponentManager::GetComponent<Transform2D>(aObject);
+	unsigned currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
+
+	if (!currentGO) return;
+
+	if (ImGui::IsAnyItemActive()) return;
+
+	bool FKeyPressed = ImGui::IsKeyPressed(ImGuiKey_F, false);
+	if (!FKeyPressed) return;
+
+	Transform2D* transform = ComponentManager::GetComponent<Transform2D>(currentGO);
 	if (transform)
 	{
 		myInspectorPosition = transform->GetPosition();
@@ -51,7 +60,7 @@ void Eclipse::Editor::SceneView::ZoomToObject(unsigned aObject)
 		return;
 	}
 
-	RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(aObject);
+	RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(currentGO);
 	if (rectTransform)
 	{
 		myInspectorPosition = rectTransform->myCanvas->gameObject->transform->GetPosition();
@@ -131,8 +140,7 @@ void Eclipse::Editor::SceneView::MouseManager()
 
 void Eclipse::Editor::SceneView::SpriteDragging()
 {
-	if (!draggingSprite)
-		return;
+	if (!draggingSprite) return;
 
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 mouseDelta = io.MouseDelta;
@@ -207,22 +215,14 @@ Eclipse::Math::Vector2ui Eclipse::Editor::SceneView::GetSceneViewMousePosition()
 
 void Eclipse::Editor::SceneView::SpriteSelector()
 {
-	if (!ImGui::IsMouseClicked(0))
+	if (!ImGui::IsMouseClicked(0) || !ImGui::IsWindowHovered())
 		return;
-	if (!ImGui::IsWindowHovered())
-		return;
-	if (myGizmoMoveY || myGizmoMoveX)
-		return;
-
 
 	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear();
 	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
-	//GraphicsEngine::Get<OpenGLGraphicsEngine>()->ClearCurrentSceneBuffer(0, 0, 0);
-
-	//BaseGraphicsBuffer* graphicsBuffer = GraphicsEngine::Get()->GetGraphicsBuffer();
 
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
@@ -231,13 +231,6 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 
 	BaseRenderComponent::IsScene = true;
 	Canvas::IsScene = true;
-
-	buffer->SetOrCreateBuffer<CameraBuffer>(0);
-
-	CanvasBuffer* canvasBuffer;
-	buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
-	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
-
 
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 	commandListManager->GetSpriteCommandList().Execute();
@@ -322,118 +315,21 @@ void Eclipse::Editor::SceneView::ObjectSnappingGizmo()
 	ImGui::SetCursorPosX(0);
 }
 
-void Eclipse::Editor::SceneView::Draw()
+void Eclipse::Editor::SceneView::CheckNChangeSceneImageDimension()
 {
-
-	ImVec2 windowSize = ImGui::GetContentRegionAvail();
-	myWindowSize = { windowSize.x, windowSize.y };
-
-	if (ImGui::BeginMenuBar())
-	{
-		ObjectSnappingGizmo();
-		DrawGizmoButtons(DrawGizmo);
-		ImGui::EndMenuBar();
-	}
-
-	MouseManager();
-
-
-	if (SelectionContext::GetCurrentData<GameObjectTarget>() && ImGui::IsKeyPressed(ImGuiKey_F, false) && !ImGui::IsAnyItemActive())
-		ZoomToObject(SelectionContext::GetCurrentData<GameObjectTarget>());
-
-	if (SelectionContext::GetCurrentData<GameObjectTarget>())
-	{
-		mySelectedObject = GetComp(::Eclipse::SpriteRenderer2D, SelectionContext::GetCurrentData<GameObjectTarget>());
-
-		if (mySelectedObject && mySelectedObject->GetMaterial())
-		{
-			::Eclipse::Transform2D* transform = GetComp(::Eclipse::Transform2D, SelectionContext::GetCurrentData<GameObjectTarget>());
-
-			//DebugDrawer::Get().Begin();
-			Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetSizeNormalized();
-			Math::Vector2f size = mySelectedObject->spriteRectMax - mySelectedObject->spriteRectMin;
-			float aspectScale = size.y / size.x;
-
-			//DebugDrawer::DrawSquare(transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f), transform->GetRotation(), transform->GetScale() * 0.005f * 0.5f * textureScale * Math::Vector2f(1.f, aspectScale), Math::Color(1.f, 0.4f, 0.7f, 1.f));
-
-			//GizmoManager(transform);
-
-			//DebugDrawer::Get().Render();
-		}
-	}
-
-
-	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
-	CameraBuffer* cameraBuffer = nullptr;
-	buffer->GetBuffer<CameraBuffer>(cameraBuffer);
-
-	Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
-	float lastInspectorRotation = cameraBuffer->cameraRotation;
-	Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
-
-	float aspectRatio = myWindowSize.y / myWindowSize.x;
-	cameraBuffer->resolutionRatio = aspectRatio;
-
-	cameraBuffer->cameraPosition = myInspectorPosition;
-	cameraBuffer->cameraRotation = myInspectorRotation;
-	cameraBuffer->cameraScale = myInspectorScale;
-
-
-	device->SetViewport(myWindowSize);
-
-
-	buffer->SetOrCreateBuffer<CameraBuffer>(0);
-
-	CanvasBuffer* canvasBuffer;
-	buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
-	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
-	BaseRenderComponent::IsScene = true;
-	Canvas::IsScene = true;
-
-
-	// This is not using its own framebuffer but if left click then render and get mouse position color
-	SpriteSelector();
-
-	EditorBuffer* editorBuffer;
-	buffer->GetBuffer<EditorBuffer>(editorBuffer);
-	editorBuffer->PixelPicking = 0;
-	buffer->SetOrCreateBuffer<EditorBuffer>(35);
-
-	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
-	device->Clear(Graphics::ClearFlags::Color, ClearColor);
-
-	// isScene = 0;
-	// GraphicsEngine::Get<OpenGLGraphicsEngine>()->UpdateGlobalUniform(UniformType::Int, "IsSceneView", &isScene);
-
+	Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 	if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
 	{
-		// REsize the texture.
-		//device->BindTexture()
-
 		device->BindTexture(sceneBuffer.textureIndex);
 		device->ChangeImageDimensions(myWindowSize);
 		device->BindTexture(0);
 	}
 
 	myLastWindowResolution = { myWindowSize.x, myWindowSize.y };
+}
 
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-	commandListManager->GetSpriteCommandList().Execute();
-	commandListManager->GetUICommandList().Execute();
-	commandListManager->GetDebugDrawCommandList().Execute();
-
-
-	cameraBuffer->cameraPosition = lastInspectorPosition;
-	cameraBuffer->cameraRotation = lastInspectorRotation;
-	cameraBuffer->cameraScale = lastInspectorScale;
-
-
-	ImVec2 CursorPos = ImGui::GetCursorPos();
-	ImGui::SetCursorPos(ImVec2(CursorPos.x, CursorPos.y));
-	ImGui::Image(sceneBuffer.textureIndex, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
-
+void Eclipse::Editor::SceneView::CheckDragNDrop()
+{
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_PREFAB"))
@@ -459,7 +355,16 @@ void Eclipse::Editor::SceneView::Draw()
 			memset(data + prefSize, '\0', 1);
 			stream.close();
 
-			InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+
+			ImGuiIO& io = ImGui::GetIO();
+			Math::Vector2i MousePosition = GetSceneViewMousePosition();
+			MousePosition.y = myWindowSize.y - MousePosition.y - 1.f;
+			float ResolutionRatio = myWindowSize.x / myWindowSize.y;
+			Math::Vector2f Dividend = myWindowSize * 0.5f;
+			Math::Vector2f InWorldMousePosition = Math::Vector2f((float)MousePosition.x / Dividend.y, -(float)MousePosition.y / (Dividend.x / ResolutionRatio)) * (1.f / myInspectorScale);
+
+			Eclipse::GameObject* go = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+			go->transform->SetPosition(myInspectorPosition + InWorldMousePosition);
 
 			free(data);
 		}
@@ -469,6 +374,114 @@ void Eclipse::Editor::SceneView::Draw()
 		}
 		ImGui::EndDragDropTarget();
 	}
+}
+
+void Eclipse::Editor::SceneView::TryDrawSpriteEdges()
+{
+	if (SelectionContext::GetCurrentData<GameObjectTarget>())
+	{
+		mySelectedObject = GetComp(::Eclipse::SpriteRenderer2D, SelectionContext::GetCurrentData<GameObjectTarget>());
+
+		if (mySelectedObject && mySelectedObject->GetMaterial())
+		{
+			::Eclipse::Transform2D* transform = GetComp(::Eclipse::Transform2D, SelectionContext::GetCurrentData<GameObjectTarget>());
+
+			//DebugDrawer::Get().Begin();
+			Math::Vector2f textureScale = mySelectedObject->GetMaterial()->GetTexture().GetSizeNormalized();
+			Math::Vector2f size = mySelectedObject->spriteRectMax - mySelectedObject->spriteRectMin;
+			float aspectScale = size.y / size.x;
+
+			//DebugDrawer::DrawSquare(transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f), transform->GetRotation(), transform->GetScale() * 0.005f * 0.5f * textureScale * Math::Vector2f(1.f, aspectScale), Math::Color(1.f, 0.4f, 0.7f, 1.f));
+
+			//GizmoManager(transform);
+
+			//DebugDrawer::Get().Render();
+		}
+	}
+}
+
+void Eclipse::Editor::SceneView::RenderSceneView()
+{
+	Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
+
+	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
+	device->Clear(Graphics::ClearFlags::Color, ClearColor);
+
+	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	commandListManager->GetSpriteCommandList().Execute();
+	commandListManager->GetUICommandList().Execute();
+	commandListManager->GetDebugDrawCommandList().Execute();
+}
+
+void Eclipse::Editor::SceneView::Draw()
+{
+	ImVec2 windowSize = ImGui::GetContentRegionAvail();
+	myWindowSize = { windowSize.x, windowSize.y };
+
+	if (ImGui::BeginMenuBar())
+	{
+		ObjectSnappingGizmo();
+		DrawGizmoButtons(DrawGizmo);
+		ImGui::EndMenuBar();
+	}
+
+	MouseManager();
+
+	TryZoomToObject();
+
+	TryDrawSpriteEdges();
+
+
+	Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
+	device->SetViewport(myWindowSize);
+
+
+	Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+
+	CameraBuffer* cameraBuffer = nullptr;
+	buffer->GetBuffer<CameraBuffer>(cameraBuffer);
+
+	Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
+	float lastInspectorRotation = cameraBuffer->cameraRotation;
+	Math::Vector2f lastInspectorScale = cameraBuffer->cameraScale;
+
+	float aspectRatio = myWindowSize.y / myWindowSize.x;
+	cameraBuffer->resolutionRatio = aspectRatio;
+
+	cameraBuffer->cameraPosition = myInspectorPosition;
+	cameraBuffer->cameraRotation = myInspectorRotation;
+	cameraBuffer->cameraScale = myInspectorScale;
+
+
+
+
+	buffer->SetOrCreateBuffer<CameraBuffer>(0);
+
+	CanvasBuffer* canvasBuffer;
+	buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
+	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
+	BaseRenderComponent::IsScene = true;
+	Canvas::IsScene = true;
+
+
+	// This is not using its own framebuffer but if left click then render and get mouse position color
+	SpriteSelector();
+
+	EditorBuffer* editorBuffer;
+	buffer->GetBuffer<EditorBuffer>(editorBuffer);
+	editorBuffer->PixelPicking = 0;
+	buffer->SetOrCreateBuffer<EditorBuffer>(35);
+
+
+	cameraBuffer->cameraPosition = lastInspectorPosition;
+	cameraBuffer->cameraRotation = lastInspectorRotation;
+	cameraBuffer->cameraScale = lastInspectorScale;
+
+
+	CheckNChangeSceneImageDimension();
+	ImGui::Image(sceneBuffer.textureIndex, ImVec2(myWindowSize.x, myWindowSize.y), ImVec2(0, 1), ImVec2(1, 0));
+
+	CheckDragNDrop();
 
 	device->BindFrameBuffer(0);
 }

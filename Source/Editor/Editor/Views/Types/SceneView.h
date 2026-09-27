@@ -23,7 +23,7 @@ namespace Eclipse::Editor
 		BASIC_VIEW("Scene")
 
 	public:
-		static void ZoomToObject(unsigned aObject);
+		void TryZoomToObject();
 		static void ResetCamera();
 
 	private:
@@ -39,7 +39,14 @@ namespace Eclipse::Editor
 
 		Eclipse::Math::Vector2ui GetSceneViewMousePosition();
 
+	private:
+		void CheckNChangeSceneImageDimension();
+		void CheckDragNDrop();
+		void TryDrawSpriteEdges();
+
 	public:
+		void DrawSceneView();
+
 		void Draw() override;
 		void OnOpen() override;
 
@@ -59,14 +66,12 @@ namespace Eclipse::Editor
 	private:
 		Math::Vector2f mySpriteMouseDownPosition = { 0, 0 };
 		Math::Vector2f mySpriteMoveVector = { 0, 0 };
-
+		
 	private:
-		::Eclipse::SpriteRenderer2D* mySelectedObject = nullptr;
+		Eclipse::SpriteRenderer2D* mySelectedObject = nullptr;
 		unsigned mySelectedSpriteHighlightProgram;
 
 	private:
-		std::vector<std::vector<Component*>> myCopiedComponentsFromObjects;
-
 		Graphics::FrameBuffer sceneBuffer;
 		Math::Color ClearColor = { 0.2f, 0.2f, 0.2f, 1.f };
 
@@ -75,11 +80,6 @@ namespace Eclipse::Editor
 		float mySnappingDistance = 0.01f;
 
 	private:
-		bool myGizmoMoveX = false;
-		bool myGizmoMoveY = false;
-
-	private:
-
 		static inline float totalYScroll = 0;
 
 		float lastScroll = 0;
