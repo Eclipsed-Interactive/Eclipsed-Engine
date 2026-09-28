@@ -45,7 +45,7 @@ namespace Eclipse::Editor
 		void TryDrawSpriteEdges();
 
 	public:
-		void DrawSceneView();
+		void RenderSceneView();
 
 		void Draw() override;
 		void OnOpen() override;

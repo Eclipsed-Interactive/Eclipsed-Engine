@@ -472,6 +472,7 @@ void Eclipse::Editor::SceneView::Draw()
 	editorBuffer->PixelPicking = 0;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
+	RenderSceneView();
 
 	cameraBuffer->cameraPosition = lastInspectorPosition;
 	cameraBuffer->cameraRotation = lastInspectorRotation;
