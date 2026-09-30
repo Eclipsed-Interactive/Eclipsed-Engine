@@ -12,6 +12,7 @@
 #include "EclipsedEngine/Plugin/PluginManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
+#include "EclipsedEngine/Components/Rendering/Camera.h"
 
 #include "Core/EventSystem/EventSystem.h"
 
@@ -61,19 +62,21 @@ namespace Eclipse
 		{ // TOFFLA
 			Math::Vector2f scale = { 10.f, 10.f };
 
-
-			GameObject* gameobject = ComponentManager::CreateGameObject();
-			auto t = gameobject->AddComponent<Transform2D>();
-			t->SetScale(scale);
-			t->DirtyUpdate();
-			gameobject->AddComponent<SpriteRenderer2D>();
-
-
-			GameObject* gameobject2 = ComponentManager::CreateGameObject();
-			auto tt = gameobject2->AddComponent<Transform2D>();
-			tt->SetScale(scale);
-			tt->DirtyUpdate();
-			gameobject2->AddComponent<SpriteRenderer2D>();
+			{
+				GameObject* gameobject = ComponentManager::CreateGameObject();
+				auto t = gameobject->AddComponent<Transform2D>();
+				t->SetScale(scale);
+				t->DirtyUpdate();
+				gameobject->AddComponent<Camera>();
+				gameobject->AddComponent<SpriteRenderer2D>();
+			}
+			{
+				GameObject* gameobject = ComponentManager::CreateGameObject();
+				auto t = gameobject->AddComponent<Transform2D>();
+				t->SetScale(scale);
+				t->DirtyUpdate();
+				gameobject->AddComponent<SpriteRenderer2D>();
+			}
 
 		}
 	}

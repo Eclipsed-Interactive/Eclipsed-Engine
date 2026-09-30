@@ -33,8 +33,11 @@ namespace Eclipse::Editor
 
 		void InitSceneBuffer();
 
+		void SetBuffers();
 
 	private:
+
+
 		Math::Vector2f myWindowSize;
 		Math::Vector2f myLastWindowResolution = { -1, -1 };
 

@@ -14,6 +14,8 @@
 
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 
+#include "EclipsedEngine/Components/Transform2D.h"
+
 namespace Eclipse::Editor
 {
 	void GameView::OnOpen()
@@ -64,10 +66,12 @@ namespace Eclipse::Editor
 
 		device->SetViewport(myWindowSize);
 
+		SetBuffers();
+
 		bool NoCameraInScene = false;
-		if (Camera::main)
+		if (Camera* camera = MainSingleton::GetPointer<Camera>())
 		{
-			device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.7f, 0.7f, 1.f });
+			device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
 
 			Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 			commandListManager->GetSpriteCommandList().Execute();
@@ -76,8 +80,6 @@ namespace Eclipse::Editor
 		}
 		else
 			NoCameraInScene = true;
-
-
 
 		DrawFixedResolution();
 
@@ -163,6 +165,22 @@ namespace Eclipse::Editor
 	{
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		myGameFrameBuffer = device->CreateFrameBuffer();
+	}
+
+	void GameView::SetBuffers()
+	{
+		Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+
+		Camera* camera = MainSingleton::GetPointer<Camera>();
+
+		float aspectRatio = myWindowSize.y / myWindowSize.x;
+		camera->myCameraBuffer.resolutionRatio = aspectRatio;
+
+		camera->myCameraBuffer.cameraPosition = camera->gameObject->transform->GetPosition();
+		camera->myCameraBuffer.cameraRotation = camera->gameObject->transform->GetRotation();
+		camera->myCameraBuffer.cameraScale = { camera->CameraZoom, camera->CameraZoom };
+
+		buffer->SetOrCreateBuffer<CameraBuffer>(0, camera->myCameraBuffer);
 	}
 
 	void GameView::CheckNChangeSceneImageDimension()

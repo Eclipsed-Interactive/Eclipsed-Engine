@@ -15,29 +15,28 @@ namespace Eclipse
 {
     void Camera::OnDestroy()
     {
-        if (main == this)
-            main = nullptr;
+        Camera* IntrenalCamera = MainSingleton::GetPointer<Camera>();
+
+        if (IntrenalCamera == this)
+            IntrenalCamera = nullptr;
     }
 
     void Camera::OnComponentAdded()
     {
-        main = this;
+        MainSingleton::AddInstance(this);
 
         OnSceneLoaded();
     }
 
-    void Camera::UpdateCameraTransform()
-    {
-        if (Camera::main != this)
-            return;
+    //void Camera::UpdateCameraTransform()
+    //{
+    //    if (MainSingleton::GetPointer<Camera>() != this)
+    //        return;
 
-        Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-        myCameraBuffer.cameraPosition = gameObject->transform->GetPosition();
-        myCameraBuffer.cameraRotation = gameObject->transform->GetRotation();
-        myCameraBuffer.cameraScale = { CameraZoom, CameraZoom };
-
-        buffer->SetOrCreateBuffer(0, myCameraBuffer);
-    }
+    //    myCameraBuffer.cameraPosition = gameObject->transform->GetPosition();
+    //    myCameraBuffer.cameraRotation = gameObject->transform->GetRotation();
+    //    myCameraBuffer.cameraScale = { CameraZoom, CameraZoom };
+    //}
 
 
     void Camera::EditorUpdate()
@@ -46,7 +45,7 @@ namespace Eclipse
         
         if (!created)
         {
-            gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { UpdateCameraTransform(); });
+            //gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { UpdateCameraTransform(); });
 
             created = true;
         }
