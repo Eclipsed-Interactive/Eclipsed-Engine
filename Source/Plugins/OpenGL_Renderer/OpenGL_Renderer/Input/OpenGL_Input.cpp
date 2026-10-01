@@ -133,21 +133,21 @@ namespace Eclipse::OpenGL::Input
 #endif
             });
 
-        glfwSetCursorPosCallback(window, [](GLFWwindow* w, double x, double y)
-            {
-                OpenGL_Input* input = GetInputPtrFromGlfwPtr(w);
-
-                if (input)
-                    input->OnMousePos_Callback(w, x, y);
-
-                // Removed because moving camera in scene view, this makes camera jump a bunch of units in the oposite direction (Do not know why)
+            // Removed because moving camera in scene view, this makes camera jump a bunch of units in the oposite direction (Do not know why)
+//        glfwSetCursorPosCallback(window, [](GLFWwindow* w, double x, double y)
+//            {
+//                OpenGL_Input* input = GetInputPtrFromGlfwPtr(w);
+//
+//                if (input)
+//                    input->OnMousePos_Callback(w, x, y);
+//
 //#ifdef ECL_EDITOR
 //                ImGui::GetIO().AddMousePosEvent(
 //                    (float)x,
 //                    (float)y
 //                );
 //#endif
-            });
+//            });
 
         glfwSetCursorEnterCallback(window, [](GLFWwindow* w, int entered)
             {

@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <sstream>
+
 namespace Eclipse::Editor
 {
 	namespace
@@ -99,7 +101,7 @@ namespace Eclipse::Editor
 		ImGui::Separator();
 		ImGui::Spacing();
 
-		ImGui::BeginChild("SettingsActiveKeys", ImVec2(ImGui::GetWindowSize().x - 20.0f, 70.0f), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+		ImGui::BeginChild("SettingsActiveKeys", ImVec2(ImGui::GetContentRegionAvail().x, 70.0f), false, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 
 		ImGui::Dummy({ 5, 0 });
 		ImGui::SameLine();
@@ -139,7 +141,10 @@ namespace Eclipse::Editor
 			ImVec2 min = pos;
 			ImVec2 max(pos.x + keySize.x, pos.y + keySize.y);
 
-			ImGui::InvisibleButton("##active_key", keySize);
+			std::stringstream stream;
+			stream << "##active_Key" << key;
+
+			ImGui::InvisibleButton(stream.str().c_str(), keySize);
 
 			drawList->AddRectFilled(min, max, IM_COL32(55, 55, 60, 255), 5.0f);
 			drawList->AddRect(min, max, IM_COL32(100, 100, 110, 255), 5.0f);
