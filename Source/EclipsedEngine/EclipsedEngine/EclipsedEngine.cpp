@@ -60,7 +60,7 @@ namespace Eclipse
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 
 		{ // TOFFLA
-			Math::Vector2f scale = { 10.f, 10.f };
+			Math::Vector2f scale = { 10.f, -10.f };
 
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
@@ -70,6 +70,7 @@ namespace Eclipse
 				gameobject->AddComponent<Camera>();
 				gameobject->AddComponent<SpriteRenderer2D>();
 			}
+
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
 				auto t = gameobject->AddComponent<Transform2D>();
@@ -115,6 +116,9 @@ namespace Eclipse
 
 		ComponentManager::AwakeStartComponents();
 
+		ComponentManager::EditorUpdateComponents();
+		ComponentManager::EditorLateUpdateComponents();
+
 		ComponentManager::EarlyUpdateComponents();
 		ComponentManager::UpdateComponents();
 	}
@@ -124,6 +128,7 @@ namespace Eclipse
 		Timer::Update();
 		Input::Input::Update();
 
+		renderer->GetDebugDrawer()->Begin();
 		renderer->BeginFrame();
 
 		ImGui_NewFrame();

@@ -14,6 +14,7 @@
 #include "OpenGL_GraphicsBuffer.h"
 #include "OpenGL_UniformVariableManager.h"
 #include "OpenGL_Drawer.h"
+#include "OpenGL_DebugDrawer.h"
 #include "OpenGL_GraphicsDevice.h"
 
 namespace Eclipse::Graphics::OpenGL
@@ -48,9 +49,12 @@ namespace Eclipse::Graphics::OpenGL
 		device = new OpenGL_GraphicsDevice;
 		graphicsBuffer = new OpenGL_GraphicsBuffer;
 		uniformVariableManager = new OpenGL_UniformVariableManager;
-		drawer = new OpenGL_Drawer;
 
+		drawer = new OpenGL_Drawer;
 		drawer->mySprite = device->CreateSprite();
+
+		debugDrawer = new OpenGL_DebugDrawer;
+		debugDrawer->Init();
 
 		return ErrorCode{};
 	}

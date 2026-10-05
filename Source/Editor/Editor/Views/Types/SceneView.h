@@ -27,8 +27,6 @@ namespace Eclipse::Editor
 		static void ResetCamera();
 
 	private:
-		void GizmoManager(Eclipse::Transform2D* aTransform);
-
 		void ObjectSnappingGizmo();
 
 		void SpriteSelector();

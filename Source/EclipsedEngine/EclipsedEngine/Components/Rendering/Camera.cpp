@@ -41,25 +41,27 @@ namespace Eclipse
 
     void Camera::EditorUpdate()
     {
-        OnDrawGizmos();
-        
         if (!created)
         {
             //gameObject->transform->AddFunctionToRunOnDirtyUpdate(this, [&]() { UpdateCameraTransform(); });
 
             created = true;
         }
+
+        OnDrawGizmos();
+        
+        Math::Vector2f Position = gameObject->transform->GetPosition();
+        Math::Vector2f Scale = { 1.7777f, 1.f };
+
+        MinBoundsWorld = Position - Scale;
+        MaxBoundsWorld = Position + Scale;
     }
 
     void Camera::OnDrawGizmos()
     {
         if (drawCameraGizmos)
         {
-            Math::Vector2f sqrPosition = gameObject->transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f);
-            float sqrRotation = gameObject->transform->GetRotation();
-            Math::Vector2f sqrSize = Math::Vector2f(0.5f  * 1.7777777777f, 0.5f);
-
-            //DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
+            DebugDrawer::DrawSquareMinMax(MinBoundsWorld, MaxBoundsWorld, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
         }
     }
 }

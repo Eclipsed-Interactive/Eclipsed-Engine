@@ -1,17 +1,15 @@
 #include "SpriteRenderer2D.h"
 
 #include "EclipsedEngine/Components/Transform2D.h"
-#include "Renderer/Sprite.h"
-
-#include "Renderer/IRenderer.h"
-#include "Renderer/RenderCommands/CommandList.h"
-
-#include "RenderCommands/RenderSprite2DCommand.h"
-
+#include "EclipsedEngine/Components/Rendering/Camera.h"
 #include "Core/GraphicsBuffers/EditorBuffer.h"
 
+#include "RenderCommands/RenderSprite2DCommand.h"
+#include "Renderer/Sprite.h"
+#include "Renderer/IRenderer.h"
 #include "Renderer/IDrawer.h"
 #include "Renderer/RendererManager.h"
+#include "Renderer/RenderCommands/CommandList.h"
 
 namespace Eclipse
 {
@@ -85,13 +83,27 @@ namespace Eclipse
 		}
 	}
 
+	bool InclusiveCollisionCheck(Math::Vector2f MinBoundsSelf, Math::Vector2f MaxBoundsSelf, Math::Vector2f MinBoundsOther, Math::Vector2f MaxBoundsOther)
+	{
+		if (MaxBoundsOther.y < MaxBoundsSelf.y)
+			return false;
+		if (MinBoundsOther.y > MinBoundsSelf.y)
+			return false;
+
+		if (MaxBoundsOther.x < MinBoundsSelf.x)
+			return false;
+		if (MinBoundsOther.x > MaxBoundsSelf.x)
+			return false;
+
+		return true;
+	}
+
 	void SpriteRenderer2D::Render()
 	{
 		if (!gameObject->transform)
 			return;
 
 		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-
 		commandListManager->GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
 	}
 
@@ -100,10 +112,23 @@ namespace Eclipse
 		if (!hasMaterial || IsDeleted)
 			return;
 
-		// unsigned shaderID = material->GetShaderProgramID();
-		//
-		// if (aProgramID)
-		// 	shaderID = aProgramID;
+#ifdef ECL_EDITOR
+		if (false && !IsScene)
+		{
+			Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
+			Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
+
+			DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
+
+			if (MainSingleton::Exists<Camera>())
+			{
+				Camera* camera = MainSingleton::GetPointer<Camera>();
+				bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, camera->MinBoundsWorld, camera->MaxBoundsWorld);
+				if (!IsInFrustum)
+					return;
+			}
+		}
+#endif // ECL_EDITOR
 
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();

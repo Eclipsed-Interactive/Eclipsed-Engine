@@ -15,6 +15,7 @@
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 
 #include "EclipsedEngine/Components/Transform2D.h"
+#include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 
 namespace Eclipse::Editor
 {
@@ -69,8 +70,15 @@ namespace Eclipse::Editor
 		SetBuffers();
 
 		bool NoCameraInScene = false;
-		if (Camera* camera = MainSingleton::GetPointer<Camera>())
+
+		Camera* camera = nullptr;
+		if (MainSingleton::Exists<Camera>())
+			camera = MainSingleton::GetPointer<Camera>();
+
+		if (camera)
 		{
+			BaseRenderComponent::IsScene = false;
+
 			device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
 
 			Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
@@ -169,9 +177,14 @@ namespace Eclipse::Editor
 
 	void GameView::SetBuffers()
 	{
-		Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+		if (!MainSingleton::Exists<Camera>())
+			return;
 
 		Camera* camera = MainSingleton::GetPointer<Camera>();
+		if (!camera)
+			return;
+
+		Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		float aspectRatio = myWindowSize.y / myWindowSize.x;
 		camera->myCameraBuffer.resolutionRatio = aspectRatio;

@@ -113,4 +113,20 @@ namespace Eclipse
         mySingletons.clear();
     }
 
+
+    template<typename T>
+    inline void MainSingleton::RemoveInstance()
+    {
+        const char* type = typeid(T).name();
+
+        if (!mySingletons.contains(type))
+            return;
+
+        auto& [type, heap_entry] = mySingletons[type];
+
+        if (heap_entry.deleter)
+            heap_entry.deleter(heap_entry.instance);
+
+        mySingletons.erase(type);
+    }
 }

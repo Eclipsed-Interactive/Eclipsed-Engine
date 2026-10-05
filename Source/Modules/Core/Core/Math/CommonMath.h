@@ -41,7 +41,8 @@ namespace Eclipse::Math
         return std::atan2(direction);
     }
 
-    inline float Lerp(float Min, float Max, float t)
+    template<typename T>
+    inline T Lerp(T Min, T Max, float t)
     {
         return Min + (Max - Min) * t;
     }

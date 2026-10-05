@@ -59,6 +59,10 @@ namespace Eclipse
         static void Destroy();
 
 
+        template<typename T>
+        static void RemoveInstance();
+
+
     private:
 
         static std::unordered_map<std::string, SingletonEntry> mySingletons;

@@ -64,5 +64,7 @@ namespace Eclipse
         SERIALIZED_FIELD(Assets::Material, material);
 
         Assets::Material PixelPickMaterial;
+
+        Math::Vector2f Bounds;
     };
 }

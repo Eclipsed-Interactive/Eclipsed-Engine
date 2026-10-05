@@ -407,9 +407,13 @@ void Eclipse::Editor::SceneView::RenderSceneView()
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
+	BaseRenderComponent::IsScene = true;
+
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
+
+	Graphics::RendererManager::GetRenderer().GetDebugDrawer()->Render();
 	commandListManager->GetDebugDrawCommandList().Execute();
 }
 

@@ -21,4 +21,9 @@ namespace Eclipse::Graphics
 	{
 		return device;
 	}
+
+	IDebugDrawer* IRenderer::GetDebugDrawer()
+	{
+		return debugDrawer;
+	}
 }
