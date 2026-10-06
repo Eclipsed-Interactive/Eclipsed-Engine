@@ -240,7 +240,7 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 
 
 	Math::Vector2i MousePosition = GetSceneViewMousePosition();
-	MousePosition.y = myWindowSize.y - MousePosition.y - 1.f;
+	MousePosition.y = myWindowSize.y - MousePosition.y;
 
 	Math::Vector4ui colorValue = device->ReadPixelOnFrameBuffer(0, MousePosition);
 	unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
@@ -436,11 +436,11 @@ void Eclipse::Editor::SceneView::Draw()
 	TryDrawSpriteEdges();
 
 
-	Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
+	auto* device = Graphics::RendererManager::GetRenderer().GetDevice();
 	device->SetViewport(myWindowSize);
 
 
-	Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+	auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 	CameraBuffer* cameraBuffer = nullptr;
 	buffer->GetBuffer<CameraBuffer>(cameraBuffer);
@@ -474,9 +474,12 @@ void Eclipse::Editor::SceneView::Draw()
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
 	editorBuffer->PixelPicking = 0;
+	editorBuffer->IsSceneView = 1;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 	RenderSceneView();
+
+	editorBuffer->IsSceneView = 0;
 
 	cameraBuffer->cameraPosition = lastInspectorPosition;
 	cameraBuffer->cameraRotation = lastInspectorRotation;

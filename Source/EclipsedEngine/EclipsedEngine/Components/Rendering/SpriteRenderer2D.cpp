@@ -112,8 +112,13 @@ namespace Eclipse
 		if (!hasMaterial || IsDeleted)
 			return;
 
+		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+
 #ifdef ECL_EDITOR
-		if (false && !IsScene)
+		EditorBuffer* editorBuffer;
+		buffer->GetBuffer<EditorBuffer>(editorBuffer);
+
+		if (!editorBuffer->IsSceneView)
 		{
 			Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
 			Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
@@ -130,6 +135,8 @@ namespace Eclipse
 		}
 #endif // ECL_EDITOR
 
+		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+
 		myTransformBuffer.Position = gameObject->transform->GetPosition();
 		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
 		myTransformBuffer.Scale = gameObject->transform->GetScale();
@@ -145,7 +152,10 @@ namespace Eclipse
 
 		Math::Vector2f scaleMultiplier;
 		if (sprite->IsValid())
+		{
 			scaleMultiplier = sprite->GetTextureSizeNormilized();
+			graphicsDevice->BindTexture(0, sprite);
+		}
 		else
 			scaleMultiplier = material->GetTexture().GetTextureSizeNormilized();
 
@@ -154,28 +164,23 @@ namespace Eclipse
 		mySpriteBuffer.spriteScaleMultiplier = { scaleMultiplier.x, scaleMultiplier.y * aspectScale };
 		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
-		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
 #ifdef ECL_EDITOR
-		EditorBuffer* editorBuffer;
-		buffer->GetBuffer<EditorBuffer>(editorBuffer);
-		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
+		if (editorBuffer->PixelPicking)
+			editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
+		
 		buffer->SetOrCreateBuffer<EditorBuffer>(35);
+
+		if (editorBuffer->PixelPicking)
+			graphicsDevice->BindMaterial(PixelPickMaterial);
+		else
 #endif
+			graphicsDevice->BindMaterial(material);
+
+
 		buffer->SetOrCreateBuffer(5, material->GetBuffer());
 
 		buffer->SetOrCreateBuffer(1, myTransformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
-
-
-		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
-		if (editorBuffer->PixelPicking)
-			graphicsDevice->BindMaterial(PixelPickMaterial);
-		else
-			graphicsDevice->BindMaterial(material);
-
-		if (sprite->IsValid())
-			graphicsDevice->BindTexture(0, sprite);
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();

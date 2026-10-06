@@ -8,7 +8,8 @@ namespace Eclipse
     {
         Math::Vector4f PixelPickColor;
         int PixelPicking = 1;
-        float Padding[3];
+        int IsSceneView = 0;
+        float Padding[2];
     };
 }
 
