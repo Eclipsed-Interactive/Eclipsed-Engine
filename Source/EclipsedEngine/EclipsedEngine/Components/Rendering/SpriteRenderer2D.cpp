@@ -114,26 +114,27 @@ namespace Eclipse
 
 		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
-#ifdef ECL_EDITOR
-		EditorBuffer* editorBuffer;
-		buffer->GetBuffer<EditorBuffer>(editorBuffer);
+		Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
+		Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
 
-		if (!editorBuffer->IsSceneView)
+		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
+		
+
+		CameraBuffer* cameraBuffer = nullptr;
+		buffer->GetBuffer<CameraBuffer>(cameraBuffer);
+
+		Math::Vector2f ScaleWResolutionRatio = 1 / cameraBuffer->cameraScale;
+		ScaleWResolutionRatio.x *= cameraBuffer->resolutionRatio;
+
+		Math::Vector2f Min = cameraBuffer->cameraPosition - ScaleWResolutionRatio;
+		Math::Vector2f Max = cameraBuffer->cameraPosition + ScaleWResolutionRatio;
+
+		bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
+		if (!IsInFrustum)
 		{
-			Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
-			Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
-
-			DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
-
-			if (MainSingleton::Exists<Camera>())
-			{
-				Camera* camera = MainSingleton::GetPointer<Camera>();
-				bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, camera->MinBoundsWorld, camera->MaxBoundsWorld);
-				if (!IsInFrustum)
-					return;
-			}
+			DebugDrawer::DrawSquareMinMax({ 0, 0 }, { 0.1f, 0.1f }, Math::Color(0.f, 1.f, 0.f, 1.f));
+			return;
 		}
-#endif // ECL_EDITOR
 
 		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
 
@@ -165,9 +166,12 @@ namespace Eclipse
 		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
 #ifdef ECL_EDITOR
+		EditorBuffer* editorBuffer;
+		buffer->GetBuffer<EditorBuffer>(editorBuffer);
+
 		if (editorBuffer->PixelPicking)
 			editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-		
+
 		buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 		if (editorBuffer->PixelPicking)

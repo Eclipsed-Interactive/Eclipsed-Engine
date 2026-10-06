@@ -54,7 +54,7 @@ namespace Eclipse::Editor
 	public:
 		static inline Math::Vector2f myInspectorPosition = { 0, 0 };
 		static inline float myInspectorRotation = 0;
-		static inline Math::Vector2f myInspectorScale = { 1, 1 };
+		static inline Math::Vector2f myInspectorScale = { 1.f, 1.f };
 
 	private:
 		Math::Vector2f myWindowSize;
