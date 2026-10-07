@@ -116,8 +116,6 @@ namespace Eclipse
 
 		Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
 		Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
-
-		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 		
 
 		CameraBuffer* cameraBuffer = nullptr;
@@ -132,6 +130,8 @@ namespace Eclipse
 		bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
 		if (!IsInFrustum)
 			return;
+
+		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 
 		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
 
