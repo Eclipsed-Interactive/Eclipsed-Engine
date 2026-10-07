@@ -123,8 +123,8 @@ namespace Eclipse
 		CameraBuffer* cameraBuffer = nullptr;
 		buffer->GetBuffer<CameraBuffer>(cameraBuffer);
 
-		Math::Vector2f ScaleWResolutionRatio = 1 / cameraBuffer->cameraScale;
-		ScaleWResolutionRatio.x *= cameraBuffer->resolutionRatio;
+		Math::Vector2f ScaleWResolutionRatio = 1.f / cameraBuffer->cameraScale;
+		ScaleWResolutionRatio.x *= 1.f / cameraBuffer->resolutionRatio;
 
 		Math::Vector2f Min = cameraBuffer->cameraPosition - ScaleWResolutionRatio;
 		Math::Vector2f Max = cameraBuffer->cameraPosition + ScaleWResolutionRatio;
