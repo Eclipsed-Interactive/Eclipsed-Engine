@@ -131,10 +131,7 @@ namespace Eclipse
 
 		bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
 		if (!IsInFrustum)
-		{
-			DebugDrawer::DrawSquareMinMax({ 0, 0 }, { 0.1f, 0.1f }, Math::Color(0.f, 1.f, 0.f, 1.f));
 			return;
-		}
 
 		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
 
