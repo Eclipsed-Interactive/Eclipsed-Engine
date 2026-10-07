@@ -17,6 +17,9 @@ namespace Eclipse
 		Arena& operator=(const Arena&) = delete;
 
 	public:
+		void Resize(Size size);
+
+	public:
 		template<typename T>
 		T* Allocate();
 

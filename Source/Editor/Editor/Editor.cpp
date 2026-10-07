@@ -17,10 +17,6 @@
 #include "Editor/Game/GameModuleManager.h"
 #include "Reflection/Reflection.h"
 
-#include "Core/Standard/Clock/Clock.h"
-#include "Core/Standard/Core/Asserts.hpp"
-#include "Core/Standard/Memory/Arena.h"
-
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
@@ -30,8 +26,6 @@ namespace Eclipse::Editor
 
 	void Editor::Init(void* imguiCtx)
 	{
-		Clock::Initialize();
-
 		ImGui::SetCurrentContext((ImGuiContext*)imguiCtx);
 
 		Assets::AssetImporter::ImportAssets(PathManager::GetEngineAssetsPath(), "Engine Assets");
