@@ -2,6 +2,7 @@
 
 #include "Timer.h"
 #include <chrono>
+#include "Timer.h"
 
 namespace Eclipse
 {
@@ -47,4 +48,5 @@ namespace Eclipse
     {
         return myTotalTime;
     }
+
 }
