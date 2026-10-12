@@ -12,7 +12,7 @@ namespace Eclipse::Reflection
 		static void Generate(const std::filesystem::path& path);
 
 	private:
-		static void GenerateFile(const TypeDescriptor& descriptor);
-		static void GenerateRegistratorFile();
+		static void GenerateFile(const std::filesystem::path& generationPath, const TypeDescriptor& descriptor);
+		static void GenerateRegistratorFile(const std::filesystem::path& generationPath);
 	};
 }

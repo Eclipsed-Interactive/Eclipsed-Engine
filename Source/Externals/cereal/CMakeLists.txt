@@ -1,5 +1,5 @@
 add_library(cereal INTERFACE)
-
+include("${CMAKE_SOURCE_DIR}/CMake/common.cmake")
 target_include_directories(cereal INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )

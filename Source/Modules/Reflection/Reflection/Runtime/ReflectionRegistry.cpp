@@ -1,22 +1,44 @@
 #include "ReflectionRegistry.h"
 
+#include <stdexcept>
+
 namespace Eclipse::Reflection
 {
-	void ReflectionRegistry::RegisterField(const std::string& typeName, const std::string& fieldName, size_t offset)
+	void ReflectionRegistry::RegisterType(TypeEntry type)
 	{
-		registererd[typeName][fieldName] = offset;
+		registererd.insert_or_assign(type.name, std::move(type));
+	}
+
+	void ReflectionRegistry::RegisterField(const std::string& typeName, FieldEntry field)
+	{
+		if (registererd.contains(typeName))
+		{
+			TypeEntry& entry = registererd[typeName];
+			entry.fields.insert_or_assign(field.name, std::move(field));
+		}
 	}
 
 	size_t ReflectionRegistry::GetOffset(const std::string& typeName, const std::string& fieldName)
 	{
-		auto fieldsIt = registererd.find(typeName);
-		if (fieldsIt == registererd.end()) return 0;
+		const FieldEntry& field = GetField(typeName, fieldName);
+		return field.offset;
+	}
 
-		auto& fields = fieldsIt->second;
+	const FieldEntry& ReflectionRegistry::GetField(const std::string& typeName, const std::string& fieldName)
+	{
+		const TypeEntry& type = GetType(typeName);
 
-		auto field = fields.find(fieldName);
-		if (field == fields.end()) return 0;
+		if (!type.fields.contains(fieldName))
+			throw std::runtime_error("The field dont exist.");
 
-		return field->second;
+		return type.fields.at(fieldName);
+	}
+
+	const TypeEntry& ReflectionRegistry::GetType(const std::string& typeName)
+	{
+		if (!registererd.contains(typeName))
+			throw std::runtime_error("The type dont exist.");
+
+		return registererd[typeName];
 	}
 }

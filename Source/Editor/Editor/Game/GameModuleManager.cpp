@@ -5,6 +5,7 @@
 #include "EclipsedEngine/Plugin/PluginManager.h"
 
 #include <Windows.h>
+#include "Core/Standard/System/Process.h"
 
 namespace Eclipse
 {
@@ -14,12 +15,28 @@ namespace Eclipse
 
 	bool GameModuleManager::Load(const char* source)
 	{
+		const std::string exePath = (PathManager::GetEngineRoot() / "HeaderTool.exe").generic_string();
+
+		const std::string contentPath = (PathManager::GetProjectRoot() / "Content").generic_string();
+		const std::string outputPath = (PathManager::GetProjectRoot() / "Generated" / "Reflection").generic_string();
+
+		const char* args[] = {
+			contentPath.c_str(),
+			outputPath.c_str()
+		};
+
+		const bool success = Process::RunAndWait(exePath.c_str(), args, 2);
+
 		sourcepath = source;
 		game = PluginManager::CompileAndLoad(sourcepath.c_str());
-		name = game->GetName();
+		//name = game->GetName();
 
 		if (!game->Succeded())
 			return false;
+
+		auto registerTypes = game->GetMethod("RegisterReflectedTypes");
+		if (registerTypes)
+			registerTypes();
 
 		return true;
 	}

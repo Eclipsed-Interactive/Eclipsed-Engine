@@ -7,6 +7,9 @@
 #include <iostream>
 #include <Windows.h>
 
+#include "Core/Standard/System/Process.h"
+#include "Core/Standard/Core/Asserts.hpp"
+
 namespace Eclipse
 {
 	Plugin::Plugin(const char* source)
@@ -19,21 +22,18 @@ namespace Eclipse
 
 		name = pluginName.substr(pluginName.find('=') + 1);
 
-		BatchScript generateScript(
-			path + "/Tools",
-			"generate.bat"
-		);
+		const std::filesystem::path toolsPath = std::filesystem::path(path) / "Tools";
 
-		BatchScript buildScript(
-			path + "/Tools",
-			"compile.bat"
-		);
+		if (!Process::RunBatchAndWait(toolsPath / "generate.bat", true))
+			return;
 
-		generateScript.Run(true);
-		buildScript.Run(true);
+		if (!Process::RunBatchAndWait(toolsPath / "compile.bat", true))
+			return;
+
 
 		std::string dllPath = "";
 		std::string binPath = (std::filesystem::path(source) / "Bin").generic_string();
+		std::filesystem::create_directories(binPath);
 		for (auto i : std::filesystem::recursive_directory_iterator(binPath))
 		{
 			if (i.path().extension() == ".dll")

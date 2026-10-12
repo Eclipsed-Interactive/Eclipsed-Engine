@@ -7,6 +7,12 @@
 
 namespace Eclipse::Math
 {
+	template<typename T>
+	class Vector3;
+
+	template<typename T>
+	class Vector4;
+
 	template <typename T>
 	class Vector2 final
 	{
@@ -21,6 +27,10 @@ namespace Eclipse::Math
 
 		template<typename U>
 		Vector2(const Vector2<U>& aVec) : x((T)aVec.x), y((T)aVec.y) {}
+
+	public:
+		operator Vector3<T>() const;
+		operator Vector4<T>() const;
 
 	public:
 		std::type_index GetType() const;

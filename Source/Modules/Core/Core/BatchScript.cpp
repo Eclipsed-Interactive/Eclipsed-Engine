@@ -156,8 +156,8 @@ namespace Eclipse
 	{
 		std::string cmd = "cd /d \"" + workingDir.generic_string() + "\" && ";
 
-		if (openNewWindow)
-			cmd += "start ";
+        if (openNewWindow)
+            cmd += "start \"\" /wait cmd /C ";
 
 		cmd += command;
 

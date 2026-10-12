@@ -33,8 +33,7 @@ namespace Eclipse::Editor
 		EditorUI::Init();
 		EditorLayout::Init();
 
-		//Reflection::Reflect(PathManager::GetProjectRoot() / "Generated" / "Reflection");
-		//GameModuleManager::Load("C:/Users/zulto/Desktop/GamePlugin");
+		GameModuleManager::Load(PathManager::GetProjectRoot().generic_string().c_str());
 	}
 
 	void Editor::Shutdown()

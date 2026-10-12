@@ -11,6 +11,14 @@ setx ECLIPSED_ENGINE_ROOT "%~dp0\"
 echo.
 echo.
 
+echo ==== Begun: Generating engine reflection ====
+
+"%~dp0Tools\HeaderTool.exe" "%~dp0Source/Modules/" "%~dp0Source/Generated/"
+
+echo.
+echo.
+echo.
+
 echo ==== Begun: Generating project ====
 echo.
 

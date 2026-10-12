@@ -8,3 +8,5 @@
 #include "Vector/Vector2.h"
 #include "Vector/Vector3.h"
 #include "Vector/Vector4.h"
+
+#include "Vector/VectorConversions.hpp"

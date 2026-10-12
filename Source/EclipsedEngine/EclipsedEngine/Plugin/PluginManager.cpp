@@ -20,6 +20,8 @@ namespace Eclipse
 
 		loadedplugins[plug->GetName()] = plug;
 		plug->GetInitFunc()();
+
+		return plug;
 	}
 
 	void PluginManager::Unload(const char* pluginName)

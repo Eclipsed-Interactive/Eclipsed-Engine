@@ -11,7 +11,7 @@ function(GenerateExecutable)
         "${ROOT}/main.cpp"
     )
 
-    add_executable(${TARGET_NAME} WIN32 
+    add_executable(${TARGET_NAME} ${ARGN} 
         ${SOURCES} 
         ${MAIN} 
     )
