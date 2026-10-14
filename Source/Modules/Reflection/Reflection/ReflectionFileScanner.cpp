@@ -16,7 +16,6 @@ namespace Eclipse::Reflection
 {
     namespace
     {
-        // Preserve character positions while hiding comments and literals.
         std::string MaskNonCode(const std::string& source)
         {
             std::string result = source;
@@ -56,7 +55,6 @@ namespace Eclipse::Reflection
                     continue;
                 }
 
-                // Raw strings: R"delimiter(...)delimiter"
                 if (source.compare(i, 2, "R\"") == 0)
                 {
                     const auto opening = source.find('(', i + 2);
