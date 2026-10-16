@@ -156,6 +156,12 @@ namespace Eclipse::Graphics::OpenGL
 		glBindTexture(GL_TEXTURE_2D, textureIndex);
 	}
 
+	void OpenGL_GraphicsDevice::BindTexture(unsigned slot, unsigned textureIndex)
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, textureIndex);
+	}
+
 	void OpenGL_GraphicsDevice::BindTexture(unsigned slot, Assets::Texture& texture)
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);

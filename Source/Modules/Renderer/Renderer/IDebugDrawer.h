@@ -50,10 +50,22 @@ namespace Eclipse
 			static void DrawHalfCircle(Math::Vector2f aPosition, float aRadius, const Math::Vector2f& aDirection, unsigned aCircleResolution = 16, const Math::Color& aColor = Math::Color(0, 1, 0, 1));
 
 		protected:
+
+			struct LineVTX
+			{
+				Math::Color color = {};
+
+				float posX = 0;
+				float posY = 0;
+
+				float TrashX = 0;
+				float TrashY = 0;
+			};
+
 			struct Line
 			{
-				std::vector<Math::Vector2f> linePoints;
-				Math::Color color;
+				LineVTX Pos1;
+				LineVTX Pos2;
 			};
 
 			void BeginRender(const Line& line);
@@ -62,16 +74,7 @@ namespace Eclipse
 
 			std::vector<Line> myLineCollection;
 
-			struct LineVTX
-			{
-				float posX;
-				float posY;
-
-				// float SecondPosX;
-				// float SecondPosY;
-			};
-
-			std::vector<LineVTX> vertices;
+			//std::vector<LineVTX> vertices;
 			std::vector<unsigned> indices;
 		};
 	}

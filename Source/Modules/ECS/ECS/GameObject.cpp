@@ -4,8 +4,6 @@
 
 namespace Eclipse
 {
-	
-	
 	void GameObject::Delete()
 	{
 		for (auto& Child : GetChildren())
@@ -108,7 +106,13 @@ namespace Eclipse
 		aChild->parent = this;
 		aChild->SetChildIndex(GetChildCount() - 1);
 	}
+
 	size_t GameObject::GetChildCount()
+	{
+		return children.size();
+	}
+
+	bool GameObject::HasChildren()
 	{
 		return children.size();
 	}

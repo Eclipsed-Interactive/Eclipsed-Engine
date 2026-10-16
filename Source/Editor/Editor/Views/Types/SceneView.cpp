@@ -229,9 +229,6 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	editorBuffer->PixelPicking = 1;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
-	BaseRenderComponent::IsScene = true;
-	Canvas::IsScene = true;
-
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
@@ -407,8 +404,6 @@ void Eclipse::Editor::SceneView::RenderSceneView()
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
-	BaseRenderComponent::IsScene = true;
-
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
@@ -464,8 +459,6 @@ void Eclipse::Editor::SceneView::Draw()
 	CanvasBuffer* canvasBuffer;
 	buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
 	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
-	BaseRenderComponent::IsScene = true;
-	Canvas::IsScene = true;
 
 
 	// This is not using its own framebuffer but if left click then render and get mouse position color

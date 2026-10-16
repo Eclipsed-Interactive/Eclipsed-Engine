@@ -15,7 +15,6 @@ namespace Eclipse::Assets
 	{
 		types[AssetType::AudioClip] = new AudioAssetType;
 
-		types[AssetType::Font] = new FontAssetType;
 		types[AssetType::Prefab] = new PrefabAssetType;
 		types[AssetType::Scene] = new SceneAssetType;
 	}

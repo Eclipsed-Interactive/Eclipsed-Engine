@@ -278,5 +278,10 @@ namespace Eclipse
             if (child->transform)
                 child->transform->DirtyUpdate();
         }
+
+
+        myTransformBuffer.Position = GetPosition();
+        myTransformBuffer.Rotation = GetRotation();
+        myTransformBuffer.Scale = GetScale();
     }
 }

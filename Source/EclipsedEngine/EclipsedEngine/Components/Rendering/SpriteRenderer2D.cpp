@@ -11,6 +11,8 @@
 #include "Renderer/RendererManager.h"
 #include "Renderer/RenderCommands/CommandList.h"
 
+#include "Physics/PhysicsEngine.h"
+
 namespace Eclipse
 {
 #ifdef ECLIPSED_NETWORKING
@@ -83,21 +85,6 @@ namespace Eclipse
 		}
 	}
 
-	bool InclusiveCollisionCheck(Math::Vector2f MinBoundsSelf, Math::Vector2f MaxBoundsSelf, Math::Vector2f MinBoundsOther, Math::Vector2f MaxBoundsOther)
-	{
-		if (MaxBoundsOther.y < MaxBoundsSelf.y)
-			return false;
-		if (MinBoundsOther.y > MinBoundsSelf.y)
-			return false;
-
-		if (MaxBoundsOther.x < MinBoundsSelf.x)
-			return false;
-		if (MinBoundsOther.x > MaxBoundsSelf.x)
-			return false;
-
-		return true;
-	}
-
 	void SpriteRenderer2D::Render()
 	{
 		if (!gameObject->transform)
@@ -112,11 +99,7 @@ namespace Eclipse
 		if (!hasMaterial || IsDeleted)
 			return;
 
-		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
-		Math::Vector2f MinBounds = myTransformBuffer.Position - myTransformBuffer.Scale * 0.5f * 0.01f;
-		Math::Vector2f MaxBounds = myTransformBuffer.Position + myTransformBuffer.Scale * 0.5f * 0.01f;
-		
+		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();		
 
 		CameraBuffer* cameraBuffer = nullptr;
 		buffer->GetBuffer<CameraBuffer>(cameraBuffer);
@@ -127,17 +110,19 @@ namespace Eclipse
 		Math::Vector2f Min = cameraBuffer->cameraPosition - ScaleWResolutionRatio;
 		Math::Vector2f Max = cameraBuffer->cameraPosition + ScaleWResolutionRatio;
 
-		bool IsInFrustum = InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
+
+		TransformBuffer& transformBuffer = gameObject->transform->myTransformBuffer;
+
+		Math::Vector2f MinBounds = transformBuffer.Position - transformBuffer.Scale * 0.5f * 0.01f;
+		Math::Vector2f MaxBounds = transformBuffer.Position + transformBuffer.Scale * 0.5f * 0.01f;
+
+		bool IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
 		if (!IsInFrustum)
 			return;
 
 		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 
 		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
-
-		myTransformBuffer.Position = gameObject->transform->GetPosition();
-		myTransformBuffer.Rotation = gameObject->transform->GetRotation();
-		myTransformBuffer.Scale = gameObject->transform->GetScale();
 
 		Math::Vector2f NewSpriteRectMax = spriteRectMax;
 		Math::Vector2f NewSpriteRectMin = spriteRectMin;
@@ -148,18 +133,16 @@ namespace Eclipse
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
 		material->GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 
-		Math::Vector2f scaleMultiplier;
-		if (sprite->IsValid())
-		{
-			scaleMultiplier = sprite->GetTextureSizeNormilized();
-			graphicsDevice->BindTexture(0, sprite);
-		}
-		else
-			scaleMultiplier = material->GetTexture().GetTextureSizeNormilized();
+		//Math::Vector2f scaleMultiplier;
+		//if (sprite->IsValid())
+		//{
+		//	scaleMultiplier = sprite->GetTextureSizeNormilized();
+		//	graphicsDevice->BindTexture(0, sprite);
+		//}
+		//else
+		//	scaleMultiplier = material->GetTexture().GetTextureSizeNormilized();
 
 
-		float aspectScale = size.y / size.x;
-		mySpriteBuffer.spriteScaleMultiplier = { scaleMultiplier.x, scaleMultiplier.y * aspectScale };
 		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
 #ifdef ECL_EDITOR
@@ -174,13 +157,15 @@ namespace Eclipse
 		if (editorBuffer->PixelPicking)
 			graphicsDevice->BindMaterial(PixelPickMaterial);
 		else
-#endif
 			graphicsDevice->BindMaterial(material);
+#else
+		graphicsDevice->BindMaterial(material);
+#endif
 
 
 		buffer->SetOrCreateBuffer(5, material->GetBuffer());
 
-		buffer->SetOrCreateBuffer(1, myTransformBuffer);
+		buffer->SetOrCreateBuffer(1, transformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();

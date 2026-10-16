@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Math/Vector/Vector2.h"
-#include <unordered_map>
+#include <vector>
 
 namespace Eclipse::Assets
 {
@@ -15,7 +15,25 @@ namespace Eclipse::Assets
     
     struct InternalFont
     {
-        std::unordered_map<char, Character> myCharTexture;
-        float maxCharHeight;
+        friend class OpenGL_FontAssetType;
+
+        bool CharacterExists(char aChar)
+        {
+            return aChar < myCharTexture.size();
+        }
+
+        const Character& GetCharTexture(char aChar)
+        {
+            return myCharTexture[aChar];
+        }
+
+        float GetBiggestCharacterHeight()
+        {
+            return maxCharacterHeight;
+        }
+
+    private:
+        std::vector<Character> myCharTexture;
+        float maxCharacterHeight;
     };
 }

@@ -91,6 +91,10 @@ namespace Eclipse
         static void CleanUp();
         static void DrawPhysicsObjects();
 
+        //Custom PhysicsFunctions
+        static bool InclusiveCollisionCheck(Math::Vector2f MinBoundsSelf, Math::Vector2f MaxBoundsSelf, Math::Vector2f MinBoundsOther, Math::Vector2f MaxBoundsOther);
+
+
 
         static void CheckCollisions();
 

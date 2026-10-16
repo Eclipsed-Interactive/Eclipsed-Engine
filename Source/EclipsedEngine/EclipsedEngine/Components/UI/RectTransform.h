@@ -13,12 +13,13 @@ namespace Eclipse
 
     private:
         void UpdateTransforms();
-        void DirtyUpdate();
 
         void AddParentPosition(GameObject* aParent, Math::Vector2f& aPosition) const;
         
     public:
         void EditorUpdate() override;
+
+        void DirtyUpdate();
 
         
         Math::Vector2f GetPosition() const;
