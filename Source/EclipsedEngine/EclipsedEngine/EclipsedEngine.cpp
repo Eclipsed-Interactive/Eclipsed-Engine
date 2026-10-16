@@ -101,7 +101,6 @@ namespace Eclipse
 
 				gameobject->SetParent(parent);
 
-
 				parent->AddComponent<Canvas>();
 			}
 		}

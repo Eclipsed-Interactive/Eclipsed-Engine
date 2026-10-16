@@ -53,14 +53,10 @@ namespace Eclipse
 #ifdef ECL_EDITOR
 		if (drawCanvasGizmos)
 		{
-			float sizeX = ReferenceResolution->x / 1080;
-			float sizeY = ReferenceResolution->y / 1080;
+			Math::Vector2f Position = gameObject->transform->GetPosition();
+			Math::Vector2f Scale(1.7777f, 1.f);
 
-			Math::Vector2f sqrPosition = gameObject->transform->GetPosition() * 0.5f + Math::Vector2f(0.5f, 0.5f);
-			float sqrRotation = gameObject->transform->GetRotation();
-			Math::Vector2f sqrSize = Math::Vector2f(0.5f * sizeX, 0.5f * sizeY);
-
-			//DebugDrawer::DrawSquare(sqrPosition, sqrRotation, sqrSize, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
+			DebugDrawer::DrawSquareMinMax(Position - Scale, Position + Scale, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
 		}
 #endif
 	}

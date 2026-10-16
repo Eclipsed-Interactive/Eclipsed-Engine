@@ -227,6 +227,7 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	EditorBuffer* editorBuffer;
 	buffer->GetBuffer<EditorBuffer>(editorBuffer);
 	editorBuffer->PixelPicking = 1;
+	editorBuffer->IsSceneView = 1;
 	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();

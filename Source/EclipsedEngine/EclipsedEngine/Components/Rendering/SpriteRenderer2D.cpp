@@ -163,10 +163,10 @@ namespace Eclipse
 #endif
 
 
-		buffer->SetOrCreateBuffer(5, material->GetBuffer());
-
 		buffer->SetOrCreateBuffer(1, transformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
+		buffer->SetOrCreateBuffer(5, material->GetBuffer());
+
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();

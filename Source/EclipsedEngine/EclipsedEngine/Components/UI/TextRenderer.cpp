@@ -59,11 +59,8 @@ namespace Eclipse
 		EditorBuffer* editorBuffer;
 		GraphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
 
-		if (editorBuffer->IsSceneView)
-			myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
 #endif
-
-
+		myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 
 		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv * ((float)myFontSize * 0.005f);
@@ -171,8 +168,6 @@ namespace Eclipse
 
 		TransformUpdate();
 
-		GraphicsBuffer->SetOrCreateBuffer(1, myTransformBuffer);
-
 		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
 		Math::Vector2f scaleRect = myTransformBuffer.Scale * myRect * resolution;
 		scaleRect.x *= 0.5f;
@@ -255,10 +250,6 @@ namespace Eclipse
 			myTextBuffer.offset.x = textOffset.x + (characterFace.bearing.x + characterFace.size.x * 0.5f) * pxX;
 			myTextBuffer.offset.y = textOffset.y + (characterFace.bearing.y - characterFace.size.y * 0.5f) * pxY;
 
-
-
-			GraphicsBuffer->SetOrCreateBuffer(3, myTextBuffer);
-
 			CanvasBuffer* canvasBuffer;
 			GraphicsBuffer->GetBuffer<CanvasBuffer>(canvasBuffer);
 
@@ -290,9 +281,10 @@ namespace Eclipse
 
 			graphicsDevice->BindMaterial(material);
 #endif
-			GraphicsBuffer->SetOrCreateBuffer(5, material.GetBuffer());
-
+			GraphicsBuffer->SetOrCreateBuffer(1, myTransformBuffer);
 			GraphicsBuffer->SetOrCreateBuffer(2, *canvasBuffer);
+			GraphicsBuffer->SetOrCreateBuffer(3, myTextBuffer);
+			GraphicsBuffer->SetOrCreateBuffer(5, material.GetBuffer());
 
 			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 			Graphics::IDrawer* drawer = renderer.GetDrawer();
