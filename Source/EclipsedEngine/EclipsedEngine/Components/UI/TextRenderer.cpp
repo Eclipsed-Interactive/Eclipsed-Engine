@@ -100,29 +100,28 @@ namespace Eclipse
 #ifdef ECL_EDITOR
 	void TextRenderer::OnDrawGizmos()
 	{
-		// This is not right, does not work as intended
+		//if (drawRectGizmos)
+		//{
+		//	auto tranform = gameObject->GetComponent<RectTransform>();
+		//	if (!tranform)
+		//		return;
+		//	if (!tranform->myCanvas)
+		//		return;
 
-		if (drawRectGizmos)
-		{
-			auto tranform = gameObject->GetComponent<RectTransform>();
-			if (!tranform)
-				return;
-			if (!tranform->myCanvas)
-				return;
+		//	Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
+		//	float aspectRatio = resolution.x / resolution.y;
+		//	Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
 
-			Math::Vector2f resolution = tranform->myCanvas->ReferenceResolution;
-			float aspectRatio = resolution.x / resolution.y;
-			Math::Vector2f canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
+		//	const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv * Math::Vector2f(aspectRatio, 1);
+		//	//float rotation = gameObject->transform->GetRotation();
+		//	Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
+		//	scale.x *= aspectRatio;
 
-			const Math::Vector2f& position = tranform->GetPosition() * canvasScaleRelationOneDiv * Math::Vector2f(aspectRatio, 1);
-			//float rotation = gameObject->transform->GetRotation();
-			Math::Vector2f scale = tranform->WidthHeightPX.Get() * myRect * canvasScaleRelationOneDiv;
-			scale.x *= aspectRatio;
 
-			//Math::Vector2f CanvasPosition = canvasScaleRelationOneDiv * tranform->myCanvas->canvasCameraTransform.PositionOffset * 0.5f;
+		//	//Math::Vector2f CanvasPosition = canvasScaleRelationOneDiv * tranform->myCanvas->canvasCameraTransform.PositionOffset * 0.5f;
 
-			DebugDrawer::DrawSquare(position + Math::Vector2f(0.5f, 0.5f), 0.f, scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
-		}
+		//	DebugDrawer::DrawSquareMinMax(position - scale, position + scale, Math::Color(0.7f, 0.7f, 0.7f, 1.f));
+		//}
 	}
 #endif
 

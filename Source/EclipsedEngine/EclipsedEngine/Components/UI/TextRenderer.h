@@ -62,12 +62,12 @@ namespace Eclipse
 
         int myLastFontSize = 48;
 
-        static inline bool drawRectGizmos = false;
+        static inline bool drawRectGizmos = true;
 
     private:
         Assets::Material material;
 
-        PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextAlignment, 1);
+        PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextAlignment, 2);
         PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myTextCentering, 1);
 
         std::vector<float> lineOffsets;
