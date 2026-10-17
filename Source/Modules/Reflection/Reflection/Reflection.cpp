@@ -1,4 +1,4 @@
-#include "Reflection.h"
+#include "Reflection.hpp"
 
 #include "Core/PathManager.h"
 #include "ReflectionFileScanner.h"

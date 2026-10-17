@@ -15,7 +15,7 @@
 #include "EditorUI.h"
 
 #include "Editor/Game/GameModuleManager.h"
-#include "Reflection/Reflection.h"
+#include "Reflection/Reflection.hpp"
 
 namespace Eclipse::Editor
 {

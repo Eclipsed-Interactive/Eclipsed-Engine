@@ -9,7 +9,7 @@
 #include "EditorViewInstance.h"
 
 #include "Core/Math/Random.h"
-#include "Core/Math/Hash.h"
+#include "Core/Standard/Core/Hash.hpp"
 
 namespace Eclipse::Editor
 {

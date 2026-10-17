@@ -5,6 +5,7 @@
 #include "EclipsedEngine/Components/UI/Canvas.h"
 
 #include "Physics/PhysicsEngine.h"
+#include "ImGui/imgui.h"
 
 void Eclipse::Editor::BaseRenderingView::DrawGizmoPopup()
 {

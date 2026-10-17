@@ -18,7 +18,7 @@ namespace Eclipse::Reflection
 		//MoveFileExW(path.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
 	}
 
-	void Eclipse::Reflection::ReflectionGenerator::Generate(const std::filesystem::path& path)
+	void ReflectionGenerator::Generate(const std::filesystem::path& path)
 	{
 		std::filesystem::create_directories(path);
 
@@ -45,6 +45,7 @@ namespace Eclipse::Reflection
 			<< "\n"
 			<< "#include <cstddef>\n"
 			<< "#include \"Reflection/Runtime/ReflectionRegistry.h\"\n"
+			<< "#include \"Reflection/Attributes/Attributes.hpp\"\n"
 			<< "\n"
 			<< "#include \"" << descriptor.FilePath << "\"\n"
 			<< "\n"
@@ -61,7 +62,7 @@ namespace Eclipse::Reflection
 			<< "\t\tTypeEntry{\n"
 			<< "\t\t\t.name = \"" << descriptor.Name << "\", \n"
 			<< "\t\t\t.size = sizeof(" << descriptor.Name << "),\n"
-			<< "\t\t\t.id = " << descriptor.Name << "::GetID(),\n"
+			<< "\t\t\t.id = " << descriptor.Name << "::GetReflectionID(),\n"
 			<< "\t\t\t.create = [](){ return reinterpret_cast<void*>(new " << descriptor.Name << "); },\n"
 			<< "\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); }\n"
 			<< "\t\t}\n"
@@ -70,17 +71,34 @@ namespace Eclipse::Reflection
 
 		for (const auto& field : descriptor.Fields)
 		{
+			// Create a namepsace 
+			file << "\t{\n";
+
 			file
-				<< "\tReflection::ReflectionRegistry::RegisterField(\n"
-				<< "\t\t\"" << descriptor.Name << "\",\n"
-				<< "\t\tFieldEntry\n"
-				<< "\t\t{\n" 
+				<< "\t\tFieldEntry entry =\n"
+				<< "\t\t{\n"
 				<< "\t\t\t.name = \"" << field.Name << "\",\n"
 				<< "\t\t\t.offset = offsetof(" << descriptor.Name << ", " << field.Name << "),\n"
 				<< "\t\t\t.size = sizeof(" << descriptor.Name << "::" << field.Name << ")\n"
-				<< "\t\t}\n"
-				<< "\t);\n"
+				<< "\t\t};\n"
 				<< "\n";
+
+
+			for (auto attr : field.attributes)
+			{
+				file << "\t\tentry.attributeContainer.Add<" << attr.Name << ">(" << attr.Arguments << ");\n";
+			}
+
+
+			file << "\n";
+
+			file
+				<< "\t\tReflection::ReflectionRegistry::RegisterField(\n"
+				<< "\t\t\t\"" << field.Name << "\",\n"
+				<< "\t\t\tentry\n"
+				<< "\t\t);\n";
+
+			file << "\t}";
 		}
 
 		file << "}\n";

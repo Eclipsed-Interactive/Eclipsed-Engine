@@ -17,12 +17,25 @@ namespace Eclipse::Hash
 
 	inline constexpr int FNV1A32(const char* str)
 	{
-		unsigned long long hash = 2166136261;
+		int hash = 2166136261;
 
 		while (*str)
 		{
-			hash ^= static_cast<unsigned long long>(*str++);
+			hash ^= static_cast<int>(*str++);
 			hash *= 16777619;
+		}
+
+		return hash;
+	}
+
+	inline constexpr unsigned int FNV1A_U32(const char* str)
+	{
+		unsigned int hash = 2166136261u;
+
+		while (*str)
+		{
+			hash ^= static_cast<unsigned int>(*str++);
+			hash *= 16777619u;
 		}
 
 		return hash;

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Reflection/Reflection.h"
+#include "Reflection/Reflection.hpp"
 #include "Core/Standard/Core/Asserts.hpp"
 
 using namespace Eclipse;

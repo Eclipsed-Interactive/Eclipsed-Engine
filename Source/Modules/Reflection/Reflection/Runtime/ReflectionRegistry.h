@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "Reflection/Attributes/AttributeContainer.h"
+
 #include "Reflection.Core.hpp"
 
 namespace Eclipse::Reflection
@@ -12,6 +14,8 @@ namespace Eclipse::Reflection
 		std::string name;
 		size_t offset;
 		size_t size;
+
+		AttributeContainer attributeContainer;
 	};
 
 	struct REFLECTION_API TypeEntry

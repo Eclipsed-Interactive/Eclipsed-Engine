@@ -5,6 +5,13 @@
 
 #include "Runtime/ReflectionRegistry.h" // Remove when TypeEntry is in its own file.
 
+#include "Core/Standard/Core/Hash.hpp"
+#include "Attributes/Attributes.hpp"
+
+#define MAKE_REFLECTABLE(cls)                   \
+friend void cls##_ReflectionRegister();         \
+constexpr static unsigned int GetReflectionID() { return ::Eclipse::Hash::FNV1A_U32(#cls); }
+
 namespace Eclipse::Reflection
 {
 	REFLECTION_API void Reflect(const std::filesystem::path& content, const std::filesystem::path& destination);

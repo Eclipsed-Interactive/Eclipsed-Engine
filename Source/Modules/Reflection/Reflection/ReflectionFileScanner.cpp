@@ -1,3 +1,4 @@
+
 #include "ReflectionFileScanner.h"
 
 #include <filesystem>
@@ -87,7 +88,6 @@ namespace Eclipse::Reflection
 
                 if (source[i] == '"' || source[i] == '\'')
                 {
-                    // Preserve common numeric digit separators.
                     if (source[i] == '\'' && i > 0 &&
                         i + 1 < source.size() &&
                         source[i - 1] >= '0' && source[i - 1] <= '9' &&
@@ -160,8 +160,9 @@ namespace Eclipse::Reflection
         const std::string original = ReadFile(path);
         const std::string source = MaskNonCode(original);
 
+        // Supports export macros such as ECL_API before the type name.
         const std::regex typeRegex(
-            R"(\b(?:class|struct)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
+            R"(\b(?:class|struct)\s+(?:(?:[A-Za-z_][A-Za-z0-9_]*_API)\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
         );
 
         const std::regex fieldsRegex(
@@ -287,7 +288,6 @@ namespace Eclipse::Reflection
                     type.Fields.emplace_back(std::move(field));
             }
 
-            // Register once, and only when attributed fields were found.
             if (!type.Fields.empty())
                 TypeRegistry::Register(type);
         }

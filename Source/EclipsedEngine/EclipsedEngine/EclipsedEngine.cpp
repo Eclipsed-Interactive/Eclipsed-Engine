@@ -25,7 +25,6 @@ namespace Eclipse
 {
 	void Engine::Init()
 	{
-
 		EventSystem::Trigger("Engine-Load");
 
 		PathManager::Init();

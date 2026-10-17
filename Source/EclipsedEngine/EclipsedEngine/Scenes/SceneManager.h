@@ -73,7 +73,6 @@ namespace Eclipse
 
 
 
-
 		static inline Assets::Scene activeScene;
 	};
 }

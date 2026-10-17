@@ -15,7 +15,6 @@
 
 #include "EclipsedEngine/Components/Transform2D.h"
 
-#include "EclipsedEngine/Reflection/Reflection.h"
 #include "Core/ChatGPT_Dump/Base64.hpp"
 
 //#include "EclipsedEngine/ECS/ObjectManager.h"
@@ -58,7 +57,7 @@ namespace Eclipse::Editor
 
 	void EditorActions::CopyGameObject(unsigned activeGO, rapidjson::Value& gameobjectJson, rapidjson::Document::AllocatorType& anAllocator)
 	{
-		rapidjson::Value componentArray(rapidjson::kArrayType);
+		/*rapidjson::Value componentArray(rapidjson::kArrayType);
 		componentArray.SetArray();
 
 		auto& reflectionList = Reflection::ReflectionManager::GetList();
@@ -116,7 +115,7 @@ namespace Eclipse::Editor
 			}
 
 			gameobjectJson.AddMember("Children", childArray, anAllocator);
-		}
+		}*/
 	}
 	rapidjson::StringBuffer EditorActions::CopyObject(int aObjectID, bool aCopyToClipboard)
 	{

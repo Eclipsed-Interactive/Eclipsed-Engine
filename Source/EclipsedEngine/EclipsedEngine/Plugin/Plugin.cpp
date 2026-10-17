@@ -15,7 +15,7 @@ namespace Eclipse
 	Plugin::Plugin(const char* source)
 	{
 		std::string path = source;
-
+		
 		std::ifstream pluginFile(path + "/.plugin");
 		std::string pluginName;
 		pluginFile >> pluginName;
