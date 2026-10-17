@@ -213,7 +213,7 @@ namespace Eclipse
 			GameObject* parent = ComponentManager::myEntityIdToEntity.at(child.ownerID);
 			child.gameobject->SetParent(parent);
 		}
-		
+	
 		for (ChildObject& child : aChildObjects)
 		{
 			if (auto* recttransform = child.gameobject->GetComponent<RectTransform>())

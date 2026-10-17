@@ -44,8 +44,13 @@ namespace Eclipse::Graphics::OpenGL
 		glGenTextures(1, &buf.textureIndex);
 		glBindTexture(GL_TEXTURE_2D, buf.textureIndex);
 
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
@@ -153,6 +158,12 @@ namespace Eclipse::Graphics::OpenGL
 
 	void OpenGL_GraphicsDevice::BindTexture(unsigned textureIndex)
 	{
+		glBindTexture(GL_TEXTURE_2D, textureIndex);
+	}
+
+	void OpenGL_GraphicsDevice::BindTexture(unsigned slot, unsigned textureIndex)
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, textureIndex);
 	}
 

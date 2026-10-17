@@ -10,7 +10,6 @@ namespace Eclipse::Graphics
     {
         glBindBufferBase(GL_UNIFORM_BUFFER, aBufferIndex, myUniformBufferObjects[aTypeInfo]);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, static_cast<GLsizeiptr>(bufferSize), aBuffer);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
     void OpenGL_GraphicsBuffer::AddInternalBuffer(std::type_index aTypeInfo, size_t bufferSize)
@@ -19,8 +18,7 @@ namespace Eclipse::Graphics
         
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_UNIFORM_BUFFER, buffer);
-        glBufferData(GL_UNIFORM_BUFFER, static_cast<GLsizeiptr>(bufferSize), nullptr, GL_STATIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        glBufferData(GL_UNIFORM_BUFFER, static_cast<GLsizeiptr>(bufferSize), nullptr, GL_DYNAMIC_DRAW);
     }
 
 }

@@ -4,6 +4,8 @@
 #include "EclipsedEngine/Components/Component.h"
 #include "Core/GraphicsBuffers/CanvasBuffer.h"
 
+#include <vector>
+
 namespace Eclipse
 {
     class ECL_API Canvas : public Component
@@ -18,6 +20,8 @@ namespace Eclipse
 
         void TransformUpdate();
 
+        void SetCanvasForChildren(std::vector<GameObject*>& Children);
+
         SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, ReferenceResolution, Math::Vector2f(1920, 1080));
         SERIALIZED_FIELD_DEFAULT(bool, WorldSpace, false);
 
@@ -31,7 +35,5 @@ namespace Eclipse
         static inline bool drawCanvasGizmos = true;
 
         CanvasBuffer myCanvasBuffer;
-
-        static inline bool IsScene = false;
     };
 }

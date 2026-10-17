@@ -77,8 +77,6 @@ namespace Eclipse::Editor
 
 		if (camera)
 		{
-			BaseRenderComponent::IsScene = false;
-
 			device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
 
 			Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();

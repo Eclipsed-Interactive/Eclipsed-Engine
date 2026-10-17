@@ -38,6 +38,7 @@ namespace Eclipse::Graphics
 
 	public:
 		virtual void BindTexture(unsigned textureIndex) = 0;
+		virtual void BindTexture(unsigned slot, unsigned textureIndex) = 0;
 		virtual void BindTexture(unsigned slot, Assets::Texture& texture) = 0;
 		virtual void BindShader(unsigned id) = 0;
 		virtual void BindMaterial(Assets::Material& material) = 0;

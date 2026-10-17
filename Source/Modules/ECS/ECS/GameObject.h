@@ -46,6 +46,7 @@ namespace Eclipse
 		void RemoveChild(int index);
 		void AddChild(GameObject* aChild);
 		size_t GetChildCount();
+		bool HasChildren();
 
 		size_t GetChildIndex();
 		void SetChildIndex(size_t index);
@@ -80,6 +81,8 @@ namespace Eclipse
 		std::string myName = "Gameobject";
 
 		bool myIsOwner = true;
+
+		bool IsStatic;
 	};
 
 	template<typename T>

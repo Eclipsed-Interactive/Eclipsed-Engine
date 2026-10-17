@@ -10,6 +10,7 @@
 #include "Core/Math/Matrix/Matrix3x3.h"
 
 #include "EclipsedEngine.Core.hpp"
+#include "Core/GraphicsBuffers/TransformBuffer.h"
 
 namespace Eclipse
 {
@@ -79,6 +80,9 @@ namespace Eclipse
 		
 		Math::Matrix3x3f GlobalTransformationMatrix;
 		
+	public:
+		TransformBuffer myTransformBuffer;
+
 		// Not implemented but if strictly necessary easy to do
 		//Math::Matrix3x3f LocalTransformationMatrix;
 		

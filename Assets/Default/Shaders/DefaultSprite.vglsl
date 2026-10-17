@@ -37,7 +37,7 @@ layout(std140, binding=3) uniform SpriteBuffer
 
 void main()
 {
-   outTexCoord=TexCoord*.98+vec2(.01,0);
+   outTexCoord=TexCoord;
    
    float totalRotation=transform.rotation+cameraRotation;
    mat2 rotationMatrix=mat2(cos(totalRotation),-sin(totalRotation),

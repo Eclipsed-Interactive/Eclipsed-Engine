@@ -89,9 +89,6 @@ namespace Eclipse
 		Math::Vector2f halfRefRes = referenceResolution * 0.5f;
 
 #ifdef ECL_EDITOR
-		//Math::Vector2f resolution = Editor::GameWindow::myGameImageResolution;
-		Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();;
-#else
 		Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();
 #endif
 
@@ -102,29 +99,21 @@ namespace Eclipse
 
 		myTransformBuffer.Position = position;
 
-#ifdef ECL_EDITOR
-		if (IsScene)
-			myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
-		else
-#endif
-			myTransformBuffer.Position *= Math::Vector2f(2, 2);
-
-		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
-
-		Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
-		myTransformBuffer.Scale = WidthHeightPX;
-
-		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / referenceResolution.x, 1.f / referenceResolution.y };
-		myTransformBuffer.Scale *= canvasScaleRelationOneDiv;
-
 		Math::Vector2f multiplier;
 
 #ifdef ECL_EDITOR
-		if (IsScene)
+		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
+		Graphics::IGraphicsBuffer* GraphicsBuffer = Renderer->GetGraphicsBuffer();
+		EditorBuffer* editorBuffer;
+		GraphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+
+		if (editorBuffer->IsSceneView)
+		{
+			myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
 			multiplier = canvasCameraTransform.ScaleMultiplier;
+		}
 		else
 		{
-#endif
 			if (!tranform->ScaleWithCanvasX)
 				multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
 			else
@@ -134,10 +123,28 @@ namespace Eclipse
 			else
 				multiplier.y = 2;
 
-#ifdef ECL_EDITOR
+			myTransformBuffer.Position *= Math::Vector2f(2, 2);
 		}
+#else
+		myTransformBuffer.Position *= Math::Vector2f(2, 2);
+
+		if (!tranform->ScaleWithCanvasX)
+			multiplier.x = canvasCameraTransform.ScaleMultiplier.x;
+		else
+			multiplier.x = 2;
+		if (!tranform->ScaleWithCanvasY)
+			multiplier.y = canvasCameraTransform.ScaleMultiplier.y;
+		else
+			multiplier.y = 2;
 #endif
-		myTransformBuffer.Scale *= multiplier;
+
+		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
+
+		Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
+		myTransformBuffer.Scale = WidthHeightPX;
+
+		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / referenceResolution.x, 1.f / referenceResolution.y };
+		myTransformBuffer.Scale *= canvasScaleRelationOneDiv * multiplier;
 
 		myTransformBuffer.Rotation = canvasCameraTransform.Rotation;
 	}
@@ -187,15 +194,18 @@ namespace Eclipse
 		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
 		buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
-		if (!IsScene)
+		if (!editorBuffer->IsSceneView)
 		{
-#endif
 			if (!transform->myCanvas->WorldSpace)
 				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
 			else
 				canvasBuffer->canvasPositionOffset = { 0, 0 };
-#ifdef ECL_EDITOR
 		}
+#else
+		if (!transform->myCanvas->WorldSpace)
+			canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+		else
+			canvasBuffer->canvasPositionOffset = { 0, 0 };
 #endif
 
 
@@ -203,6 +213,9 @@ namespace Eclipse
 		buffer->SetOrCreateBuffer(1, myTransformBuffer);
 		buffer->SetOrCreateBuffer(2, *canvasBuffer);
 
-		//Sprite::Get().Render();
+		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
+		Graphics::IDrawer* Drawer = Renderer->GetDrawer();
+
+		Drawer->DrawSprite();
 	}
 }

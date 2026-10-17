@@ -1,30 +1,41 @@
 #include "EclipsedEngine.h"
 
+#include "Renderer/RenderCommands/CommandList.h"
 #include "Renderer/RendererManager.h"
 #include "Renderer/IRenderer.h"
+
 #include "Core/MainSingleton.h"
+
 #include "ImGui/imgui.h"
 #include "ImGui/External/implot.h"
+
 #include "Core/PathManager.h"
 #include "Core/Timer.h"
+
 #include "Assets/AssetManager.h"
 #include "Assets/AssetImporter.h"
+
 #include "EclipsedEngine/Plugin/PluginManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
+#include "EclipsedEngine/Components/UI/RectTransform.h"
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
+#include "EclipsedEngine/Components/UI/Canvas.h"
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 
 #include "Core/EventSystem/EventSystem.h"
 
-#include "Renderer/RenderCommands/CommandList.h"
 #include "Input/Input.h"
 
 #include "Audio/AudioPluginLoader.h"
+#include "Assets/Helper/TextManager.h"
 
 namespace Eclipse
 {
 	void Engine::Init()
 	{
+		MainSingleton::RegisterInstance<TextManager>();
+
 		EventSystem::Trigger("Engine-Load");
 
 		PathManager::Init();
@@ -64,20 +75,33 @@ namespace Eclipse
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
 				auto t = gameobject->AddComponent<Transform2D>();
-				t->SetScale(scale);
-				t->DirtyUpdate();
-				gameobject->AddComponent<Camera>();
+
 				gameobject->AddComponent<SpriteRenderer2D>();
+				gameobject->AddComponent<Camera>();
 			}
 
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
 				auto t = gameobject->AddComponent<Transform2D>();
 				t->SetScale(scale);
-				t->DirtyUpdate();
+
 				gameobject->AddComponent<SpriteRenderer2D>();
 			}
 
+			{
+				GameObject* parent = ComponentManager::CreateGameObject();
+				auto t = parent->AddComponent<Transform2D>();
+
+
+				GameObject* gameobject = ComponentManager::CreateGameObject();
+				auto t1 = gameobject->AddComponent<RectTransform>();
+
+				gameobject->AddComponent<TextRenderer>();
+
+				gameobject->SetParent(parent);
+
+				parent->AddComponent<Canvas>();
+			}
 		}
 	}
 
