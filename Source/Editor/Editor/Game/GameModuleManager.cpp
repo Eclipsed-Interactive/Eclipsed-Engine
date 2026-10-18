@@ -9,11 +9,123 @@
 
 namespace Eclipse
 {
-	Plugin* GameModuleManager::game = nullptr;
-	std::string GameModuleManager::name;
-	std::string GameModuleManager::sourcepath;
+	void* GameModuleManager::gameModule = nullptr;
+	Func GameModuleManager::initFunc = nullptr;
+	Func GameModuleManager::cleanupFunc = nullptr;
 
-	bool GameModuleManager::Load(const char* source)
+	std::string GameModuleManager::name;
+	std::filesystem::path GameModuleManager::dllPath;
+
+	bool GameModuleManager::TryCompileAndLoad()
+	{
+		if (!BuildDLL())
+			return false;
+
+		Load();
+	}
+
+	bool GameModuleManager::Load()
+	{
+		const std::string dllString = dllPath.generic_string();
+		gameModule = LoadLibraryA(dllString.c_str());
+		if (!gameModule)
+			return false;
+
+		initFunc = (Func)GetProcAddress((HMODULE)gameModule, "Init");
+		if (!initFunc)
+			return false;
+
+		cleanupFunc = (Func)GetProcAddress((HMODULE)gameModule, "Cleanup");
+		if (!cleanupFunc)
+			return false;
+
+		return true;
+	}
+
+	void GameModuleManager::Unload()
+	{
+		if (!gameModule)
+			return;
+
+		std::filesystem::remove(dllPath);
+
+		FreeLibrary((HMODULE)gameModule);
+		gameModule = nullptr;
+
+		initFunc = nullptr;
+		cleanupFunc = nullptr;
+	}
+
+	bool GameModuleManager::Reload()
+	{
+		return TryCompileAndLoad();
+	}
+
+	bool GameModuleManager::IsLoaded()
+	{
+		return gameModule != nullptr;
+	}
+
+	bool GameModuleManager::HasChanged(const char* source)
+	{
+		namespace fs = std::filesystem;
+
+		fs::path sourcePath = source;
+		fs::path dllPath = "";
+
+		for (auto& entry : fs::recursive_directory_iterator(sourcePath / "Bin"))
+		{
+			if (entry.path().extension().generic_string() == ".dll")
+			{
+				dllPath = entry.path();
+				break;
+			}
+		}
+
+		fs::file_time_type dllLastWriteTime = {};
+
+		if (fs::exists(dllPath))
+			dllLastWriteTime = fs::last_write_time(dllPath);
+
+
+		for (auto& entry : fs::recursive_directory_iterator(sourcePath / "Content"))
+		{
+			if (!entry.is_regular_file())
+				continue;
+
+			if (fs::last_write_time(entry.path()) > dllLastWriteTime)
+				return true;
+		}
+
+		return false;
+	}
+
+	bool GameModuleManager::DllFileExists(const char* dllPath)
+	{
+		return std::filesystem::exists(dllPath);
+	}
+
+	bool GameModuleManager::BuildDLL()
+	{
+		if (IsLoaded())
+			Unload();
+
+		if (!RunHeaderTool())
+			return false;
+
+		if (!GenerateCmake())
+			return false;
+
+		if (!Compile())
+			return false;
+
+		if (!CopyDllFile())
+			return false;
+
+		return true;
+	}
+
+	bool GameModuleManager::RunHeaderTool()
 	{
 		const std::string exePath = (PathManager::GetEngineRoot() / "HeaderTool.exe").generic_string();
 
@@ -22,45 +134,53 @@ namespace Eclipse
 
 		const char* args[] = {
 			contentPath.c_str(),
-			outputPath.c_str()
+			outputPath.c_str(),
+			"false"
 		};
 
-		const bool success = Process::RunAndWait(exePath.c_str(), args, 2);
-
-		sourcepath = source;
-		game = PluginManager::CompileAndLoad(sourcepath.c_str());
-		//name = game->GetName();
-
-		if (!game->Succeded())
-			return false;
-
-		auto registerTypes = game->GetMethod("RegisterReflectedTypes");
-		if (registerTypes)
-			registerTypes();
-
-		return true;
+		return Process::RunAndWait(exePath.c_str(), args, 3);
 	}
 
-	void GameModuleManager::Unload()
+	bool GameModuleManager::GenerateCmake()
 	{
-		if (game)
-			PluginManager::Unload(game->GetName());
+		const std::filesystem::path toolsPath = PathManager::GetProjectRoot() / "Tools";
+		return Process::RunBatchAndWait(toolsPath / "generate.bat", true);
 	}
 
-	bool GameModuleManager::Reload()
+	bool GameModuleManager::CopyDllFile()
 	{
-		if (!game) return false;
+		std::filesystem::path oldDllPath = "";
 
-		PluginManager::Unload(name.c_str());
-		game = PluginManager::CompileAndLoad(sourcepath.c_str());
+		for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
+		{
+			if (entry.path().extension().generic_string() == ".dll")
+			{
+				oldDllPath = entry.path();
+				break;
+			}
+		}
 
-		return game->Succeded();
+		dllPath = PathManager::GetEngineRoot() / oldDllPath.filename();
+		return std::filesystem::copy_file(oldDllPath, dllPath, std::filesystem::copy_options::overwrite_existing);
 	}
 
-	bool GameModuleManager::IsLoaded()
+	bool GameModuleManager::Compile()
 	{
-		return game != nullptr;
-	}
+		for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
+		{
+			if (entry.path().extension().generic_string() == ".dll")
+			{
+				std::filesystem::path pdb = entry.path();
+				pdb.replace_extension(".pdb");
 
+				std::filesystem::remove(entry.path());
+				std::filesystem::remove(pdb);
+				break;
+			}
+		}
+
+		const std::filesystem::path toolsPath = PathManager::GetProjectRoot() / "Tools";
+		return Process::RunBatchAndWait(toolsPath / "compile.bat", true);
+	}
 }
 

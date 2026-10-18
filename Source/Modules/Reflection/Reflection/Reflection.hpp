@@ -4,17 +4,18 @@
 #include <filesystem>
 
 #include "Runtime/ReflectionRegistry.h" // Remove when TypeEntry is in its own file.
+#include "ReflectionRegistrar.hpp"
 
 #include "Core/Standard/Core/Hash.hpp"
 #include "Attributes/Attributes.hpp"
 
 #define MAKE_REFLECTABLE(cls)                   \
-friend void cls##_ReflectionRegister();         \
+friend struct ::ReflectionRegistrar<cls>;         \
 constexpr static unsigned int GetReflectionID() { return ::Eclipse::Hash::FNV1A_U32(#cls); }
 
 namespace Eclipse::Reflection
 {
-	REFLECTION_API void Reflect(const std::filesystem::path& content, const std::filesystem::path& destination);
+	REFLECTION_API void Reflect(const std::filesystem::path& content, const std::filesystem::path& destination, bool useStatic);
 
 	REFLECTION_API const TypeEntry& Find(const std::string& typeName);
 	REFLECTION_API const FieldEntry& Find(const std::string& typeName, const std::string& fieldName);

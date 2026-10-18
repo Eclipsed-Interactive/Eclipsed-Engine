@@ -1,17 +1,20 @@
 //#ifndef _ECL_ENG_COMPONENT
 //#define _ECL_ENG_COMPONENT
 
+#include "Reflection/ReflectionRegistrar.hpp"
 #include "ECS/BaseComponent.h"
 #include "EclipsedEngine/TypeIDGenerator.h"
 
 #include "EclipsedEngine/Reflection/Reflection_Macros.h"
 #include "EclipsedEngine/Replication/Replication_Macros.h"
 
+#include "Reflection/Reflection.hpp"
+
 
 #define BASE_OBJECT_IMPL(TYPE)																\
 static inline unsigned typeID = Eclipse::TypeRegistry::GetTypeID<TYPE>();					\
-static unsigned GetTypeID() { return typeID; }
-
+static unsigned GetTypeID() { return typeID; }	\
+MAKE_REFLECTABLE(TYPE);
 
 //#include "Core/Reflection/Registry/ComponentRegistry.h"
 
@@ -29,7 +32,7 @@ static unsigned GetTypeID() { return typeID; }
 #define COMPONENT_FRIEND_CLASS         \
 friend class Eclipse::Editor::InspectorWindow;  \
 friend class ComponentManager;         \
-friend class SceneLoader;           
+friend class SceneLoader;    
 
 #define COMPONENT_BASE_1(type)												\
 COMPONENT_FRIEND_CLASS														\

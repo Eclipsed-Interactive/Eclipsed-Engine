@@ -33,7 +33,7 @@ namespace Eclipse::Editor
 		EditorUI::Init();
 		EditorLayout::Init();
 
-		GameModuleManager::Load(PathManager::GetProjectRoot().generic_string().c_str());
+		GameModuleManager::TryCompileAndLoad();
 	}
 
 	void Editor::Shutdown()

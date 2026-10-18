@@ -13,7 +13,7 @@ echo.
 
 echo ==== Begun: Generating engine reflection ====
 
-"%~dp0Tools\HeaderTool.exe" "%~dp0Source/EclipsedEngine/EclipsedEngine/" "%~dp0Source/Generated/"
+"%~dp0Tools\HeaderTool.exe" "%~dp0Source/EclipsedEngine/EclipsedEngine/" "%~dp0Source/Generated/" true
 
 echo.
 echo.

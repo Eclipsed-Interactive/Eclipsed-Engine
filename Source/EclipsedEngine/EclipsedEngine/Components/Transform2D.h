@@ -70,6 +70,7 @@ namespace Eclipse
 		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(float, rotation, 5.f, 0, Transform2D);
 		REPLICATED_SERIALIZED_FIELD_DEFAULT(Math::Vector2f, scale, Math::Vector2f(1, 1), Transform2D);
 
+		[[SerializeField]]
 		Math::Vector2f lastPosition;
 		float lastRotation;
 		Math::Vector2f lastScale;

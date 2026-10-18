@@ -6,10 +6,14 @@
 
 namespace Eclipse
 {
+    using Func = void(*)();
+
 	class GameModuleManager
 	{
     public:
-        static bool Load(const char* source);
+        static bool TryCompileAndLoad();
+
+        static bool Load();
         static void Unload();
 
         static bool Reload();
@@ -17,9 +21,23 @@ namespace Eclipse
         [[nodiscard]]
         static bool IsLoaded();
 
+        static bool HasChanged(const char* dllPath);
+        static bool DllFileExists(const char* dllPath);
+
     private:
-        static Plugin* game;
+        static bool BuildDLL();
+        static bool RunHeaderTool();
+        static bool Compile();
+        static bool GenerateCmake();
+
+        static bool CopyDllFile();
+
+    private:
+        static void* gameModule;
+        static Func initFunc;
+        static Func cleanupFunc;
+
         static std::string name;
-        static std::string sourcepath;
+        static std::filesystem::path dllPath;
 	};
 }

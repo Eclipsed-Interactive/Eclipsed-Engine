@@ -10,12 +10,12 @@
 
 namespace Eclipse::Reflection
 {
-	void Reflect(const std::filesystem::path& content, const std::filesystem::path& destination)
+	void Reflect(const std::filesystem::path& content, const std::filesystem::path& destination, bool useStatic)
 	{
 		ReflectionFileScanner::ScanAndReflectFiles(content);
 
 		ReflectionGenerator::Clear(destination);
-		ReflectionGenerator::Generate(destination);
+		ReflectionGenerator::Generate(destination, useStatic);
 	}
 
 	const TypeEntry& Find(const std::string& typeName)

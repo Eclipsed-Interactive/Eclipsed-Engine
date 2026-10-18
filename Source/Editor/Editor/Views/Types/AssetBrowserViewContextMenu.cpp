@@ -13,7 +13,7 @@
 //#include <shellapi.h>
 
 #include "Editor/Game/GameLoader.h"
-#include "Editor/Game/GameCompiler.h"
+#include "Editor/Game/GameModuleManager.h"
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "ECS/ComponentManager.h"
@@ -128,7 +128,7 @@ namespace Eclipse::Editor
 
 		if (ImGui::MenuItem("Recompile"))
 		{
-			//GameModuleManager::CompileAndLoad();
+			GameModuleManager::Reload();
 		}
 	}
 
