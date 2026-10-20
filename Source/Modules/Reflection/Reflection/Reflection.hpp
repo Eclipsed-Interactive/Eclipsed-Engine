@@ -10,8 +10,7 @@
 #include "Attributes/Attributes.hpp"
 
 #define MAKE_REFLECTABLE(cls)                   \
-friend struct ::ReflectionRegistrar<cls>;         \
-constexpr static unsigned int GetReflectionID() { return ::Eclipse::Hash::FNV1A_U32(#cls); }
+friend struct ::ReflectionRegistrar<cls>;
 
 namespace Eclipse::Reflection
 {

@@ -214,11 +214,13 @@ namespace Eclipse::Reflection
                 bodyEnd - bodyStart - 1
             );
 
+            if (body.find("MAKE_REFLECTABLE") == std::string::npos)
+                continue;
+
             TypeDescriptor type;
             type.Name = match[1].str();
             type.FilePath = path.generic_string();
 
-            // Only fields directly inside this class are considered.
             std::vector<std::size_t> fieldDepths(body.size());
             depth = 0;
 
@@ -288,8 +290,7 @@ namespace Eclipse::Reflection
                     type.Fields.emplace_back(std::move(field));
             }
 
-            if (!type.Fields.empty())
-                TypeRegistry::Register(type);
+            TypeRegistry::Register(type);
         }
     }
 

@@ -10,7 +10,7 @@
 namespace Eclipse
 {
 	void* GameModuleManager::gameModule = nullptr;
-	Func GameModuleManager::initFunc = nullptr;
+	Func GameModuleManager::registerReflectedTypesFunc = nullptr;
 	Func GameModuleManager::cleanupFunc = nullptr;
 
 	std::string GameModuleManager::name;
@@ -31,13 +31,15 @@ namespace Eclipse
 		if (!gameModule)
 			return false;
 
-		initFunc = (Func)GetProcAddress((HMODULE)gameModule, "Init");
-		if (!initFunc)
+		registerReflectedTypesFunc = (Func)GetProcAddress((HMODULE)gameModule, "RegisterReflectedTypes");
+		if (!registerReflectedTypesFunc)
 			return false;
 
-		cleanupFunc = (Func)GetProcAddress((HMODULE)gameModule, "Cleanup");
-		if (!cleanupFunc)
-			return false;
+		//cleanupFunc = (Func)GetProcAddress((HMODULE)gameModule, "Cleanup");
+		//if (!cleanupFunc)
+		//	return false;
+
+		registerReflectedTypesFunc();
 
 		return true;
 	}
@@ -52,7 +54,7 @@ namespace Eclipse
 		FreeLibrary((HMODULE)gameModule);
 		gameModule = nullptr;
 
-		initFunc = nullptr;
+		registerReflectedTypesFunc = nullptr;
 		cleanupFunc = nullptr;
 	}
 
@@ -66,14 +68,13 @@ namespace Eclipse
 		return gameModule != nullptr;
 	}
 
-	bool GameModuleManager::HasChanged(const char* source)
+	bool GameModuleManager::HasChanged()
 	{
 		namespace fs = std::filesystem;
 
-		fs::path sourcePath = source;
 		fs::path dllPath = "";
 
-		for (auto& entry : fs::recursive_directory_iterator(sourcePath / "Bin"))
+		for (auto& entry : fs::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
 		{
 			if (entry.path().extension().generic_string() == ".dll")
 			{
@@ -88,7 +89,7 @@ namespace Eclipse
 			dllLastWriteTime = fs::last_write_time(dllPath);
 
 
-		for (auto& entry : fs::recursive_directory_iterator(sourcePath / "Content"))
+		for (auto& entry : fs::recursive_directory_iterator(PathManager::GetProjectRoot() / "Content"))
 		{
 			if (!entry.is_regular_file())
 				continue;
@@ -110,13 +111,15 @@ namespace Eclipse
 		if (IsLoaded())
 			Unload();
 
-		if (!RunHeaderTool())
+		bool wasChanged = HasChanged();
+
+		if (wasChanged && !RunHeaderTool())
 			return false;
 
-		if (!GenerateCmake())
+		if (wasChanged && !GenerateCmake())
 			return false;
 
-		if (!Compile())
+		if (wasChanged && !Compile())
 			return false;
 
 		if (!CopyDllFile())
@@ -166,16 +169,19 @@ namespace Eclipse
 
 	bool GameModuleManager::Compile()
 	{
-		for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
+		if (std::filesystem::exists(PathManager::GetProjectRoot() / "Bin"))
 		{
-			if (entry.path().extension().generic_string() == ".dll")
+			for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
 			{
-				std::filesystem::path pdb = entry.path();
-				pdb.replace_extension(".pdb");
+				if (entry.path().extension().generic_string() == ".dll")
+				{
+					std::filesystem::path pdb = entry.path();
+					pdb.replace_extension(".pdb");
 
-				std::filesystem::remove(entry.path());
-				std::filesystem::remove(pdb);
-				break;
+					std::filesystem::remove(entry.path());
+					std::filesystem::remove(pdb);
+					break;
+				}
 			}
 		}
 

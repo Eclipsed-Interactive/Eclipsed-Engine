@@ -54,6 +54,7 @@ namespace Eclipse::Reflection
 			<< "#include \"Reflection/Runtime/ReflectionRegistry.h\"\n"
 			<< "#include \"Reflection/Attributes/Attributes.hpp\"\n"
 			<< "#include \"Reflection/ReflectionRegistrar.hpp\"\n"
+			<< "#include \"Core/Standard/TypeIDGenerator.hpp\"\n"
 			<< "\n"
 			<< "#include \"" << descriptor.FilePath << "\"\n"
 			<< "\n"
@@ -76,7 +77,7 @@ namespace Eclipse::Reflection
 			<< "\t\t\tTypeEntry{\n"
 			<< "\t\t\t\t.name = \"" << descriptor.Name << "\", \n"
 			<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "),\n"
-			<< "\t\t\t\t.id = " << descriptor.Name << "::GetReflectionID(),\n"
+			<< "\t\t\t\t.id = Type::GetTypeID<" <<  descriptor.Name << ">(), \n"
 			<< "\t\t\t\t.create = [](){ return reinterpret_cast<void*>(new " << descriptor.Name << "); },\n"
 			<< "\t\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); }\n"
 			<< "\t\t\t}\n"
@@ -93,7 +94,8 @@ namespace Eclipse::Reflection
 				<< "\t\t\t{\n"
 				<< "\t\t\t\t.name = \"" << field.Name << "\",\n"
 				<< "\t\t\t\t.offset = offsetof(" << descriptor.Name << ", " << field.Name << "),\n"
-				<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "::" << field.Name << ")\n"
+				<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "::" << field.Name << "),\n"
+				<< "\t\t\t\t.type = Type::GetTypeID<decltype(" << descriptor.Name << "::" << field.Name << ")>()\n"
 				<< "\t\t\t};\n"
 				<< "\n";
 
@@ -162,7 +164,7 @@ namespace Eclipse::Reflection
 	{
 		using namespace std::filesystem;
 
-		const path filepath = generationPath / "ReflectionRegistrator.ref.hpp";
+		const path filepath = generationPath / "ReflectionRegistrator.ref.cpp";
 		std::ofstream file(filepath, std::ios::binary | std::ios::trunc);
 
 		if (!file)

@@ -8,4 +8,10 @@ namespace Eclipse::Reflection
 	{
 		int min, max;
 	};
+
+	template<typename T>
+	struct Step
+	{
+		T step;
+	};
 }

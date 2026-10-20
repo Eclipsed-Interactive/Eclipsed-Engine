@@ -18,6 +18,7 @@ namespace Eclipse
 
 	class ECL_API Transform2D : public Component
 	{
+		MAKE_REFLECTABLE(Transform2D);
 		COMPONENT_BASE_2(Transform2D, UINT_MAX * 0.5f)
 
 	public:
@@ -72,7 +73,11 @@ namespace Eclipse
 
 		[[SerializeField]]
 		Math::Vector2f lastPosition;
+
+		[[SerializeField]]
 		float lastRotation;
+
+		[[SerializeField]]
 		Math::Vector2f lastScale;
 
 		Math::Vector2f GlobalPosition;

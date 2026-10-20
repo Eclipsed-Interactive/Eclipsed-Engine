@@ -21,7 +21,7 @@ namespace Eclipse
         [[nodiscard]]
         static bool IsLoaded();
 
-        static bool HasChanged(const char* dllPath);
+        static bool HasChanged();
         static bool DllFileExists(const char* dllPath);
 
     private:
@@ -34,7 +34,7 @@ namespace Eclipse
 
     private:
         static void* gameModule;
-        static Func initFunc;
+        static Func registerReflectedTypesFunc;
         static Func cleanupFunc;
 
         static std::string name;

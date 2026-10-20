@@ -3,7 +3,7 @@
 
 #include "Reflection/ReflectionRegistrar.hpp"
 #include "ECS/BaseComponent.h"
-#include "EclipsedEngine/TypeIDGenerator.h"
+#include "Core/Standard/TypeIDGenerator.hpp"
 
 #include "EclipsedEngine/Reflection/Reflection_Macros.h"
 #include "EclipsedEngine/Replication/Replication_Macros.h"
@@ -12,7 +12,7 @@
 
 
 #define BASE_OBJECT_IMPL(TYPE)																\
-static inline unsigned typeID = Eclipse::TypeRegistry::GetTypeID<TYPE>();					\
+static inline unsigned typeID = Eclipse::Type::GetTypeID<TYPE>();							\
 static unsigned GetTypeID() { return typeID; }	\
 MAKE_REFLECTABLE(TYPE);
 

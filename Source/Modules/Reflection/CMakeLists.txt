@@ -7,6 +7,7 @@ CreateSharedProject()
 
 target_link_libraries(Reflection PUBLIC 
     Core 
+    ImGui
 )
 
 SetFolder("Modules")

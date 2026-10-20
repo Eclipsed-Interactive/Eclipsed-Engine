@@ -41,4 +41,9 @@ namespace Eclipse::Reflection
 
 		return registererd[typeName];
 	}
+
+	const std::unordered_map<std::string, TypeEntry>& ReflectionRegistry::GetTypes()
+	{
+		return registererd;
+	}
 }
