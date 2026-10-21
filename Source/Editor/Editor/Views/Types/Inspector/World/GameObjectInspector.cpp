@@ -76,7 +76,7 @@ namespace Eclipse::Editor
 
 			ImGui::Text(comp->GetComponentName());
 
-			//ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
+			ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
 
 			if (ImGui::IsItemHovered())
 			{
@@ -97,6 +97,12 @@ namespace Eclipse::Editor
 
 			// NEW REFLECTION
 			//Reflection::ReflectionManager::DrawInspector(comp, comp->GetComponentName());
+			const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(comp->GetComponentName());
+			for (const auto& [name, field] : type.fields)
+			{
+				InspectorFieldDrawer::Draw(comp, field);
+			}
+
 			ImGui::Unindent(20.f);
 
 			ImGui::Dummy({ 0, 30 });

@@ -112,7 +112,7 @@ namespace Eclipse::Reflection
 
 			file
 				<< "\t\t\tReflection::ReflectionRegistry::RegisterField(\n"
-				<< "\t\t\t\t\"" << field.Name << "\",\n"
+				<< "\t\t\t\t\"" << descriptor.Name << "\",\n"
 				<< "\t\t\t\tentry\n"
 				<< "\t\t\t);\n";
 

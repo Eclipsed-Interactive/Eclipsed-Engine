@@ -31,10 +31,12 @@ namespace Eclipse::Editor
 			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
 			if (stepAttr) step = stepAttr->step;
 
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+
 			if (range)
 			{
 				ImGui::DragInt(("##" + id + entry.name).c_str(),
-					(int*)v,
+					(int*)addr,
 					step,
 					range->min,
 					range->max
@@ -57,10 +59,12 @@ namespace Eclipse::Editor
 			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
 			if (stepAttr) step = stepAttr->step;
 
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+
 			if (range)
 			{
 				ImGui::DragFloat(("##" + id + entry.name).c_str(),
-					(float*)v,
+					(float*)addr,
 					step,
 					range->min,
 					range->max
@@ -77,8 +81,8 @@ namespace Eclipse::Editor
 			const int randomID = Random::Rand<int>();
 
 			const std::string id = std::to_string(randomID);
-
-			ImGui::Checkbox(("##" + id + entry.name).c_str(), (bool*)v);
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			ImGui::Checkbox(("##" + id + entry.name).c_str(), (bool*)addr);
 			}
 		);
 	}
