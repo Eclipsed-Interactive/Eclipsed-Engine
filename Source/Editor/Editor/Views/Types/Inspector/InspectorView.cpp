@@ -11,6 +11,7 @@
 #include "FontAwesome/7/IconsFontAwesome7.h"
 
 #include "Reflection/Runtime/ReflectionRegistry.h"
+#include "InspectorFieldDrawer.h"
 
 namespace Eclipse::Editor
 {
@@ -21,6 +22,7 @@ namespace Eclipse::Editor
 		{
 			isInitialized = true;
 
+			InspectorFieldDrawer::RegisterDefaults();
 			AssetInspectorRegistry::RegisterAll();
 		}
 	}

@@ -51,6 +51,8 @@ namespace Eclipse::Reflection
 
 		static const std::unordered_map<std::string, TypeEntry>& GetTypes();
 
+		static const TypeEntry* TryGetType(const std::string& typeName);
+
 	public:
 		template<typename T>
 		static TypeEntry* GetType();

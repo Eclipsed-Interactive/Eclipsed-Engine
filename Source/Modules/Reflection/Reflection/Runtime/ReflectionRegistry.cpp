@@ -46,4 +46,11 @@ namespace Eclipse::Reflection
 	{
 		return registererd;
 	}
+	const TypeEntry* ReflectionRegistry::TryGetType(const std::string& typeName)
+	{
+		if (!registererd.contains(typeName))
+			return nullptr;
+
+		return &registererd[typeName];
+	}
 }

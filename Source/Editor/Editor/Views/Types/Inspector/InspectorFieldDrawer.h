@@ -17,11 +17,13 @@ namespace Eclipse::Editor
 
 		static void Draw(void* v, const Reflection::FieldEntry& field);
 
-	private:
 		static void RegisterDefaults();
 
+	private:
 		template<typename T>
 		static void Register(std::function<void(void*, const Reflection::FieldEntry&)> drawInspectorFunc);
+
+		static void NoDrawMethod();
 
 	private:
 		static inline std::unordered_map<TypeID, std::function<void(void*, const Reflection::FieldEntry&)>> drawInspectorFuncs;
@@ -32,7 +34,10 @@ namespace Eclipse::Editor
 	{
 		const TypeID id = Type::GetTypeID<T>();
 		if (!drawInspectorFuncs.contains(id))
+		{
+			NoDrawMethod();
 			return;
+		}
 
 		drawInspectorFuncs[id](&v, field);
 	}

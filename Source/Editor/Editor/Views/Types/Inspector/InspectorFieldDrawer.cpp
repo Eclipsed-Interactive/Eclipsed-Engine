@@ -7,14 +7,20 @@
 
 #include "ImGui/imgui.h"
 
+#include <Windows.h>
+#include <string>
+
 namespace Eclipse::Editor
 {
 	void InspectorFieldDrawer::Draw(void* v, const Reflection::FieldEntry& field)
 	{
 		if (!drawInspectorFuncs.contains(field.type))
+		{
+			NoDrawMethod();
 			return;
+		}
 
-		drawInspectorFuncs[field.type](&v, field);
+		drawInspectorFuncs[field.type](v, field);
 	}
 
 	void InspectorFieldDrawer::RegisterDefaults()
@@ -23,19 +29,15 @@ namespace Eclipse::Editor
 
 		Register<int>([](void* v, const FieldEntry& entry) {
 			const Range* range = entry.attributeContainer.TryGet<Range>();
-			const int randomID = Random::Rand<int>();
 
-			const std::string id = std::to_string(randomID);
-
-			int step = 1;
+			float step = 1.f;
 			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-
 			if (range)
 			{
-				ImGui::DragInt(("##" + id + entry.name).c_str(),
+				ImGui::DragInt("##value",
 					(int*)addr,
 					step,
 					range->min,
@@ -44,26 +46,22 @@ namespace Eclipse::Editor
 			}
 			else
 			{
-				ImGui::DragInt(("##" + id + entry.name).c_str(), (int*)v, step);
+				ImGui::DragInt("##value", (int*)addr, step);
 			}
 			}
 		);
 
 		Register<float>([](void* v, const FieldEntry& entry) {
 			const Range* range = entry.attributeContainer.TryGet<Range>();
-			const int randomID = Random::Rand<int>();
-
-			const std::string id = std::to_string(randomID);
 
 			float step = 0.1f;
 			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-
 			if (range)
 			{
-				ImGui::DragFloat(("##" + id + entry.name).c_str(),
+				ImGui::DragFloat("##value",
 					(float*)addr,
 					step,
 					range->min,
@@ -72,18 +70,23 @@ namespace Eclipse::Editor
 			}
 			else
 			{
-				ImGui::DragFloat(("##" + id + entry.name).c_str(), (float*)v, step);
+				ImGui::DragFloat("##value", (float*)addr, step);
 			}
 			}
 		);
 
 		Register<bool>([](void* v, const FieldEntry& entry) {
-			const int randomID = Random::Rand<int>();
-
-			const std::string id = std::to_string(randomID);
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			ImGui::Checkbox(("##" + id + entry.name).c_str(), (bool*)addr);
+			ImGui::Checkbox("##value", (bool*)addr);
 			}
 		);
+	}
+
+	void InspectorFieldDrawer::NoDrawMethod()
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.1f, 0.1f, 1.f));
+		ImGui::Text(__FILE__);
+		ImGui::Text("No draw method.");
+		ImGui::PopStyleColor();
 	}
 }

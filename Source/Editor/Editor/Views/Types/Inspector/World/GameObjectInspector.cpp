@@ -63,18 +63,10 @@ namespace Eclipse::Editor
 			if (!comp)
 				continue;
 
-			auto priority = comp->GetUpdatePriority();
-			auto name = comp->GetComponentName();
-			std::string named(name);
-
-
-
 			std::string id = comp->GetComponentName();
 			id += "##" + std::to_string(counter);
 
 			counter++;
-
-			ImGui::Text(comp->GetComponentName());
 
 			ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
 
@@ -97,10 +89,24 @@ namespace Eclipse::Editor
 
 			// NEW REFLECTION
 			//Reflection::ReflectionManager::DrawInspector(comp, comp->GetComponentName());
-			const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(comp->GetComponentName());
-			for (const auto& [name, field] : type.fields)
+
+			const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(comp->GetComponentName());
+			if (!type)
 			{
-				InspectorFieldDrawer::Draw(comp, field);
+				ImGui::TextDisabled("Not Reflected");
+			}
+			else
+			{
+				ImGui::PushID(comp);
+				for (const auto& [name, field] : type->fields)
+				{
+					ImGui::PushID(name.c_str());
+					ImGui::Text(name.c_str());
+					ImGui::SameLine();
+					InspectorFieldDrawer::Draw((void*)comp, field);
+					ImGui::PopID();
+				}
+				ImGui::PopID();
 			}
 
 			ImGui::Unindent(20.f);
