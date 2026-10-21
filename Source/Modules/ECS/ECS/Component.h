@@ -7,6 +7,8 @@
 
 #include "ECS.Core.hpp"
 
+#include "Core/Standard/TypeIDGenerator.hpp"
+
 namespace Eclipse
 {
 	namespace Editor
@@ -93,9 +95,9 @@ namespace Eclipse
 		virtual void Update() {}
 		virtual void LateUpdate() {}
 
-#ifdef ECL_EDITOR
+//#ifdef ECL_EDITOR
 		virtual bool OnDrawInspector() { return false; }
-#endif
+//#endif
 
 		virtual void Render() {}
 
@@ -112,12 +114,14 @@ namespace Eclipse
 		bool IsOwner() { return myIsOwner; }
 		void SetIsOwner(bool anIsOwner) { myIsOwner = anIsOwner; }
 
+		virtual TypeID GetID();
+
 	protected:
 
 	protected:
-#ifdef ECL_EDITOR
+//#ifdef ECL_EDITOR
 		virtual void UpdateInspector() {}
-#endif
+//#endif
 		//#ifdef ECL_EDITOR
 		//		void UpdateInspector() { Reflection::ReflectionManager::DrawInspector(this, GetComponentName()); }
 		//#endif

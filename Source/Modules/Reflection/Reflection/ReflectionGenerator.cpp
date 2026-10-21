@@ -79,7 +79,9 @@ namespace Eclipse::Reflection
 			<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "),\n"
 			<< "\t\t\t\t.id = Type::GetTypeID<" <<  descriptor.Name << ">(), \n"
 			<< "\t\t\t\t.create = [](){ return reinterpret_cast<void*>(new " << descriptor.Name << "); },\n"
-			<< "\t\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); }\n"
+			<< "\t\t\t\t.createAtAddress = [](unsigned char* addr){ return reinterpret_cast<void*>(new (addr)" << descriptor.Name << "); },\n"
+			<< "\t\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); },\n"
+			<< "\t\t\t\t.flag = static_cast<Reflection::ReflectionFlags>("<< static_cast<int>(descriptor.flag) <<")\n"
 			<< "\t\t\t}\n"
 			<< "\t\t);\n"
 			<< "\n";
@@ -172,8 +174,6 @@ namespace Eclipse::Reflection
 
 		file << "#pragma once\n\n";
 
-		file << "#include \"Plugin.Core.hpp\"\n\n";
-
 		for (auto [id, type] : TypeRegistry::GetAll())
 		{
 			file << "#include \"" << generationPath.generic_string() << "/" << type.Name << ".ref.hpp\"\n";
@@ -184,7 +184,7 @@ namespace Eclipse::Reflection
 		file <<
 			"extern \"C\"\n"
 			"{\n"
-			"\tinline DLL void RegisterReflectedTypes()\n"
+			"\tinline __declspec(dllexport) void RegisterReflectedTypes()\n"
 			"\t{\n";
 
 		for (auto [id, type] : TypeRegistry::GetAll())

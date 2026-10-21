@@ -2,7 +2,8 @@
 
 #include <vector>
 #include <string>
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 
 #include "EclipsedEngine/Components/Component.h"
 

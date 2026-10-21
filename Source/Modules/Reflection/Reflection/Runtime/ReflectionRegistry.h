@@ -6,6 +6,8 @@
 #include "Reflection/Attributes/AttributeContainer.h"
 #include "Core/Standard/TypeIDGenerator.hpp"
 
+#include "ReflectionFlags.h"
+
 #include "Reflection.Core.hpp"
 
 namespace Eclipse::Reflection
@@ -28,9 +30,10 @@ namespace Eclipse::Reflection
 		TypeID id;
 
 		void* (*create)() = nullptr;
+		void* (*createAtAddress)(unsigned char*) = nullptr;
 		void (*destroy)(void*) = nullptr;
-		void (*drawInspector)(void* data, FieldEntry& field) = nullptr;
 
+		ReflectionFlags flag;
 		std::unordered_map<std::string, FieldEntry> fields;
 	};
 

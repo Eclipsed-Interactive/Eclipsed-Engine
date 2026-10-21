@@ -6,12 +6,11 @@ namespace Eclipse::Reflection
 
 	struct Range
 	{
-		int min, max;
+		float min, max;
 	};
 
-	template<typename T>
 	struct Step
 	{
-		T step;
+		float step;
 	};
 }

@@ -14,6 +14,8 @@
 
 #include "Editor/ImGui/ImGui_Impl.h"
 
+#include "Editor/Views/Types/Inspector/InspectorFieldDrawer.h"
+
 namespace Eclipse::Editor
 {
 	ImGuiTextFilter GameObjectInspector::filter{};
@@ -58,12 +60,23 @@ namespace Eclipse::Editor
 		static Component* rightClickedComp = nullptr;
 		for (auto comp : ComponentManager::GetComponents(gobjId))
 		{
+			if (!comp)
+				continue;
+
+			auto priority = comp->GetUpdatePriority();
+			auto name = comp->GetComponentName();
+			std::string named(name);
+
+
+
 			std::string id = comp->GetComponentName();
 			id += "##" + std::to_string(counter);
 
 			counter++;
 
-			ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
+			ImGui::Text(comp->GetComponentName());
+
+			//ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
 
 			if (ImGui::IsItemHovered())
 			{
@@ -101,6 +114,20 @@ namespace Eclipse::Editor
 
 			filter.Draw("##Search");
 
+			for (auto& [name, type] : Reflection::ReflectionRegistry::GetTypes())
+			{
+				if (type.flag != Reflection::ReflectionFlags::Component)
+					continue;
+
+				if (ImGui::Button(name.c_str(), ImVec2(-FLT_MIN, 0)))
+				{
+					ComponentManager::AddComponent(gobjId, type.createAtAddress, type.size);
+					ImGui::CloseCurrentPopup();
+					filter = {};
+					compSearchIsFocused = false;
+				}
+			}
+
 			//for (auto& [name, registeredComp] : ComponentRegistry::GetComponentTypeNameMap())
 			//{
 			//	if (!filter.PassFilter(name.c_str())) continue;
@@ -116,7 +143,7 @@ namespace Eclipse::Editor
 
 			ImGui::EndCombo();
 		}
-		else if(compSearchIsFocused)
+		else if (compSearchIsFocused)
 		{
 			filter = {};
 			compSearchIsFocused = false;

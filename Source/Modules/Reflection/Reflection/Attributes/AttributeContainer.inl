@@ -10,7 +10,7 @@ namespace Eclipse::Reflection
     }
 
     template<typename Attribute>
-    inline Attribute* AttributeContainer::Get()
+    inline const Attribute* AttributeContainer::Get()const
     {
         return std::any_cast<Attribute>(
             &attributes.at(typeid(Attribute))
@@ -18,7 +18,7 @@ namespace Eclipse::Reflection
     }
 
     template<typename Attribute>
-    inline Attribute* AttributeContainer::TryGet()
+    inline const Attribute* AttributeContainer::TryGet() const
     {
         auto it = attributes.find(typeid(Attribute));
 

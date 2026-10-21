@@ -17,11 +17,15 @@
 #include "Editor/Game/GameModuleManager.h"
 #include "Reflection/Reflection.hpp"
 
+#include "Core/Standard/Serialization/Serialization.hpp"
+
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
 	{
 		ProjectManager::LoadOrSelectProject();
+
+		float value = Serialization::FromJson<float>("3.1415");
 	}
 
 	void Editor::Init(void* imguiCtx)

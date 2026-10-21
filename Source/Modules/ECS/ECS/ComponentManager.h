@@ -109,6 +109,9 @@ namespace Eclipse
 
 		static GameObject* FindObjectByName(const char* aName);
 
+		static Component* AddComponent(unsigned aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
+
 
 		static Component* AddComponent(unsigned aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
 		static Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);

@@ -20,10 +20,10 @@ namespace Eclipse::Reflection
 		void Add(Args&&... args);
 
 		template<typename Attribute>
-		Attribute* Get();
+		const Attribute* Get() const ;
 
 		template<typename Attribute>
-		Attribute* TryGet();
+		const Attribute* TryGet() const;
 
 	private:
 		std::unordered_map<std::type_index, std::any> attributes;

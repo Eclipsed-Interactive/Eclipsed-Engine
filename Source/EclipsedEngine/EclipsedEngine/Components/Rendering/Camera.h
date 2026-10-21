@@ -3,7 +3,8 @@
 #include "EclipsedEngine/Components/Component.h"
 
 #include "Core/GraphicsBuffers/CameraBuffer.h"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 namespace Eclipse
 {
     class Camera : public Component

@@ -74,6 +74,9 @@ namespace Eclipse
 
 		fs::path dllPath = "";
 
+		if (!fs::exists(PathManager::GetProjectRoot() / "Bin"))
+			return true;
+
 		for (auto& entry : fs::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
 		{
 			if (entry.path().extension().generic_string() == ".dll")
