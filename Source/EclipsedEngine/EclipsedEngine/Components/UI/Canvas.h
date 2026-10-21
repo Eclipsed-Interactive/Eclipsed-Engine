@@ -3,7 +3,8 @@
 #include "ECS/ComponentManager.h"
 #include "EclipsedEngine/Components/Component.h"
 #include "Core/GraphicsBuffers/CanvasBuffer.h"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 #include <vector>
 
 namespace Eclipse

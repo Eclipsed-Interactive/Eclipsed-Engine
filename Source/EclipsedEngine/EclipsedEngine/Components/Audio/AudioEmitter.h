@@ -4,7 +4,8 @@
 #include <functional>
 
 #include "EclipsedEngine/Components/Component.h"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 #include <Core/Math/Vector/Vector2.h>
 
 #include "Assets/AssetManager.h"

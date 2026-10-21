@@ -5,10 +5,11 @@
 #include "Networking/Shared/Message.h"
 
 #include <vector>
-#include "EclipsedEngine/Reflection/AbstractSerializedVariable.h"
 #include "Assets/Core/GUID.h"
 
 #include "EclipsedEngine.Core.hpp"
+
+#include "EclipsedEngine/Reflection/AbstractSerializedVariable.h"
 
 namespace Eclipse
 {

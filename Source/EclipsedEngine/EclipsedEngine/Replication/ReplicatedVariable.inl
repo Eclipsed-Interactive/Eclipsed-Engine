@@ -3,8 +3,6 @@
 #include "ReplicatedVariable.h"
 #include "ReplicationManager.h"
 
-#include "Eclipsedengine/Reflection/Reflection.h"
-
 #include "EclipsedEngine/Components/Component.h"
 
 namespace Eclipse::Replication

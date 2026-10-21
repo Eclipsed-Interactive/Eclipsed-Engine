@@ -12,12 +12,16 @@
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/TransformBuffer.h"
 
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
+
 namespace Eclipse
 {
 	using DirtyFunctionPtr = void (Component::*)();
 
 	class ECL_API Transform2D : public Component
 	{
+		MAKE_REFLECTABLE(Transform2D);
 		COMPONENT_BASE_2(Transform2D, UINT_MAX * 0.5f)
 
 	public:
@@ -70,8 +74,13 @@ namespace Eclipse
 		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(float, rotation, 5.f, 0, Transform2D);
 		REPLICATED_SERIALIZED_FIELD_DEFAULT(Math::Vector2f, scale, Math::Vector2f(1, 1), Transform2D);
 
+		[[SerializeField]]
 		Math::Vector2f lastPosition;
+
+		[[SerializeField]]
 		float lastRotation;
+
+		[[SerializeField]]
 		Math::Vector2f lastScale;
 
 		Math::Vector2f GlobalPosition;

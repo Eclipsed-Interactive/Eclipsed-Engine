@@ -1,5 +1,5 @@
 @PACKAGE_INIT@
 
-include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_KEY@_Targets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/EclipsedTargets.cmake")
 
-check_required_components(@PROJECT_KEY@)
+check_required_components(Eclipsed)

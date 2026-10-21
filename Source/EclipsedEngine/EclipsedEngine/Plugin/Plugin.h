@@ -14,6 +14,7 @@ namespace Eclipse
 	{
 	public:
 		Plugin(const char* source);
+		~Plugin();
 
 	public:
 		template<typename TFunc = Func>

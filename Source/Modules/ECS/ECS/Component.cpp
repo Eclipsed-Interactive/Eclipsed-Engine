@@ -2,4 +2,9 @@
 
 namespace Eclipse
 {
+	TypeID Component::GetID()
+	{
+		return Type::GetTypeID<Component>();
+	}
+
 }

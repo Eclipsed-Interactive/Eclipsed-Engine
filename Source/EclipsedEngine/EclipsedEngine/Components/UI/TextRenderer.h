@@ -14,7 +14,8 @@
 #include "Core/GraphicsBuffers/TransformBuffer.h"
 
 #include "EclipsedEngine.Core.hpp"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 
 namespace Eclipse
 {

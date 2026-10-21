@@ -8,10 +8,6 @@
 
 #include <fstream>
 
-#include "EclipsedEngine/Reflection/Reflection.h"
-#include "EclipsedEngine/Reflection/SerializedVariable.h"
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
-
 #include "Core/ChatGPT_Dump/Base64.hpp"
 
 #include "ECS/Component.h"
@@ -28,6 +24,8 @@
 #include "Assets/Core/AssetDatabase.h"
 
 #include "ECS/GameObject.h"
+
+#include "Reflection/Registry/ComponentRegistry.h"
 
 namespace Eclipse
 {

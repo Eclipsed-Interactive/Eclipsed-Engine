@@ -78,6 +78,27 @@ foreach(DIR ${SUBDIRS})
 endforeach()
 
 
+
+
+# Load tools
+file(GLOB SUBDIRS LIST_DIRECTORIES true
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Tools/*"
+)
+
+foreach(DIR ${SUBDIRS})
+    if(IS_DIRECTORY "${DIR}")
+        get_filename_component(DIR_NAME "${DIR}" NAME)
+        string(REPLACE "-" "_" DIR_NAME "${DIR_NAME}")
+
+        add_subdirectory("${DIR}")
+  
+        add_dependencies(Launcher ${DIR_NAME})
+        add_dependencies(Editor ${DIR_NAME})
+    endif()
+endforeach()
+
+
+
 set_property(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     PROPERTY VS_STARTUP_PROJECT Editor
@@ -110,3 +131,5 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
         "IntDir=${CMAKE_BINARY_DIR}/Intermediate/$(MSBuildProjectName)/$(Platform)/$(Configuration)/"
     )
 endif()
+include(CMake/packaging.cmake)
+InstallCMakePackage()

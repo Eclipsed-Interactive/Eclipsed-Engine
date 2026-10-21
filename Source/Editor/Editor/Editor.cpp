@@ -15,13 +15,17 @@
 #include "EditorUI.h"
 
 #include "Editor/Game/GameModuleManager.h"
-#include "Reflection/Reflection.h"
+#include "Reflection/Reflection.hpp"
+
+#include "Core/Standard/Serialization/Serialization.hpp"
 
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
 	{
 		ProjectManager::LoadOrSelectProject();
+
+		float value = Serialization::FromJson<float>("3.1415");
 	}
 
 	void Editor::Init(void* imguiCtx)
@@ -33,8 +37,7 @@ namespace Eclipse::Editor
 		EditorUI::Init();
 		EditorLayout::Init();
 
-		//Reflection::Reflect(PathManager::GetProjectRoot() / "Generated" / "Reflection");
-		//GameModuleManager::Load("C:/Users/zulto/Desktop/GamePlugin");
+		GameModuleManager::TryCompileAndLoad();
 	}
 
 	void Editor::Shutdown()

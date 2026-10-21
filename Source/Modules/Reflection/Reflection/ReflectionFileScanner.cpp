@@ -1,110 +1,335 @@
+
 #include "ReflectionFileScanner.h"
 
-#include <iostream>eesssadfc
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 #include <regex>
 #include <string>
-#include <fstream>
-#include <filesystem>
+#include <utility>
+#include <vector>
 
 #include "TypeDescriptor.h"
 #include "TypeRegistry.h"
 
 namespace Eclipse::Reflection
 {
-	void ReflectionFileScanner::ScanAndReflectFiles(const std::filesystem::path& root)
+	namespace
 	{
-		for (auto it : std::filesystem::recursive_directory_iterator(root))
+		std::string MaskNonCode(const std::string& source)
 		{
-			const std::string extension = it.path().extension().string();
+			std::string result = source;
 
-			if (it.is_directory()) continue;
-			else if (extension != ".h" && extension != ".hpp") continue;
+			const auto mask = [&](std::size_t start, std::size_t end)
+				{
+					for (std::size_t i = start; i < end; ++i)
+					{
+						if (result[i] != '\n' && result[i] != '\r')
+							result[i] = ' ';
+					}
+				};
 
-			const std::string path = it.path().generic_string();
-			ReflectFile(path.c_str());
+			for (std::size_t i = 0; i < source.size();)
+			{
+				if (source.compare(i, 2, "//") == 0)
+				{
+					const auto end = source.find('\n', i);
+					const auto next = end == std::string::npos
+						? source.size()
+						: end;
+
+					mask(i, next);
+					i = next;
+					continue;
+				}
+
+				if (source.compare(i, 2, "/*") == 0)
+				{
+					const auto end = source.find("*/", i + 2);
+					const auto next = end == std::string::npos
+						? source.size()
+						: end + 2;
+
+					mask(i, next);
+					i = next;
+					continue;
+				}
+
+				if (source.compare(i, 2, "R\"") == 0)
+				{
+					const auto opening = source.find('(', i + 2);
+
+					if (opening != std::string::npos &&
+						opening - (i + 2) <= 16)
+					{
+						const std::string delimiter = source.substr(
+							i + 2,
+							opening - (i + 2)
+						);
+
+						const std::string closing =
+							")" + delimiter + "\"";
+
+						const auto end = source.find(
+							closing,
+							opening + 1
+						);
+
+						const auto next = end == std::string::npos
+							? source.size()
+							: end + closing.size();
+
+						mask(i, next);
+						i = next;
+						continue;
+					}
+				}
+
+				if (source[i] == '"' || source[i] == '\'')
+				{
+					if (source[i] == '\'' && i > 0 &&
+						i + 1 < source.size() &&
+						source[i - 1] >= '0' && source[i - 1] <= '9' &&
+						source[i + 1] >= '0' && source[i + 1] <= '9')
+					{
+						++i;
+						continue;
+					}
+
+					const auto start = i;
+					const char quote = source[i++];
+
+					while (i < source.size())
+					{
+						if (source[i] == '\\')
+						{
+							++i;
+
+							if (i < source.size())
+								++i;
+						}
+						else if (source[i++] == quote)
+						{
+							break;
+						}
+					}
+
+					mask(start, i);
+					continue;
+				}
+
+				++i;
+			}
+
+			return result;
+		}
+
+		std::string Trim(const std::string& text)
+		{
+			const auto first = text.find_first_not_of(" \t\r\n");
+
+			if (first == std::string::npos)
+				return {};
+
+			const auto last = text.find_last_not_of(" \t\r\n");
+			return text.substr(first, last - first + 1);
 		}
 	}
 
-	void ReflectionFileScanner::ReflectFile(const std::filesystem::path& path)
+	void ReflectionFileScanner::ScanAndReflectFiles(
+		const std::filesystem::path& root)
 	{
-		std::string source = ReadFile(path);
+		for (const auto& entry :
+			std::filesystem::recursive_directory_iterator(root))
+		{
+			if (!entry.is_regular_file())
+				continue;
+
+			const std::string extension =
+				entry.path().extension().string();
+
+			if (extension == ".h" || extension == ".hpp")
+				ReflectFile(entry.path());
+		}
+	}
+
+	void ReflectionFileScanner::ReflectFile(
+		const std::filesystem::path& path)
+	{
+		const std::string original = ReadFile(path);
+		const std::string source = MaskNonCode(original);
+
+		// Supports export macros such as ECL_API before the type name.
+		/*const std::regex typeRegex(
+			R"(\b(?:class|struct)\s+(?:(?:[A-Za-z_][A-Za-z0-9_]*_API)\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
+		);*/
+
+		const std::regex typeRegex(
+			R"(\b(?:class|struct)\s+(?:[A-Za-z_][A-Za-z0-9_]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
+		);
 
 		const std::regex fieldsRegex(
-			R"(\[\[([\s\S]*?)\]\]\s*(?:(inline)\s+)?(.+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(|=|;))"
+			R"(\[\[([^\]]*)\]\]\s*(?:(inline)\s+)?([^;{}()=\[\]]+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?=[=;{]))"
 		);
 
 		const std::regex attributesRegex(
-			R"(\s*([A-Za-z_][A-Za-z0-9_]*)(?:\((.*?)\))?\s*(?:,|$))"
+			R"(\s*([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)(?:\s*\((.*?)\))?\s*(?:,|$))"
 		);
 
-		const std::regex typeRegex(
-			R"(\b(?:class|struct)\s+(?:[A-Za-z_][A-Za-z0-9_]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*([\s\S]*))"
-		);
-
-		auto begin = std::sregex_iterator(
+		const auto typesBegin = std::sregex_iterator(
 			source.begin(),
 			source.end(),
 			typeRegex
 		);
 
-		auto typeEnd = std::sregex_iterator();
-		for (auto typeIt = begin; typeIt != typeEnd; typeIt++)
+		for (auto typeIt = typesBegin;
+			typeIt != std::sregex_iterator();
+			++typeIt)
 		{
 			const std::smatch& match = *typeIt;
 
-			const std::string name = match[1];
+			const auto bodyStart =
+				static_cast<std::size_t>(match.position()) +
+				static_cast<std::size_t>(match.length());
+
+			std::size_t bodyEnd = bodyStart;
+			std::size_t depth = 1;
+
+			while (bodyEnd < source.size() && depth > 0)
+			{
+				if (source[bodyEnd] == '{')
+					++depth;
+				else if (source[bodyEnd] == '}')
+					--depth;
+
+				++bodyEnd;
+			}
+
+			if (depth != 0)
+			{
+				std::cerr << "Unclosed class or struct in "
+					<< path << '\n';
+				continue;
+			}
+
+			const std::string body = source.substr(
+				bodyStart,
+				bodyEnd - bodyStart - 1
+			);
+
+			if (body.find("MAKE_REFLECTABLE") == std::string::npos)
+				continue;
 
 			TypeDescriptor type;
-			type.Name = name;
+			type.Name = match[1].str();
 			type.FilePath = path.generic_string();
 
-			const std::string body = match[2];
-			auto fieldsBegin = std::sregex_iterator(
+			size_t start = body.find("REFLECTION_FLAG");
+			if (start != std::string::npos)
+			{
+				start += std::string("REFLECTION_FLAG(").length();
+				size_t end = body.find(')', start);
+
+				if (end != std::string::npos)
+				{
+					std::string flag = body.substr(start, end - start);
+					std::transform(flag.begin(), flag.end(), flag.begin(),
+						[](unsigned char c) {
+							return static_cast<char>(std::toupper(c));
+						});
+
+					if (flag == "COMPONENT")
+						type.flag = ReflectionFlags::Component;
+					else if (flag == "SERIALIZABLE")
+						type.flag = ReflectionFlags::Serializable;
+				}
+			}
+			else type.flag = ReflectionFlags::None;
+
+			std::vector<std::size_t> fieldDepths(body.size());
+			depth = 0;
+
+			for (std::size_t i = 0; i < body.size(); ++i)
+			{
+				fieldDepths[i] = depth;
+
+				if (body[i] == '{')
+					++depth;
+				else if (body[i] == '}' && depth > 0)
+					--depth;
+			}
+
+			const auto fieldsBegin = std::sregex_iterator(
 				body.begin(),
 				body.end(),
 				fieldsRegex
 			);
 
-			auto fieldsEnd = std::sregex_iterator();
-			for (auto fieldsIt = fieldsBegin; fieldsIt != fieldsEnd; fieldsIt++)
+			for (auto fieldIt = fieldsBegin;
+				fieldIt != std::sregex_iterator();
+				++fieldIt)
 			{
-				const std::smatch& fieldMatch = *fieldsIt;
+				const std::smatch& fieldMatch = *fieldIt;
+
+				const auto fieldPosition =
+					static_cast<std::size_t>(fieldMatch.position());
+
+				if (fieldDepths[fieldPosition] != 0)
+					continue;
 
 				FieldDescriptor field;
-				field.Name = fieldMatch[4];
-				field.Type = fieldMatch[3];
+				field.Name = fieldMatch[4].str();
+				field.Type = Trim(fieldMatch[3].str());
 
-				const std::string attributes = fieldMatch[1];
-				auto attributesBegin = std::sregex_iterator(
+				if (field.Type.empty())
+					continue;
+
+				// Recover original attribute arguments, including strings.
+				const auto attributesPosition = bodyStart +
+					static_cast<std::size_t>(fieldMatch.position(1));
+
+				const std::string attributes = original.substr(
+					attributesPosition,
+					static_cast<std::size_t>(fieldMatch.length(1))
+				);
+
+				const auto attributesBegin = std::sregex_iterator(
 					attributes.begin(),
 					attributes.end(),
 					attributesRegex
 				);
 
-				auto attribtuesEnd = std::sregex_iterator();
-				for (auto attributesIt = attributesBegin; attributesIt != attribtuesEnd; attributesIt++)
+				for (auto attributeIt = attributesBegin;
+					attributeIt != std::sregex_iterator();
+					++attributeIt)
 				{
-					const std::smatch& attributesMatch = *attributesIt;
+					const std::smatch& attributeMatch = *attributeIt;
 
-					const std::string attributeName = attributesMatch[1];
-					const std::string attributeArgs = attributesMatch[2];
-
-					field.attributes.emplace_back(attributeName, attributeArgs);
+					field.attributes.emplace_back(
+						attributeMatch[1].str(),
+						attributeMatch[2].str()
+					);
 				}
 
-				type.Fields.emplace_back(std::move(field));
+				if (!field.attributes.empty())
+					type.Fields.emplace_back(std::move(field));
 			}
 
 			TypeRegistry::Register(type);
 		}
 	}
 
-	std::string ReflectionFileScanner::ReadFile(const std::filesystem::path& path)
+	std::string ReflectionFileScanner::ReadFile(
+		const std::filesystem::path& path)
 	{
 		std::ifstream file(path, std::ios::binary);
 
 		if (!file)
-			return "";
+		{
+			std::cerr << "Could not read " << path << '\n';
+			return {};
+		}
 
 		return std::string(
 			std::istreambuf_iterator<char>(file),

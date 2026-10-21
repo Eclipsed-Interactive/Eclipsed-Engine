@@ -2,7 +2,8 @@
 
 #include "EclipsedEngine/Components/Component.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 //#include "Assets/Assets/SpriteAnimation.h"
 
 namespace Eclipse

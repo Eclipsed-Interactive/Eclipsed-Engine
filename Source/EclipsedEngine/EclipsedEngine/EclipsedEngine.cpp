@@ -34,7 +34,6 @@ namespace Eclipse
 {
 	void Engine::Init()
 	{
-
 		MainSingleton::RegisterInstance<TextManager>();
 
 		EventSystem::Trigger("Engine-Load");

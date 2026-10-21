@@ -6,7 +6,8 @@
 #include "Assets/Assets/MaterialAsset.h"
 #include "Assets/Assets/TextureAsset.h"
 #include <Core/GraphicsBuffers/TransformBuffer.h>
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 namespace Eclipse
 {
     class ECL_API UIImage : public BaseRenderComponent

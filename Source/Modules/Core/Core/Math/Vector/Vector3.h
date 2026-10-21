@@ -7,6 +7,12 @@
 
 namespace Eclipse::Math
 {
+	template<typename T>
+	class Vector2;
+
+	template<typename T>
+	class Vector4;
+
 	template <typename T>
 	class Vector3 final
 	{
@@ -15,6 +21,10 @@ namespace Eclipse::Math
 		Vector3(const T& aX, const T& aY, const T& aZ);
 		Vector3(const std::initializer_list<T> initList);
 		~Vector3() = default;
+
+	public:
+		operator Vector2<T>() const;
+		operator Vector4<T>() const;
 
 	public:
 		std::type_index GetType() const;

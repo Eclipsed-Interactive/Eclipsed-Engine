@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EclipsedEngine/Reflection/SerializedVariable.h"
-
 #ifdef ECLIPSED_NETWORKING
 	#include "ReplicatedVariable.h"
 	#include "ReplicationManager.h"

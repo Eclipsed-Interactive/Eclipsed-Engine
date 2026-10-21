@@ -4,7 +4,8 @@
 #include "Core/Math/Vector/Vector2.h"
 
 #include "Physics/PhysicsEngineSettings.h"
-
+#include "EclipsedEngine/Reflection/Reflection_Macros.h"
+#include "EclipsedEngine/Replication/Replication_Macros.h"
 struct b2BodyId;
 
 namespace Eclipse

@@ -992,6 +992,102 @@ namespace Eclipse
 		return nullptr;
 	}
 
+	Component* ComponentManager::AddComponent(unsigned aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
+	{
+		Component* component = AddComponentWithID(aGOID, Component::GetNextComponentID(), createFunc, size);
+		component->OnComponentAdded();
+
+		return component;
+	}
+
+	Component* ComponentManager::AddComponentWithID(unsigned aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
+	{
+		uint8_t* base = static_cast<uint8_t*>(myComponentData);
+
+		uint8_t* ptrToComponent = nullptr;
+		for (int i = 0; i < graveyard.size(); i++)
+		{
+			Graveyard& space = graveyard[i];
+			if (space.size == size)
+			{
+				ptrToComponent = static_cast<uint8_t*>(space.ptr);
+				memset(ptrToComponent, 0, space.size);
+
+				std::swap(graveyard[i], graveyard.back());
+				graveyard.pop_back();
+
+				break;
+			}
+		}
+
+		if (!ptrToComponent)
+		{
+			ptrToComponent = base + myComponentMemoryTracker;
+
+			myComponentMemoryTracker += size;
+
+			assert((myComponentMemoryTracker) <= MAX_COMPONENT_MEMORY_BYTES && "Adding the latest componnet made the component tracker go over max count increase MAX_COMPONENT_MEMORY_BYTES");
+		}
+
+
+		unsigned typeIndex = Utilities::IDGenerator::GetID();
+
+		if (myEntityIdToEntity.find(aGOID) == myEntityIdToEntity.end())
+			myEntityIdToEntity[aGOID] = CreateGameObject(aGOID);
+
+		void* ptr = createFunc(ptrToComponent);
+
+		Component* component = reinterpret_cast<Component*>(ptr);
+		component->componentSize = size;
+
+		component->SetComponentID(aComponentID);
+
+		component->gameObject = myEntityIdToEntity.at(aGOID);
+		component->myComponentComponentID = typeIndex;
+
+		myComponentsToStartBuffer.emplace_back(component);
+
+
+		bool SetComponentPtr = false;
+		UpdatePriority* componentVectorPtr = nullptr;
+		for (auto& componentVec : myComponents)
+		{
+			if (componentVec.Value == component->GetUpdatePriority())
+			{
+				componentVectorPtr = &componentVec;
+				SetComponentPtr = true;
+				break;
+			}
+		}
+		if (!SetComponentPtr)
+		{
+			componentVectorPtr = &myComponents.emplace_back();
+			componentVectorPtr->Value = component->GetUpdatePriority();
+		}
+
+		componentVectorPtr->vector.push_back(component);
+
+		if (SetComponentPtr)
+		{
+			if (component->GetZIndex() >= 0)
+				SortZIndexComponents(*componentVectorPtr);
+
+			SortUpdatePrioComponents();
+		}
+
+		size_t componentIndex = myComponents.size() - 1;
+
+		myEntityIDToVectorOfComponentIDs[aGOID].emplace_back(component);
+		//component->myComponentIndex = componentIndex;
+
+		//CreateComponentReplicated(component);
+
+		if (myComponents.size() <= 1)
+			return component;
+
+		return component;
+	}
+
 	const Eclipse::ComponentManager::RenderLayers& ComponentManager::GetAllComponents()
 	{
 		return myComponents;
