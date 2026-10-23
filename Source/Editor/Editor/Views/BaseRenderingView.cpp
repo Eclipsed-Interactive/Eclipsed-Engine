@@ -15,7 +15,7 @@ void Eclipse::Editor::BaseRenderingView::DrawGizmoPopup()
 		if (ImGui::CollapsingHeader("Rects"))
 		{
 			//ImGui::Checkbox("Draw Text Renderer Rects##DrawTextRenderDebugLines", &TextRenderer::drawRectGizmos);
-			ImGui::Checkbox("Draw Camera Gizmos##DrawCameraGizmosDebugLines", &Camera::drawCameraGizmos);
+			ImGui::Checkbox("Draw Camera Gizmos##DrawCameraGizmosDebugLines", &Camera::DrawCameraGizmos);
 			ImGui::Checkbox("Draw Canvas Gizmos##DrawCanvasGizmosDebugLines", &Canvas::drawCanvasGizmos);
 		}
 		if (ImGui::CollapsingHeader("Physics"))

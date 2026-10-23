@@ -15,10 +15,10 @@ namespace Eclipse
 {
 	void Camera::OnDestroy()
 	{
-		Camera* IntrenalCamera = MainSingleton::GetPointer<Camera>();
+		Camera* InternalCamera = MainSingleton::GetPointer<Camera>();
 
-		if (IntrenalCamera == this)
-			IntrenalCamera = nullptr;
+		if (InternalCamera == this)
+			InternalCamera = nullptr;
 	}
 
 	void Camera::OnComponentAdded()
@@ -53,15 +53,15 @@ namespace Eclipse
 		Math::Vector2f Position = gameObject->transform->GetPosition();
 		Math::Vector2f Scale = { 1.7777f, 1.f };
 
-		MinBoundsWorld = Position - Scale;
-		MaxBoundsWorld = Position + Scale;
+		minBoundsWorld = Position - Scale;
+		maxBoundsWorld = Position + Scale;
 	}
 
 	void Camera::OnDrawGizmos()
 	{
-		if (drawCameraGizmos)
+		if (DrawCameraGizmos)
 		{
-			DebugDrawer::DrawSquareMinMax(MinBoundsWorld, MaxBoundsWorld, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
+			DebugDrawer::DrawSquareMinMax(minBoundsWorld, maxBoundsWorld, Math::Color(0.9f, 0.9f, 0.9f, 1.f));
 		}
 	}
 }

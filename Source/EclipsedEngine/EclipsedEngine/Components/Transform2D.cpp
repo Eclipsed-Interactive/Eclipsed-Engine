@@ -7,17 +7,17 @@
 namespace Eclipse
 {
 #ifdef ECLIPSED_NETWORKING
-    void Transform2D::position_OnRep()
-    {
-    }
+    //void Transform2D::position_OnRep()
+    //{
+    //}
 
-    void Transform2D::rotation_OnRep()
-    {
-    }
+    //void Transform2D::rotation_OnRep()
+    //{
+    //}
 
-    void Transform2D::scale_OnRep()
-    {
-    }
+    //void Transform2D::scale_OnRep()
+    //{
+    //}
 #endif
 
     void Transform2D::OnComponentAddedNoCreations()
@@ -126,17 +126,17 @@ namespace Eclipse
 
     Math::Vector2f* Transform2D::GetPositionPtr()
     {
-        return &position.Get();
+        return &position;
     }
 
     float* Transform2D::GetRotationPtr()
     {
-        return &rotation.Get();
+        return &rotation;
     }
 
     Math::Vector2f* Transform2D::GetScalePtr()
     {
-        return &scale.Get();
+        return &scale;
     }
 
     void Transform2D::SetPosition(const Math::Vector2f& aPosition)
@@ -146,8 +146,8 @@ namespace Eclipse
 
     void Transform2D::SetPosition(float aX, float aY)
     {
-        position->x = aX;
-        position->y = aY;
+        position.x = aX;
+        position.y = aY;
 
         lastPosition = position;
 
@@ -175,8 +175,8 @@ namespace Eclipse
 
     void Transform2D::SetScale(float aX, float aY)
     {
-        scale->x = aX;
-        scale->y = aY;
+        scale.x = aX;
+        scale.y = aY;
 
         lastScale = scale;
 
@@ -195,7 +195,7 @@ namespace Eclipse
 
     void Transform2D::UpdateTransforms()
     {
-        Math::Vector3f PositionV3(position->x, position->y, 1.f);
+        Math::Vector3f PositionV3(position.x, position.y, 1.f);
         GlobalRotation = rotation;
         GlobalScale = scale;
         
@@ -222,12 +222,12 @@ namespace Eclipse
 
     void Transform2D::EditorUpdate()
     {
-        if (position->x != lastPosition.x || position->y != lastPosition.y)
+        if (position.x != lastPosition.x || position.y != lastPosition.y)
         {
             lastPosition = position;
             myIsDirty = true;
         }
-        if (scale->x != lastScale.x || scale->y != lastScale.y)
+        if (scale.x != lastScale.x || scale.y != lastScale.y)
         {
             lastScale = scale;
             myIsDirty = true;

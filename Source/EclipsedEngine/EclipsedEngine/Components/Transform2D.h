@@ -22,6 +22,8 @@ namespace Eclipse
 	class ECL_API Transform2D : public Component
 	{
 		MAKE_REFLECTABLE(Transform2D);
+		REFLECTION_FLAG(COMPONENT);
+
 		COMPONENT_BASE_2(Transform2D, UINT_MAX * 0.5f)
 
 	public:
@@ -70,17 +72,17 @@ namespace Eclipse
 		Math::Matrix3x3f GetTransform() const;
 		
 	private:
-		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(Math::Vector2<float>, position, 0.01f, Math::Vector2f(0, 0), Transform2D);
-		REPLICATED_SERIALIZED_FIELD_STEP_DEFAULT(float, rotation, 5.f, 0, Transform2D);
-		REPLICATED_SERIALIZED_FIELD_DEFAULT(Math::Vector2f, scale, Math::Vector2f(1, 1), Transform2D);
+		[[SerializeField, Step(0.01f)]]
+		Math::Vector2f position = Math::Vector2f(0.f, 0.f);
+
+		[[SerializeField, Step(5.f)]]
+		float rotation = 0.f;
 
 		[[SerializeField]]
+		Math::Vector2f scale = Math::Vector2f(1.f, 1.f);
+
 		Math::Vector2f lastPosition;
-
-		[[SerializeField]]
 		float lastRotation;
-
-		[[SerializeField]]
 		Math::Vector2f lastScale;
 
 		Math::Vector2f GlobalPosition;

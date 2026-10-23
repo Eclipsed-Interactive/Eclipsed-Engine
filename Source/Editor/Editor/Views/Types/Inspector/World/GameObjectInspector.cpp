@@ -87,9 +87,6 @@ namespace Eclipse::Editor
 			ImGui::SameLine();
 			ImGui::Checkbox(("##IsReplicatedBool" + id).c_str(), &comp->IsReplicated);
 
-			// NEW REFLECTION
-			//Reflection::ReflectionManager::DrawInspector(comp, comp->GetComponentName());
-
 			const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(comp->GetComponentName());
 			if (!type)
 			{

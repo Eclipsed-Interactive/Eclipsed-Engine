@@ -185,13 +185,13 @@ namespace Eclipse::Editor
 		Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		float aspectRatio = myWindowSize.y / myWindowSize.x;
-		camera->myCameraBuffer.resolutionRatio = aspectRatio;
+		camera->GetBuffer().resolutionRatio = aspectRatio;
 
-		camera->myCameraBuffer.cameraPosition = camera->gameObject->transform->GetPosition();
-		camera->myCameraBuffer.cameraRotation = camera->gameObject->transform->GetRotation();
-		camera->myCameraBuffer.cameraScale = { camera->CameraZoom, camera->CameraZoom };
+		camera->GetBuffer().cameraPosition = camera->gameObject->transform->GetPosition();
+		camera->GetBuffer().cameraRotation = camera->gameObject->transform->GetRotation();
+		camera->GetBuffer().cameraScale = { camera->CameraZoom, camera->CameraZoom };
 
-		buffer->SetOrCreateBuffer<CameraBuffer>(0, camera->myCameraBuffer);
+		buffer->SetOrCreateBuffer<CameraBuffer>(0, camera->GetBuffer());
 	}
 
 	void GameView::CheckNChangeSceneImageDimension()

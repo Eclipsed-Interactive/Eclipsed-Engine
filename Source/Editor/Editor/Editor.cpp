@@ -19,6 +19,8 @@
 
 #include "Core/Standard/Serialization/Serialization.hpp"
 
+#include "EclipsedEngine/SceneSerializer.h"
+
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
@@ -55,6 +57,15 @@ namespace Eclipse::Editor
 		MainMenuBar::Draw();
 		EditorLayout::Draw();
 		//ViewManager::Update();
+
+
+		ImGui::Begin("Scene Window");
+
+		if (ImGui::Button("Save Scene"))
+			SceneSerializer::SaveScene();
+
+		ImGui::End();
+
 	}
 	
 	void Editor::EndFrame()

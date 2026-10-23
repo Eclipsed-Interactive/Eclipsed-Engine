@@ -10,6 +10,8 @@
 #include <Windows.h>
 #include <string>
 
+#include "Core/Math/Vector/Vector2.h"
+
 namespace Eclipse::Editor
 {
 	void InspectorFieldDrawer::Draw(void* v, const Reflection::FieldEntry& field)
@@ -78,6 +80,54 @@ namespace Eclipse::Editor
 		Register<bool>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
 			ImGui::Checkbox("##value", (bool*)addr);
+			}
+		);
+
+		Register<Math::Vector2f>([](void* v, const FieldEntry& entry) {
+			const Range* range = entry.attributeContainer.TryGet<Range>();
+
+			float step = 0.1f;
+			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
+			if (stepAttr) step = stepAttr->step;
+
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			if (range)
+			{
+				ImGui::DragFloat2("##value",
+					(float*)addr,
+					step,
+					range->min,
+					range->max
+				);
+			}
+			else
+			{
+				ImGui::DragFloat2("##value", (float*)addr, step);
+			}
+			}
+		);
+
+		Register<Math::Vector2f>([](void* v, const FieldEntry& entry) {
+			const Range* range = entry.attributeContainer.TryGet<Range>();
+
+			float step = 0.1f;
+			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
+			if (stepAttr) step = stepAttr->step;
+
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			if (range)
+			{
+				ImGui::DragFloat2("##value",
+					(float*)addr,
+					step,
+					range->min,
+					range->max
+				);
+			}
+			else
+			{
+				ImGui::DragFloat2("##value", (float*)addr, step);
+			}
 			}
 		);
 	}

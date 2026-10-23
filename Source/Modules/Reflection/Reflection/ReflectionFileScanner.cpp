@@ -160,11 +160,6 @@ namespace Eclipse::Reflection
 		const std::string original = ReadFile(path);
 		const std::string source = MaskNonCode(original);
 
-		// Supports export macros such as ECL_API before the type name.
-		/*const std::regex typeRegex(
-			R"(\b(?:class|struct)\s+(?:(?:[A-Za-z_][A-Za-z0-9_]*_API)\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
-		);*/
-
 		const std::regex typeRegex(
 			R"(\b(?:class|struct)\s+(?:[A-Za-z_][A-Za-z0-9_]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
 		);
