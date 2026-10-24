@@ -19,17 +19,48 @@ void Eclipse::ParticleSystem2D::Awake()
 		Emitter& emitter = myEmmiter.emplace_back();
 		emitter.SpawnPosition = { 2.f, 0.8f };
 		emitter.SpawnShape = new CircleSpawnShape(0.25f);
+
+		emitter.StartData.StartLifetimeMin = 1.8f;
+		emitter.StartData.StartLifetimeMax = 2.5f;
+
+		emitter.StartData.StartVelocityMin.x = -0.5f;
+		emitter.StartData.StartVelocityMin.y = 1.f;
+
+		emitter.StartData.StartVelocityMax.x = 0.5f;
+		emitter.StartData.StartVelocityMax.y = 1.5f;
 	}
 
 	{
 		Emitter& emitter = myEmmiter.emplace_back();
 		emitter.SpawnPosition = { -1.5, 0.f };
 		emitter.SpawnShape = new RectSpawnShape({ 0.4f , 0.2f });
+
+		emitter.StartData.StartLifetimeMin = 2.f;
+		emitter.StartData.StartLifetimeMax = 2.f;
+
+		emitter.StartData.StartVelocityMin.x = -1.5f;
+		emitter.StartData.StartVelocityMin.y = 1.f;
+
+		emitter.StartData.StartVelocityMax.x = -1.f;
+		emitter.StartData.StartVelocityMax.y = 2.f;
 	}
 
 	{
 		Emitter& emitter = myEmmiter.emplace_back();
 		emitter.SpawnPosition = { 3.5f, -1.5f };
+		emitter.SpawnShape = new CircleSpawnShape(0.2f);
+		emitter.EmmiterShape = new ShpericalEmitterShape();
+
+		emitter.StartData.StartLifetimeMin = 2.2f;
+		emitter.StartData.StartLifetimeMax = 2.5f;
+
+		emitter.StartData.StartVelocityMin.x = 1.f;
+		emitter.StartData.StartVelocityMin.y = 1.f;
+
+		emitter.StartData.StartVelocityMax.x = 1.f;
+		emitter.StartData.StartVelocityMax.y = 1.f;
+
+		emitter.UseGravity = false;
 	}
 }
 
@@ -42,8 +73,13 @@ void Eclipse::ParticleSystem2D::Update()
 	}
 }
 
-
-
+void Eclipse::ParticleSystem2D::OnDestroy()
+{
+	for (auto& Emitter : myEmmiter)
+	{
+		delete Emitter.SpawnShape;
+	}
+}
 
 void Eclipse::Emitter::Init()
 {
@@ -117,12 +153,23 @@ void Eclipse::Emitter::SpawnParticle()
 	if (SpawnShape)
 		SpawnShapePosition = SpawnShape->GetSpawnPosition();
 
-	particleData.Position = ActivePosition + SpawnShapePosition;
+	particleData.Position = ActivePosition + SpawnShapePosition + StartData.StartPosition;
 
-	particleData.LifeTime = Math::Random::RandRange(1.8f, 2.5f);
+	particleData.LifeTime = Math::Random::RandRange(StartData.StartLifetimeMin, StartData.StartLifetimeMax);
 
-	particleData.Velocity.x = Math::Random::RandRange(-0.5f, 0.5f);
-	particleData.Velocity.y = Math::Random::RandRange(1.f, 1.5f);
+	if (EmmiterShape)
+	{
+		Math::Vector2f Veclocity = EmmiterShape->GetStartVelocity();
+
+		particleData.Velocity.x = Veclocity.x * Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
+		particleData.Velocity.y = Veclocity.y * Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
+	}
+	else
+	{
+		particleData.Velocity.x = Math::Random::RandRange(StartData.StartVelocityMin.x, StartData.StartVelocityMax.x);
+		particleData.Velocity.y = Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
+	}
+
 
 	myParticles.push_back(particleData);
 }

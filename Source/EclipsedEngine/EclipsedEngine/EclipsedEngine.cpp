@@ -92,8 +92,10 @@ namespace Eclipse
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
 				auto t = gameobject->AddComponent<Transform2D>();
+				t->SetScale(scale);
 
 				gameobject->AddComponent<ParticleSystem2D>();
+				gameobject->AddComponent<SpriteRenderer2D>();
 			}
 
 			//{

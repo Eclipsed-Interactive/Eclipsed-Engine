@@ -45,6 +45,32 @@ namespace Eclipse
 		class ParticleData;
 	}
 
+	class BaseParticleEmittingShape
+	{
+	public:
+		virtual Math::Vector2f GetStartVelocity() = 0;
+	};
+
+	class ShpericalEmitterShape : public BaseParticleEmittingShape
+	{
+	public:
+		ShpericalEmitterShape() = default;
+		~ShpericalEmitterShape() = default;
+
+		virtual Math::Vector2f GetStartVelocity() override
+		{
+			float RandomValue = Math::Random::RandRange(0.f, Math::pi2);
+
+			float RandomVelocityValueX = cos(RandomValue);
+			float RandomVelocityValueY = sin(RandomValue);
+
+			return Math::Vector2f(RandomVelocityValueX, RandomVelocityValueY);
+		}
+	};
+
+
+
+
 	class BaseParticleSpawnShape
 	{
 	public:
@@ -111,13 +137,25 @@ namespace Eclipse
 
 		std::vector<Graphics::ParticleData> myParticles;
 
-		BaseParticleSpawnShape* SpawnShape = nullptr;
-
 		bool UseGravity = true;
 		float SpawnInterval = 0.005f;
 		float CurrentTime = 0;
 		Math::Vector2f SpawnPosition = {0, 0};
 		Math::Vector2f ActivePosition = {0, 0};
+
+		BaseParticleSpawnShape* SpawnShape = nullptr;
+		BaseParticleEmittingShape* EmmiterShape = nullptr;
+		
+		struct ParticleStartData
+		{
+			Math::Vector2f StartPosition = { 0.f, 0.f };
+
+			Math::Vector2f StartVelocityMin = { -0.5f, 1.f };
+			Math::Vector2f StartVelocityMax = { -0.5f, 1.f };
+
+			float StartLifetimeMin = 2.5f;
+			float StartLifetimeMax = 2.5f;
+		} StartData;
 	};
 
 	class ParticleSystem2D : public Component
@@ -128,6 +166,8 @@ namespace Eclipse
 
 		void Awake() override;
 		void Update() override;
+
+		void OnDestroy() override;
 
 	private:
 		std::vector<Emitter> myEmmiter;
