@@ -134,7 +134,7 @@ namespace Eclipse
 
 		static unsigned GetNewGOID()
 		{
-			return Random::RandRange<unsigned>(0, 0x00FFFFFF);
+			return Math::Random::RandRange<unsigned>(0, 0x00FFFFFF);
 		}
 
 		static GameObject* CreateGameObject(GameObjectID aId);

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "Sprite.h"
 #include "TextSprite.h"
+#include "ParticleDrawer.h"
 
 #include "Assets/Assets/TextureAsset.h"
 #include "Assets/Assets/MaterialAsset.h"
@@ -35,6 +36,7 @@ namespace Eclipse::Graphics
 	public:
 		virtual Sprite* CreateSprite() = 0;
 		virtual TextSprite* CreateTextSprite() = 0;
+		virtual ParticleDrawer* CreateParticleDrawer() = 0;
 
 	public:
 		virtual void BindTexture(unsigned textureIndex) = 0;

@@ -37,7 +37,7 @@ namespace Eclipse::Editor
 			{
 				EditorViewInstance* instance = new EditorViewInstance;
 
-				if (id == -1)  instance->id = Random::Rand<int>();
+				if (id == -1)  instance->id = Math::Random::Rand<int>();
 				else instance->id = id;
 
 				instance->view = new T;

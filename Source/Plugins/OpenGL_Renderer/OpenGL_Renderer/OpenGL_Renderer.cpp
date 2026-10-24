@@ -52,6 +52,7 @@ namespace Eclipse::Graphics::OpenGL
 
 		drawer = new OpenGL_Drawer;
 		drawer->mySprite = device->CreateSprite();
+		drawer->myParticleDrawer = device->CreateParticleDrawer();
 
 		debugDrawer = new OpenGL_DebugDrawer;
 		debugDrawer->Init();

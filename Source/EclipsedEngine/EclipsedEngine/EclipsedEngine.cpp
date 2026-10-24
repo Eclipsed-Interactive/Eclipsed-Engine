@@ -18,6 +18,7 @@
 #include "EclipsedEngine/Plugin/PluginManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
+#include "EclipsedEngine/Components/Rendering/ParticleSystem2D.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/TextRenderer.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
@@ -72,36 +73,43 @@ namespace Eclipse
 		{ // TOFFLA
 			Math::Vector2f scale = { 10.f, -10.f };
 
+			//{
+			//	GameObject* gameobject = ComponentManager::CreateGameObject();
+			//	auto t = gameobject->AddComponent<Transform2D>();
+
+			//	gameobject->AddComponent<SpriteRenderer2D>();
+			//	gameobject->AddComponent<Camera>();
+			//}
+
+			//{
+			//	GameObject* gameobject = ComponentManager::CreateGameObject();
+			//	auto t = gameobject->AddComponent<Transform2D>();
+			//	t->SetScale(scale);
+
+			//	gameobject->AddComponent<SpriteRenderer2D>();
+			//}
+
 			{
 				GameObject* gameobject = ComponentManager::CreateGameObject();
 				auto t = gameobject->AddComponent<Transform2D>();
 
-				gameobject->AddComponent<SpriteRenderer2D>();
-				gameobject->AddComponent<Camera>();
+				gameobject->AddComponent<ParticleSystem2D>();
 			}
 
-			{
-				GameObject* gameobject = ComponentManager::CreateGameObject();
-				auto t = gameobject->AddComponent<Transform2D>();
-				t->SetScale(scale);
-
-				gameobject->AddComponent<SpriteRenderer2D>();
-			}
-
-			{
-				GameObject* parent = ComponentManager::CreateGameObject();
-				auto t = parent->AddComponent<Transform2D>();
+			//{
+			//	GameObject* parent = ComponentManager::CreateGameObject();
+			//	auto t = parent->AddComponent<Transform2D>();
 
 
-				GameObject* gameobject = ComponentManager::CreateGameObject();
-				auto t1 = gameobject->AddComponent<RectTransform>();
+			//	GameObject* gameobject = ComponentManager::CreateGameObject();
+			//	auto t1 = gameobject->AddComponent<RectTransform>();
 
-				gameobject->AddComponent<TextRenderer>();
+			//	gameobject->AddComponent<TextRenderer>();
 
-				gameobject->SetParent(parent);
+			//	gameobject->SetParent(parent);
 
-				parent->AddComponent<Canvas>();
-			}
+			//	parent->AddComponent<Canvas>();
+			//}
 		}
 	}
 
