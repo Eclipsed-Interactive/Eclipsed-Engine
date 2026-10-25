@@ -51,7 +51,7 @@ namespace Eclipse
 
 		static unsigned GetNextComponentID()
 		{
-			return Random::Rand<unsigned>();
+			return Math::Random::Rand<unsigned>();
 		}
 
 		virtual float GetZIndex() { return -1; }

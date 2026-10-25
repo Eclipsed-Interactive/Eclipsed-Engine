@@ -27,6 +27,7 @@ namespace Eclipse::Graphics::OpenGL
 	public:
 		Sprite* CreateSprite() override;
 		TextSprite* CreateTextSprite() override;
+		ParticleDrawer* CreateParticleDrawer() override;
 
 	public:
 		void BindTexture(unsigned textureIndex) override;

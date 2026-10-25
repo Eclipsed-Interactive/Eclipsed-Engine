@@ -97,21 +97,12 @@ namespace Eclipse::Graphics::OpenGL
 			{
 				glUseProgram(programID);
 
-
-
-
+				indices.resize(myLineCollection.size() * 2);
 				for (int i = 0; i < myLineCollection.size() * 2; i++)
-				{
-					indices.emplace_back(i);
-				}
+					indices[i] = i;
 
 				Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 				buffer->SetOrCreateBuffer<CameraBuffer>(0);
-
-
-				//Line line;
-
-				//memcpy(&line, myLineCollection.data(), sizeof(Line))
 
 				glBindBuffer(GL_ARRAY_BUFFER, myVTXbuffer);
 				glBufferData(GL_ARRAY_BUFFER, myLineCollection.size() * sizeof(Line), myLineCollection.data(), GL_DYNAMIC_DRAW);
@@ -121,9 +112,7 @@ namespace Eclipse::Graphics::OpenGL
 
 				glBindVertexArray(myLineBuffer);
 
-				//glUniform4f(0, line.color.r, line.color.g, line.color.b, line.color.a);
-
-				glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+				glDrawArrays(GL_LINES, 0, indices.size());
 
 				EndRender();
 			}

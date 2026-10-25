@@ -18,6 +18,7 @@ namespace Eclipse
     {
         startTime = clock.now();
         duration = std::chrono::duration<float>(0);
+        myTimeScale = 1;
     }
 
     void Timer::Update()

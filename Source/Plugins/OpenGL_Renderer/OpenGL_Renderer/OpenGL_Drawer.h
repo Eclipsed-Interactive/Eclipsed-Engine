@@ -10,5 +10,6 @@ namespace Eclipse::Graphics::OpenGL
 		void DrawSprite() override;
 		//void DrawTextSprite() override;
 		//void DrawSprite(SpriteRenderer2D* spriteRend, Transform2D* transform) override;
+		void DrawParticles(ParticleData* aParticles, int aParticleCount) override;
 	};
 }

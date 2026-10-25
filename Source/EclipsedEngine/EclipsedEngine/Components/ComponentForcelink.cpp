@@ -13,8 +13,9 @@
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteSheetAnimator2D.h"
-#include "EclipsedEngine/Components/UI/TextRenderer.h"
+#include "EclipsedEngine/Components/Rendering/ParticleSystem2D.h"
 
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
 #include "EclipsedEngine/Components/UI/Button.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
 #include "EclipsedEngine/Components/UI/RectTransform.h"
@@ -48,6 +49,7 @@ void Eclipse::ComponentForcelink::LinkComponents()
 	COMP_REG(Camera);
 	COMP_REG(SpriteRenderer2D);
 	COMP_REG(SpriteSheetAnimator2D);
+	COMP_REG(ParticleSystem2D);
 	//COMP_REG(TextRenderer);
 	
 	COMP_REG(Button);

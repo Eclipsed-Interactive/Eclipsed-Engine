@@ -17,6 +17,21 @@ namespace Eclipse::Graphics::OpenGL
 		glBindVertexArray(0);
 	}
 
+	void OpenGL_Drawer::DrawParticles(ParticleData* aParticles, int aParticleCount)
+	{
+		glUseProgram(myParticleDrawer->GetProgramID());
+
+		glBindBuffer(GL_ARRAY_BUFFER, myParticleDrawer->GetVertexBufferID());
+
+		size_t Size = aParticleCount * sizeof(ParticleData);
+		glBufferData(GL_ARRAY_BUFFER, Size, aParticles, GL_DYNAMIC_DRAW);
+
+		glBindVertexArray(myParticleDrawer->GetBufferID());
+		glDrawArrays(GL_POINTS, 0, aParticleCount);
+
+		glBindVertexArray(0);
+	}
+
 	//void OpenGL_Drawer::DrawTextSprite()
 	//{
 	//	//glBindVertexArray(sprite.GetSpriteBufferID());
