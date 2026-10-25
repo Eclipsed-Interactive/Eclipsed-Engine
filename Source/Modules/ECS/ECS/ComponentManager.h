@@ -47,7 +47,7 @@ namespace Eclipse
 		};
 
 		typedef FloatVectorContainer<Component*> UpdatePriority;
-		typedef std::vector<UpdatePriority> RenderLayers;
+		typedef std::vector<UpdatePriority> FlabbergastingBabbaBoya;
 
 		static void SetCreateComponentReplicated(std::function<void(Component*)> aCreateComponentReplicated) { CreateComponentReplicated = aCreateComponentReplicated; }
 
@@ -120,7 +120,7 @@ namespace Eclipse
 		template <typename T>
 		static unsigned GetComponentID();
 
-		static const Eclipse::ComponentManager::RenderLayers& GetAllComponents();
+		static const Eclipse::ComponentManager::FlabbergastingBabbaBoya& GetAllComponents();
 
 		static std::vector<Component*> GetComponents(unsigned aGOID);
 
@@ -142,6 +142,8 @@ namespace Eclipse
 
 		static void Clear();
 
+		static const std::unordered_map<unsigned, GameObject*>& GetGameObjects();
+
 	private:
 		static std::function<void(Component*)> CreateComponentReplicated;
 
@@ -157,7 +159,7 @@ namespace Eclipse
 
 		//std::vector<Component*> myRenderComponents;
 
-		static RenderLayers myComponents;
+		static FlabbergastingBabbaBoya myComponents;
 
 		static std::vector<Component*> myComponentsToStartBuffer;
 		static std::vector<Component*> myComponentsToStart;

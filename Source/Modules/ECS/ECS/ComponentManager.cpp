@@ -588,7 +588,7 @@ namespace Eclipse
 
 	//std::vector<Component*> myRenderComponents;
 
-	ComponentManager::RenderLayers ComponentManager::myComponents;
+	ComponentManager::FlabbergastingBabbaBoya ComponentManager::myComponents;
 
 	std::vector<Component*> ComponentManager::myComponentsToStartBuffer;
 	std::vector<Component*> ComponentManager::myComponentsToStart;
@@ -693,6 +693,11 @@ namespace Eclipse
 
 		// TODO: MAKES NO SENSE. 
 		/*WHY? -> */ Init(); // <- Made by Simon.
+	}
+
+	const std::unordered_map<unsigned, GameObject*>& ComponentManager::GetGameObjects()
+	{
+		return myEntityIdToEntity;
 	}
 
 	void ComponentManager::AwakeComponents()
@@ -1088,7 +1093,7 @@ namespace Eclipse
 		return component;
 	}
 
-	const Eclipse::ComponentManager::RenderLayers& ComponentManager::GetAllComponents()
+	const Eclipse::ComponentManager::FlabbergastingBabbaBoya& ComponentManager::GetAllComponents()
 	{
 		return myComponents;
 	}

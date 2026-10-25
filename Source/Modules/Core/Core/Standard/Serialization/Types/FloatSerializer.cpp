@@ -3,16 +3,18 @@
 #include "Core/Standard/Serialization/SerializerRegistrator.hpp"
 #include <charconv>
 
-std::string FloatToJson(const float& v)
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
+rapidjson::Value FloatToJson(const float& v, rapidjson::Document::AllocatorType& allocator)
 {
-	return std::to_string(v);
+	return rapidjson::Value(v);
 }
 
-void JsonToFloat(void* v, std::string_view sv)
+void JsonToFloat(void* v, rapidjson::Value& sv)
 {
-	float* val = reinterpret_cast<float*>(v);
-	/*std::from_chars_result result =*/ std::from_chars(sv.data(), sv.data() + sv.size(), *val);
-	// Handle errors.
+	float* ptr = static_cast<float*>(v);
+	if (sv.IsFloat()) *ptr = sv.GetFloat();
 }
 
 REGISTER(float, FloatToJson, JsonToFloat);

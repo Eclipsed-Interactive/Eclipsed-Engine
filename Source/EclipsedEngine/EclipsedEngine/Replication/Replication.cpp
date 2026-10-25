@@ -316,7 +316,7 @@ namespace Eclipse::Replication
 
 		std::vector<Component*> componentsToReplicate;
 
-		const ComponentManager::RenderLayers& allComponents = ComponentManager::GetAllComponents();
+		const ComponentManager::FlabbergastingBabbaBoya& allComponents = ComponentManager::GetAllComponents();
 		for (const auto& componentList : allComponents)
 		{
 			for (const auto& component : componentList.vector)

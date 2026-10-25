@@ -2,13 +2,15 @@
 
 #include "Serialization.hpp"
 
+#include "rapidjson/document.h"
+
 #define REGISTER(cls, toJson, fromJson) static ::Eclipse::Serialization::AutoSerializerRegistrator<cls> cls##_Registrator(&toJson, &fromJson);
 
 namespace Eclipse::Serialization
 {
 	template<typename T>
 	struct AutoSerializerRegistrator {
-		explicit AutoSerializerRegistrator(std::string(*toJson)(const T&), void(*fromJson)(void* v, std::string_view sv))
+		explicit AutoSerializerRegistrator(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, rapidjson::Value& sv))
 		{
 			Serialization::RegisterJson<T>(toJson, fromJson);
 		}
