@@ -71,24 +71,28 @@ namespace Eclipse::Editor
 		}
 
 		if (!layoutToOpen.empty())
-			LoadLayout(layoutToOpen.c_str());
-
-		ImGui::DockSpaceOverViewport(
-			1,
-			ImGui::GetMainViewport(),
-			ImGuiDockNodeFlags_PassthruCentralNode
-		);
-
-		for (auto instance : activeViews)
 		{
-			std::string windowName = std::string(instance->view->GetName()) + "##" + std::to_string(instance->id);
+			LoadLayout(layoutToOpen.c_str());
+			layoutToOpen.clear();
+		}
+
+		for (auto* instance : activeViews)
+		{
+			std::string windowName =
+				std::string(instance->view->GetName()) +
+				"##" +
+				std::to_string(instance->id);
 
 			ImGuiWindowFlags flags = instance->view->ActiveImGuiFlag;
 
-			if (ImGui::Begin(windowName.c_str(), &instance->open, flags))
+			if (ImGui::Begin(
+				windowName.c_str(),
+				&instance->open,
+				flags))
 			{
 				instance->view->Draw();
 			}
+
 			ImGui::End();
 		}
 	}

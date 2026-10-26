@@ -12,6 +12,9 @@ namespace Eclipse
 {
     class ECL_API RigidBody2D : public Component
     {
+        MAKE_REFLECTABLE(RigidBody2D);
+        REFLECTION_FLAG(COMPONENT);
+
         BASE_SELECTION(RigidBody2D, 5)
 
     public:
@@ -51,9 +54,9 @@ namespace Eclipse
 
         Box2DBodyType BodyType = DynamicBody;
 
-        SERIALIZED_FIELD_DEFAULT(bool, LockRotation, false);
-        SERIALIZED_FIELD_DEFAULT(bool, LockXPos, false);
-        SERIALIZED_FIELD_DEFAULT(bool, LockYPos, false);
+        [[SerializeField]] bool LockRotation = false;
+        [[SerializeField]] bool LockXPos = false;
+        [[SerializeField]] bool LockYPos = false;
         
         Math::Vector2f myVelocity = { 0.f, 0.f };
 

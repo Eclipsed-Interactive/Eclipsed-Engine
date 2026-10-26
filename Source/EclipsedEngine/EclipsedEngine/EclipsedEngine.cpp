@@ -31,6 +31,8 @@
 #include "Audio/AudioPluginLoader.h"
 #include "Assets/Helper/TextManager.h"
 
+#include "Physics/PhysicsEngine.h"
+
 namespace Eclipse
 {
 	void Engine::Init()
@@ -74,17 +76,6 @@ namespace Eclipse
 	void Engine::LateInit()
 	{
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
-
-
-		//{
-		//	GameObject* gameobject = ComponentManager::CreateGameObject();
-		//	auto t = gameobject->AddComponent<Transform2D>();
-		//	Math::Vector2f scale = { 10.f, -10.f };
-		//	t->SetScale(scale);
-
-		//	gameobject->AddComponent<ParticleSystem2D>();
-		//	gameobject->AddComponent<SpriteRenderer2D>();
-		//}
 	}
 
 

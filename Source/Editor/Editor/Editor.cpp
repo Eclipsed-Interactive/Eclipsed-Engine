@@ -12,6 +12,9 @@
 #include "Core/PathManager.h"
 
 #include "EditorLayout.h"
+#include "ToolBar.h"
+#include "StatusBar.h"
+#include "DockSpace.h"
 #include "EditorUI.h"
 
 #include "Editor/Game/GameModuleManager.h"
@@ -21,6 +24,7 @@
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "Editor/Common/EditorActions.h"
+#include "Core/Settings/EditorSettings.h"
 
 namespace Eclipse::Editor
 {
@@ -40,7 +44,8 @@ namespace Eclipse::Editor
 
 		GameModuleManager::TryCompileAndLoad();
 
-		SceneManager::LoadLastActive();
+		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup())
+			SceneManager::LoadLastActive();
 	}
 
 	void Editor::Shutdown()
@@ -52,25 +57,16 @@ namespace Eclipse::Editor
 	{
 		EditorActions::Update();
 	}
-	
+
 	void Editor::Render()
 	{
 		MainMenuBar::Draw();
+		ToolBar::Draw();
+		StatusBar::Draw();
+		DockSpace::Draw();
 		EditorLayout::Draw();
-		//ViewManager::Update();
-
-
-		ImGui::Begin("Scene Window");
-
-		if (ImGui::Button("Save Scene"))
-			SceneManager::SaveActive();
-		if (ImGui::Button("Load Scene"))
-			SceneManager::Load("Default");
-
-		ImGui::End();
-
 	}
-	
+
 	void Editor::EndFrame()
 	{
 		EditorLayout::EndFrame();
