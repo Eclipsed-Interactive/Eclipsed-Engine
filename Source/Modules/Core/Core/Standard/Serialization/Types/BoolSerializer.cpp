@@ -11,7 +11,7 @@ rapidjson::Value BoolToJson(const bool& v, rapidjson::Document::AllocatorType& a
 	return rapidjson::Value(v);
 }
 
-void JsonToBool(void* v, rapidjson::Value& sv)
+void JsonToBool(void* v, const rapidjson::Value& sv)
 {
 	bool* ptr = static_cast<bool*>(v);
 	if (sv.IsBool()) *ptr = sv.GetBool();

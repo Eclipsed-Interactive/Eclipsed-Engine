@@ -33,16 +33,20 @@ namespace Eclipse
         //void RectTransform::AddParentScale(GameObject* aParent, Math::Vector2f& aPosition) const;
 
     public:
-        SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, Position, Math::Vector2f(0, 0));
-        SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, WidthHeightPX, Math::Vector2f(100, 100));
-        
-        SERIALIZED_FIELD_DEFAULT(bool, ScaleWithCanvasX, false);
-        SERIALIZED_FIELD_DEFAULT(bool, ScaleWithCanvasY, false);
+        [[SerializeField]]
+        Math::Vector2f Position = Math::Vector2f(0, 0);
 
-        SERIALIZED_FIELD_DEFAULT(bool, AlignLeft, false);
-        SERIALIZED_FIELD_DEFAULT(bool, AlignTop, false);
-        SERIALIZED_FIELD_DEFAULT(bool, AlignRight, false);
-        SERIALIZED_FIELD_DEFAULT(bool, AlignBottom, false);
+        [[SerializeField]]
+        Math::Vector2f WidthHeightPX = Math::Vector2f(100, 100);
+
+        
+        [[SerializeField]] bool ScaleWithCanvasX = false;
+        [[SerializeField]] bool ScaleWithCanvasY = false;
+
+        [[SerializeField]] bool AlignLeft = false;
+        [[SerializeField]] bool AlignTop = false;
+        [[SerializeField]] bool AlignRight = false;
+        [[SerializeField]] bool AlignBottom = false;
 
         Math::Vector2f GlobalPosition;
         

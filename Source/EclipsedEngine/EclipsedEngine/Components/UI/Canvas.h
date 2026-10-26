@@ -9,32 +9,38 @@
 
 namespace Eclipse
 {
-    class ECL_API Canvas : public Component
-    {
-        COMPONENT_BASE_2(Canvas, 999999);
+	class ECL_API Canvas : public Component
+	{
+		MAKE_REFLECTABLE(Canvas);
+		REFLECTION_FLAG(COMPONENT);
 
-    public:
+		COMPONENT_BASE_2(Canvas, 999999);
 
-        void SetCanvasTransformProperties();
-        void EditorUpdate() override;
-        void OnComponentAdded() override;
+	public:
 
-        void TransformUpdate();
+		void SetCanvasTransformProperties();
+		void EditorUpdate() override;
+		void OnComponentAdded() override;
 
-        void SetCanvasForChildren(std::vector<GameObject*>& Children);
+		void TransformUpdate();
 
-        SERIALIZED_FIELD_DEFAULT(Math::Vector2<float>, ReferenceResolution, Math::Vector2f(1920, 1080));
-        SERIALIZED_FIELD_DEFAULT(bool, WorldSpace, false);
+		void SetCanvasForChildren(std::vector<GameObject*>& Children);
 
-        struct EditorCanvasCameraTransform
-        {
-            Math::Vector2f PositionOffset = { 0, 0 };
-            float Rotation = 0.f;
-            Math::Vector2f ScaleMultiplier = { 1, 1 };
-        } canvasCameraTransform;
+		[[SerializeField]]
+		Math::Vector2f ReferenceResolution = Math::Vector2f(1920, 1080);
 
-        static inline bool drawCanvasGizmos = true;
+		[[SerializeField]]
+		bool WorldSpace = false;
 
-        CanvasBuffer myCanvasBuffer;
-    };
+		struct EditorCanvasCameraTransform
+		{
+			Math::Vector2f PositionOffset = { 0, 0 };
+			float Rotation = 0.f;
+			Math::Vector2f ScaleMultiplier = { 1, 1 };
+		} canvasCameraTransform;
+
+		static inline bool drawCanvasGizmos = true;
+
+		CanvasBuffer myCanvasBuffer;
+	};
 }

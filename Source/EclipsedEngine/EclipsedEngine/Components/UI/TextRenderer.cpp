@@ -63,7 +63,7 @@ namespace Eclipse
 		myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 
-		myTransformBuffer.Scale = tranform->WidthHeightPX.Get() * canvasScaleRelationOneDiv * ((float)myFontSize * 0.005f);
+		myTransformBuffer.Scale = tranform->WidthHeightPX * canvasScaleRelationOneDiv * ((float)myFontSize * 0.005f);
 
 		Math::Vector2f multiplier;
 

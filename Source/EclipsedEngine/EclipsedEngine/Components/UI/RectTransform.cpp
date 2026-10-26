@@ -37,12 +37,12 @@ namespace Eclipse
 
     void RectTransform::EditorUpdate()
     {
-        if (Position->x != lastPosition.x || Position->y != lastPosition.y)
+        if (Position.x != lastPosition.x || Position.y != lastPosition.y)
         {
             lastPosition = Position;
             myIsDirty = true;
         }
-        if (WidthHeightPX->x != lastWidthHeightPX.x || WidthHeightPX->y != lastWidthHeightPX.y)
+        if (WidthHeightPX.x != lastWidthHeightPX.x || WidthHeightPX.y != lastWidthHeightPX.y)
         {
             lastWidthHeightPX = WidthHeightPX;
             myIsDirty = true;

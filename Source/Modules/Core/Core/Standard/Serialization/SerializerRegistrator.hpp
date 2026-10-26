@@ -10,7 +10,7 @@ namespace Eclipse::Serialization
 {
 	template<typename T>
 	struct AutoSerializerRegistrator {
-		explicit AutoSerializerRegistrator(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, rapidjson::Value& sv))
+		explicit AutoSerializerRegistrator(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, const rapidjson::Value& sv))
 		{
 			Serialization::RegisterJson<T>(toJson, fromJson);
 		}

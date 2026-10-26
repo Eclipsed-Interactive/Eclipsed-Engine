@@ -1,6 +1,5 @@
 #include "SceneSerializer.h"
 
-#include "Core/Settings/EditorSettings.h"
 #include "Core/Standard/Serialization/Serialization.hpp"
 
 #include "ECS/ComponentManager.h"
@@ -15,17 +14,8 @@
 
 namespace Eclipse
 {
-	void SceneSerializer::SaveScene()
+	std::string SceneSerializer::SaveScene()
 	{
-		const std::filesystem::path path = PathManager::GetAssetsPath() / "Default.scene";
-		Settings::EditorSettings::SetLastActiveScene(path.generic_string());
-
-		std::ofstream file(path, std::ios::binary);
-		if (!file)
-		{
-			throw std::runtime_error("The file failed to open.");
-		}
-
 		rapidjson::Document d;
 		d.SetObject();
 
@@ -58,7 +48,7 @@ namespace Eclipse
 			for (auto comp : compList.vector)
 			{
 				rapidjson::Value component(rapidjson::kObjectType);
-				component.AddMember("id", comp->GetID(), alloc);
+				component.AddMember("id", comp->myInstanceComponentID, alloc);
 				component.AddMember("owner", comp->gameObject->GetID(), alloc);
 
 				const std::string& name = comp->GetComponentName();
@@ -66,6 +56,7 @@ namespace Eclipse
 				try 
 				{
 					const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(name);
+					rapidjson::Value compData(rapidjson::kObjectType);
 					for (auto& [name, type] : type.fields)
 					{
 						try
@@ -74,13 +65,15 @@ namespace Eclipse
 							 rapidjson::Value val = Serialization::ToJson(type.type, ptr, alloc);
 
 							rapidjson::Value key(type.name.c_str(), type.name.size(), alloc);
-							component.AddMember(key, val.Move(), alloc);
+							compData.AddMember(key, val.Move(), alloc);
 						}
 						catch (...)
 						{
 							// No serializer
 						}
 					}
+
+					component.AddMember("data", compData.Move(), alloc);
 				}
 				catch (...)
 				{
@@ -101,19 +94,11 @@ namespace Eclipse
 
 		d.AddMember("components", components.Move(), alloc);
 
-
-
-
 		rapidjson::StringBuffer buffer;
 		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
 
 		d.Accept(writer);
-		file << buffer.GetString();
-		file.close();
 
-
-
-		//	//for()
-		//}
+		return buffer.GetString();
 	}
 }

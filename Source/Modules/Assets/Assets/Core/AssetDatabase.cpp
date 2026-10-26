@@ -6,8 +6,25 @@
 
 namespace Eclipse::Assets
 {
+	void AssetDatabase::Reload()
+	{
+		guidToAsset.clear();
+		pathToGuid.clear();
+		fullpathToGuid.clear();
+		typeToAssets.clear();
+		sourceToAssets.clear();
+		sourcePathToKey.clear();
+
+		for (auto& [path, key] : sourceToKey)
+		{
+			ProcessSource(path, key);
+		}
+	}
+
 	void AssetDatabase::ProcessSource(const std::filesystem::path& path, const std::string& key)
 	{
+		sourceToKey[path.generic_string()] = key;
+
 		std::vector<AssetCandidate> candidates = AssetScanner::Scan(path);
 
 		for (const AssetCandidate& candidate : candidates)

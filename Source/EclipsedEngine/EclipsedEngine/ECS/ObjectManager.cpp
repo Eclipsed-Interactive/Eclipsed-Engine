@@ -7,7 +7,7 @@
 
 #include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 #include "EclipsedEngine/Reflection/Reflection.h"
-#include "EclipsedEngine/Scenes/SceneLoader.h"
+//#include "EclipsedEngine/Scenes/SceneLoader.h"
 
 #include <Components/UI/RectTransform.h>
 #include <Components/UI/Canvas.h>
@@ -46,64 +46,66 @@ namespace Eclipse
 
     void InternalSpawnObjectClass::PasteGameObject(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator)
     {
-        aGameObject = ComponentManager::CreateGameObject();
-        aGameObject->SetName(gameobject["Name"].GetString());
+        // Needs integrating with the new scene saving :|
 
-        for (auto& componentJson : gameobject["Components"].GetArray())
-        {
-            auto coIt = componentJson.MemberBegin();
+        //aGameObject = ComponentManager::CreateGameObject();
+        //aGameObject->SetName(gameobject["Name"].GetString());
 
-            Component* component;
-            component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, Component::GetNextComponentID());
+        //for (auto& componentJson : gameobject["Components"].GetArray())
+        //{
+        //    auto coIt = componentJson.MemberBegin();
 
-            auto& reflectedList = Reflection::ReflectionManager::GetList();
-            if (reflectedList.find(component) == reflectedList.end())
-                continue;
+        //    Component* component;
+        //    component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, Component::GetNextComponentID());
 
-            auto& reflectedVars = reflectedList.at(component);
+        //    auto& reflectedList = Reflection::ReflectionManager::GetList();
+        //    if (reflectedList.find(component) == reflectedList.end())
+        //        continue;
 
-            int refIndex = 0;
+        //    auto& reflectedVars = reflectedList.at(component);
 
-            for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
-            {
-                if (refIndex >= reflectedVars.size())
-                    continue;
-                auto& reflectedVariable = reflectedVars.at(refIndex++);
-                SceneLoader::LoadType(reflectedVariable, coIt->value);
-            }
+        //    int refIndex = 0;
 
-            if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
-            {
-                float LocalRotation = transform->GetLocalRotation();
+        //    for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
+        //    {
+        //        if (refIndex >= reflectedVars.size())
+        //            continue;
+        //        auto& reflectedVariable = reflectedVars.at(refIndex++);
+        //        SceneLoader::LoadType(reflectedVariable, coIt->value);
+        //    }
 
-                transform->SetRotation(LocalRotation * Math::rad2Deg);
-            }
+        //    if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
+        //    {
+        //        float LocalRotation = transform->GetLocalRotation();
 
-            if (component && componentJson.HasMember("IsReplicated"))
-                component->IsReplicated = componentJson["IsReplicated"].GetBool();
-        }
+        //        transform->SetRotation(LocalRotation * Math::rad2Deg);
+        //    }
 
-        if (gameobject.HasMember("Children"))
-        {
-            auto childArray = gameobject["Children"].GetArray();
-            for (auto& child : childArray)
-            {
-                GameObject* newGameObject;
-                PasteGameObject(newGameObject, child, anAllocator);
+        //    if (component && componentJson.HasMember("IsReplicated"))
+        //        component->IsReplicated = componentJson["IsReplicated"].GetBool();
+        //}
 
-                aGameObject->AddChild(newGameObject);
+        //if (gameobject.HasMember("Children"))
+        //{
+        //    auto childArray = gameobject["Children"].GetArray();
+        //    for (auto& child : childArray)
+        //    {
+        //        GameObject* newGameObject;
+        //        PasteGameObject(newGameObject, child, anAllocator);
 
-                if (auto* recttransform = newGameObject->GetComponent<RectTransform>())
-                {
-                    if (recttransform->myCanvas = GetParentCanvas(newGameObject))
-                    {
-                        recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
-                        recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
-                        recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
-                    }
-                }
-            }
-        }
+        //        aGameObject->AddChild(newGameObject);
+
+        //        if (auto* recttransform = newGameObject->GetComponent<RectTransform>())
+        //        {
+        //            if (recttransform->myCanvas = GetParentCanvas(newGameObject))
+        //            {
+        //                recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
+        //                recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
+        //                recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
+        //            }
+        //        }
+        //    }
+        //}
     }
 
 
@@ -203,65 +205,67 @@ namespace Eclipse
     void InternalSpawnObjectClass::PasteGameObjectSpecifiedIds(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator,
                                                                int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated)
     {
-        aGameObject = ComponentManager::CreateGameObject(aGameobjectID);
-        aGameObject->SetName(gameobject["Name"].GetString());
-        aGameObject->SetIsOwner(false);
+        // Needs integrating with the new scene saving :|
 
-        for (auto& componentJson : gameobject["Components"].GetArray())
-        {
-            bool isReplicated = false;
-            auto coIt = componentJson.MemberBegin();
-            if (fromReplicated && componentJson.HasMember("IsReplicated"))
-            {
-                isReplicated = componentJson["IsReplicated"].GetBool();
-                if (!isReplicated)
-                    continue;
-            }
-            
+        //aGameObject = ComponentManager::CreateGameObject(aGameobjectID);
+        //aGameObject->SetName(gameobject["Name"].GetString());
+        //aGameObject->SetIsOwner(false);
 
-            std::string str = coIt->name.GetString();
-            
-            int ComponentID = aComponentsID[currentIndex++];
+        //for (auto& componentJson : gameobject["Components"].GetArray())
+        //{
+        //    bool isReplicated = false;
+        //    auto coIt = componentJson.MemberBegin();
+        //    if (fromReplicated && componentJson.HasMember("IsReplicated"))
+        //    {
+        //        isReplicated = componentJson["IsReplicated"].GetBool();
+        //        if (!isReplicated)
+        //            continue;
+        //    }
+        //    
 
-            Component* component;
-            component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, ComponentID);
+        //    std::string str = coIt->name.GetString();
+        //    
+        //    int ComponentID = aComponentsID[currentIndex++];
 
-            auto& reflectedList = Reflection::ReflectionManager::GetList();
-            if (reflectedList.find(component) == reflectedList.end())
-                continue;
+        //    Component* component;
+        //    component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, ComponentID);
 
-            auto& reflectedVars = reflectedList.at(component);
+        //    auto& reflectedList = Reflection::ReflectionManager::GetList();
+        //    if (reflectedList.find(component) == reflectedList.end())
+        //        continue;
 
-            if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
-            {
-                float LocalRotation = transform->GetLocalRotation();
+        //    auto& reflectedVars = reflectedList.at(component);
 
-                transform->SetRotation(LocalRotation * Math::rad2Deg);
-            }
+        //    if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
+        //    {
+        //        float LocalRotation = transform->GetLocalRotation();
 
-            int refIndex = 0;
+        //        transform->SetRotation(LocalRotation * Math::rad2Deg);
+        //    }
 
-            for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
-            {
-                auto& reflectedVariable = reflectedVars.at(refIndex++);
-                SceneLoader::LoadType(reflectedVariable, coIt->value);
-            }
+        //    int refIndex = 0;
 
-            component->IsReplicated = isReplicated;
+        //    for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
+        //    {
+        //        auto& reflectedVariable = reflectedVars.at(refIndex++);
+        //        SceneLoader::LoadType(reflectedVariable, coIt->value);
+        //    }
 
-            component->SetIsOwner(false);
-        }
+        //    component->IsReplicated = isReplicated;
 
-        if (gameobject.HasMember("Children"))
-        {
-            auto childArray = gameobject["Children"].GetArray();
-            for (auto& child : childArray)
-            {
-                GameObject* newGameObject;
-                PasteGameObjectSpecifiedIds(newGameObject, child, anAllocator, aGameobjectID + 1, aComponentsID, currentIndex, fromReplicated);
+        //    component->SetIsOwner(false);
+        //}
 
-                aGameObject->AddChild(newGameObject);
-            }
-        }
+        //if (gameobject.HasMember("Children"))
+        //{
+        //    auto childArray = gameobject["Children"].GetArray();
+        //    for (auto& child : childArray)
+        //    {
+        //        GameObject* newGameObject;
+        //        PasteGameObjectSpecifiedIds(newGameObject, child, anAllocator, aGameobjectID + 1, aComponentsID, currentIndex, fromReplicated);
+
+        //        aGameObject->AddChild(newGameObject);
+        //    }
+        //}
     }
 }

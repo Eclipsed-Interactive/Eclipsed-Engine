@@ -11,9 +11,19 @@
 #include "Editor/Common/EditorActions.h"
 #include "Editor/EditorUI.h"
 
+#include "Core/Math/Vector/Vector2.h"
+#include "EclipsedEngine/Components/Transform2D.h"
+#include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
+#include "EclipsedEngine/Components/UI/RectTransform.h"
+#include "EclipsedEngine/Components/UI/TextRenderer.h"
+#include "EclipsedEngine/Components/UI/Button.h"
+#include "EclipsedEngine/Components/UI/UIImage.h"
+#include "EclipsedEngine/Components/UI/Canvas.h"
+
 #include "FontAwesome/7/IconsFontAwesome7.h"
 
 #include "Editor/SelectionContext.h"
+#include <fstream>
 
 namespace Eclipse::Editor
 {
@@ -261,16 +271,16 @@ namespace Eclipse::Editor
 
     void HierarchyView::CreatePrefab(unsigned aGameobjectID, std::filesystem::path aPath)
     {
-        //std::string GameObjectName = ComponentManager::GetGameObject(aGameobjectID)->GetName();
+        std::string GameObjectName = ComponentManager::GetGameObject(aGameobjectID)->GetName();
 
-        //rapidjson::StringBuffer objectJson = EditorActions::CopyObject(aGameobjectID, false);
-        //std::ofstream outputStream(aPath / (GameObjectName + ".eprf"));
-        //outputStream << objectJson.GetString();
+        rapidjson::StringBuffer objectJson = EditorActions::CopyObject(aGameobjectID, false);
+        std::ofstream outputStream(aPath / (GameObjectName + ".eprf"));
+        outputStream << objectJson.GetString();
     }
 
     void HierarchyView::Draw()
     {
-        /*if (ImGui::BeginPopup("GameobjectHierarchyRightClicked"))
+        if (ImGui::BeginPopup("GameobjectHierarchyRightClicked"))
         {
             if (ImGui::BeginMenu("Actions"))
             {
@@ -407,7 +417,7 @@ namespace Eclipse::Editor
                 }
             }
         }
-        */
+        
         for (const auto& [id, data] : ComponentManager::myEntityIdToEntity)
         {
             if (data == nullptr) continue;

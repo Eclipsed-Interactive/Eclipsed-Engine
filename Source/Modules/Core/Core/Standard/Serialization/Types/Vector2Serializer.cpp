@@ -18,7 +18,7 @@ rapidjson::Value Vector2fToJson(const Vector2f& v, rapidjson::Document::Allocato
 	return obj;
 }
 
-void JsonToVector2f(void* v, rapidjson::Value& sv)
+void JsonToVector2f(void* v, const rapidjson::Value& sv)
 {
 	if (!sv.IsObject()) return;
 

@@ -27,6 +27,11 @@ namespace Eclipse
         UpdateTransforms();
     }
 
+    void Transform2D::OnComponentAdded()
+    {
+        OnComponentAddedNoCreations();
+    }
+
     void Transform2D::AddParentTransform(GameObject* aParent, Math::Mat3x3f& aTransform) const
     {
         Transform2D* parentTransform = aParent->GetComponent<Transform2D>();

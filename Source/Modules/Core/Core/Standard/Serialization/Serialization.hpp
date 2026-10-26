@@ -12,7 +12,7 @@
 namespace Eclipse::Serialization
 {
 	using ToJsonFunction = std::function<rapidjson::Value(const void*, rapidjson::Document::AllocatorType& allocator)>;
-	using FromJsonFunction = std::function<void(void*, rapidjson::Value&)>;
+	using FromJsonFunction = std::function<void(void*, const rapidjson::Value&)>;
 
 	using ToBinaryFunction = std::function<std::vector<std::byte>(const void*)>;
 
@@ -25,7 +25,7 @@ namespace Eclipse::Serialization
 	{
 	public:
 		template<typename T>
-		static void RegisterJson(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, rapidjson::Value& sv));
+		static void RegisterJson(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, const rapidjson::Value& sv));
 
 		template<typename T>
 		static const JsonSerializer& GetJson();
@@ -46,8 +46,13 @@ namespace Eclipse::Serialization
 		return Serialization::GetJson(typeID).toJson(v, allocator);
 	}
 
+	inline void FromJson(unsigned long long typeID, void* v, const rapidjson::Value& value)
+	{
+		return Serialization::GetJson(typeID).fromJson(v, value);
+	}
+
 	template<typename T>
-	inline T FromJson(std::string_view v)
+	inline T FromJson(const rapidjson::Value& v)
 	{
 		T t{};
 		//Serialization::GetJson<T>().fromJson(&t, v);
@@ -68,11 +73,11 @@ namespace Eclipse::Serialization
 	}
 
 	template<typename T>
-	inline void Serialization::RegisterJson(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType&), void(*fromJson)(void* v, rapidjson::Value& sv))
+	inline void Serialization::RegisterJson(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType&), void(*fromJson)(void* v, const rapidjson::Value& sv))
 	{
 		JsonSerializer serializer{
 			.toJson = [toJson](const void* v, rapidjson::Document::AllocatorType& alloc) {return toJson(*reinterpret_cast<const T*>(v), alloc);},
-			.fromJson = [fromJson](void* v, rapidjson::Value& value) {return fromJson(v, value);},
+			.fromJson = [fromJson](void* v,const rapidjson::Value& value) {return fromJson(v, value);},
 		};
 
 		jsonRegistry.insert_or_assign(Type::GetTypeID<T>(), serializer);

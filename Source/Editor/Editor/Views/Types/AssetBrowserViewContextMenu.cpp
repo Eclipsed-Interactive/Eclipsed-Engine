@@ -123,7 +123,7 @@ namespace Eclipse::Editor
 
 		if (ImGui::MenuItem("Copy Path"))
 		{
-			LOG_ERROR("Copy Path not implemented.");
+			//LOG_ERROR("Copy Path not implemented.");
 		}
 
 		if (ImGui::MenuItem("Recompile"))
@@ -183,7 +183,7 @@ namespace Eclipse::Editor
 			else
 				savedPath = activePath;
 
-			LOG_ERROR("Creating Component not implemented.");
+			//LOG_ERROR("Creating Component not implemented.");
 
 			activePath = savedPath;
 		}
@@ -216,7 +216,6 @@ namespace Eclipse::Editor
 			else
 				savedPath = activePath;
 
-			LOG_ERROR("Creating Physics Material not implemented.");
 
 			activePath = savedPath;
 		}

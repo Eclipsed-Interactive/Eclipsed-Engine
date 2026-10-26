@@ -11,7 +11,7 @@ rapidjson::Value FloatToJson(const float& v, rapidjson::Document::AllocatorType&
 	return rapidjson::Value(v);
 }
 
-void JsonToFloat(void* v, rapidjson::Value& sv)
+void JsonToFloat(void* v, const rapidjson::Value& sv)
 {
 	float* ptr = static_cast<float*>(v);
 	if (sv.IsFloat()) *ptr = sv.GetFloat();

@@ -38,11 +38,11 @@ namespace Eclipse
 
 		if (transform->myCanvas)
 		{
-			float sizeX = (transform->WidthHeightPX->x / transform->myCanvas->ReferenceResolution->y) * 0.5f;
-			float sizeY = (transform->WidthHeightPX->y / transform->myCanvas->ReferenceResolution->y) * 0.5f;
+			float sizeX = (transform->WidthHeightPX.x / transform->myCanvas->ReferenceResolution.y) * 0.5f;
+			float sizeY = (transform->WidthHeightPX.y / transform->myCanvas->ReferenceResolution.y) * 0.5f;
 
-			float posX = transform->Position->x / transform->myCanvas->ReferenceResolution->y + 0.5f;
-			float posY = transform->Position->y / transform->myCanvas->ReferenceResolution->y + 0.5f;
+			float posX = transform->Position.x / transform->myCanvas->ReferenceResolution.y + 0.5f;
+			float posY = transform->Position.y / transform->myCanvas->ReferenceResolution.y + 0.5f;
 
 			Math::Vector2f sqrPos = { posX, posY };
 			Math::Vector2f sqrSize = { sizeX, sizeY };
@@ -140,7 +140,7 @@ namespace Eclipse
 
 		myTransformBuffer.Position += canvasCameraTransform.PositionOffset;
 
-		Math::Vector2f WidthHeightPX = tranform->WidthHeightPX.Get();
+		Math::Vector2f WidthHeightPX = tranform->WidthHeightPX;
 		myTransformBuffer.Scale = WidthHeightPX;
 
 		Math::Vector2f canvasScaleRelationOneDiv = { 1.f / referenceResolution.x, 1.f / referenceResolution.y };

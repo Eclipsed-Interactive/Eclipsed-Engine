@@ -86,6 +86,9 @@ namespace Eclipse::Settings
 #else
 			std::filesystem::path path = Derived::Name;
 #endif
+
+			std::filesystem::create_directories(path.parent_path());
+
 			std::ifstream in(path);
 			if (!in.is_open()) {
 				Save();

@@ -24,6 +24,9 @@ namespace Eclipse
     
     class ECL_API SpriteRenderer2D : public BaseRenderComponent
     {
+        MAKE_REFLECTABLE(SpriteRenderer2D);
+        REFLECTION_FLAG(COMPONENT);
+
         COMPONENT_BASE_2(SpriteRenderer2D, 20)
 
     public:

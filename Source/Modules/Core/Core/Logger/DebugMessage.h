@@ -6,14 +6,14 @@
 
 namespace Eclipse
 {
-	enum class DiagnosticSeverity
+	enum class CORE_API DiagnosticSeverity
 	{
 		Info, 
 		Warning,
 		Error
 	};
 
-	enum class DiagnosticKind
+	enum class CORE_API DiagnosticKind
 	{
 		Text,
 		SourceCode 

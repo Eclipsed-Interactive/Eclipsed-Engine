@@ -889,6 +889,8 @@ namespace Eclipse
 		if (myComponents.size() <= 1)
 			return component;
 
+		component->OnComponentAdded();
+
 		return component;
 	}
 
@@ -1086,6 +1088,8 @@ namespace Eclipse
 		//component->myComponentIndex = componentIndex;
 
 		//CreateComponentReplicated(component);
+
+		component->OnComponentAdded();
 
 		if (myComponents.size() <= 1)
 			return component;

@@ -22,6 +22,7 @@ namespace Eclipse
 		void Render();
 		void LateRender();
 		bool ShouldClose();
+		void Shutdown();
 
 	private:
 		void ImGui_NewFrame();

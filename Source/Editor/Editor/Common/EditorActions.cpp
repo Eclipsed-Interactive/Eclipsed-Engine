@@ -9,7 +9,7 @@
 #include "Editor/Views/Types/HierarchyView.h"
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
-#include "EclipsedEngine/Scenes/SceneLoader.h"
+//#include "EclipsedEngine/Scenes/SceneLoader.h"
 #include "ECS/ComponentManager.h"
 #include "Core/Clipboard.h"
 
@@ -24,7 +24,9 @@
 #include "Editor/Game/GameCompiler.h"
 #include "Editor/Game/GameLoader.h"
 
+#include "Core/MainSingleton.h"
 #include "Core/PathManager.h"
+#include "Assets/Core/AssetDatabase.h"
 
 namespace Eclipse::Editor
 {
@@ -32,13 +34,16 @@ namespace Eclipse::Editor
 	{
 		switch (SceneManager::GetActiveSceneType())
 		{
-		case SceneManager::Default:
-			SceneManager::SaveActiveScene();
+		case SceneManager::World:
+			SceneManager::SaveActive();
 			break;
 		case SceneManager::Prefab:
-			std::filesystem::path filePath = SceneManager::GetActiveScene();
+			Assets::Scene scene = SceneManager::GetActive();
+			const Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+
+			std::filesystem::path filePath = database.GetProcessedFile(scene.GetAssetID()).fullPath;
 			filePath.replace_filename("");
-			HierarchyView::CreatePrefab(SceneManager::ActivePrefabEditSceneID, filePath);
+			HierarchyView::CreatePrefab(SceneManager::GetActivePrefab(), filePath);
 			break;
 		}
 	}

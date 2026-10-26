@@ -28,6 +28,8 @@ namespace Eclipse::Assets
         AssetDatabase& operator=(AssetDatabase&&) noexcept = default;
 
     public:
+        void Reload();
+
         void ProcessSource(const std::filesystem::path& path, const std::string& key);
         void ProcessBundle(const std::filesystem::path& path);
 
@@ -54,5 +56,6 @@ namespace Eclipse::Assets
         std::unordered_map<AssetType, std::vector<GUID>> typeToAssets;
         std::unordered_map<std::string , std::vector<GUID>> sourceToAssets;
         std::unordered_map<std::string, std::string> sourcePathToKey;
+        std::unordered_map<std::string, std::string> sourceToKey;
     };
 }

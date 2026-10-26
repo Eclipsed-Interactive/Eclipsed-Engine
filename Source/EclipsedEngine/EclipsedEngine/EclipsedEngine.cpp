@@ -63,56 +63,28 @@ namespace Eclipse
 		MainSingleton::AddInstance(myCommandListManager);
 
 		ImGui_Init();
+
+#ifdef ECL_EDITOR
+		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
+#else
+		// IMPORT BUNDLE
+#endif
 	}
 
 	void Engine::LateInit()
 	{
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
-		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
-
-		{ // TOFFLA
-			Math::Vector2f scale = { 10.f, -10.f };
-
-			//{
-			//	GameObject* gameobject = ComponentManager::CreateGameObject();
-			//	auto t = gameobject->AddComponent<Transform2D>();
-
-			//	gameobject->AddComponent<SpriteRenderer2D>();
-			//	gameobject->AddComponent<Camera>();
-			//}
-
-			//{
-			//	GameObject* gameobject = ComponentManager::CreateGameObject();
-			//	auto t = gameobject->AddComponent<Transform2D>();
-			//	t->SetScale(scale);
-
-			//	gameobject->AddComponent<SpriteRenderer2D>();
-			//}
-
-			{
-				GameObject* gameobject = ComponentManager::CreateGameObject();
-				auto t = gameobject->AddComponent<Transform2D>();
-				t->SetScale(scale);
-
-				gameobject->AddComponent<ParticleSystem2D>();
-				gameobject->AddComponent<SpriteRenderer2D>();
-			}
-
-			//{
-			//	GameObject* parent = ComponentManager::CreateGameObject();
-			//	auto t = parent->AddComponent<Transform2D>();
 
 
-			//	GameObject* gameobject = ComponentManager::CreateGameObject();
-			//	auto t1 = gameobject->AddComponent<RectTransform>();
+		//{
+		//	GameObject* gameobject = ComponentManager::CreateGameObject();
+		//	auto t = gameobject->AddComponent<Transform2D>();
+		//	Math::Vector2f scale = { 10.f, -10.f };
+		//	t->SetScale(scale);
 
-			//	gameobject->AddComponent<TextRenderer>();
-
-			//	gameobject->SetParent(parent);
-
-			//	parent->AddComponent<Canvas>();
-			//}
-		}
+		//	gameobject->AddComponent<ParticleSystem2D>();
+		//	gameobject->AddComponent<SpriteRenderer2D>();
+		//}
 	}
 
 
@@ -120,6 +92,11 @@ namespace Eclipse
 	bool Engine::ShouldClose()
 	{
 		return renderer->ShouldWindowClose();
+	}
+
+	void Engine::Shutdown()
+	{
+		EventSystem::Trigger("Engine-Shutdown");
 	}
 
 	void* Engine::GetImGuiContext()
@@ -132,9 +109,6 @@ namespace Eclipse
 		renderer->EndFrame();
 
 		myCommandListManager.ResetAllCommandLists();
-
-		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-		//device->BindFrameBuffer({0,1});
 	}
 
 	void Engine::Update()
@@ -153,6 +127,11 @@ namespace Eclipse
 		ComponentManager::EditorLateUpdateComponents();
 
 		ComponentManager::EarlyUpdateComponents();
+
+
+
+		// Toffla
+		// Move this to the on play 
 		ComponentManager::UpdateComponents();
 	}
 
@@ -179,7 +158,7 @@ namespace Eclipse
 
 		//device->BindFrameBuffer(1);
 		//Graphics::CommandListManager::ExecuteAllCommandLists();
-		
+
 		device->BindFrameBuffer(0);
 		device->Clear();
 

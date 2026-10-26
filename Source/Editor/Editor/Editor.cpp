@@ -19,15 +19,14 @@
 
 #include "Core/Standard/Serialization/Serialization.hpp"
 
-#include "EclipsedEngine/SceneSerializer.h"
+#include "EclipsedEngine/Scenes/SceneManager.h"
+#include "Editor/Common/EditorActions.h"
 
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
 	{
 		ProjectManager::LoadOrSelectProject();
-
-		float value = Serialization::FromJson<float>("3.1415");
 	}
 
 	void Editor::Init(void* imguiCtx)
@@ -40,6 +39,8 @@ namespace Eclipse::Editor
 		EditorLayout::Init();
 
 		GameModuleManager::TryCompileAndLoad();
+
+		SceneManager::LoadLastActive();
 	}
 
 	void Editor::Shutdown()
@@ -49,7 +50,7 @@ namespace Eclipse::Editor
 
 	void Editor::BeginFrame()
 	{
-
+		EditorActions::Update();
 	}
 	
 	void Editor::Render()
@@ -62,7 +63,9 @@ namespace Eclipse::Editor
 		ImGui::Begin("Scene Window");
 
 		if (ImGui::Button("Save Scene"))
-			SceneSerializer::SaveScene();
+			SceneManager::SaveActive();
+		if (ImGui::Button("Load Scene"))
+			SceneManager::Load("Default");
 
 		ImGui::End();
 

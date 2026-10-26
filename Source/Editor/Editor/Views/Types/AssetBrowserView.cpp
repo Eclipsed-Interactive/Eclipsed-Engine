@@ -67,6 +67,8 @@ namespace Eclipse::Editor
 			dirTree.Reload();
 			Active_View_Node = dirTree.GetNode(lastPath);
 
+			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+			database.Reload();
 			//ctxMenu.SetActivePath(LastPath);
 		}
 	}
@@ -450,36 +452,39 @@ namespace Eclipse::Editor
 			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 			Assets::GUID guid = database.GetGUIDFromFullPath(fifo.filePath);
 
-			SceneManager::LoadScene(guid);
-			Settings::EditorSettings::SetLastActiveScene(fifo.filePath.stem().filename().string());
+			SceneManager::Load(guid);
+			Settings::EditorSettings::SetLastActiveScene(guid.ToString());
 
 			SceneView::ResetCamera();
 		}
 		break;
 		case Utilities::FileInfo::FileType_Prefab:
-		{
-			std::ifstream stream(fifo.filePath);
-			if (!stream.is_open())
-				return;
-
-			SceneManager::UnloadScene();
-			InitNewPhysicsScene();
-
-			SceneManager::SetActiveSceneType(SceneManager::Prefab);
-			SceneManager::SetActiveScene(fifo.filePath.generic_string().c_str());
+		{ 
+			// Needs integrating with the new scene saving :|
 
 
-			size_t prefSize = std::filesystem::file_size(fifo.filePath);
-			char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
-			stream.read(data, prefSize);
-			memset(data + prefSize, '\0', 1);
-			stream.close();
+			//std::ifstream stream(fifo.filePath);
+			//if (!stream.is_open())
+			//	return;
 
-			SceneManager::ActivePrefabEditSceneID = CreateGameobjectFunc(data);
+			//SceneManager::UnloadActive();
+			//InitNewPhysicsScene();
 
-			SceneView::ResetCamera();
+			//SceneManager::SetActiveSceneType(SceneManager::Prefab);
+			//SceneManager::SetActiveScene(fifo.filePath.generic_string().c_str());
 
-			free(data);
+
+			//size_t prefSize = std::filesystem::file_size(fifo.filePath);
+			//char* data = reinterpret_cast<char*>(malloc(prefSize + 1));
+			//stream.read(data, prefSize);
+			//memset(data + prefSize, '\0', 1);
+			//stream.close();
+
+			//SceneManager::ActivePrefabEditSceneID = CreateGameobjectFunc(data);
+
+			//SceneView::ResetCamera();
+
+			//free(data);
 		}
 		break;
 

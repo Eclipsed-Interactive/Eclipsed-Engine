@@ -52,9 +52,9 @@ namespace Eclipse
 		//Math::Vector2f gameResolution = transform->myCanvas->ReferenceResolution.Get();
 		//float aspectResoluton = gameResolution.y / gameResolution.x;
 		
-		Math::Vector2f halfWitdh = transform->WidthHeightPX.Get() * 0.5f;
-		topRightCorner = transform->Position.Get() + halfWitdh;
-		lowerLeftCorner = transform->Position.Get() - halfWitdh;
+		Math::Vector2f halfWitdh = transform->WidthHeightPX * 0.5f;
+		topRightCorner = transform->Position + halfWitdh;
+		lowerLeftCorner = transform->Position - halfWitdh;
 	}
 
 	void Button::Print()

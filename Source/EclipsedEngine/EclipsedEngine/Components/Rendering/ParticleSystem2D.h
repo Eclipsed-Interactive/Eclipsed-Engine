@@ -160,10 +160,12 @@ namespace Eclipse
 
 	class ParticleSystem2D : public Component
 	{
-	public:
-		ParticleSystem2D() = default;
-		~ParticleSystem2D() = default;
+		MAKE_REFLECTABLE(ParticleSystem2D);
+		REFLECTION_FLAG(COMPONENT);
 
+		COMPONENT_BASE_2(ParticleSystem2D, UINT_MAX * 0.5f);
+
+	public:
 		void Awake() override;
 		void Update() override;
 

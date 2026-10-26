@@ -6311,7 +6311,7 @@ nvmlReturn_t DECLDIR nvmlDeviceGetGpuOperationMode(nvmlDevice_t device, nvmlGpuO
  *       the operating system is under memory pressure, it may resort to utilizing FB memory.
  *       Such actions can result in discrepancies in the accuracy of memory reporting.
  *
- * @note On certain SOC platforms, the integrated GPU (iGPU) does not use a dedicated framebuffer
+ * @note On certain SOC platforms, the with GPU (iGPU) does not use a dedicated framebuffer
  *       but instead shares memory with the system. As a result, \ref NVML_ERROR_NOT_SUPPORTED
  *       will be returned in this case.
  *

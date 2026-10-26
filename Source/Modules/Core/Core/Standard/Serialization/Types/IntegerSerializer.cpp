@@ -11,7 +11,7 @@ rapidjson::Value IntegerToJson(const int& v, rapidjson::Document::AllocatorType&
 	return rapidjson::Value(v);
 }
 
-void JsonToInteger(void* v, rapidjson::Value& sv)
+void JsonToInteger(void* v, const rapidjson::Value& sv)
 {
 	int* ptr = static_cast<int*>(v);
 	if (sv.IsInt()) *ptr = sv.GetInt();

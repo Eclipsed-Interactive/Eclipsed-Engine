@@ -171,7 +171,7 @@ void Eclipse::Editor::SceneView::SpriteDragging()
 	RectTransform* rectTransform = ComponentManager::GetComponent<RectTransform>(currentGO);
 	if (rectTransform)
 	{
-		Math::Vector2f translatedPosition = Math::Vector2f(rectTransform->myCanvas->ReferenceResolution->y, rectTransform->myCanvas->ReferenceResolution->y);
+		Math::Vector2f translatedPosition = Math::Vector2f(rectTransform->myCanvas->ReferenceResolution.y, rectTransform->myCanvas->ReferenceResolution.y);
 		rectTransform->SetPosition(mySpriteMouseDownPosition + positionSnappPosition * translatedPosition * 0.5f);
 	}
 

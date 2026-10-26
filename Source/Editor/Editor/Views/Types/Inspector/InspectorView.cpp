@@ -34,13 +34,6 @@ namespace Eclipse::Editor
 		if (!lockInspector) currentTarget = SelectionContext::GetCurrentData();
 
 		InspectorDispatcher::Draw(currentTarget);
-
-
-		for (auto& [name, type] : Reflection::ReflectionRegistry::GetTypes())
-		{
-			ImGui::Text(name.c_str());
-		}
-		
 	}
 
 	void InspectorView::DrawInspectorHeader()

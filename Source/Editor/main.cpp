@@ -36,6 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		editor.EndFrame();
 	}
 
+	engine.Shutdown();
 	editor.Shutdown();
 }
 
