@@ -59,3 +59,25 @@ unsigned Eclipse::Graphics::ParticleDrawer::GetProgramID() const
 {
 	return ProgramID;
 }
+
+
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetComputeVTXShaderID()
+{
+	return ComputeVTXShaderID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetComputeVTXShaderID() const
+{
+	return ComputeVTXShaderID;
+}
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetComputeProgramID()
+{
+	return ComputeProgramID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetComputeProgramID() const
+{
+	return ComputeVTXShaderID;
+}

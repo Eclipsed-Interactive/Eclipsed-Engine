@@ -22,6 +22,11 @@ namespace Eclipse::Graphics
 		return device;
 	}
 
+	IComputer* IRenderer::GetComputer()
+	{
+		return computer;
+	}
+
 	IDebugDrawer* IRenderer::GetDebugDrawer()
 	{
 		return debugDrawer;

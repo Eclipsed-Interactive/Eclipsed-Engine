@@ -5,6 +5,7 @@
 #include "UniformVariableManager.h"
 #include "IDrawer.h"
 #include "IGraphicsDevice.h"
+#include "IComputer.h"
 #include "IDebugDrawer.h"
 
 #include "Renderer.Core.hpp"
@@ -35,6 +36,7 @@ namespace Eclipse::Graphics
 		UniformVariableManager* GetUniformVariableManager();
 		IDrawer* GetDrawer();
 		IGraphicsDevice* GetDevice();
+		IComputer* GetComputer();
 		IDebugDrawer* GetDebugDrawer();
 
 	protected:
@@ -42,6 +44,7 @@ namespace Eclipse::Graphics
 		UniformVariableManager* uniformVariableManager;
 		IDrawer* drawer;
 		IGraphicsDevice* device;
+		IComputer* computer;
 		IDebugDrawer* debugDrawer;
 	};
 }

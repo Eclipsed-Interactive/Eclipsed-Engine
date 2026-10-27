@@ -15,6 +15,7 @@
 #include "OpenGL_UniformVariableManager.h"
 #include "OpenGL_Drawer.h"
 #include "OpenGL_DebugDrawer.h"
+#include "OpenGL_Computer.h"
 #include "OpenGL_GraphicsDevice.h"
 
 namespace Eclipse::Graphics::OpenGL
@@ -56,6 +57,8 @@ namespace Eclipse::Graphics::OpenGL
 
 		debugDrawer = new OpenGL_DebugDrawer;
 		debugDrawer->Init();
+
+		computer = new OpenGL_Computer;
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

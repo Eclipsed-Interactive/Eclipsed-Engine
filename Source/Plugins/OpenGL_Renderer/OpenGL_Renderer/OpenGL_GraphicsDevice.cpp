@@ -225,6 +225,42 @@ namespace Eclipse::Graphics::OpenGL
 		"frag_colour = vec4(1, 1, 1, 1);\n"
 		"}\n";
 
+
+	static const char* particleComputeVTXShaderSource =
+		"#version 430\n"
+		"layout(local_size_x = 64) in;\n"
+
+		"layout(std140,binding=1) uniform SharedGPUParticlesBuffer\n"
+		"{\n"
+		"vec2 Gravity;\n"
+		"float DeltaTime;\n"
+		"float Trash;\n"
+		"};\n"
+
+		"struct Particle\n" 
+		"{\n"
+		"vec2  Position;\n"
+		"vec2  Velocity;\n"
+		"vec2  Scale;\n"
+		"float Rotation;\n"
+		"float LifeTime;\n"
+		"};\n"
+
+		"layout(std430, binding = 0) buffer Data\n"
+		"{\n"
+			"Particle particle[];\n"
+		"};\n"
+
+		"void main()\n"
+		"{\n"
+		"uint i = gl_GlobalInvocationID.x;\n"
+		"particle[i].Velocity += Gravity * DeltaTime;\n"
+		"particle[i].Position += particle[i].Velocity * DeltaTime;\n"
+		"particle[i].LifeTime -= DeltaTime;\n"
+
+		"}\n";
+
+
 	ParticleDrawer* OpenGL_GraphicsDevice::CreateParticleDrawer()
 	{
 		ParticleDrawer* particleDrawer = new ParticleDrawer;
@@ -241,12 +277,10 @@ namespace Eclipse::Graphics::OpenGL
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Position));
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Scale));
 			glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Rotation));
-			glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Trash));
 
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
-			glEnableVertexAttribArray(3);
 		}
 
 		unsigned& VtxShaderID = particleDrawer->GetVTXShaderID();
@@ -303,8 +337,30 @@ namespace Eclipse::Graphics::OpenGL
 			throw;
 		}
 
-
 		glBindVertexArray(0);
+
+		unsigned& ComputeVtxShaderID = particleDrawer->GetComputeVTXShaderID();
+		unsigned& ComputeProgramID = particleDrawer->GetComputeProgramID();
+
+		ComputeVtxShaderID = glCreateShader(GL_COMPUTE_SHADER);
+		glShaderSource(ComputeVtxShaderID, 1, &particleComputeVTXShaderSource, NULL);
+		glCompileShader(ComputeVtxShaderID);
+		checkShader(ComputeVtxShaderID, "Compute");
+
+		ComputeProgramID = glCreateProgram();
+		glAttachShader(ComputeProgramID, ComputeVtxShaderID);
+		glLinkProgram(ComputeProgramID);
+
+		glGetProgramiv(ComputeProgramID, GL_LINK_STATUS, &linked);
+		if (!linked)
+		{
+			GLint len = 0;
+			glGetProgramiv(ComputeProgramID, GL_INFO_LOG_LENGTH, &len);
+			std::string log(len > 1 ? len : 1, '\0');
+			glGetProgramInfoLog(ComputeProgramID, len, NULL, log.data());
+			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
+			throw;
+		}
 
 		return particleDrawer;
 	}
