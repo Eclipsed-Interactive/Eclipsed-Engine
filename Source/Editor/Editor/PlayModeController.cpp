@@ -8,6 +8,8 @@ namespace Eclipse
 	bool PlayModeController::StepRequested = false;
 	PlayMode PlayModeController::CurrentMode = PlayMode::Stopped;
 	PlayMode PlayModeController::RequestedMode = PlayMode::Stopped;
+	std::string PlayModeController::SceneSnapshot = "";
+
 
 	PlayMode PlayModeController::GetPlayMode()
 	{
@@ -41,17 +43,16 @@ namespace Eclipse
 
 	void PlayModeController::EnterPlay()
 	{
-		SetPlayMode(PlayMode::Playing);
+		SceneSnapshot = SceneManager::CaptureSnapshot();
 
 		Timer::SetTimeScale(1.f);
 	}
 
 	void PlayModeController::ExitPlay()
 	{
-		SetPlayMode(PlayMode::Stopped);
-
 		Timer::SetTimeScale(1.f);
-		SceneManager::ReloadActive();
+		SceneManager::RestoreSnapshot(SceneSnapshot);
+		SceneSnapshot.clear();
 	}
 
 	bool PlayModeController::IsPlaying()
@@ -71,6 +72,9 @@ namespace Eclipse
 
 	void PlayModeController::ApplyMode()
 	{
+		if (CurrentMode == RequestedMode)
+			return;
+
 		CurrentMode = RequestedMode;
 
 		switch (CurrentMode)

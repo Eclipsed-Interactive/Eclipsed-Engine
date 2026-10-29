@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace Eclipse
 {
 	enum class PlayMode
@@ -34,5 +36,7 @@ namespace Eclipse
 		static bool StepRequested;
 		static PlayMode CurrentMode;
 		static PlayMode RequestedMode;
+
+		static std::string SceneSnapshot;
 	};
 }

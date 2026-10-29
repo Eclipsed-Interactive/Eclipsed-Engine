@@ -14,7 +14,7 @@
 
 namespace Eclipse
 {
-	std::string SceneSerializer::SaveScene()
+	std::string SceneSerializer::SaveScene(bool pretty)
 	{
 		rapidjson::Document d;
 		d.SetObject();
@@ -53,7 +53,7 @@ namespace Eclipse
 
 				const std::string& name = comp->GetComponentName();
 
-				try 
+				try
 				{
 					const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(name);
 					rapidjson::Value compData(rapidjson::kObjectType);
@@ -62,7 +62,7 @@ namespace Eclipse
 						try
 						{
 							unsigned char* ptr = reinterpret_cast<unsigned char*>(comp) + type.offset;
-							 rapidjson::Value val = Serialization::ToJson(type.type, ptr, alloc);
+							rapidjson::Value val = Serialization::ToJson(type.type, ptr, alloc);
 
 							rapidjson::Value key(type.name.c_str(), type.name.size(), alloc);
 							compData.AddMember(key, val.Move(), alloc);
@@ -95,9 +95,19 @@ namespace Eclipse
 		d.AddMember("components", components.Move(), alloc);
 
 		rapidjson::StringBuffer buffer;
-		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
 
-		d.Accept(writer);
+		if (pretty)
+		{
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+			d.Accept(writer);
+		}
+		else
+		{
+			rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+			d.Accept(writer);
+		}
+
+
 
 		return buffer.GetString();
 	}

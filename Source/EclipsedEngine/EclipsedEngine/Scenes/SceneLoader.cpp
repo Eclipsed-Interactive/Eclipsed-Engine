@@ -15,13 +15,13 @@
 
 namespace Eclipse
 {
-	void SceneSerializer::LoadScene(Assets::Scene scene)
+	void SceneSerializer::LoadScene(const std::string& scene)
 	{
-		if (scene.dataPtr->sourceBlob.empty())
+		if (scene.empty())
 			return;
 
 		rapidjson::Document d;
-		d.Parse(scene.dataPtr->sourceBlob.c_str());
+		d.Parse(scene.c_str());
 
 		if (d.HasParseError())
 		{
@@ -34,6 +34,14 @@ namespace Eclipse
 
 		if (d.HasMember("components") && d["components"].IsObject())
 			LoadComponents(d["components"]);
+	}
+
+	void SceneSerializer::LoadScene(Assets::Scene scene)
+	{
+		if (scene.dataPtr->sourceBlob.empty())
+			return;
+
+		LoadScene(scene.dataPtr->sourceBlob);
 	}
 
 	void SceneSerializer::LoadGameObjects(const rapidjson::Value& gameobjects)

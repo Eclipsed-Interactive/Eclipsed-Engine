@@ -21,6 +21,10 @@ namespace Eclipse
 		static void LoadLastActive();
 
 	public:
+		static std::string CaptureSnapshot();
+		static void RestoreSnapshot(const std::string& snapshot);
+
+	public:
 		enum SceneType
 		{
 			World,

@@ -14,6 +14,23 @@
 
 namespace Eclipse
 {
+	std::string SceneManager::CaptureSnapshot()
+	{
+		return SceneSerializer::SaveScene();
+	}
+
+	void SceneManager::RestoreSnapshot(const std::string& snapshot)
+	{
+		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		commandListManager->ResetAllCommandLists();
+
+		ComponentManager::Clear();
+
+		PhysicsEngine::CleanUp();
+
+		SceneSerializer::LoadScene(snapshot);
+	}
+
 	void SceneManager::UnloadActive()
 	{
 		ActiveScene = {};
@@ -36,7 +53,7 @@ namespace Eclipse
 
 	void SceneManager::SaveActive()
 	{
-		const std::string serializedString = SceneSerializer::SaveScene();
+		const std::string serializedString = SceneSerializer::SaveScene(true);
 
 		Assets::AssetDatabase& database = MainSingleton::GetInstance< Assets::AssetDatabase>();
 		const Assets::AssetMeta& meta = database.GetProcessedFile(ActiveScene.GetAssetID());
