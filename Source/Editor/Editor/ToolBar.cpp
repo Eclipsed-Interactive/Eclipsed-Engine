@@ -16,6 +16,9 @@
 #include "rapidjson/stringbuffer.h"
 #include "FontAwesome/7/IconsFontAwesome7.h"
 
+#include <EclipsedEngine/EclipsedEngine.h>
+#include <Editor/PlayModeController.h>
+
 namespace Eclipse::Editor
 {
 	void ToolBar::Draw()
@@ -56,13 +59,13 @@ namespace Eclipse::Editor
 
 		ImGui::Begin("##EditorToolbar", nullptr, flags);
 
-		switch (mode)
+		switch (PlayModeController::GetPlayMode())
 		{
-		case PlayMode::Playing: DrawPlayMode(mode);
+		case PlayMode::Playing: DrawPlayMode();
 			break;
-		case PlayMode::Paused: DrawPausedMode(mode);
+		case PlayMode::Paused: DrawPausedMode();
 			break;
-		case PlayMode::Stopped: DrawStoppedMode(mode);
+		case PlayMode::Stopped: DrawStoppedMode();
 			break;
 		}
 
@@ -71,42 +74,48 @@ namespace Eclipse::Editor
 		ImGui::PopStyleVar(3);
 	}
 
-	void ToolBar::DrawPlayMode(PlayMode& currentMode)
+	void ToolBar::DrawPlayMode()
 	{
 		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f - PlayModeButtonsPadding);
 		if (ImGui::Button(ICON_FA_PAUSE, PlayModeButtonSize))
 		{
-			currentMode = PlayMode::Paused;
+			PlayModeController::SetPlayMode(PlayMode::Paused);
 		}
 
 		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f + PlayModeButtonsPadding);
 		if (ImGui::Button(ICON_FA_STOP, PlayModeButtonSize))
 		{
-			currentMode = PlayMode::Stopped;
+			PlayModeController::SetPlayMode(PlayMode::Stopped);
 		}
 	}
 
-	void ToolBar::DrawPausedMode(PlayMode& currentMode)
+	void ToolBar::DrawPausedMode()
 	{
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f - PlayModeButtonsPadding);
+		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f - (PlayModeButtonsPadding * 2));
 		if (ImGui::Button(ICON_FA_PLAY, PlayModeButtonSize))
 		{
-			currentMode = PlayMode::Playing;
+			PlayModeController::SetPlayMode(PlayMode::Playing);
 		}
 
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f + PlayModeButtonsPadding);
+		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f );
 		if (ImGui::Button(ICON_FA_STOP, PlayModeButtonSize))
 		{
-			currentMode = PlayMode::Stopped;
+			PlayModeController::SetPlayMode(PlayMode::Stopped);
+		}
+
+		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f + (PlayModeButtonsPadding * 2));
+		if (ImGui::Button(ICON_FA_FORWARD_STEP, PlayModeButtonSize))
+		{
+			PlayModeController::Step();
 		}
 	}
 
-	void ToolBar::DrawStoppedMode(PlayMode& currentMode)
+	void ToolBar::DrawStoppedMode()
 	{
 		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f);
 		if (ImGui::Button(ICON_FA_PLAY, PlayModeButtonSize))
 		{
-			currentMode = PlayMode::Playing;
+			PlayModeController::SetPlayMode(PlayMode::Playing);
 		}
 	}
 }

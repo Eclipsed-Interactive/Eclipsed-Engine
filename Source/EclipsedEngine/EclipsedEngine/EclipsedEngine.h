@@ -13,32 +13,34 @@ namespace Eclipse
 	class ECL_API Engine
 	{
 	public:
-		void Init();
-		void LateInit();
+		static void Init();
+		static void LateInit();
 
-		void BeginFrame();
-		void EndFrame();
-		void Update();
-		void Render();
-		void LateRender();
-		bool ShouldClose();
-		void Shutdown();
+		static void BeginFrame();
+		static void EndFrame();
+		static void Update();
+		static void Render();
+		static void LateRender();
+		static bool ShouldClose();
+		static void Shutdown();
+
+		static void UpdateGame();
 
 	private:
-		void ImGui_NewFrame();
-		void ImGui_EndFrame();
-		void ImGui_Init();
-		void ImGui_Render();
+		static void ImGui_NewFrame();
+		static void ImGui_EndFrame();
+		static void ImGui_Init();
+		static void ImGui_Render();
 
-		Graphics::CommandListManager* GetCommandListManager();
+		static Graphics::CommandListManager* GetCommandListManager();
 
 	public:
-		void* GetImGuiContext();
+		static void* GetImGuiContext();
 
 	private:
-		Graphics::IRenderer* renderer = nullptr;
-		Audio::IAudioBackend* audio = nullptr;
+		static Graphics::IRenderer* renderer;
+		static Audio::IAudioBackend* audio;
 
-		Graphics::CommandListManager myCommandListManager;
+		static Graphics::CommandListManager myCommandListManager;
 	};
 }

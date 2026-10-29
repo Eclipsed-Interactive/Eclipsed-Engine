@@ -102,6 +102,7 @@ namespace Eclipse
 		void Update();
 
 		void SpawnParticle();
+		void Render();
 
 		std::vector<Graphics::ParticleData> myParticles;
 
@@ -139,6 +140,7 @@ namespace Eclipse
 
 	public:
 		void Awake() override;
+		void Render() override;
 		void Update() override;
 
 		void OnDestroy() override;

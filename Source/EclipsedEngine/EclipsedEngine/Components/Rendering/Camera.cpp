@@ -15,15 +15,14 @@ namespace Eclipse
 {
 	void Camera::OnDestroy()
 	{
-		Camera* InternalCamera = MainSingleton::GetPointer<Camera>();
-
-		if (InternalCamera == this)
-			InternalCamera = nullptr;
+		if (MainSingleton::Exists<Camera>() && MainSingleton::GetPointer<Camera>() == this)
+			MainSingleton::RemoveInstance<Camera>();
 	}
 
 	void Camera::OnComponentAdded()
 	{
-		MainSingleton::AddInstance(this);
+		//MainSingleton::AddInstance(this);
+		MainSingleton::AddInstance<Camera>(this);
 
 		OnSceneLoaded();
 	}
@@ -48,13 +47,13 @@ namespace Eclipse
 			created = true;
 		}
 
-		OnDrawGizmos();
-
 		Math::Vector2f Position = gameObject->transform->GetPosition();
 		Math::Vector2f Scale = { 1.7777f, 1.f };
 
 		minBoundsWorld = Position - Scale;
 		maxBoundsWorld = Position + Scale;
+
+		OnDrawGizmos();
 	}
 
 	void Camera::OnDrawGizmos()

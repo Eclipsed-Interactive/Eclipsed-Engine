@@ -8,7 +8,7 @@ namespace Eclipse
     Duration Timerr::myDelta;
     Duration Timerr::myTotal;
 
-    float Timerr::myTimeScale = 0.f;
+    float Timerr::myTimeScale = 1.f;
 
     void Timerr::Tick()
     {

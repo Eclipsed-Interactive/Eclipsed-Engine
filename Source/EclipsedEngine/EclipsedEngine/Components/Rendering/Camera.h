@@ -34,6 +34,7 @@ namespace Eclipse
 
     public:
         static inline bool DrawCameraGizmos = true;
+        static inline Camera* MainCamera = nullptr;
 
     private:
         bool created;

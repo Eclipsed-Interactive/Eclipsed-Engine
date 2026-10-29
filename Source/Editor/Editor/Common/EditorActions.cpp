@@ -28,6 +28,8 @@
 #include "Core/PathManager.h"
 #include "Assets/Core/AssetDatabase.h"
 
+#include <Editor/PlayModeController.h>
+
 namespace Eclipse::Editor
 {
 	void EditorActions::SaveScene()
@@ -51,7 +53,8 @@ namespace Eclipse::Editor
 	{
 		if (true)
 		{
-			SaveScene();
+			if(!PlayModeController::IsInPlaySession())
+				SaveScene();
 		}
 		else if (false)
 		{

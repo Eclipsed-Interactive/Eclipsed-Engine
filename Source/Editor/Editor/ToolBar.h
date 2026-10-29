@@ -7,21 +7,14 @@
 
 namespace Eclipse::Editor
 {
-	enum class PlayMode
-	{
-		Playing,
-		Paused,
-		Stopped
-	};
-
 	class ToolBar
 	{
 	public:
 		static void Draw();
 
-		static void DrawPlayMode(PlayMode& currentMode);
-		static void DrawPausedMode(PlayMode& currentMode);
-		static void DrawStoppedMode(PlayMode& currentMode);
+		static void DrawPlayMode();
+		static void DrawPausedMode();
+		static void DrawStoppedMode();
 
 	public:
 		static inline ImVec2 PlayModeButtonSize = ImVec2(25, 25);

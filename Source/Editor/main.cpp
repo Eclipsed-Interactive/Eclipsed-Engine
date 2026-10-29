@@ -10,33 +10,21 @@ void Test_ImGui();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Eclipse::Editor::Editor editor;
-	Eclipse::Engine engine;
 	editor.EarlyInit();
 
-	engine.Init();
-	editor.Init(engine.GetImGuiContext());
+	editor.Init();
 
-	engine.LateInit();
-
-	while (!engine.ShouldClose())
+	while (!editor.ShouldClose())
 	{
-		engine.BeginFrame();
 		editor.BeginFrame();
 
 		Test_ImGui();
 
-		engine.Update();
-
-		engine.Render();
+		editor.Update();
 		editor.Render();
-
-		engine.LateRender();
-
-		engine.EndFrame();
 		editor.EndFrame();
 	}
 
-	engine.Shutdown();
 	editor.Shutdown();
 }
 

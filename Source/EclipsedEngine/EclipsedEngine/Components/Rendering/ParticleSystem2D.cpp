@@ -73,6 +73,14 @@ void Eclipse::ParticleSystem2D::Awake()
 	}
 }
 
+void Eclipse::ParticleSystem2D::Render()
+{
+	for (auto& Emitter : myEmmiter)
+	{
+		Emitter.Render();
+	}
+}
+
 void Eclipse::ParticleSystem2D::Update()
 {
 	for (auto& Emitter : myEmmiter)
@@ -168,22 +176,7 @@ void Eclipse::Emitter::Update()
 			particle.Velocity.y -= deltaTime;
 
 		particle.Position += particle.Velocity * deltaTime;
-	}*/
-
-
-
-
-
-
-
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-	commandListManager->GetSpriteCommandList().Enqueue([&]()
-		{
-			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
-			Graphics::IDrawer* drawer = renderer.GetDrawer();
-
-			drawer->DrawParticles(myParticles.data(), myParticles.size());
-		});
+*/
 }
 
 void Eclipse::Emitter::SpawnParticle()
@@ -213,4 +206,16 @@ void Eclipse::Emitter::SpawnParticle()
 
 
 	myParticles.push_back(particleData);
+}
+
+void Eclipse::Emitter::Render()
+{
+	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	commandListManager->GetSpriteCommandList().Enqueue([&]()
+		{
+			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+			Graphics::IDrawer* drawer = renderer.GetDrawer();
+
+			drawer->DrawParticles(myParticles.data(), myParticles.size());
+		});
 }

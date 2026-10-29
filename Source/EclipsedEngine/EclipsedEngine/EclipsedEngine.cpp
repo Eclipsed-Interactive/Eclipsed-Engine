@@ -35,6 +35,11 @@
 
 namespace Eclipse
 {
+	Graphics::IRenderer* Engine::renderer = nullptr;
+	Audio::IAudioBackend* Engine::audio = nullptr;
+
+	Graphics::CommandListManager Engine::myCommandListManager ;
+
 	void Engine::Init()
 	{
 		MainSingleton::RegisterInstance<TextManager>();
@@ -72,6 +77,12 @@ namespace Eclipse
 		// IMPORT BUNDLE
 #endif
 	}
+
+	void Engine::UpdateGame()
+	{
+		ComponentManager::UpdateComponents();
+	}
+
 
 	void Engine::LateInit()
 	{
@@ -118,12 +129,6 @@ namespace Eclipse
 		ComponentManager::EditorLateUpdateComponents();
 
 		ComponentManager::EarlyUpdateComponents();
-
-
-
-		// Toffla
-		// Move this to the on play 
-		ComponentManager::UpdateComponents();
 	}
 
 	void Engine::BeginFrame()
