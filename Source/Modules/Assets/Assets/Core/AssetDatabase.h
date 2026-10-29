@@ -41,6 +41,7 @@ namespace Eclipse::Assets
         AssetMeta& GetMetaFromMetaPath(const std::filesystem::path& path);
         AssetMeta& GetProcessedFile(const GUID& guid);
 
+        void RenameFile(const std::filesystem::path& oldPath, const std::filesystem::path& newPath);
 
 
         GUID GetGUIDFromFullPath(const std::filesystem::path& fullpath);

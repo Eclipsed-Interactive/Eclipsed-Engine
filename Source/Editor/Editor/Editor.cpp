@@ -98,5 +98,10 @@ namespace Eclipse::Editor
 		Engine::EndFrame();
 
 		EditorLayout::EndFrame();
+
+		if (!PlayModeController::IsInPlaySession() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		{
+			SceneManager::CheckDirty();
+		}
 	}
 }

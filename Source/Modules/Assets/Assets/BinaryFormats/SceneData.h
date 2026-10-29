@@ -10,5 +10,6 @@ namespace Eclipse::Assets
 		~SceneData();
 
 		std::string sourceBlob;
+		std::string name;
 	};
 }

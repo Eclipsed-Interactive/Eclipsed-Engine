@@ -28,6 +28,12 @@
 
 namespace Eclipse::Assets
 {
+	void AssetManager::ProcessAssetUnloading()
+	{
+
+	}
+
+
 	bool AssetManager::IsFileReady(const std::string& path)
 	{
 		for (int i = 0; i < 5; i++)

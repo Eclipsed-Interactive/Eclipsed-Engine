@@ -35,6 +35,9 @@ namespace Eclipse::Assets
 		static void AddFileChanged(const Editor::FileWatcherEvent& e);
 		static void ProcessFileChanges();
 
+		
+		static void ProcessAssetUnloading();
+
 	private:
 		static bool FileWasChanged(const AssetMeta& meta);
 

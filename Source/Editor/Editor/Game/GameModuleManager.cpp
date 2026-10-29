@@ -49,10 +49,10 @@ namespace Eclipse
 		if (!gameModule)
 			return;
 
-		std::filesystem::remove(dllPath);
-
 		FreeLibrary((HMODULE)gameModule);
 		gameModule = nullptr;
+
+		std::filesystem::remove(dllPath);
 
 		registerReflectedTypesFunc = nullptr;
 		cleanupFunc = nullptr;
@@ -167,6 +167,9 @@ namespace Eclipse
 		}
 
 		dllPath = PathManager::GetEngineRoot() / oldDllPath.filename();
+		if (!std::filesystem::exists(dllPath))
+			return false;
+
 		return std::filesystem::copy_file(oldDllPath, dllPath, std::filesystem::copy_options::overwrite_existing);
 	}
 

@@ -27,6 +27,9 @@
 #include "cereal/cereal.hpp"
 #include "cereal/archives/json.hpp"
 
+#include <Assets/Core/AssetDatabase.h>
+#include <Core/MainSingleton.h>
+
 namespace Eclipse::Editor
 {
 	AssetBrowserViewContextMenu::AssetBrowserViewContextMenu() : AbstractContextMenu("AssetsCtxMenu") {}
@@ -65,10 +68,11 @@ namespace Eclipse::Editor
 
 				std::filesystem::path newName = activePathAtRenaming.parent_path() / tempName;
 
-				std::filesystem::rename(activePathAtRenaming, newName);
-
 				ImGui::CloseCurrentPopup();
 				renameModal = false;
+
+				Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+				database.RenameFile(activePathAtRenaming.generic_string(), newName.generic_string());
 			}
 
 			ImGui::SameLine();

@@ -18,6 +18,13 @@
 #include "Assets/AssetManager.h"
 
 #include "Assets/Assets/PrefabAsset.h"
+#include "Assets/Assets/SceneAsset.h"
+#include "Assets/Assets/TextureAsset.h"
+#include "Assets/Assets/MaterialAsset.h"
+#include "Assets/Assets/Shader/VertexShaderAsset.h"
+#include "Assets/Assets/Shader/PixelShaderAsset.h"
+#include "Assets/Assets/FontAsset.h"
+#include "Assets/Assets/AudioAsset.h"
 
 namespace Eclipse::Replication
 {

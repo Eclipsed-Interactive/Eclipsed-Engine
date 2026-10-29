@@ -12,7 +12,7 @@
 #include "Assets/AssetManager.h"
 
 #include "EclipsedEngine.Core.hpp"
-
+#include <Assets/Assets/PrefabAsset.h>
 
 
 namespace Eclipse

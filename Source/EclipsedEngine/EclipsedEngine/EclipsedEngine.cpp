@@ -111,6 +111,8 @@ namespace Eclipse
 		renderer->EndFrame();
 
 		myCommandListManager.ResetAllCommandLists();
+
+		Assets::AssetManager::EndFrame();
 	}
 
 	void Engine::Update()

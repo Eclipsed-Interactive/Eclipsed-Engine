@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "Core/Math/Vector/Vector3.h"
+#include "Core/Math/CommonMath.h"
 
 namespace Eclipse
 {

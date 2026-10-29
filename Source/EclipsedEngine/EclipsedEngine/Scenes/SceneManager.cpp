@@ -21,12 +21,7 @@ namespace Eclipse
 
 	void SceneManager::RestoreSnapshot(const std::string& snapshot)
 	{
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-		commandListManager->ResetAllCommandLists();
-
-		ComponentManager::Clear();
-
-		PhysicsEngine::CleanUp();
+		Clear();
 
 		SceneSerializer::LoadScene(snapshot);
 	}
@@ -35,6 +30,11 @@ namespace Eclipse
 	{
 		ActiveScene = {};
 
+		Clear();
+	}
+
+	void SceneManager::Clear()
+	{
 		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 		commandListManager->ResetAllCommandLists();
 
@@ -108,6 +108,10 @@ namespace Eclipse
 		Settings::EditorSettings::SetLastActiveScene(guid.ToString());
 
 		SceneSerializer::LoadScene(ActiveScene);
+
+#ifdef ECL_EDITOR
+		MarkClean();
+#endif
 	}
 
 	void SceneManager::Load(Assets::Scene scene)
@@ -119,6 +123,10 @@ namespace Eclipse
 
 		ActiveScene = scene;
 		SceneSerializer::LoadScene(ActiveScene);
+
+#ifdef ECL_EDITOR
+		MarkClean();
+#endif
 	}
 
 	void SceneManager::Load(Assets::GUID guid)
@@ -134,6 +142,10 @@ namespace Eclipse
 			ActiveScene = scene;
 
 			SceneSerializer::LoadScene(ActiveScene);
+
+#ifdef ECL_EDITOR
+			MarkClean();
+#endif
 		}
 		catch(...)
 		{

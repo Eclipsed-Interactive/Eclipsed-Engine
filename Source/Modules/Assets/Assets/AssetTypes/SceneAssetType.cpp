@@ -17,6 +17,7 @@ namespace Eclipse::Assets
 		buffer << in.rdbuf();
 
 		data.source = buffer.str();
+		data.name = file.fileName;
 
 		return data;
 	}
@@ -32,9 +33,13 @@ namespace Eclipse::Assets
 
 		const ImportedScene& _data = std::get<ImportedScene>(data);
 
-		const size_t size = _data.source.size();
-		writer.Write(DATA_SIZE_PAIR(size));
-		writer.Write(_data.source.data(), _data.source.size());
+		const size_t nameSize = _data.name.size();
+		writer.Write(DATA_SIZE_PAIR(nameSize));
+		writer.Write(_data.name.data(), nameSize);
+
+		const size_t blobSize = _data.source.size();
+		writer.Write(DATA_SIZE_PAIR(blobSize));
+		writer.Write(_data.source.data(), blobSize);
 	}
 
 	void SceneAssetType::Load(BinaryReader& reader, const AssetMeta& meta, AssetData* data)
@@ -43,11 +48,17 @@ namespace Eclipse::Assets
 
 		_data->guid = meta.guid;
 
-		size_t size = 0;
-		reader.Read(reinterpret_cast<char*>(&size), sizeof(size_t));
+		size_t blobSize = 0;
+		size_t nameSize = 0;
+		reader.Read(reinterpret_cast<char*>(&nameSize), sizeof(size_t));
 
-		_data->sourceBlob.resize(size);
-		reader.Read(_data->sourceBlob.data(), size);
+		_data->name.resize(nameSize);
+		reader.Read(_data->name.data(), nameSize);
+
+		reader.Read(reinterpret_cast<char*>(&blobSize), sizeof(size_t));
+
+		_data->sourceBlob.resize(blobSize);
+		reader.Read(_data->sourceBlob.data(), blobSize);
 	}
 
 	void SceneAssetType::LoadFromBinary(BinaryReader& reader, const AssetMeta& meta, AssetData* data)
@@ -57,10 +68,16 @@ namespace Eclipse::Assets
 		data->guid = meta.guid;
 		reader.SetRead(meta.offset);
 
-		size_t size = 0;
-		reader.Read(reinterpret_cast<char*>(&size), sizeof(size_t));
+		size_t nameSize = 0;
+		reader.Read(reinterpret_cast<char*>(&nameSize), sizeof(size_t));
 
-		_data->sourceBlob.resize(meta.size);
-		reader.Read(_data->sourceBlob.data(), meta.size - sizeof(size_t));
+		_data->name.resize(nameSize);
+		reader.Read(_data->name.data(), nameSize);
+
+		size_t blobSize = 0;
+		reader.Read(reinterpret_cast<char*>(&blobSize), sizeof(size_t));
+
+		_data->sourceBlob.resize(blobSize);
+		reader.Read(_data->sourceBlob.data(), blobSize);
 	}
 }

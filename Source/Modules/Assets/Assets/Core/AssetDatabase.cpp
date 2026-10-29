@@ -4,8 +4,34 @@
 #include "Metadata/MetaSerializer.h"
 #include "Core/SupportedAssets.h"
 
+#include <Core/PathManager.h>
+#include <AssetImporter.h>
+
 namespace Eclipse::Assets
 {
+	void AssetDatabase::RenameFile(const std::filesystem::path& oldPath, const std::filesystem::path& newPath)
+	{
+		const GUID& guid = fullpathToGuid[oldPath];
+		AssetMeta& meta = guidToAsset[guid];
+
+		meta.fullPath = newPath;
+		meta.fileName = newPath.filename().stem().string();
+		
+		std::filesystem::rename(oldPath, newPath);
+		std::filesystem::rename(oldPath.generic_string() + ".meta", newPath.generic_string() + ".meta");
+
+		fullpathToGuid.insert_or_assign(newPath, guid);
+
+		fullpathToGuid.erase(oldPath);
+
+
+		AssetImporter::ImportFile(meta);
+
+		//fullpathToGuid
+		return;
+	}
+
+
 	void AssetDatabase::Reload()
 	{
 		guidToAsset.clear();
@@ -79,7 +105,7 @@ namespace Eclipse::Assets
 		const AssetType type = GetAssetTypeFromExtension(path.extension().string());
 
 		typeToAssets[type].push_back(file.guid);
-		sourceToAssets[sourcePathToKey[path.generic_string()]].push_back(file.guid);
+		//sourceToAssets[sourcePathToKey[path.generic_string()]].push_back(file.guid);
 
 		return guidToAsset[file.guid];
 	}

@@ -34,10 +34,13 @@ namespace Eclipse::Editor
 {
 	void EditorActions::SaveScene()
 	{
+		SceneManager::MarkClean();
+
 		switch (SceneManager::GetActiveSceneType())
 		{
 		case SceneManager::World:
 			SceneManager::SaveActive();
+
 			break;
 		case SceneManager::Prefab:
 			Assets::Scene scene = SceneManager::GetActive();
@@ -53,8 +56,10 @@ namespace Eclipse::Editor
 	{
 		if (true)
 		{
-			if(!PlayModeController::IsInPlaySession())
+			if (!PlayModeController::IsInPlaySession())
+			{
 				SaveScene();
+			}
 		}
 		else if (false)
 		{

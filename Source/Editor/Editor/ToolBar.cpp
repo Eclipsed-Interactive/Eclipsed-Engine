@@ -30,19 +30,8 @@ namespace Eclipse::Editor
 		ImVec2 workPos = viewport->WorkPos;
 		ImVec2 workSize = viewport->WorkSize;
 
-		ImGui::SetNextWindowPos(
-			ImVec2(
-				workPos.x,
-				workPos.y
-			)
-		);
-
-		ImGui::SetNextWindowSize(
-			ImVec2(
-				workSize.x,
-				ToolBarHeight
-			)
-		);
+		ImGui::SetNextWindowPos(ImVec2(workPos.x, workPos.y));
+		ImGui::SetNextWindowSize(ImVec2(workSize.x, ToolBarHeight));
 
 		ImGuiWindowFlags flags =
 			ImGuiWindowFlags_NoTitleBar |
@@ -58,6 +47,8 @@ namespace Eclipse::Editor
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6.0f, 4.0f));
 
 		ImGui::Begin("##EditorToolbar", nullptr, flags);
+
+		//ImGui::Button(ICON_FA_PAUSE, PlayModeButtonSize);
 
 		switch (PlayModeController::GetPlayMode())
 		{
@@ -97,7 +88,7 @@ namespace Eclipse::Editor
 			PlayModeController::SetPlayMode(PlayMode::Playing);
 		}
 
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f );
+		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f);
 		if (ImGui::Button(ICON_FA_STOP, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Stopped);

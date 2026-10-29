@@ -19,10 +19,12 @@ namespace Eclipse::Assets
 
 			if (data == nullptr) continue;
 
-			if (data->refCount == 0)
+			if (data->refCount <= 0)
 			{
 				AssetCache::Delete(guid);
 			}
 		}
+
+		pendingForDelete.clear();
 	}
 }

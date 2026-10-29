@@ -99,6 +99,7 @@ namespace Eclipse::Assets
 	struct ImportedScene
 	{
 		std::string source;
+		std::string name;
 	};
 
 #pragma endregion

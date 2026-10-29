@@ -12,9 +12,6 @@
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/TransformBuffer.h"
 
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
-
 namespace Eclipse
 {
 	using DirtyFunctionPtr = void (Component::*)();
