@@ -65,6 +65,8 @@ namespace Eclipse
 				GetNextComponentID();
 		}
 
+		unsigned GetComponentID() { return myInstanceComponentID; }
+
 		void SetComponentID(unsigned compID)
 		{
 			myInstanceComponentID = compID;

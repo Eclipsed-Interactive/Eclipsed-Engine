@@ -162,6 +162,7 @@ namespace Eclipse::Editor
 		{
 			if (ImGui::Button("Remove"))
 			{
+				ComponentManager::DeleteComponent(gobjId,0, rightClickedComp->GetComponentID());
 				//Destroy(rightClickedComp);
 				rightClickedComp = nullptr;
 
