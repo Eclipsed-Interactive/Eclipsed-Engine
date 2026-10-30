@@ -16,16 +16,16 @@
 namespace Eclipse
 {
 #ifdef ECLIPSED_NETWORKING
-	void SpriteRenderer2D::sprite_OnRep()
-	{
-		SetSprite(sprite->GetAssetID());
-	}
+	//void SpriteRenderer2D::sprite_OnRep()
+	//{
+	//	SetSprite(Sprite->GetAssetID());
+	//}
 #endif
 
 	void SpriteRenderer2D::SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax)
 	{
-		spriteRectMin = aMin * sprite->GetDimDivOne();
-		spriteRectMax = aMax * sprite->GetDimDivOne();
+		spriteRectMin = aMin * Sprite.GetDimDivOne();
+		spriteRectMax = aMax * Sprite.GetDimDivOne();
 	}
 
 	void SpriteRenderer2D::SetXMirror(bool aMirror)
@@ -46,7 +46,7 @@ namespace Eclipse
 
 	void SpriteRenderer2D::SetSprite(const Assets::Texture& aSprite)
 	{
-		sprite = aSprite;
+		Sprite = aSprite;
 		hasSprite = true;
 
 		//REPLICATEGARANTIED(sprite);
@@ -61,26 +61,26 @@ namespace Eclipse
 
 	void SpriteRenderer2D::SetMaterial(const Assets::Material& aMaterial)
 	{
-		material = aMaterial;
+		Material = aMaterial;
 		hasMaterial = true;
 	}
 
 
 	Assets::Texture SpriteRenderer2D::GetSprite()
 	{
-		return sprite;
+		return Sprite;
 	}
 
 	void SpriteRenderer2D::OnComponentAdded()
 	{
 		PixelPickMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::PIXELPICK_MATERIAL);
 
-		if (material->IsValid()) hasMaterial = true;
-		if (sprite->IsValid()) hasSprite = true;
+		if (Material.IsValid()) hasMaterial = true;
+		if (Sprite.IsValid()) hasSprite = true;
 
 		if (!hasMaterial)
 		{
-			material = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
+			Material = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
 			hasMaterial = true;
 		}
 	}
@@ -131,16 +131,10 @@ namespace Eclipse
 		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
 
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		material->GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		Material.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 
-		//Math::Vector2f scaleMultiplier;
-		//if (sprite->IsValid())
-		//{
-		//	scaleMultiplier = sprite->GetTextureSizeNormilized();
-		//	graphicsDevice->BindTexture(0, sprite);
-		//}
-		//else
-		//	scaleMultiplier = material->GetTexture().GetTextureSizeNormilized();
+		Math::Vector2f scaleMultiplier;
+
 
 
 		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
@@ -157,15 +151,22 @@ namespace Eclipse
 		if (editorBuffer->PixelPicking)
 			graphicsDevice->BindMaterial(PixelPickMaterial);
 		else
-			graphicsDevice->BindMaterial(material);
+			graphicsDevice->BindMaterial(Material);
 #else
 		graphicsDevice->BindMaterial(material);
 #endif
 
+		if (Sprite.IsValid())
+		{
+			scaleMultiplier = Sprite.GetTextureSizeNormilized();
+			graphicsDevice->BindTexture(0, Sprite);
+		}
+		else
+			scaleMultiplier = Material.GetTexture().GetTextureSizeNormilized();
 
 		buffer->SetOrCreateBuffer(1, transformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
-		buffer->SetOrCreateBuffer(5, material->GetBuffer());
+		buffer->SetOrCreateBuffer(5, Material.GetBuffer());
 
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();

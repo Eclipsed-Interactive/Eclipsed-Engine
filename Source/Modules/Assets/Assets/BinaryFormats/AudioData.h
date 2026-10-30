@@ -12,8 +12,14 @@ namespace FMOD {
 namespace Eclipse::Assets
 {
 	struct AudioData : public AssetData {
-		Audio::ISound* sound;
-		
+		~AudioData()
+		{
+			// Runs before members are destroyed, so Data is still valid while FMOD releases the sound.
+			delete sound;
+		}
+
+		Audio::ISound* sound = nullptr;
+
 		AudioStorage Storage = AudioStorage::PCM;
 		AudioFormat Format = AudioFormat::PCM16;
 

@@ -3,7 +3,19 @@
 #include "Assets/Core/SupportedAssets.h"
 #include "ImGui/ImGui.h"
 
-//#include "Editor/Views/EditorField.h"
+#include <Assets/BinaryFormats/MaterialData.h>
+
+#include "cereal/archives/json.hpp"
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <cfloat>
+
+#include "Editor/Common/DragAndDrop.h"
+
+#include <Core/MainSingleton.h>
+#include <Core/PathManager.h>
+#include <Assets/Core/AssetDatabase.h>
 
 namespace Eclipse::Editor
 {
@@ -17,21 +29,22 @@ namespace Eclipse::Editor
 
 	void MaterialInspector::Draw(const InspectableTarget& target)
 	{
-		//AssetTarget asset = std::get<AssetTarget>(target);
+		AssetTarget asset = std::get<AssetTarget>(target);
 
-		//Assets::MaterialData data;
-		//{ // Read material
-		//	std::ifstream in(asset);
-		//	cereal::JSONInputArchive ar(in);
-		//	ar(data);
-		//}
+		Assets::SerializableMaterialData data;
+		{
+			std::ifstream in(asset);
+			cereal::JSONInputArchive ar(in);
+			ar(data);
+		}
 
-		//bool wasChanged = EditorFieldDrawer<Assets::Material, Assets::MaterialData>::DrawEditor(data);
-		//if (wasChanged)
-		//{
-		//	std::ofstream out(asset);
-		//	cereal::JSONOutputArchive ar(out);
-		//	ar(data);
-		//}
+		bool wasChanged = false;
+		
+		if (wasChanged)
+		{ 
+			std::ofstream out(asset);
+			cereal::JSONOutputArchive ar(out);
+			ar(data);
+		}
 	}
 }

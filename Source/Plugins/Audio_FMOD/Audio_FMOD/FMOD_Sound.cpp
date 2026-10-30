@@ -9,6 +9,11 @@
 
 namespace Eclipse::Audio
 {
+	FMOD_Sound::~FMOD_Sound()
+	{
+		if (mySound) mySound->release();
+	}
+
 	void* FMOD_Sound::GetSound()
 	{
 		return mySound;

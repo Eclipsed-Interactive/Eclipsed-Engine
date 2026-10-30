@@ -125,8 +125,6 @@ namespace Eclipse
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		device->BindFrameBuffer(1);
 
-		ComponentManager::AwakeStartComponents();
-
 		ComponentManager::EditorUpdateComponents();
 		ComponentManager::EditorLateUpdateComponents();
 

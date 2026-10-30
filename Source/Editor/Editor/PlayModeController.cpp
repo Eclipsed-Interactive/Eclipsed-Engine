@@ -3,6 +3,8 @@
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "Core/Timer.h"
 
+#include <ECS/ComponentManager.h>
+
 namespace Eclipse
 {
 	bool PlayModeController::StepRequested = false;
@@ -43,8 +45,8 @@ namespace Eclipse
 
 	void PlayModeController::EnterPlay()
 	{
+		ComponentManager::AwakeStartComponents();
 		SceneSnapshot = SceneManager::CaptureSnapshot();
-
 		Timer::SetTimeScale(1.f);
 	}
 
@@ -64,7 +66,7 @@ namespace Eclipse
 	{
 		return CurrentMode == PlayMode::Paused;
 	}
-	
+
 	bool PlayModeController::IsInPlaySession()
 	{
 		return CurrentMode != PlayMode::Stopped;

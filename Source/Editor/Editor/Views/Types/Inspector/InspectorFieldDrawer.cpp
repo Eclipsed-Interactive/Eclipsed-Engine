@@ -11,10 +11,15 @@
 #include <string>
 #include <algorithm>
 #include <filesystem>
+#include <vector>
+#include <cfloat>
 
 #include "Core/Math/Vector/Vector2.h"
 
 #include "Assets/Assets/AudioAsset.h"
+#include "Assets/Assets/TextureAsset.h"
+#include "Assets/Assets/MaterialAsset.h"
+
 #include "Assets/AssetManager.h"
 #include "Assets/Core/AssetDatabase.h"
 
@@ -27,30 +32,31 @@ namespace Eclipse::Editor
 {
 	namespace
 	{
-		// Asset browser payloads are paths relative to the tree they came from (project or engine assets).
-		bool TryGetGUIDFromPayload(const ImGuiPayload* payload, Assets::GUID& outGuid)
+		bool TryGetGUIDFromPayload(const ImGuiPayload* aPayload, Assets::GUID& aOutGuid)
 		{
-			const std::string relativePath(static_cast<const char*>(payload->Data), payload->DataSize);
+			const std::string relativePath(static_cast<const char*>(aPayload->Data), aPayload->DataSize);
 			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 
 			for (const std::filesystem::path& root : { PathManager::GetAssetsPath(), PathManager::GetEngineAssetsPath() })
 			{
 				try
 				{
-					outGuid = database.GetGUIDFromFullPath(root / relativePath);
+					aOutGuid = database.GetGUIDFromFullPath(root / relativePath);
 					return true;
 				}
-				catch (const std::runtime_error&) {}
+				catch (...)
+				{
+
+				}
 			}
 
 			return false;
 		}
 
 		template<typename TAsset>
-		std::string GetAssetDisplayName(const TAsset& asset, const char* typeName)
+		std::string GetDisplayName(const TAsset& asset, const char* typeName)
 		{
 			if (!asset.IsValid()) return std::string("None (") + typeName + ")";
-
 			try
 			{
 				const Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
@@ -62,13 +68,58 @@ namespace Eclipse::Editor
 			}
 		}
 
-		// Unity-style object field: a box showing the asset name that accepts drops from the asset browser.
-		template<typename TAsset>
-		void DrawAssetField(TAsset& asset, Utilities::FileInfo::FileType_ fileType, const char* typeName)
+		bool DrawAssetPicker(const char* popupId, Assets::AssetType assetType, const Assets::GUID& current, Assets::GUID& outGuid)
 		{
-			const char* dndId = DragAndDrop::dnd_id[fileType];
-			const std::string label = GetAssetDisplayName(asset, typeName);
+			if (!ImGui::BeginPopup(popupId)) return false;
 
+			static ImGuiTextFilter filter;
+			if (ImGui::IsWindowAppearing())
+			{
+				filter.Clear();
+				ImGui::SetKeyboardFocusHere();
+			}
+			filter.Draw("##Filter", -FLT_MIN);
+
+			std::vector<const Assets::AssetMeta*> assets;
+			for (const auto& [guid, meta] : MainSingleton::GetInstance<Assets::AssetDatabase>().GetSources())
+			{
+				if (meta.type == assetType && filter.PassFilter(meta.fileName.c_str()))
+					assets.push_back(&meta);
+			}
+			std::sort(assets.begin(), assets.end(), [](const Assets::AssetMeta* a, const Assets::AssetMeta* b) { return a->fileName < b->fileName; });
+
+			bool picked = false;
+			if (ImGui::BeginListBox("##assets", ImVec2(-FLT_MIN, 10.f * ImGui::GetTextLineHeightWithSpacing())))
+			{
+				if (ImGui::Selectable("None", current.IsEmpty()))
+				{
+					outGuid = Assets::GUID();
+					picked = true;
+				}
+
+				for (const Assets::AssetMeta* meta : assets)
+				{
+					ImGui::PushID(meta);
+					if (ImGui::Selectable(meta->fileName.c_str(), meta->guid == current))
+					{
+						outGuid = meta->guid;
+						picked = true;
+					}
+					if (ImGui::IsItemHovered() && !meta->fullPath.empty())
+						ImGui::SetTooltip("%s", meta->fullPath.generic_string().c_str());
+					ImGui::PopID();
+				}
+				ImGui::EndListBox();
+			}
+
+			ImGui::EndPopup();
+			return picked;
+		}
+
+
+		template<typename TAsset>
+		void DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
+		{
 			const ImGuiStyle& style = ImGui::GetStyle();
 			const float clearWidth = ImGui::GetFrameHeight();
 			const float boxWidth = (std::max)(50.f, ImGui::GetContentRegionAvail().x - clearWidth - style.ItemInnerSpacing.x);
@@ -77,26 +128,28 @@ namespace Eclipse::Editor
 			const ImVec2 boxMin = ImGui::GetCursorScreenPos();
 			const ImVec2 boxMax(boxMin.x + boxSize.x, boxMin.y + boxSize.y);
 
-			ImGui::InvisibleButton("##AssetField", boxSize);
-			const bool hovered = ImGui::IsItemHovered();
-
-			// Only highlight when the thing being dragged is actually something we accept.
 			const ImGuiPayload* dragged = ImGui::GetDragDropPayload();
+			const char* dndId = DragAndDrop::dnd_id[aFileType];
 			const bool compatibleDrag = dragged && dragged->IsDataType(dndId);
 
-			ImDrawList* drawList = ImGui::GetWindowDrawList();
-			drawList->AddRectFilled(boxMin, boxMax, ImGui::GetColorU32(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), style.FrameRounding);
-			if (compatibleDrag)
-				drawList->AddRect(boxMin, boxMax, ImGui::GetColorU32(ImGuiCol_DragDropTarget), style.FrameRounding, 0, 1.5f);
+			const bool clicked = ImGui::InvisibleButton("##asset_field", boxSize);
+			const bool isHovered = ImGui::IsItemHovered();
 
-			const ImVec4 textColor = asset.IsValid() ? style.Colors[ImGuiCol_Text] : style.Colors[ImGuiCol_TextDisabled];
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			drawList->AddRectFilled(boxMin, boxMax, ImGui::GetColorU32(isHovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), style.FrameRounding);
+
+			if (compatibleDrag)
+			{
+				drawList->AddRect(boxMin, boxMax, ImGui::GetColorU32(ImGuiCol_DragDropTarget), style.FrameRounding, 0, 1.5f);
+			}
+
+			const std::string label = GetDisplayName(anAsset, aTypeName);
+
+			const ImVec4 textColor = anAsset.IsValid() ? style.Colors[ImGuiCol_Text] : style.Colors[ImGuiCol_TextDisabled];
 			const ImVec2 textPos(boxMin.x + style.FramePadding.x, boxMin.y + style.FramePadding.y);
 			drawList->PushClipRect(boxMin, ImVec2(boxMax.x - style.FramePadding.x, boxMax.y), true);
 			drawList->AddText(textPos, ImGui::GetColorU32(textColor), label.c_str());
 			drawList->PopClipRect();
-
-			if (hovered && asset.IsValid())
-				ImGui::SetTooltip("%s", asset.GetAssetID().ToString().c_str());
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -104,16 +157,23 @@ namespace Eclipse::Editor
 				{
 					Assets::GUID guid;
 					if (TryGetGUIDFromPayload(payload, guid))
-						asset = Assets::AssetManager::Load<TAsset>(guid);
+						anAsset = Assets::AssetManager::Load<TAsset>(guid);
 				}
 				ImGui::EndDragDropTarget();
 			}
 
-			ImGui::SameLine(0.f, style.ItemInnerSpacing.x);
-			ImGui::BeginDisabled(!asset.IsValid());
-			if (ImGui::Button("X##ClearAsset", ImVec2(clearWidth, clearWidth)))
-				asset = TAsset();
-			ImGui::EndDisabled();
+			if (clicked)
+				ImGui::OpenPopup("##AssetPicker");
+
+			ImGui::SetNextWindowPos(ImVec2(boxMin.x, boxMax.y));
+			ImGui::SetNextWindowSize(ImVec2(boxSize.x + style.ItemInnerSpacing.x + clearWidth, 0.f));
+			Assets::GUID picked;
+			if (DrawAssetPicker("##AssetPicker", anAssetType, anAsset.IsValid() ? anAsset.GetAssetID() : Assets::GUID(), picked))
+				anAsset = picked.IsEmpty() ? TAsset() : Assets::AssetManager::Load<TAsset>(picked);
+
+			ImGui::SameLine();
+			if(ImGui::Button("X", ImVec2(clearWidth, clearWidth)))
+				anAsset = TAsset();
 		}
 	}
 
@@ -234,9 +294,28 @@ namespace Eclipse::Editor
 			}
 		);
 
+		Register<Math::Color>([](void* v, const FieldEntry& entry) {
+			
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			ImGui::ColorPicker4("##value", (float*)addr);
+			}
+		);
+
 		Register<Assets::AudioClip>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, "Audio Clip");
+			DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip");
+			}
+		);
+
+		Register<Assets::Texture>([](void* v, const FieldEntry& entry) {
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			DrawAssetField(*reinterpret_cast<Assets::Texture*>(addr), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture");
+			}
+		);
+
+		Register<Assets::Material>([](void* v, const FieldEntry& entry) {
+			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+			DrawAssetField(*reinterpret_cast<Assets::Material*>(addr), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material");
 			}
 		);
 	}

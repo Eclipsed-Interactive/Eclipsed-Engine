@@ -10,6 +10,9 @@ namespace Eclipse
 {
 	void AudioEmitter::Awake()
 	{
+		if (!AudioClip.IsValid())
+			return;
+
 		channel = Audio::AudioManager::GetBackend()->CreateAudioChannel();
 		channel->Play(AudioClip.dataPtr->sound);
 
