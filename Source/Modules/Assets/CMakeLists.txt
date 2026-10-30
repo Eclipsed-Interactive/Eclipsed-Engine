@@ -10,6 +10,7 @@ target_link_libraries(Assets PUBLIC
     FreeType
     OpenGL
     fmod
+    Audio
 )
 
 SetFolder("Modules")

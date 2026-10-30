@@ -2,7 +2,9 @@
 
 #include "fmod/fmod.hpp"
 #include "Core/MainSingleton.h"
+#include <Audio/AudioPluginLoader.h>
 
+#include <Audio/ISound.h>
 
 namespace Eclipse::Assets
 {
@@ -216,12 +218,22 @@ namespace Eclipse::Assets
 
 		FMOD_MODE mode = FMOD_OPENMEMORY | FMOD_OPENRAW;
 
+		FMOD::Sound* sound = nullptr;
 		FMOD_RESULT result = system->createSound(
 			reinterpret_cast<const char*>(_data->Data.data()),
 			mode,
 			&exinfo,
-			&_data->sound
+			&sound
 		);
+
+		if (result != FMOD_OK)
+		{
+			// log it
+			return;
+		}
+
+		_data->sound = Audio::AudioManager::GetBackend()->CreateSound();
+		_data->sound->SetSound(sound);
 	}
 
 	void AudioAssetType::LoadFromBinary(BinaryReader& reader, const AssetMeta& meta, AssetData* data)
@@ -266,11 +278,14 @@ namespace Eclipse::Assets
 
 		FMOD_MODE mode = FMOD_OPENMEMORY | FMOD_OPENRAW;
 
+		_data->sound = Audio::AudioManager::GetBackend()->CreateSound();
+		FMOD::Sound* sound = static_cast<FMOD::Sound*>(_data->sound->GetSound());
+
 		FMOD_RESULT result = system->createSound(
 			reinterpret_cast<const char*>(_data->Data.data()),
 			mode,
 			&exinfo,
-			&_data->sound
+			&sound
 		);
 	}
 }

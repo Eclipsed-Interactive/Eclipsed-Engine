@@ -22,14 +22,20 @@ namespace Eclipse::Audio
 		[[nodiscard]]
 		bool IsInitialized() const override;
 
+	public:
+		IAudioChannel* CreateAudioChannel() override;
+		ISound* CreateSound() override;
+
 	private:
 		void ReleaseStudioSystem();
 		void ResetBackend();
 
-	private:
-		FMOD::System* system = nullptr;
-		FMOD::Studio::System* studioSystem = nullptr;
 
+	public:
+		static FMOD::System* system ;
+		static FMOD::Studio::System* studioSystem ;
+
+	private:
 		bool isInitialized = false;
 	};
 }

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "AudioResult.h"
+#include "IAudioChannel.h"
+#include "ISound.h"
 
 namespace Eclipse::Audio
 {
@@ -8,6 +10,10 @@ namespace Eclipse::Audio
 	{
 	public:
 		virtual ~IAudioBackend() = default;
+
+	public:
+		virtual IAudioChannel* CreateAudioChannel() = 0;
+		virtual ISound* CreateSound() = 0;
 
 	public:
 		virtual AudioError Initialize() = 0;

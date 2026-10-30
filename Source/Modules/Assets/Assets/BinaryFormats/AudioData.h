@@ -3,6 +3,8 @@
 #include "Assets/BinaryFormats/AssetData.h"
 #include "Assets/Core/ImportedData.h"
 
+#include <Audio/ISound.h>
+
 namespace FMOD {
 	class Sound;
 }
@@ -10,7 +12,7 @@ namespace FMOD {
 namespace Eclipse::Assets
 {
 	struct AudioData : public AssetData {
-		FMOD::Sound* sound;
+		Audio::ISound* sound;
 		
 		AudioStorage Storage = AudioStorage::PCM;
 		AudioFormat Format = AudioFormat::PCM16;

@@ -5,8 +5,16 @@
 #include "fmod/fmod_studio.h"
 #include "fmod/fmod_studio.hpp"
 
+#include "FMOD_AudioChannel.h"
+#include "FMOD_Sound.h"
+
+#include <Core/MainSingleton.h>
+
 namespace Eclipse::Audio
 {
+	FMOD::System* FMOD_Backend::system = nullptr;
+	FMOD::Studio::System* FMOD_Backend::studioSystem = nullptr;
+
 	AudioError TranslateFMODError(const FMOD_RESULT result, const AudioError fallback = AudioError::BackendOperationFailed)
 	{
 		switch (result)
@@ -90,6 +98,8 @@ namespace Eclipse::Audio
 			return TranslateFMODError(result);
 		}
 
+		MainSingleton::AddInstance<FMOD::System*>(system);
+
 		isInitialized = true;
 		return AudioError::None;
 	}
@@ -104,6 +114,16 @@ namespace Eclipse::Audio
 	void FMOD_Backend::Shutdown()
 	{
 		ReleaseStudioSystem();
+	}
+
+	IAudioChannel* FMOD_Backend::CreateAudioChannel()
+	{
+		return new FMOD_AudioChannel;
+	}
+
+	ISound* FMOD_Backend::CreateSound()
+	{
+		return new FMOD_Sound;
 	}
 
 	bool FMOD_Backend::IsInitialized() const

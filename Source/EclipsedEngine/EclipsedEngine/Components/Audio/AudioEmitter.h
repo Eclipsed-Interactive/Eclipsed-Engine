@@ -10,8 +10,8 @@
 
 #include "Assets/AssetManager.h"
 
-namespace FMOD {
-	class Channel;
+namespace Eclipse::Audio {
+	class IAudioChannel;
 }
 
 
@@ -24,11 +24,14 @@ namespace Eclipse
 
 	class ECL_API AudioEmitter : public Component
 	{
+		MAKE_REFLECTABLE(AudioEmitter);
+		REFLECTION_FLAG(COMPONENT);
+
 		BASE_SELECTION(AudioEmitter, 0)
 
-	/*public:
+	public:
 		void Awake() override;
-		void OnDestroy() override;
+		/*	void OnDestroy() override;
 
 		void Update() override;
 
@@ -51,16 +54,15 @@ namespace Eclipse
 		void UpdateAudioPosition();*/
 
 	public:
-		SERIALIZED_FIELD(Assets::AudioClip, audioClip);
+		[[SerializeField]]
+		Assets::AudioClip AudioClip;
 
-		SERIALIZED_FIELD_DEFAULT(bool, EnableSpatial, false);
-		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);
-		SERIALIZED_FIELD_DEFAULT(float, volume, 1.f);
-
+		[[SerializeField]] bool EnableSpatial = false;
+		[[SerializeField]] bool playOnAwake = false;
+		[[SerializeField]] float volume = 1.f;
 
 	private:
-		FMOD::Channel* channel = nullptr;
-		bool isPlaying = false;
+		Audio::IAudioChannel* channel;
 	};
 
 }
