@@ -80,7 +80,7 @@ private:
 
 		[[SerializeField]] bool EnableSpatial = false;
 		[[SerializeField]] bool playOnAwake = false;
-		[[SerializeField, OnChange(ApplyVolume), Step(0.0001f), Range(0.f, 1.f)]] float volume = 1.f;
+		[[SerializeField, OnChange(ApplyVolume), Step(0.01f), Range(0.f, 1.f)]] float volume = 1.f;
 
 	private:
 		Audio::IAudioChannel* channel = nullptr;

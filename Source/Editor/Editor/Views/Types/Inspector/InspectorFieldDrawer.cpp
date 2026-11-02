@@ -242,7 +242,7 @@ namespace Eclipse::Editor
 			int data = *reinterpret_cast<int*>(addr);
 
 			bool changed = range
-				? ImGui::DragInt("##value", &data, step, range->min, range->max)
+				? ImGui::SliderInt("##value", &data, range->min, range->max)
 				: ImGui::DragInt("##value", &data, step);
 
 			if (changed) Set(entry.owner, entry.name, v, data);
@@ -261,7 +261,7 @@ namespace Eclipse::Editor
 			float data = *reinterpret_cast<float*>(addr);
 
 			bool changed = range
-				? ImGui::DragFloat("##value", &data, step, range->min, range->max)
+				? ImGui::SliderFloat("##value", &data, range->min, range->max)
 				: ImGui::DragFloat("##value", &data, step);
 
 			if (changed) Set(entry.owner, entry.name, v, data);
@@ -271,7 +271,11 @@ namespace Eclipse::Editor
 
 		Register<bool>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			ImGui::Checkbox("##value", (bool*)addr);
+			bool data = *reinterpret_cast<bool*>(addr);
+
+			bool changed = ImGui::Checkbox("##value", (bool*)addr);
+			if (changed) Set(entry.owner, entry.name, v, data);
+
 			}
 		);
 
@@ -286,7 +290,7 @@ namespace Eclipse::Editor
 			Math::Vector2f data = *reinterpret_cast<Math::Vector2f*>(addr);
 
 			bool changed = range
-				? ImGui::DragFloat2("##value", &data.x, step, range->min, range->max)
+				? ImGui::SliderFloat2("##value", &data.x, range->min, range->max)
 				: ImGui::DragFloat2("##value", &data.x, step);
 
 			if (changed) Set(entry.owner, entry.name, v, data);
@@ -305,7 +309,7 @@ namespace Eclipse::Editor
 			Math::Vector2d data = *reinterpret_cast<Math::Vector2d*>(addr);
 
 			bool changed = range
-				? ImGui::DragScalarN("##value", ImGuiDataType_Double, &data.x, 2, step, &range->min, &range->max)
+				? ImGui::SliderScalarN("##value", ImGuiDataType_Double, &data.x, 2, &range->min, &range->max)
 				: ImGui::DragScalarN("##value", ImGuiDataType_Double, &data.x, 2, step);
 
 			if (changed) Set(entry.owner, entry.name, v, data);
