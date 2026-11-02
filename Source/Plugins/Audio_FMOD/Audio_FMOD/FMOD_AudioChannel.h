@@ -14,10 +14,17 @@ namespace Eclipse::Audio
 	{
 	public:
 		// Playback
-		void Play(ISound* aSound) override;
-		//void Pause() override;
-		//void Resume() override;
-		//void Stop() override;
+		void Play() override;
+		void Pause() override;
+		void Stop() override;
+
+		void SetPlaying(Audio::PlayMode aMode);
+
+		void SetSound(ISound* aSound) override;
+
+	private:
+		void ApplyVolume() override;
+
 		//PlayMode GetPlayMode() const override;
 		//bool IsValid() const override;
 

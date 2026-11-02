@@ -423,6 +423,12 @@ namespace Eclipse::Editor
 		ImGui::Dummy(ImVec2(5, 0));
 		ImGui::SameLine();
 
+		if (!SceneManager::GetActive().IsValid())
+		{
+			ImGui::Text("No active scene");
+			return;
+		}
+
 		ImGui::Text(SceneManager::GetActive().dataPtr->name.c_str());
 
 		if (SceneManager::IsDirty())

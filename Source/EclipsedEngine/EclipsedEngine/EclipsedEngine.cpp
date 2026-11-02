@@ -80,6 +80,7 @@ namespace Eclipse
 
 	void Engine::UpdateGame()
 	{
+		ComponentManager::AwakeStartComponents();
 		ComponentManager::UpdateComponents();
 	}
 

@@ -27,16 +27,18 @@ namespace Eclipse::Audio
 		NotStarted, Playing, Paused, Stopped
 	};
 
-	class IAudioChannel : public AudioVolume
+	class IAudioChannel 
 	{
 	public:
+		IAudioChannel() = default;
 		virtual ~IAudioChannel() = default;
 
+		virtual void SetSound(ISound* aSound) = 0;
+
 		// Playback
-		virtual void Play(ISound* aSound) = 0;
-		//virtual void Pause() = 0;
-		//virtual void Resume() = 0;
-		//virtual void Stop() = 0;
+		virtual void Play() = 0;
+		virtual void Pause() = 0;
+		virtual void Stop() = 0;
 		//virtual PlayMode GetPlayMode() const = 0;
 		//virtual bool IsValid() const = 0;
 		//bool IsPlaying() const { return GetPlayMode() == PlayMode::Playing; }
@@ -46,7 +48,7 @@ namespace Eclipse::Audio
 		//virtual AudioMode GetMode() const = 0;
 
 		//// Mixing
-		//virtual void ApplyVolume() =0 ;
+		virtual void ApplyVolume() = 0;
 		//virtual void SetPitch(float pitch) = 0;
 		//virtual float GetPitch() const = 0;
 		//virtual void SetPan(float pan) = 0; // -1 left 1 right
@@ -69,5 +71,14 @@ namespace Eclipse::Audio
 		//__declspec(property(get = GetPitch, put = SetPitch)) float Pitch;
 		//__declspec(property(get = IsMuted, put = SetMuted)) bool Muted;
 		//__declspec(property(get = IsPlaying)) bool Playing;
+
+	public:
+		float GetVolume() { return myVolume; }
+		void SetVolume(float aVolume) { myVolume = aVolume; ApplyVolume(); }
+
+		__declspec(property(get = GetVolume, put = SetVolume)) float Volume;
+
+	protected:
+		float myVolume = 1.f;
 	};
 }

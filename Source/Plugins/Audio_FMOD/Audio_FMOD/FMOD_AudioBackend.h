@@ -11,6 +11,8 @@ namespace FMOD
 
 namespace Eclipse::Audio
 {
+	class IAudioChannel;
+	class ISound;
 	class FMOD_Backend :  public IAudioBackend
 	{
 	public:

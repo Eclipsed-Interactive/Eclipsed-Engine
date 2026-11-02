@@ -28,6 +28,7 @@
 
 #include "PlayModeController.h"
 
+
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
@@ -78,7 +79,9 @@ namespace Eclipse::Editor
 		Engine::Update();
 
 		if (PlayModeController::ShouldTick())
+		{
 			Engine::UpdateGame();
+		}
 	}
 
 	void Editor::Render()

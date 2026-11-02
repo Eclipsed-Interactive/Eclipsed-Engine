@@ -10,23 +10,111 @@ namespace Eclipse
 {
 	void AudioEmitter::Awake()
 	{
+		Audio::IAudioBackend* backend = Audio::AudioManager::GetBackend();
+
+		if (!backend)
+			return;
+
+		channel = backend->CreateAudioChannel();
+
+		if (!channel)
+			return;
+
+		ApplyAudioClip();
+		ApplyVolume();
+
+		if (playOnAwake && AudioClip.IsValid())
+			Play();
+	}
+
+	void AudioEmitter::OnDestroy()
+	{
+		if (!AudioClip.IsValid() || !channel) 
+			return;
+
+		channel->Stop();
+
+		delete channel;
+		channel = nullptr;
+	}
+
+	void AudioEmitter::Update()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->SetVolume(volume);
+	}
+
+	void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
+	{
+		AudioClip = clip;
+		channel->SetSound(AudioClip.dataPtr->sound);
+
+		ApplyAudioClip();
+	}
+
+	void AudioEmitter::SetVolume(float aVolume)
+	{
+		volume = aVolume;
+		
+		if (!channel)
+			return;
+
+		channel->SetVolume(volume);
+	}
+
+	void AudioEmitter::Play()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->Play();
+	}
+
+	void AudioEmitter::Pause()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->Pause();
+	}
+
+	void AudioEmitter::Stop()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->Stop();
+	}
+
+	float AudioEmitter::GetVolume() const
+	{
+		return volume;
+	}
+
+	void AudioEmitter::ApplyVolume()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->Volume = volume;
+	}
+
+	void AudioEmitter::ApplyAudioClip()
+	{
+		if (!channel)
+			return;
+
+		channel->Stop();
+
 		if (!AudioClip.IsValid())
 			return;
 
-		channel = Audio::AudioManager::GetBackend()->CreateAudioChannel();
-		channel->Play(AudioClip.dataPtr->sound);
+		channel->SetSound(AudioClip.dataPtr->sound);
 
-		//if (playOnAwake)
-		//	Play();
-
-		//Transform2D* trans = gameObject->transform;
-
-		//trans->AddFunctionToRunOnDirtyUpdate(this,
-		//	[this]()
-		//	{
-		//		this->UpdateAudioPosition();
-		//	}
-		//);
+		if (playOnAwake)
+			channel->Play();
 	}
 
 	//void AudioEmitter::OnDestroy()

@@ -16,6 +16,7 @@ namespace Eclipse::Reflection
 	struct REFLECTION_API FieldEntry
 	{
 		std::string name;
+		std::string owner;
 		size_t offset;
 		size_t size;
 

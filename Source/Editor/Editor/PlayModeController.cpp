@@ -45,7 +45,6 @@ namespace Eclipse
 
 	void PlayModeController::EnterPlay()
 	{
-		ComponentManager::AwakeStartComponents();
 		SceneSnapshot = SceneManager::CaptureSnapshot();
 		Timer::SetTimeScale(1.f);
 	}

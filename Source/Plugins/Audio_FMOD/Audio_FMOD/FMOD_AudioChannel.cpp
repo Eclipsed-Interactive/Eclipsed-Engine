@@ -10,12 +10,46 @@
 
 namespace Eclipse::Audio
 {
-	void FMOD_AudioChannel::Play(ISound* aSound)
+	void FMOD_AudioChannel::Play()
 	{		
+		if (!myChannel)
+			return;
+
+		myChannel->setPaused(false);
+	}
+
+	void FMOD_AudioChannel::Pause()
+	{
+		if (!myChannel)
+			return;
+
+		myChannel->setPaused(true);
+	}
+
+	void FMOD_AudioChannel::Stop()
+	{
+		if (!myChannel)
+			return;
+
+		myChannel->stop();
+	}
+
+	void FMOD_AudioChannel::SetSound(ISound* aSound)
+	{
 		FMOD::Sound* fSound = static_cast<FMOD::Sound*>(aSound->GetSound());
 		if (!fSound) return;
 
 		FMOD_Backend::system->playSound(fSound, nullptr, false, &myChannel);
+		myChannel->setPaused(true);
+	}
+
+
+	void FMOD_AudioChannel::ApplyVolume()
+	{
+		if (!myChannel)
+			return;
+
+		myChannel->setVolume(GetVolume());
 	}
 
 	//void Pause() override;

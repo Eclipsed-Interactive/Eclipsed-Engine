@@ -28,6 +28,9 @@
 
 #include "Editor/Common/DragAndDrop.h"
 
+#include "Reflection/Reflection.hpp"
+#include "Reflection/TypeRegistry.h"
+
 namespace Eclipse::Editor
 {
 	namespace
@@ -117,9 +120,30 @@ namespace Eclipse::Editor
 		}
 
 
-		template<typename TAsset>
-		void DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
+		void InvokeOnChange(void* anObject, const Reflection::FieldEntry& anEntry)
 		{
+			if (const Reflection::OnChange* onChange = anEntry.attributeContainer.TryGet<Reflection::OnChange>())
+			{
+				if (onChange->event)
+					onChange->event(anObject);
+			}
+		}
+
+		template<typename TAsset>
+		bool AssetEquals(const TAsset& a, const TAsset& b)
+		{
+			if (a.IsValid() != b.IsValid()) return false;
+			if (!a.IsValid()) return true;
+			return a.GetAssetID() == b.GetAssetID();
+		}
+
+		// Returns true if the asset was changed this frame.
+		template<typename TAsset>
+		bool DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
+		{
+			TAsset newAsset = anAsset;
+			bool assigned = false;
+
 			const ImGuiStyle& style = ImGui::GetStyle();
 			const float clearWidth = ImGui::GetFrameHeight();
 			const float boxWidth = (std::max)(50.f, ImGui::GetContentRegionAvail().x - clearWidth - style.ItemInnerSpacing.x);
@@ -157,7 +181,10 @@ namespace Eclipse::Editor
 				{
 					Assets::GUID guid;
 					if (TryGetGUIDFromPayload(payload, guid))
-						anAsset = Assets::AssetManager::Load<TAsset>(guid);
+					{
+						newAsset = Assets::AssetManager::Load<TAsset>(guid);
+						assigned = true;
+					}
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -169,11 +196,23 @@ namespace Eclipse::Editor
 			ImGui::SetNextWindowSize(ImVec2(boxSize.x + style.ItemInnerSpacing.x + clearWidth, 0.f));
 			Assets::GUID picked;
 			if (DrawAssetPicker("##AssetPicker", anAssetType, anAsset.IsValid() ? anAsset.GetAssetID() : Assets::GUID(), picked))
-				anAsset = picked.IsEmpty() ? TAsset() : Assets::AssetManager::Load<TAsset>(picked);
+			{
+				newAsset = picked.IsEmpty() ? TAsset() : Assets::AssetManager::Load<TAsset>(picked);
+				assigned = true;
+			}
 
 			ImGui::SameLine();
-			if(ImGui::Button("X", ImVec2(clearWidth, clearWidth)))
-				anAsset = TAsset();
+			if (ImGui::Button("X", ImVec2(clearWidth, clearWidth)))
+			{
+				newAsset = TAsset();
+				assigned = true;
+			}
+
+			if (!assigned || AssetEquals(anAsset, newAsset))
+				return false;
+
+			anAsset = newAsset;
+			return true;
 		}
 	}
 
@@ -200,43 +239,33 @@ namespace Eclipse::Editor
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (range)
-			{
-				ImGui::DragInt("##value",
-					(int*)addr,
-					step,
-					range->min,
-					range->max
-				);
-			}
-			else
-			{
-				ImGui::DragInt("##value", (int*)addr, step);
-			}
+			int data = *reinterpret_cast<int*>(addr);
+
+			bool changed = range
+				? ImGui::DragInt("##value", &data, step, range->min, range->max)
+				: ImGui::DragInt("##value", &data, step);
+
+			if (changed) Set(entry.owner, entry.name, v, data);
+
 			}
 		);
 
-		Register<float>([](void* v, const FieldEntry& entry) {
+		Register<float>([](void* v, const FieldEntry& entry) { // works as it should. Copy this to all other.
 			const Range* range = entry.attributeContainer.TryGet<Range>();
 
-			float step = 0.1f;
+			float step = 0.01f;
 			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (range)
-			{
-				ImGui::DragFloat("##value",
-					(float*)addr,
-					step,
-					range->min,
-					range->max
-				);
-			}
-			else
-			{
-				ImGui::DragFloat("##value", (float*)addr, step);
-			}
+			float data = *reinterpret_cast<float*>(addr);
+
+			bool changed = range
+				? ImGui::DragFloat("##value", &data, step, range->min, range->max)
+				: ImGui::DragFloat("##value", &data, step);
+
+			if (changed) Set(entry.owner, entry.name, v, data);
+
 			}
 		);
 
@@ -254,23 +283,18 @@ namespace Eclipse::Editor
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (range)
-			{
-				ImGui::DragFloat2("##value",
-					(float*)addr,
-					step,
-					range->min,
-					range->max
-				);
-			}
-			else
-			{
-				ImGui::DragFloat2("##value", (float*)addr, step);
-			}
+			Math::Vector2f data = *reinterpret_cast<Math::Vector2f*>(addr);
+
+			bool changed = range
+				? ImGui::DragFloat2("##value", &data.x, step, range->min, range->max)
+				: ImGui::DragFloat2("##value", &data.x, step);
+
+			if (changed) Set(entry.owner, entry.name, v, data);
+
 			}
 		);
 
-		Register<Math::Vector2f>([](void* v, const FieldEntry& entry) {
+		Register<Math::Vector2d>([](void* v, const FieldEntry& entry) {
 			const Range* range = entry.attributeContainer.TryGet<Range>();
 
 			float step = 0.1f;
@@ -278,44 +302,45 @@ namespace Eclipse::Editor
 			if (stepAttr) step = stepAttr->step;
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (range)
-			{
-				ImGui::DragFloat2("##value",
-					(float*)addr,
-					step,
-					range->min,
-					range->max
-				);
-			}
-			else
-			{
-				ImGui::DragFloat2("##value", (float*)addr, step);
-			}
+			Math::Vector2d data = *reinterpret_cast<Math::Vector2d*>(addr);
+
+			bool changed = range
+				? ImGui::DragScalarN("##value", ImGuiDataType_Double, &data.x, 2, step, &range->min, &range->max)
+				: ImGui::DragScalarN("##value", ImGuiDataType_Double, &data.x, 2, step);
+
+			if (changed) Set(entry.owner, entry.name, v, data);
+
 			}
 		);
 
 		Register<Math::Color>([](void* v, const FieldEntry& entry) {
-			
+
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			ImGui::ColorPicker4("##value", (float*)addr);
+			Math::Color data = *reinterpret_cast<Math::Color*>(addr);
+
+			bool changed = ImGui::ColorPicker4("##value", &data.r);
+			if (changed) Set(entry.owner, entry.name, v, data);
 			}
 		);
 
 		Register<Assets::AudioClip>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip");
+			if (DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip"))
+				InvokeOnChange(v, entry);
 			}
 		);
 
 		Register<Assets::Texture>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			DrawAssetField(*reinterpret_cast<Assets::Texture*>(addr), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture");
+			if (DrawAssetField(*reinterpret_cast<Assets::Texture*>(addr), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture"))
+				InvokeOnChange(v, entry);
 			}
 		);
 
 		Register<Assets::Material>([](void* v, const FieldEntry& entry) {
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			DrawAssetField(*reinterpret_cast<Assets::Material*>(addr), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material");
+			if (DrawAssetField(*reinterpret_cast<Assets::Material*>(addr), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material"))
+				InvokeOnChange(v, entry);
 			}
 		);
 	}

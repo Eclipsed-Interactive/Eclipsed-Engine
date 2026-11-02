@@ -77,11 +77,11 @@ namespace Eclipse::Reflection
 			<< "\t\t\tTypeEntry{\n"
 			<< "\t\t\t\t.name = \"" << descriptor.Name << "\", \n"
 			<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "),\n"
-			<< "\t\t\t\t.id = Type::GetTypeID<" <<  descriptor.Name << ">(), \n"
+			<< "\t\t\t\t.id = Type::GetTypeID<" << descriptor.Name << ">(), \n"
 			<< "\t\t\t\t.create = [](){ return reinterpret_cast<void*>(new " << descriptor.Name << "); },\n"
 			<< "\t\t\t\t.createAtAddress = [](unsigned char* addr){ return reinterpret_cast<void*>(new (addr)" << descriptor.Name << "); },\n"
 			<< "\t\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); },\n"
-			<< "\t\t\t\t.flag = static_cast<Reflection::ReflectionFlags>("<< static_cast<int>(descriptor.flag) <<")\n"
+			<< "\t\t\t\t.flag = static_cast<Reflection::ReflectionFlags>(" << static_cast<int>(descriptor.flag) << ")\n"
 			<< "\t\t\t}\n"
 			<< "\t\t);\n"
 			<< "\n";
@@ -95,6 +95,7 @@ namespace Eclipse::Reflection
 				<< "\t\t\tFieldEntry entry =\n"
 				<< "\t\t\t{\n"
 				<< "\t\t\t\t.name = \"" << field.Name << "\",\n"
+				<< "\t\t\t\t.owner = \"" << descriptor.Name << "\",\n"
 				<< "\t\t\t\t.offset = offsetof(" << descriptor.Name << ", " << field.Name << "),\n"
 				<< "\t\t\t\t.size = sizeof(" << descriptor.Name << "::" << field.Name << "),\n"
 				<< "\t\t\t\t.type = Type::GetTypeID<decltype(" << descriptor.Name << "::" << field.Name << ")>()\n"
@@ -104,7 +105,14 @@ namespace Eclipse::Reflection
 
 			for (auto attr : field.attributes)
 			{
-				file << "\t\t\tentry.attributeContainer.Add<" << attr.Name << ">(" << attr.Arguments << ");\n";
+				if (attr.Name == "OnChange")
+				{
+					file << "\t\t\tentry.attributeContainer.Add<" << attr.Name << ">(&InvokeMember<&" << descriptor.Name << "::" << attr.Arguments << ", " << descriptor.Name << ">);\n";
+				}
+				else
+				{
+					file << "\t\t\tentry.attributeContainer.Add<" << attr.Name << ">(" << attr.Arguments << ");\n";
+				}
 			}
 
 
