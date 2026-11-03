@@ -53,6 +53,9 @@ namespace Eclipse
 
 	void SceneManager::SaveActive()
 	{
+		if (!ActiveScene.IsValid())
+			return;
+
 		const std::string serializedString = SceneSerializer::SaveScene(true);
 
 		Assets::AssetDatabase& database = MainSingleton::GetInstance< Assets::AssetDatabase>();
