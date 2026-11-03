@@ -49,6 +49,7 @@ namespace Eclipse::Audio
 
 		//// Mixing
 		virtual void ApplyVolume() = 0;
+		virtual void ApplyPan() = 0;
 		//virtual void SetPitch(float pitch) = 0;
 		//virtual float GetPitch() const = 0;
 		//virtual void SetPan(float pan) = 0; // -1 left 1 right
@@ -71,6 +72,8 @@ namespace Eclipse::Audio
 		//__declspec(property(get = GetPitch, put = SetPitch)) float Pitch;
 		//__declspec(property(get = IsMuted, put = SetMuted)) bool Muted;
 		//__declspec(property(get = IsPlaying)) bool Playing;
+		
+
 
 	public:
 		float GetVolume() { return myVolume; }
@@ -80,5 +83,14 @@ namespace Eclipse::Audio
 
 	protected:
 		float myVolume = 1.f;
+
+	public:
+		float GetPan() { return myPan; }
+		void SetPan(float aPan) { myPan = aPan; ApplyPan(); }
+
+		__declspec(property(get = GetPan, put = SetPan)) float Pan;
+
+	protected:
+		float myPan = 0.f;
 	};
 }

@@ -24,6 +24,8 @@ namespace Eclipse
 	private:
 		static void EnterPlay();
 		static void ExitPlay();
+		static void Pause();
+		static void Unpause();
 
 	public:
 		static bool ShouldTick();
@@ -36,6 +38,7 @@ namespace Eclipse
 		static bool StepRequested;
 		static PlayMode CurrentMode;
 		static PlayMode RequestedMode;
+		static PlayMode PreviousMode;
 
 		static std::string SceneSnapshot;
 	};

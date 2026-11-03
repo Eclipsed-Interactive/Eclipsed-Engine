@@ -700,6 +700,22 @@ namespace Eclipse
 		return myEntityIdToEntity;
 	}
 
+	void ComponentManager::OnUnpauseComponents()
+	{
+		for (auto& renderLayer : myComponents)
+			for (auto& component : renderLayer.vector)
+				if (component->HasStarted && component->myIsOwner)
+					component->OnUnpause();
+	}
+
+	void ComponentManager::OnPauseComponents()
+	{
+		for (auto& renderLayer : myComponents)
+			for (auto& component : renderLayer.vector)
+				if (component->HasStarted && component->myIsOwner)
+					component->OnPause();
+	}
+
 	void ComponentManager::AwakeComponents()
 	{
 		for (size_t i = 0; i < myComponentsToStart.size(); ++i)

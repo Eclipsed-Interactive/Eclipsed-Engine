@@ -56,6 +56,16 @@ namespace Eclipse
 		SceneSnapshot.clear();
 	}
 
+	void PlayModeController::Pause()
+	{
+		ComponentManager::OnPauseComponents();
+	}
+
+	void PlayModeController::Unpause()
+	{
+		ComponentManager::OnUnpauseComponents();
+	}
+
 	bool PlayModeController::IsPlaying()
 	{
 		return CurrentMode == PlayMode::Playing;
@@ -76,18 +86,36 @@ namespace Eclipse
 		if (CurrentMode == RequestedMode)
 			return;
 
+		const PlayMode previousMode = CurrentMode;
 		CurrentMode = RequestedMode;
+		StepRequested = false;
 
-		switch (CurrentMode)
+		switch (previousMode)
 		{
-		case Eclipse::PlayMode::Playing:
+		case PlayMode::Stopped:
+			// Stopped -> Playing / Paused: start a new play session.
+			// Nothing has ticked yet, so there is nothing to pause.
 			EnterPlay();
 			break;
-		case Eclipse::PlayMode::Paused:
-			// Pause
+
+		case PlayMode::Playing:
+			if (CurrentMode == PlayMode::Paused)
+				Pause();
+			else if (CurrentMode == PlayMode::Stopped)
+				ExitPlay();
 			break;
-		case Eclipse::PlayMode::Stopped:
-			ExitPlay();
+
+		case PlayMode::Paused:
+			if (CurrentMode == PlayMode::Playing)
+			{
+				Unpause();
+			}
+			else if (CurrentMode == PlayMode::Stopped)
+			{
+				// Let components release paused resources before the scene is restored.
+				Unpause();
+				ExitPlay();
+			}
 			break;
 		}
 	}

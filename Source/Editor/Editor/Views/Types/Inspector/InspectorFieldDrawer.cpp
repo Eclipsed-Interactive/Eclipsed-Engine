@@ -31,6 +31,8 @@
 #include "Reflection/Reflection.hpp"
 #include "Reflection/TypeRegistry.h"
 
+#include "ImGui/imgui_internal.h"
+
 namespace Eclipse::Editor
 {
 	namespace

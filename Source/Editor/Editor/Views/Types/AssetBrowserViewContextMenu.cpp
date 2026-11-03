@@ -10,8 +10,6 @@
 
 #include <fstream>
 
-//#include <shellapi.h>
-
 #include "Editor/Game/GameLoader.h"
 #include "Editor/Game/GameModuleManager.h"
 
@@ -29,6 +27,9 @@
 
 #include <Assets/Core/AssetDatabase.h>
 #include <Core/MainSingleton.h>
+
+#include <Windows.h>
+#include <Shellapi.h>
 
 namespace Eclipse::Editor
 {
@@ -97,8 +98,16 @@ namespace Eclipse::Editor
 
 		if (ImGui::MenuItem("Show in Explorer"))
 		{
-			std::string command = "/select,\"" + activePath.string() + "\"";
-			//ShellExecute(NULL, "open", "explorer.exe", command.c_str(), NULL, 10);
+			std::wstring command = L"/select,\"" + activePath.wstring() + L"\"";
+
+			ShellExecuteW(
+				nullptr,
+				L"open",
+				L"explorer.exe",
+				command.c_str(),
+				nullptr,
+				SW_SHOWNORMAL
+			);
 		}
 
 		if (activePath.empty()) ImGui::BeginDisabled();
@@ -115,7 +124,7 @@ namespace Eclipse::Editor
 
 		if (ImGui::MenuItem("Open"))
 		{
-			//ShellExecute(NULL, "open", activePath.string().c_str(), NULL, NULL, 10);
+			ShellExecute(NULL, "open", activePath.string().c_str(), NULL, NULL, 10);
 		}
 
 		if (ImGui::MenuItem("Delete"))

@@ -22,6 +22,7 @@ namespace Eclipse
 
 		ApplyAudioClip();
 		ApplyVolume();
+		ApplyPan();
 
 		if (playOnAwake && AudioClip.IsValid())
 			Play();
@@ -32,6 +33,7 @@ namespace Eclipse
 		if (!AudioClip.IsValid() || !channel) 
 			return;
 
+		myIsPlaying = false;
 		channel->Stop();
 
 		delete channel;
@@ -43,7 +45,7 @@ namespace Eclipse
 		if (!AudioClip.IsValid() || !channel)
 			return;
 
-		channel->SetVolume(volume);
+		//ApplyVolume();
 	}
 
 	void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
@@ -69,6 +71,7 @@ namespace Eclipse
 		if (!AudioClip.IsValid() || !channel)
 			return;
 
+		myIsPlaying = true;
 		channel->Play();
 	}
 
@@ -77,6 +80,7 @@ namespace Eclipse
 		if (!AudioClip.IsValid() || !channel)
 			return;
 
+		myIsPlaying = false;
 		channel->Pause();
 	}
 
@@ -85,6 +89,7 @@ namespace Eclipse
 		if (!AudioClip.IsValid() || !channel)
 			return;
 
+		myIsPlaying = false;
 		channel->Stop();
 	}
 
@@ -93,12 +98,30 @@ namespace Eclipse
 		return volume;
 	}
 
+	void AudioEmitter::SetPan(float aPan)
+	{
+		pan = aPan;
+
+		if (!channel)
+			return;
+
+		channel->SetPan(pan);
+	}
+
+	float AudioEmitter::GetPan() const
+	{
+		return pan;
+	}
+
 	void AudioEmitter::ApplyVolume()
 	{
 		if (!AudioClip.IsValid() || !channel)
 			return;
 
-		channel->Volume = volume;
+		//channel->Volume = volume; // Linear
+		//channel->Volume = volume * volume * volume; // Cubic
+		//channel->Volume = std::powf(10, ((-60 * (1 - volume)) / 20)); // Decibel
+		channel->Volume = (std::exp(6.9f * volume) - 1.f) / (std::exp(6.9f) - 1.f); // Exponential
 	}
 
 	void AudioEmitter::ApplyAudioClip()
@@ -115,6 +138,27 @@ namespace Eclipse
 
 		if (playOnAwake)
 			channel->Play();
+	}
+
+	void AudioEmitter::ApplyPan()
+	{
+		if (!AudioClip.IsValid() || !channel)
+			return;
+
+		channel->Pan = pan;
+	}
+
+	void AudioEmitter::OnUnpause()
+	{
+		if (myIsPlaying)
+			channel->Play();
+	}
+
+
+	void AudioEmitter::OnPause()
+	{
+		if (myIsPlaying)
+			channel->Pause();
 	}
 
 	//void AudioEmitter::OnDestroy()

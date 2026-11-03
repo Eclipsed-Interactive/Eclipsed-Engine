@@ -89,6 +89,8 @@ namespace Eclipse
 		virtual void Awake() {}
 		virtual void Start() {}
 		virtual void StartNextFrame() {}
+		virtual void OnUnpause() {}
+		virtual void OnPause() {}
 
 		virtual void EditorUpdate() {}
 		virtual void EditorLateUpdate() {}

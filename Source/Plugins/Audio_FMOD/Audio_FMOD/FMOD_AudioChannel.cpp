@@ -52,6 +52,14 @@ namespace Eclipse::Audio
 		myChannel->setVolume(GetVolume());
 	}
 
+	void FMOD_AudioChannel::ApplyPan()
+	{
+		if (!myChannel)
+			return;
+
+		myChannel->setPan(myPan);
+	}
+
 	//void Pause() override;
 	//void Resume() override;
 	//void Stop() override;

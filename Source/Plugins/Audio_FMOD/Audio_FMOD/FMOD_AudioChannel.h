@@ -24,6 +24,7 @@ namespace Eclipse::Audio
 
 	private:
 		void ApplyVolume() override;
+		void ApplyPan() override;
 
 		//PlayMode GetPlayMode() const override;
 		//bool IsValid() const override;

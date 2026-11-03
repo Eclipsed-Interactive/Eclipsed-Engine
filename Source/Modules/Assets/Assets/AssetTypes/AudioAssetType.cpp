@@ -120,7 +120,7 @@ namespace Eclipse::Assets
 		exinfo.cbsize = sizeof(exinfo);
 		exinfo.length = static_cast<unsigned int>(size);
 
-		FMOD_MODE mode = FMOD_OPENMEMORY_POINT;
+		FMOD_MODE mode = FMOD_OPENMEMORY_POINT | FMOD_2D;
 
 		if (_data->Storage == AudioStorage::PCM)
 		{

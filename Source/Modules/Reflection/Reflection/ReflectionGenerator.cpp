@@ -144,7 +144,7 @@ namespace Eclipse::Reflection
 
 		for (auto [id, type] : TypeRegistry::GetAll())
 		{
-			file << "#include \"" << generationPath.generic_string() << "/" << type.Name << ".ref.hpp\"\n";
+			file << "#include \"" << (generationPath / type.Name).generic_string() << ".ref.hpp\"\n";
 		}
 
 		file << "\n";

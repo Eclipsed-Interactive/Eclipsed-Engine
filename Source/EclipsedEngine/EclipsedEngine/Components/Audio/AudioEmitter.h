@@ -40,39 +40,24 @@ namespace Eclipse
 	public:
 		void SetAudioClip(Assets::AudioClip clip);
 
-
 		void Play();
 		void Pause();
 		void Stop();
-
 
 	public:
 		void SetVolume(float aVolume);
 		float GetVolume() const;
 
-
-		/* void Update() override;
-
-public:
-	void SetSpatialMode(bool is3D);
-
-	void Play();
-	void Stop();
-
-	void Resume();
-	void Pause();
-
-	void SetAudioClip(Assets::AudioClip clip);
-
-
-
-private:
-	void InitAudio();
-	void UpdateAudioPosition();*/
+		void SetPan(float aPan);
+		float GetPan() const;
 
 	public:
 		void ApplyVolume();
 		void ApplyAudioClip();
+		void ApplyPan();
+
+		void OnUnpause() override;
+		void OnPause() override;
 
 	public:
 		[[SerializeField, OnChange(ApplyAudioClip)]]
@@ -80,13 +65,15 @@ private:
 
 		[[SerializeField]] bool EnableSpatial = false;
 		[[SerializeField]] bool playOnAwake = false;
-		[[SerializeField, OnChange(ApplyVolume), Step(0.01f), Range(0.f, 1.f)]] float volume = 1.f;
+		[[SerializeField, OnChange(ApplyVolume), Range(0.f, 1.f)]] float volume = 1.f;
+		[[SerializeField, OnChange(ApplyPan), Range(-1.f, 1.f)]] float pan = 0.f;
 
 	private:
 		Audio::IAudioChannel* channel = nullptr;
 
 	private:
 		bool myHasAudioClip = false;
+		bool myIsPlaying = false;
 	};
 
 }

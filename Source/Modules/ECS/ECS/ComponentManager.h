@@ -67,6 +67,8 @@ namespace Eclipse
 
 		static void AwakeStartComponents();
 
+		static void OnPauseComponents();
+		static void OnUnpauseComponents();
 		static void AwakeComponents();
 		static void StartComponents();
 
