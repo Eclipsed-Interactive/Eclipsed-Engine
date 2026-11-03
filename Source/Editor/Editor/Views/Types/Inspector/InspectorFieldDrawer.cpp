@@ -275,7 +275,7 @@ namespace Eclipse::Editor
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
 			bool data = *reinterpret_cast<bool*>(addr);
 
-			bool changed = ImGui::Checkbox("##value", (bool*)addr);
+			bool changed = ImGui::Checkbox("##value", &data);
 			if (changed) Set(entry.owner, entry.name, v, data);
 
 			}
