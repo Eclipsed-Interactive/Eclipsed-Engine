@@ -14,7 +14,6 @@
 #include <vector>
 #include <cfloat>
 
-#include "Core/Math/Vector/Vector2.h"
 
 #include "Assets/Assets/AudioAsset.h"
 #include "Assets/Assets/TextureAsset.h"
@@ -32,6 +31,7 @@
 #include "Reflection/TypeRegistry.h"
 
 #include "ImGui/imgui_internal.h"
+#include "ImGui/imgui_stdlib.h"
 
 namespace Eclipse::Editor
 {
@@ -229,93 +229,46 @@ namespace Eclipse::Editor
 		drawInspectorFuncs[field.type](v, field);
 	}
 
+
+
+
+
+
+
 	void InspectorFieldDrawer::RegisterDefaults()
 	{
 		using namespace Reflection;
 
-		Register<int>([](void* v, const FieldEntry& entry) {
-			const Range* range = entry.attributeContainer.TryGet<Range>();
-
-			float step = 1.f;
-			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-			if (stepAttr) step = stepAttr->step;
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			int data = *reinterpret_cast<int*>(addr);
-
-			bool changed = range
-				? ImGui::SliderInt("##value", &data, range->min, range->max)
-				: ImGui::DragInt("##value", &data, step);
-
-			if (changed) Set(entry.owner, entry.name, v, data);
-
-			}
-		);
-
-		Register<float>([](void* v, const FieldEntry& entry) { // works as it should. Copy this to all other.
-			const Range* range = entry.attributeContainer.TryGet<Range>();
-
-			float step = 0.01f;
-			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-			if (stepAttr) step = stepAttr->step;
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			float data = *reinterpret_cast<float*>(addr);
-
-			bool changed = range
-				? ImGui::SliderFloat("##value", &data, range->min, range->max)
-				: ImGui::DragFloat("##value", &data, step);
-
-			if (changed) Set(entry.owner, entry.name, v, data);
-
-			}
-		);
+		// register all of the numeric types (Uses generic drawer)
+		RegisterNumeric<
+			char, signed char, unsigned char,
+			short, unsigned short,
+			int, unsigned,
+			long, unsigned long,
+			long long, unsigned long long,
+			float, double,
+			Math::Vector2i, Math::Vector2ui, Math::Vector2f, Math::Vector2d,
+			Math::Vector3i, Math::Vector3ui, Math::Vector3f, Math::Vector3d,
+			Math::Vector4i, Math::Vector4ui, Math::Vector4f, Math::Vector4d
+		>();
 
 		Register<bool>([](void* v, const FieldEntry& entry) {
+
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
 			bool data = *reinterpret_cast<bool*>(addr);
 
 			bool changed = ImGui::Checkbox("##value", &data);
 			if (changed) Set(entry.owner, entry.name, v, data);
-
 			}
 		);
 
-		Register<Math::Vector2f>([](void* v, const FieldEntry& entry) {
-			const Range* range = entry.attributeContainer.TryGet<Range>();
-
-			float step = 0.1f;
-			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-			if (stepAttr) step = stepAttr->step;
+		Register<std::string>([](void* v, const FieldEntry& entry) {
 
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			Math::Vector2f data = *reinterpret_cast<Math::Vector2f*>(addr);
+			std::string data = *reinterpret_cast<std::string*>(addr);
 
-			bool changed = range
-				? ImGui::SliderFloat2("##value", &data.x, range->min, range->max)
-				: ImGui::DragFloat2("##value", &data.x, step);
-
+			bool changed = ImGui::InputText("##value", &data);
 			if (changed) Set(entry.owner, entry.name, v, data);
-
-			}
-		);
-
-		Register<Math::Vector2d>([](void* v, const FieldEntry& entry) {
-			const Range* range = entry.attributeContainer.TryGet<Range>();
-
-			float step = 0.1f;
-			const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-			if (stepAttr) step = stepAttr->step;
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			Math::Vector2d data = *reinterpret_cast<Math::Vector2d*>(addr);
-
-			bool changed = range
-				? ImGui::SliderScalarN("##value", ImGuiDataType_Double, &data.x, 2, &range->min, &range->max)
-				: ImGui::DragScalarN("##value", ImGuiDataType_Double, &data.x, 2, step);
-
-			if (changed) Set(entry.owner, entry.name, v, data);
-
 			}
 		);
 
@@ -359,3 +312,25 @@ namespace Eclipse::Editor
 		ImGui::PopStyleColor();
 	}
 }
+
+
+
+
+		//Register<int>([](void* v, const FieldEntry& entry) {
+		//	const Range* range = entry.attributeContainer.TryGet<Range>();
+
+		//	float step = 1.f;
+		//	const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
+		//	if (stepAttr) step = stepAttr->step;
+
+		//	unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
+		//	int data = *reinterpret_cast<int*>(addr);
+
+		//	bool changed = range
+		//		? ImGui::SliderInt("##value", &data, range->min, range->max)
+		//		: ImGui::DragInt("##value", &data, step);
+
+		//	if (changed) Set(entry.owner, entry.name, v, data);
+
+		//	}
+		//);
