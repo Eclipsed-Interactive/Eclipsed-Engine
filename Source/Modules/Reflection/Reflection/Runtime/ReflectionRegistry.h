@@ -36,6 +36,7 @@ namespace Eclipse::Reflection
 
 		ReflectionFlags flag;
 		std::unordered_map<std::string, FieldEntry> fields;
+		std::vector<std::string> fieldOrder; // Fill this in.
 	};
 
 	class REFLECTION_API ReflectionRegistry

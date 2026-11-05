@@ -154,8 +154,7 @@ namespace Eclipse::Reflection
 		}
 	}
 
-	void ReflectionFileScanner::ReflectFile(
-		const std::filesystem::path& path)
+	void ReflectionFileScanner::ReflectFile(const std::filesystem::path& path)
 	{
 		const std::string original = ReadFile(path);
 		const std::string source = MaskNonCode(original);

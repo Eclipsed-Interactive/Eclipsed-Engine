@@ -95,11 +95,13 @@ namespace Eclipse::Editor
 			else
 			{
 				ImGui::PushID(comp);
-				for (const auto& [name, field] : type->fields)
+				for (const auto& fieldName : type->fieldOrder)
 				{
-					ImGui::PushID(name.c_str());
-					ImGui::Text(name.c_str());
+					ImGui::PushID(fieldName.c_str());
+					ImGui::Text(fieldName.c_str());
 					ImGui::SameLine();
+
+					const Reflection::FieldEntry& field = type->fields.at(fieldName);
 					InspectorFieldDrawer::Draw((void*)comp, field);
 					ImGui::PopID();
 				}

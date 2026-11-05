@@ -81,7 +81,17 @@ namespace Eclipse::Reflection
 			<< "\t\t\t\t.create = [](){ return reinterpret_cast<void*>(new " << descriptor.Name << "); },\n"
 			<< "\t\t\t\t.createAtAddress = [](unsigned char* addr){ return reinterpret_cast<void*>(new (addr)" << descriptor.Name << "); },\n"
 			<< "\t\t\t\t.destroy = [](void* data){ delete reinterpret_cast<" << descriptor.Name << "*>(data); },\n"
-			<< "\t\t\t\t.flag = static_cast<Reflection::ReflectionFlags>(" << static_cast<int>(descriptor.flag) << ")\n"
+			<< "\t\t\t\t.flag = static_cast<Reflection::ReflectionFlags>(" << static_cast<int>(descriptor.flag) << "),\n"
+			<< "\t\t\t\t.fieldOrder = {";
+
+		for (int i = 0; i < descriptor.Fields.size(); i++)
+		{
+			file << "\"" << descriptor.Fields[i].Name << "\"";
+
+			if (i < descriptor.Fields.size() - 1) file << ", ";
+		}
+
+			file << "}\n"
 			<< "\t\t\t}\n"
 			<< "\t\t);\n"
 			<< "\n";
