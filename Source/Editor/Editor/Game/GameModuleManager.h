@@ -25,6 +25,10 @@ namespace Eclipse
         static bool DllFileExists(const char* dllPath);
 
     private:
+        static bool RunBuildStep(const std::string& stepName, const std::filesystem::path& batchPath);
+
+        static inline bool hasBuildErrors = false;
+
         static bool BuildDLL();
         static bool RunHeaderTool();
         static bool Compile();

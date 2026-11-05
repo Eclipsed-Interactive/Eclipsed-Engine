@@ -7,6 +7,9 @@
 #include <Windows.h>
 #include "Core/Standard/System/Process.h"
 
+#include <EclipsedEngine/Scenes/SceneManager.h>
+#include <Core/Logger/DebugLogger.h>
+
 namespace Eclipse
 {
 	void* GameModuleManager::gameModule = nullptr;
@@ -19,9 +22,15 @@ namespace Eclipse
 	bool GameModuleManager::TryCompileAndLoad()
 	{
 		if (!BuildDLL())
-			return false;
+		{
+			hasBuildErrors = false;
+			return hasBuildErrors;
+		}
 
 		Load();
+
+		hasBuildErrors = true;
+		return hasBuildErrors;
 	}
 
 	bool GameModuleManager::Load()
@@ -60,7 +69,13 @@ namespace Eclipse
 
 	bool GameModuleManager::Reload()
 	{
-		return TryCompileAndLoad();
+		SceneManager::UnloadActive();
+		const bool s = TryCompileAndLoad();
+		SceneManager::LoadLastActive();
+
+		hasBuildErrors = s;
+
+		return s;
 	}
 
 	bool GameModuleManager::IsLoaded()
@@ -109,6 +124,22 @@ namespace Eclipse
 		return std::filesystem::exists(dllPath);
 	}
 
+	bool GameModuleManager::RunBuildStep(const std::string& stepName, const std::filesystem::path& batchPath)
+	{
+		const std::filesystem::path logPath = PathManager::GetProjectRoot() / "Temp" / (stepName + ".log");
+
+		std::error_code error;
+		std::filesystem::create_directories(logPath.parent_path(), error);
+
+		unsigned long exitCode = 0;
+		if (Process::RunBatchAndWait(batchPath, logPath, exitCode))
+			return true;
+
+		LOG_ERROR("Game " + stepName + " failed (exit code " + std::to_string(exitCode) + "). Log: " + logPath.generic_string());
+
+		return false;
+	}
+
 	bool GameModuleManager::BuildDLL()
 	{
 		if (IsLoaded())
@@ -150,7 +181,7 @@ namespace Eclipse
 	bool GameModuleManager::GenerateCmake()
 	{
 		const std::filesystem::path toolsPath = PathManager::GetProjectRoot() / "Tools";
-		return Process::RunBatchAndWait(toolsPath / "generate.bat", true);
+		return RunBuildStep("generate", toolsPath / "generate.bat");
 	}
 
 	bool GameModuleManager::CopyDllFile()
@@ -192,7 +223,7 @@ namespace Eclipse
 		}
 
 		const std::filesystem::path toolsPath = PathManager::GetProjectRoot() / "Tools";
-		return Process::RunBatchAndWait(toolsPath / "compile.bat", true);
+		return RunBuildStep("compile", toolsPath / "compile.bat");
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "Views/Types/SceneView.h"
 #include "Views/Types/HierarchyView.h"
 #include "Views/Types/SettingsView.h"
+#include "Views/Types/ConsoleView.h"
 
 #include <regex>
 #include "ImGui/imgui.h"
@@ -25,6 +26,7 @@ namespace Eclipse::Editor
 		registry.RegisterView<SceneView>();
 		registry.RegisterView<HierarchyView>();
 		registry.RegisterView<SettingsView>();
+		registry.RegisterView<ConsoleView>();
 	}
 
 

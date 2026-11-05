@@ -28,15 +28,15 @@ namespace Eclipse::Core
 	};
 }
 
-#define CORE_LOG_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Info))
-#define CORE_LOG_WARNING_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Warning))
-#define CORE_LOG_ERROR_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Error))
+#define LOG_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Info))
+#define LOG_WARNING_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Warning))
+#define LOG_ERROR_CODE(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Error))
 
-#define CORE_LOG(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Info))
-#define CORE_LOG_WARNING(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Warning))
-#define CORE_LOG_ERROR(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Error))
+#define LOG(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Info))
+#define LOG_WARNING(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Warning))
+#define LOG_ERROR(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructTextMessage(MESSAGE, Eclipse::DiagnosticSeverity::Error))
 #else
-#define CORE_LOG(MESSAGE)
-#define CORE_LOG_WARNING(MESSAGE)
-#define CORE_LOG_ERROR(MESSAGE)
+#define LOG(MESSAGE)
+#define LOG_WARNING(MESSAGE)
+#define LOG_ERROR(MESSAGE)
 #endif

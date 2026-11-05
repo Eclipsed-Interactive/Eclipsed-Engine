@@ -120,7 +120,7 @@ namespace Eclipse
                     if (msg == "\n" || msg == "\0" || msg == "\r\n") continue;
 
                     if (!msg.empty())
-                        CORE_LOG(msg);
+                        LOG(msg);
                 }
             });
 
@@ -132,7 +132,7 @@ namespace Eclipse
                     if (msg == "\n" || msg == "\0") continue;
 
                     if (!msg.empty())
-                        CORE_LOG_ERROR(msg);
+                        LOG_ERROR(msg);
                 }
             });
 

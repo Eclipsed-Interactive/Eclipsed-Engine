@@ -143,4 +143,66 @@ namespace Eclipse::Process
 		CloseHandle(process.hProcess);
 		return succeeded;
 	}
+
+	CORE_API bool RunBatchAndWait(const std::filesystem::path& batchPath, const std::filesystem::path& logPath, unsigned long& exitCode)
+	{
+		exitCode = 1;
+
+		std::error_code error;
+		const auto absolutePath = std::filesystem::absolute(batchPath, error);
+		if (error)
+			return false;
+
+		const auto absoluteLogPath = std::filesystem::absolute(logPath, error);
+		if (error)
+			return false;
+
+		wchar_t systemDirectory[MAX_PATH]{};
+		const UINT length = GetSystemDirectoryW(systemDirectory, MAX_PATH);
+		if (length == 0 || length >= MAX_PATH)
+			return false;
+
+		const std::wstring executable =
+			std::wstring(systemDirectory) + L"\\cmd.exe";
+
+		std::wstring commandLine =
+			L"\"" + executable + L"\" /D /S /C \"\"" +
+			absolutePath.wstring() + L"\" > \"" +
+			absoluteLogPath.wstring() + L"\" 2>&1 < NUL\"";
+
+		const std::wstring workingDirectory =
+			absolutePath.parent_path().wstring();
+
+		STARTUPINFOW startup{};
+		startup.cb = sizeof(startup);
+
+		PROCESS_INFORMATION process{};
+
+		if (!CreateProcessW(
+			executable.c_str(),
+			commandLine.data(),
+			nullptr,
+			nullptr,
+			FALSE,
+			CREATE_NO_WINDOW,
+			nullptr,
+			workingDirectory.c_str(),
+			&startup,
+			&process))
+		{
+			return false;
+		}
+
+		CloseHandle(process.hThread);
+
+		DWORD code = 1;
+		const bool finished =
+			WaitForSingleObject(process.hProcess, INFINITE) == WAIT_OBJECT_0 &&
+			GetExitCodeProcess(process.hProcess, &code);
+
+		CloseHandle(process.hProcess);
+
+		exitCode = code;
+		return finished && code == 0;
+	}
 }

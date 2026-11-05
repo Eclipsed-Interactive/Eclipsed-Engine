@@ -17,4 +17,14 @@ namespace Eclipse::Process
 	CORE_API bool RunAndWait(const char* executablePath, const char* const* arguments, int argumentCount, bool showConsole = false);
 
 	CORE_API bool RunBatchAndWait(const std::filesystem::path& batchPath, bool showConsole = false);
+
+	/// <summary>
+	/// Runs a batch file without a console window and waits until it finishes.
+	/// Stdout and stderr are written to logPath (overwritten), stdin is NUL so 'pause' does not block.
+	/// </summary>
+	/// <param name="batchPath">The path to the batch file. Its directory is used as the working directory.</param>
+	/// <param name="logPath">The file that receives all output from the batch file.</param>
+	/// <param name="exitCode">Receives the exit code of the batch file.</param>
+	/// <returns>True if the batch file ran and returned exit code 0, false otherwise.</returns>
+	CORE_API bool RunBatchAndWait(const std::filesystem::path& batchPath, const std::filesystem::path& logPath, unsigned long& exitCode);
 }
