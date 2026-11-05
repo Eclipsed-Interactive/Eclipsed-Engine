@@ -277,7 +277,7 @@ namespace Eclipse::Editor
 			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
 			Math::Color data = *reinterpret_cast<Math::Color*>(addr);
 
-			bool changed = ImGui::ColorPicker4("##value", &data.r);
+			bool changed = ImGui::ColorEdit4("##value", &data.r);
 			if (changed) Set(entry.owner, entry.name, v, data);
 			}
 		);
