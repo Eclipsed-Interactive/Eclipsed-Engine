@@ -98,17 +98,13 @@ namespace Eclipse
 	class Emitter
 	{
 	public:
-		void Init();
 		void Update();
 
-		void SpawnParticle();
-		void Render();
-
-		std::vector<Graphics::ParticleData> myParticles;
+		//std::vector<Graphics::ParticleData> myParticles;
 
 		Math::Vector2f Gravity = {0, -1.f};
 
-		float SpawnInterval = 0.000003f;
+		float SpawnInterval = 100.f;
 		float CurrentTime = 0;
 		Math::Vector2f SpawnPosition = {0, 0};
 		Math::Vector2f ActivePosition = {0, 0};
@@ -126,9 +122,6 @@ namespace Eclipse
 			float StartLifetimeMin = 2.5f;
 			float StartLifetimeMax = 2.5f;
 		} StartData;
-
-	private:
-		unsigned SSBOID;
 	};
 
 	class ParticleSystem2D : public Component

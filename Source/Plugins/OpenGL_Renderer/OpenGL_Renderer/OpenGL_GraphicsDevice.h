@@ -29,6 +29,8 @@ namespace Eclipse::Graphics::OpenGL
 		TextSprite* CreateTextSprite() override;
 		ParticleDrawer* CreateParticleDrawer() override;
 
+		void CreateParticleShaderStorageBufferObject(unsigned& ParticleDataSSBO, unsigned& FreeListSSBO);
+
 	public:
 		void BindTexture(unsigned textureIndex) override;
 		void BindTexture(unsigned slot, unsigned textureIndex) override;

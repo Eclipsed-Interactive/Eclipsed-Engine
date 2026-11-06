@@ -19,20 +19,25 @@
 
 void Eclipse::ParticleSystem2D::Awake()
 {
-	//{
-	//	Emitter& emitter = myEmmiter.emplace_back();
-	//	emitter.SpawnPosition = { 2.f, 0.8f };
-	//	emitter.SpawnShape = new CircleSpawnShape(0.25f);
+	{
+		Emitter& emitter2 = myEmmiter.emplace_back();
+		emitter2.SpawnPosition = { 6.f, 3.8f };
+		Emitter& emitter1 = myEmmiter.emplace_back();
+		emitter1.SpawnPosition = { -4.f, -2.f };
+		Emitter& emitter = myEmmiter.emplace_back();
+		emitter.SpawnPosition = { 2.f, -0.8f };
 
-	//	emitter.StartData.StartLifetimeMin = 1.8f;
-	//	emitter.StartData.StartLifetimeMax = 2.5f;
+		emitter.SpawnShape = new CircleSpawnShape(0.25f);
 
-	//	emitter.StartData.StartVelocityMin.x = -0.5f;
-	//	emitter.StartData.StartVelocityMin.y = 1.f;
+		emitter.StartData.StartLifetimeMin = 1.8f;
+		emitter.StartData.StartLifetimeMax = 2.5f;
 
-	//	emitter.StartData.StartVelocityMax.x = 0.5f;
-	//	emitter.StartData.StartVelocityMax.y = 1.5f;
-	//}
+		emitter.StartData.StartVelocityMin.x = -0.5f;
+		emitter.StartData.StartVelocityMin.y = 1.f;
+
+		emitter.StartData.StartVelocityMax.x = 0.5f;
+		emitter.StartData.StartVelocityMax.y = 1.5f;
+	}
 
 	{
 		Emitter& emitter = myEmmiter.emplace_back();
@@ -66,19 +71,18 @@ void Eclipse::ParticleSystem2D::Awake()
 
 	//	emitter.Gravity = { 0.f, 0.f};
 	//}
-
-	for (auto& Emitter : myEmmiter)
-	{
-		Emitter.Init();
-	}
 }
 
 void Eclipse::ParticleSystem2D::Render()
 {
-	for (auto& Emitter : myEmmiter)
-	{
-		Emitter.Render();
-	}
+	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	commandListManager->GetSpriteCommandList().Enqueue([&]()
+		{
+			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+			Graphics::IDrawer* drawer = renderer.GetDrawer();
+
+			drawer->DrawParticles();
+		});
 }
 
 void Eclipse::ParticleSystem2D::Update()
@@ -88,6 +92,24 @@ void Eclipse::ParticleSystem2D::Update()
 		Emitter.ActivePosition = gameObject->transform->GetPosition() + Emitter.SpawnPosition;
 		Emitter.Update();
 	}
+
+
+	Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+	Graphics::IGraphicsBuffer* GraphicsBuffer = renderer.GetGraphicsBuffer();
+	Graphics::IComputer* computer = renderer.GetComputer();
+
+	SharedGPUParticlesBuffer* sharedGpuParticleBuffer;
+	GraphicsBuffer->GetBuffer<SharedGPUParticlesBuffer>(sharedGpuParticleBuffer);
+
+	float deltaTime = Eclipse::Timer::GetDeltaTime();
+
+	sharedGpuParticleBuffer->Gravity = Math::Vector3f(0, -1, 0.f);
+	sharedGpuParticleBuffer->DeltaTime = deltaTime;
+	sharedGpuParticleBuffer->FrameSeed++;
+
+	GraphicsBuffer->SetOrCreateBuffer<SharedGPUParticlesBuffer>(1);
+
+	computer->ComputeParticleUpdate();
 }
 
 void Eclipse::ParticleSystem2D::OnDestroy()
@@ -98,124 +120,25 @@ void Eclipse::ParticleSystem2D::OnDestroy()
 	}
 }
 
-void Eclipse::Emitter::Init()
-{
-	Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
-	Graphics::IComputer* computer = renderer.GetComputer();
-
-	SSBOID = computer->CreateNewShaderStorageBufferObject(myParticles.data(), myParticles.size());
-}
-
 void Eclipse::Emitter::Update()
 {
-	if (CurrentTime >= SpawnInterval)
-	{
-		int particlesToSpawn = CurrentTime / SpawnInterval;
-
-		for (int i = 0; i < particlesToSpawn; i++)
-		{
-			SpawnParticle();
-		}
-
-		CurrentTime = 0;
-	}
-
-	float deltaTime = Eclipse::Timer::GetDeltaTime();
-
-	CurrentTime += deltaTime;
-
-
 	Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 	Graphics::IGraphicsBuffer* GraphicsBuffer = renderer.GetGraphicsBuffer();
+	Graphics::IComputer* computer = renderer.GetComputer();
+
+	float deltaTime = Eclipse::Timer::GetDeltaTime();
+	CurrentTime += SpawnInterval * deltaTime;
+	unsigned ToSpawn = (unsigned)CurrentTime;
+	CurrentTime -= ToSpawn;
 
 	SharedGPUParticlesBuffer* sharedGpuParticleBuffer;
 	GraphicsBuffer->GetBuffer<SharedGPUParticlesBuffer>(sharedGpuParticleBuffer);
 
-	sharedGpuParticleBuffer->DeltaTime = deltaTime;
-	sharedGpuParticleBuffer->Gravity = Gravity;
+	sharedGpuParticleBuffer->EmitterPosition = Math::Vector3f(ActivePosition.x, ActivePosition.y, 0.f);
+	sharedGpuParticleBuffer->SpawnCount = ToSpawn;
 
 	GraphicsBuffer->SetOrCreateBuffer<SharedGPUParticlesBuffer>(1);
 
-
-	Graphics::IComputer* computer = renderer.GetComputer();
-	computer->ComputeParticleUpdate(myParticles.data(), myParticles.size(), SSBOID);
-
-	for (int i = 0; i < myParticles.size(); i++)
-	{
-		Graphics::ParticleData& particle = myParticles[i];
-
-		if (particle.LifeTime <= 0)
-		{
-			myParticles[i] = myParticles.back();
-			myParticles.pop_back();
-			i--;
-
-			continue;
-		}
-	}
-
-
-
-
-
-	/*	for (int i = 0; i < myParticles.size(); i++)
-	{
-		Graphics::ParticleData& particle = myParticles[i];
-
-		if (particle.LifeTime <= 0)
-		{
-			myParticles[i] = myParticles.back();
-			myParticles.pop_back();
-			i--;
-
-			continue;
-		}
-
-		particle.LifeTime -= deltaTime;
-
-			particle.Velocity.y -= deltaTime;
-
-		particle.Position += particle.Velocity * deltaTime;
-*/
-}
-
-void Eclipse::Emitter::SpawnParticle()
-{
-	Graphics::ParticleData particleData;
-
-	Math::Vector2f SpawnShapePosition(0, 0);
-	if (SpawnShape)
-		SpawnShapePosition = SpawnShape->GetSpawnPosition();
-
-	particleData.Position = ActivePosition + SpawnShapePosition + StartData.StartPosition;
-
-	particleData.LifeTime = 3.f;//Math::Random::RandRange(StartData.StartLifetimeMin, StartData.StartLifetimeMax);
-
-	if (EmmiterShape)
-	{
-		Math::Vector2f Veclocity = EmmiterShape->GetStartVelocity();
-
-		particleData.Velocity.x = Veclocity.x * Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
-		particleData.Velocity.y = Veclocity.y * Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
-	}
-	else
-	{
-		particleData.Velocity.x = Math::Random::RandRange(StartData.StartVelocityMin.x, StartData.StartVelocityMax.x);
-		particleData.Velocity.y = Math::Random::RandRange(StartData.StartVelocityMin.y, StartData.StartVelocityMax.y);
-	}
-
-
-	myParticles.push_back(particleData);
-}
-
-void Eclipse::Emitter::Render()
-{
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-	commandListManager->GetSpriteCommandList().Enqueue([&]()
-		{
-			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
-			Graphics::IDrawer* drawer = renderer.GetDrawer();
-
-			drawer->DrawParticles(myParticles.data(), myParticles.size());
-		});
+	if (ToSpawn)
+		computer->ComputeParticleSpawning(ToSpawn);
 }

@@ -1,0 +1,37 @@
+#version 460 core
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+
+in vec4 vColor[];
+in vec2 vCameraScale[];
+in float vScale[];
+in float vRotation[];
+in float vResolutionRatio[];
+in float vLifeTime[];
+
+out vec4 gColor;
+
+void main()
+{
+    if(vLifeTime[0] <= 0.0)
+        return;
+
+    gColor = vColor[0];
+
+    float c = cos(vRotation[0]);
+    float s = sin(vRotation[0]);
+    mat2 rot = mat2(c, s, -s, c);
+
+    float halfSize = vScale[0] * 0.5;
+    vec2 corners[4] = vec2[4](vec2(-halfSize, halfSize), vec2(-halfSize, -halfSize), vec2(halfSize, halfSize), vec2(halfSize, -halfSize));
+
+    for (int i = 0; i < 4; ++i)
+    {
+        vec2 offset = rot * corners[i] * vCameraScale[0];
+        offset.x *= vResolutionRatio[0];
+        gl_Position = gl_in[0].gl_Position + vec4(offset, 0.0, 0.0);
+        EmitVertex();
+    }
+    EndPrimitive();
+};

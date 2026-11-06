@@ -2,6 +2,12 @@
 
 #include "OpenGL/glad/glad.h"
 
+#include <filesystem>
+#include <Core/PathManager.h>
+#include <fstream>
+
+#include "Renderer/ParticleCommon.h"
+
 namespace Eclipse::Graphics::OpenGL
 {
 	void OpenGL_GraphicsDevice::Clear(ClearFlags flags, const Math::Color& color, float depth, unsigned char stencil)
@@ -156,131 +162,30 @@ namespace Eclipse::Graphics::OpenGL
 		return sprite;
 	}
 
-	static const char* particleVTXShaderSource =
-		"#version 460 core\n"
-		"layout(location = 0)in vec2 Position;\n"
-		"layout(location = 1)in vec2 Scale;\n"
-		"layout(location = 2)in float Rotation;\n"
-		"layout(location = 3)in float Trash;\n"
-
-		"layout(std140,binding=0) uniform CameraBuffer\n"
-		"{\n"
-		"vec2 cameraPosition;\n"
-		"vec2 cameraScale;\n"
-		"float cameraRotation;\n\n"
-		"float resolutionRatio;\n"
-		"};\n"
-
-		"out vec2 vScale;\n"
-		"out float vRotation;\n"
-		"out vec2 vCameraScale;\n"
-		"out float vResolutionRatio;\n"
-
-		"void main()\n"
-		"{\n"
-		"vScale = Scale;\n"
-		"vRotation = cameraRotation + Rotation;\n"
-		"vCameraScale = cameraScale;\n"
-		"vResolutionRatio = resolutionRatio;\n"
-
-		"vec2 vtxPos = (Position - cameraPosition) * cameraScale;\n"
-		"vtxPos.x *= resolutionRatio;\n"
-		"gl_Position = vec4(vtxPos, 0, 1);\n"
-		"}\n";
-
-	static const char* particleGeometryShaderSource =
-		"#version 460 core\n"
-		"layout(points) in;\n"
-		"layout(triangle_strip, max_vertices = 4) out;\n"
-
-		"in vec2 vScale[];\n"
-		"in float vRotation[];\n"
-		"in vec2 vCameraScale[];\n"
-		"in float vResolutionRatio[];\n"
-
-		"void main()\n"
-		"{\n"
-		"float c = cos(vRotation[0]);\n"
-		"float s = sin(vRotation[0]);\n"
-		"mat2 rot = mat2(c, s, -s, c);\n"
-
-		"vec2 halfSize = vScale[0] * 0.5;\n"
-		"vec2 corners[4] = vec2[4](vec2(-halfSize.x, halfSize.y), vec2(-halfSize.x, -halfSize.y), vec2(halfSize.x, halfSize.y), vec2(halfSize.x, -halfSize.y));\n"
-
-		"for (int i = 0; i < 4; ++i)\n"
-		"{\n"
-		"vec2 offset = rot * corners[i] * vCameraScale[0];\n"
-		"offset.x *= vResolutionRatio[0];\n"
-		"gl_Position = gl_in[0].gl_Position + vec4(offset, 0.0, 0.0);\n"
-		"EmitVertex();\n"
-		"}\n"
-		"EndPrimitive();\n"
-		"}\n";
-
-	static const char* particlePixelShaderSource =
-		"#version 460 core\n"
-		"out vec4 frag_colour;\n"
-		"void main()\n"
-		"{\n"
-		"frag_colour = vec4(1, 1, 1, 1);\n"
-		"}\n";
-
-
-	static const char* particleComputeVTXShaderSource =
-		"#version 430\n"
-		"layout(local_size_x = 64) in;\n"
-
-		"layout(std140,binding=1) uniform SharedGPUParticlesBuffer\n"
-		"{\n"
-		"vec2 Gravity;\n"
-		"float DeltaTime;\n"
-		"float Trash;\n"
-		"};\n"
-
-		"struct Particle\n" 
-		"{\n"
-		"vec2  Position;\n"
-		"vec2  Velocity;\n"
-		"vec2  Scale;\n"
-		"float Rotation;\n"
-		"float LifeTime;\n"
-		"};\n"
-
-		"layout(std430, binding = 0) buffer Data\n"
-		"{\n"
-			"Particle particle[];\n"
-		"};\n"
-
-		"void main()\n"
-		"{\n"
-		"uint i = gl_GlobalInvocationID.x;\n"
-		"particle[i].Velocity += Gravity * DeltaTime;\n"
-		"particle[i].Position += particle[i].Velocity * DeltaTime;\n"
-		"particle[i].LifeTime -= DeltaTime;\n"
-
-		"}\n";
-
 
 	ParticleDrawer* OpenGL_GraphicsDevice::CreateParticleDrawer()
 	{
 		ParticleDrawer* particleDrawer = new ParticleDrawer;
 
+		CreateParticleShaderStorageBufferObject(particleDrawer->GetParticleDataSSBOID(), particleDrawer->GetFreeListSSBOID());
+
 		glGenVertexArrays(1, &particleDrawer->GetBufferID());
 		glBindVertexArray(particleDrawer->GetBufferID());
 
-		glGenBuffers(1, &particleDrawer->GetVertexBufferID());
-		glBindBuffer(GL_ARRAY_BUFFER, particleDrawer->GetVertexBufferID());
+		glBindBuffer(GL_ARRAY_BUFFER, particleDrawer->GetParticleDataSSBOID());
 
 		{
-			const GLsizei stride = sizeof(ParticleData);
+			const GLsizei stride = sizeof(Particles::ParticleData);
 
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Position));
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Scale));
-			glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(ParticleData, Rotation));
+			glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Position));
+			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Velocity));
+			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, color));
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, MaxLife));
 
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
+			glEnableVertexAttribArray(3);
 		}
 
 		unsigned& VtxShaderID = particleDrawer->GetVTXShaderID();
@@ -305,19 +210,55 @@ namespace Eclipse::Graphics::OpenGL
 			};
 
 		VtxShaderID = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(VtxShaderID, 1, &particleVTXShaderSource, NULL);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleShader.vglsl";
+			std::fstream inputStream(AssetPath, std::ios::in);
+
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(VtxShaderID, 1, &src, NULL);
+		}
 		glCompileShader(VtxShaderID);
 		checkShader(VtxShaderID, "Vertex");
 
+
 		GeoShaderID = glCreateShader(GL_GEOMETRY_SHADER);
-		glShaderSource(GeoShaderID, 1, &particleGeometryShaderSource, NULL);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleShader.gglsl";
+			std::fstream inputStream(AssetPath, std::ios::in);
+
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(GeoShaderID, 1, &src, NULL);
+		}
 		glCompileShader(GeoShaderID);
 		checkShader(GeoShaderID, "Geometry");
 
+
 		PxShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(PxShaderID, 1, &particlePixelShaderSource, NULL);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleShader.pglsl";
+			std::fstream inputStream(AssetPath, std::ios::in);
+
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(PxShaderID, 1, &src, NULL);
+		}
 		glCompileShader(PxShaderID);
 		checkShader(PxShaderID, "Fragment");
+
 
 		ProgramID = glCreateProgram();
 		glAttachShader(ProgramID, VtxShaderID);
@@ -339,30 +280,97 @@ namespace Eclipse::Graphics::OpenGL
 
 		glBindVertexArray(0);
 
-		unsigned& ComputeVtxShaderID = particleDrawer->GetComputeVTXShaderID();
-		unsigned& ComputeProgramID = particleDrawer->GetComputeProgramID();
+		unsigned& ProgressComputeShaderID = particleDrawer->GetProgressComputeShaderID();
+		unsigned& ProgressParticleProgram = particleDrawer->GetProgressProgramID();
 
-		ComputeVtxShaderID = glCreateShader(GL_COMPUTE_SHADER);
-		glShaderSource(ComputeVtxShaderID, 1, &particleComputeVTXShaderSource, NULL);
-		glCompileShader(ComputeVtxShaderID);
-		checkShader(ComputeVtxShaderID, "Compute");
 
-		ComputeProgramID = glCreateProgram();
-		glAttachShader(ComputeProgramID, ComputeVtxShaderID);
-		glLinkProgram(ComputeProgramID);
+		ProgressComputeShaderID = glCreateShader(GL_COMPUTE_SHADER);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleProgressShader.cglsl";
+			std::fstream inputStream(AssetPath, std::ios::in);
 
-		glGetProgramiv(ComputeProgramID, GL_LINK_STATUS, &linked);
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(ProgressComputeShaderID, 1, &src, NULL);
+		}
+		glCompileShader(ProgressComputeShaderID);
+		checkShader(ProgressComputeShaderID, "Compute");
+
+
+		ProgressParticleProgram = glCreateProgram();
+		glAttachShader(ProgressParticleProgram, ProgressComputeShaderID);
+		glLinkProgram(ProgressParticleProgram);
+
+		glGetProgramiv(ProgressParticleProgram, GL_LINK_STATUS, &linked);
 		if (!linked)
 		{
 			GLint len = 0;
-			glGetProgramiv(ComputeProgramID, GL_INFO_LOG_LENGTH, &len);
+			glGetProgramiv(ProgressParticleProgram, GL_INFO_LOG_LENGTH, &len);
 			std::string log(len > 1 ? len : 1, '\0');
-			glGetProgramInfoLog(ComputeProgramID, len, NULL, log.data());
+			glGetProgramInfoLog(ProgressParticleProgram, len, NULL, log.data());
+			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
+			throw;
+		}
+
+		unsigned& SpawningComputeShaderID = particleDrawer->GetSpawningComputeShaderID();
+		unsigned& SpawningParticleProgram = particleDrawer->GetSpawnProgramID();
+
+		SpawningComputeShaderID = glCreateShader(GL_COMPUTE_SHADER);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleSpawnShader.cglsl";
+			std::fstream inputStream(AssetPath, std::ios::in);
+
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(SpawningComputeShaderID, 1, &src, NULL);
+		}
+		glCompileShader(SpawningComputeShaderID);
+		checkShader(SpawningComputeShaderID, "Compute");
+
+
+		SpawningParticleProgram = glCreateProgram();
+		glAttachShader(SpawningParticleProgram, SpawningComputeShaderID);
+		glLinkProgram(SpawningParticleProgram);
+
+		glGetProgramiv(SpawningParticleProgram, GL_LINK_STATUS, &linked);
+		if (!linked)
+		{
+			GLint len = 0;
+			glGetProgramiv(SpawningParticleProgram, GL_INFO_LOG_LENGTH, &len);
+			std::string log(len > 1 ? len : 1, '\0');
+			glGetProgramInfoLog(SpawningParticleProgram, len, NULL, log.data());
 			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
 			throw;
 		}
 
 		return particleDrawer;
+	}
+
+
+	void OpenGL_GraphicsDevice::CreateParticleShaderStorageBufferObject(unsigned& ParticleDataSSBO, unsigned& FreeListSSBO)
+	{
+		glGenBuffers(1, &ParticleDataSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ParticleDataSSBO);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, Particles::maxParticles * sizeof(Particles::ParticleData), nullptr, GL_DYNAMIC_DRAW);
+		std::vector<Particles::ParticleData> zeroes(Particles::maxParticles);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, zeroes.size(), zeroes.data());
+
+		std::vector<uint32_t> init(1 + Particles::maxParticles);
+		init[0] = Particles::maxParticles;
+		for (int i = 0; i < Particles::maxParticles; i++)
+			init[1 + i] = i;
+
+		glGenBuffers(1, &FreeListSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, FreeListSSBO);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, init.size() * sizeof(uint32_t), init.data(), GL_DYNAMIC_DRAW);
 	}
 
 	void OpenGL_GraphicsDevice::BindTexture(unsigned textureIndex)

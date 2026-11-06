@@ -8,6 +8,8 @@
 #include "Renderer/RendererManager.h"
 #include "Renderer/IRenderer.h"
 
+#include "Renderer/ParticleCommon.h"
+
 namespace Eclipse::Graphics::OpenGL
 {
 	void OpenGL_Drawer::DrawSprite()
@@ -17,18 +19,13 @@ namespace Eclipse::Graphics::OpenGL
 		glBindVertexArray(0);
 	}
 
-	void OpenGL_Drawer::DrawParticles(ParticleData* aParticles, int aParticleCount)
+	void OpenGL_Drawer::DrawParticles()
 	{
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+
 		glUseProgram(myParticleDrawer->GetProgramID());
-
-		glBindBuffer(GL_ARRAY_BUFFER, myParticleDrawer->GetVertexBufferID());
-
-		size_t Size = aParticleCount * sizeof(ParticleData);
-		glBufferData(GL_ARRAY_BUFFER, Size, aParticles, GL_DYNAMIC_DRAW);
-
 		glBindVertexArray(myParticleDrawer->GetBufferID());
-		glDrawArrays(GL_POINTS, 0, aParticleCount);
-
+		glDrawArrays(GL_POINTS, 0, Particles::maxParticles);
 		glBindVertexArray(0);
 	}
 

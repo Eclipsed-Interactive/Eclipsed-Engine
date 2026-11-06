@@ -1,0 +1,9 @@
+#version 460 core
+out vec4 frag_colour;
+
+in vec4 gColor;
+
+void main()
+{
+    frag_colour = gColor;
+}

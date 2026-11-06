@@ -1,0 +1,45 @@
+#version 460 core
+layout(location = 0)in vec4 Position; // xyz, w = size
+layout(location = 1)in vec4 Velocity; // xyz, w = lifetime
+layout(location = 2)in vec4 Color; // color
+layout(location = 3)in vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+
+struct Particle
+{
+	vec4 Position; // xyz, w = size
+	vec4 Velocity; // xyz, w = lifetime
+	vec4 Color; // color
+	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+};
+
+layout(std430, binding = 0) readonly buffer Particles { Particle particles[]; };
+
+layout(std140,binding=0) uniform CameraBuffer
+{
+    vec2 cameraPosition;
+    vec2 cameraScale;
+    float cameraRotation;
+    float resolutionRatio;
+};
+
+out vec4 vColor;
+out vec2 vCameraScale;
+out float vScale;
+out float vRotation;
+out float vResolutionRatio;
+out float vLifeTime;
+
+void main()
+{
+    vLifeTime = Velocity.w;
+
+    vColor = Color;
+    vScale = Position.w;
+    vRotation = cameraRotation + Params.y;
+    vCameraScale = cameraScale;
+    vResolutionRatio = resolutionRatio;
+
+    vec2 vtxPos = (Position.xy - cameraPosition) * cameraScale;
+    vtxPos.x *= resolutionRatio;
+    gl_Position = vec4(vtxPos, 0, 1);
+};

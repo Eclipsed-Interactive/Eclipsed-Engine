@@ -62,22 +62,65 @@ unsigned Eclipse::Graphics::ParticleDrawer::GetProgramID() const
 
 
 
-unsigned& Eclipse::Graphics::ParticleDrawer::GetComputeVTXShaderID()
+unsigned& Eclipse::Graphics::ParticleDrawer::GetParticleDataSSBOID()
 {
-	return ComputeVTXShaderID;
+	return ParticleDataSSBO;
 }
 
-unsigned Eclipse::Graphics::ParticleDrawer::GetComputeVTXShaderID() const
+unsigned Eclipse::Graphics::ParticleDrawer::GetParticleDataSSBOID() const
 {
-	return ComputeVTXShaderID;
+	return ParticleDataSSBO;
 }
 
-unsigned& Eclipse::Graphics::ParticleDrawer::GetComputeProgramID()
+unsigned& Eclipse::Graphics::ParticleDrawer::GetFreeListSSBOID()
 {
-	return ComputeProgramID;
+	return FreeListSSBO;
 }
 
-unsigned Eclipse::Graphics::ParticleDrawer::GetComputeProgramID() const
+unsigned Eclipse::Graphics::ParticleDrawer::GetFreeListSSBOID() const
 {
-	return ComputeVTXShaderID;
+	return FreeListSSBO;
+}
+
+
+
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetProgressComputeShaderID()
+{
+	return ProgressComputeShaderID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetProgressComputeShaderID() const
+{
+	return ProgressComputeShaderID;
+}
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetSpawningComputeShaderID()
+{
+	return SpawningComputeShaderID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetSpawningComputeShaderID() const
+{
+	return SpawningComputeShaderID;
+}
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetProgressProgramID()
+{
+	return ProgressProgramID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetProgressProgramID() const
+{
+	return ProgressProgramID;
+}
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetSpawnProgramID()
+{
+	return SpawnProgramID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetSpawnProgramID() const
+{
+	return SpawnProgramID;
 }

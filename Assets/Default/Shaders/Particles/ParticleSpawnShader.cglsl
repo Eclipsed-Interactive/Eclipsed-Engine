@@ -1,0 +1,68 @@
+#version 430
+layout(local_size_x = 64) in;
+
+layout(std140,binding=1) uniform SharedGPUParticlesBuffer
+{
+	vec3 Gravity;
+	float DeltaTime;
+	vec3 EmitterPosition;
+	uint SpawnCount;
+	uint FrameSeed;
+
+	vec3 Padding;
+};
+
+struct Particle
+{
+	vec4 Position; // xyz, w = size
+	vec4 Velocity; // xyz, w = lifetime
+	vec4 Color; // color
+	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+};
+
+layout(std430, binding = 0) buffer Data { Particle particle[]; };
+layout(std430, binding = 1) buffer FreeList { uint freeCount; uint freeIdx[]; };
+
+uint hash(uint x) {
+    x ^= x >> 16; x *= 0x7feb352du;
+    x ^= x >> 15; x *= 0x846ca68bu;
+    x ^= x >> 16; return x;
+}
+float rand(inout uint s) { s = hash(s); return float(s) / 4294967295.0; }
+
+void main()
+{
+	uint c = gl_GlobalInvocationID.x;
+	if(c >= SpawnCount) return;
+
+	uint old = atomicAdd(freeCount, uint(-1));
+	if(old == 0u)
+	{
+		atomicAdd(freeCount, 1u);
+		return;
+	}
+	uint slot = freeIdx[old - 1u];
+	uint seed = hash(c ^ FrameSeed);
+
+
+	float rA = rand(seed);
+	float rB = rand(seed);
+	float rS = rand(seed);
+
+	float coneAngle = radians(30.0);              // half-angle of the cone
+	float theta = rA * 6.2831853;                 // rotation around the up axis
+	float cosA  = mix(cos(coneAngle), 1.0, rB);   // 1.0 = straight up
+	float sinA  = sqrt(1.0 - cosA * cosA);
+
+	vec3 dir = vec3(sinA * cos(theta), cosA, sinA * sin(theta));
+	float speed = mix(1.0, 1.4, rS);              // min and max speed
+	vec3 velocity = dir * speed;
+
+
+	Particle p;
+	p.Position = vec4(EmitterPosition, 0.02);
+	p.Velocity = vec4(velocity, 2.0);
+	p.Color = vec4(1.0, 1.0, 1.0, 1.0);
+
+	particle[slot] = p;
+}

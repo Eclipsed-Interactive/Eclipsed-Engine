@@ -7,42 +7,37 @@
 #include "Renderer/IRenderer.h"
 #include "Renderer/IDrawer.h"
 
-#include "Renderer/ParticleDrawer.h"
+#include "Renderer/ParticleCommon.h"
+
 
 namespace Eclipse::Graphics::OpenGL
 {
-	void OpenGL_Computer::ComputeParticleUpdate(ParticleData* aParticles, int aParticleCount, unsigned SSBOID)
+	void OpenGL_Computer::ComputeParticleSpawning(unsigned ParticlesToSpawn)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();
-		
-		glEnable(GL_RASTERIZER_DISCARD);
-
-		glUseProgram(drawer->myParticleDrawer->GetComputeProgramID());
-
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBOID);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, aParticleCount * sizeof(ParticleData), aParticles, GL_DYNAMIC_DRAW);
-
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, SSBOID);
-		glDispatchCompute((aParticleCount + 63) / 64, 1, 1);
-		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBOID);
-		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, aParticleCount * sizeof(ParticleData), aParticles);
-
-		glDisable(GL_RASTERIZER_DISCARD);
+	
+	
+		glUseProgram(drawer->myParticleDrawer->GetSpawnProgramID());
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, drawer->myParticleDrawer->GetParticleDataSSBOID());
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, drawer->myParticleDrawer->GetFreeListSSBOID());
+		glDispatchCompute((ParticlesToSpawn + 63) / 64, 1, 1);
 	}
 
-	unsigned OpenGL_Computer::CreateNewShaderStorageBufferObject(ParticleData* aParticles, int aParticleCount)
+	void OpenGL_Computer::ComputeParticleUpdate()
 	{
-		unsigned SSBOID = 0;
+		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+		Graphics::IDrawer* drawer = renderer.GetDrawer();
 
-		glGenBuffers(1, &SSBOID);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, SSBOID);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, aParticleCount * sizeof(ParticleData), aParticles, GL_DYNAMIC_DRAW);
+		//glEnable(GL_RASTERIZER_DISCARD);
 
-		return SSBOID;
+		glUseProgram(drawer->myParticleDrawer->GetProgressProgramID());
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, drawer->myParticleDrawer->GetParticleDataSSBOID());
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, drawer->myParticleDrawer->GetFreeListSSBOID());
+		glDispatchCompute((Particles::maxParticles + 63) / 64, 1, 1);
+
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+		//glDisable(GL_RASTERIZER_DISCARD);
 	}
 }
