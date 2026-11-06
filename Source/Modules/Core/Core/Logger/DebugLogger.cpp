@@ -5,21 +5,30 @@
 
 namespace Eclipse::Core
 {
-	RingBuffer<DebugMessage, DEBUG_LOGGER_BUFFER_SIZE> DebugLogger::messageBuffer;
+	std::unordered_set<DebugMessage, DebugMessageHash> DebugLogger::uniqueMessages;
+	RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE> DebugLogger::messageInstanceBuffer;
 
 	void DebugLogger::AddMessage(const DebugMessage& message)
 	{
-		messageBuffer.Push(message);
+		auto [it, inserted] = uniqueMessages.emplace(message);
+		messageInstanceBuffer.Push(DebugMessageInstance{ .timeStamp = GetTimestamp(), .message = &(*it) });
 	}
 
-	const RingBuffer<DebugMessage, DEBUG_LOGGER_BUFFER_SIZE>& DebugLogger::GetMessages()
+	const RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE>& DebugLogger::GetMessages()
 	{
-		return messageBuffer;
+		return messageInstanceBuffer;
 	}
 
 	void DebugLogger::Clear()
 	{
-		messageBuffer.Clear();
+		uniqueMessages.clear();
+		messageInstanceBuffer.Clear();
+	}
+
+	std::chrono::seconds DebugLogger::GetTimestamp()
+	{
+		const auto local = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time();
+		return std::chrono::floor<std::chrono::seconds>(local - std::chrono::floor<std::chrono::days>(local));
 	}
 }
 #endif

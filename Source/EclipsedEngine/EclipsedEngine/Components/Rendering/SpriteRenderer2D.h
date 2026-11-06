@@ -69,6 +69,9 @@ namespace Eclipse
         [[SerializeField]]
         Assets::Material Material;
 
+        [[SerializeField]]
+        Math::Color Color;
+
         Assets::Material PixelPickMaterial;
 
         Math::Vector2f Bounds;

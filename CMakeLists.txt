@@ -19,6 +19,8 @@ endif()
 
 project(${PROJ_NAME} LANGUAGES C CXX CSharp)
 
+set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
+
 option(ENABLE_NETWORKING "Includes the network engine in game build." ON)
 if(${ENABLE_NETWORKING})
     add_compile_definitions(ECLIPSED_NETWORKING)

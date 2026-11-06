@@ -14,7 +14,5 @@ namespace Eclipse
 
 	private:
 		static DebugMessage ConstructDefaultMessage(const std::string& message, DiagnosticSeverity severity);
-
-		static std::string GetTimestamp();
 	};
 }
