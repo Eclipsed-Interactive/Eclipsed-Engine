@@ -11,5 +11,7 @@ namespace Eclipse::Graphics
 	public:
 		virtual void ComputeParticleSpawning(unsigned ParticlesToSpawn) = 0;
 		virtual void ComputeParticleUpdate() = 0;
+
+		virtual void ComputeDestroyAllParticles() = 0;
 	};
 }

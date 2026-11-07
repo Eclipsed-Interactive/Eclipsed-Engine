@@ -163,6 +163,37 @@ namespace Eclipse::Graphics::OpenGL
 	}
 
 
+	void CheckShader(GLuint id, const char* name)
+	{
+		GLint ok = GL_FALSE;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &ok);
+		if (!ok)
+		{
+			GLint len = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
+			std::string log(len > 1 ? len : 1, '\0');
+			glGetShaderInfoLog(id, len, NULL, log.data());
+			fprintf(stderr, "%s shader compile failed:\n%s\n", name, log.c_str());
+
+			throw;
+		}
+	};
+
+	void CheckProgram(GLuint id)
+	{
+		GLint linked = GL_FALSE;
+		glGetProgramiv(id, GL_LINK_STATUS, &linked);
+		if (!linked)
+		{
+			GLint len = 0;
+			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &len);
+			std::string log(len > 1 ? len : 1, '\0');
+			glGetProgramInfoLog(id, len, NULL, log.data());
+			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
+			throw;
+		}
+	};
+
 	ParticleDrawer* OpenGL_GraphicsDevice::CreateParticleDrawer()
 	{
 		ParticleDrawer* particleDrawer = new ParticleDrawer;
@@ -179,7 +210,8 @@ namespace Eclipse::Graphics::OpenGL
 
 			glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Position));
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Velocity));
-			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, color));
+			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Color));
+			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, Gravity));
 			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Particles::ParticleData, MaxLife));
 
 			glEnableVertexAttribArray(0);
@@ -193,21 +225,6 @@ namespace Eclipse::Graphics::OpenGL
 		unsigned& PxShaderID = particleDrawer->GetPixelShaderID();
 		unsigned& ProgramID = particleDrawer->GetProgramID();
 
-		auto checkShader = [](GLuint id, const char* name)
-			{
-				GLint ok = GL_FALSE;
-				glGetShaderiv(id, GL_COMPILE_STATUS, &ok);
-				if (!ok)
-				{
-					GLint len = 0;
-					glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
-					std::string log(len > 1 ? len : 1, '\0');
-					glGetShaderInfoLog(id, len, NULL, log.data());
-					fprintf(stderr, "%s shader compile failed:\n%s\n", name, log.c_str());
-					
-					throw;
-				}
-			};
 
 		VtxShaderID = glCreateShader(GL_VERTEX_SHADER);
 		{
@@ -223,7 +240,7 @@ namespace Eclipse::Graphics::OpenGL
 			glShaderSource(VtxShaderID, 1, &src, NULL);
 		}
 		glCompileShader(VtxShaderID);
-		checkShader(VtxShaderID, "Vertex");
+		CheckShader(VtxShaderID, "Vertex");
 
 
 		GeoShaderID = glCreateShader(GL_GEOMETRY_SHADER);
@@ -240,7 +257,7 @@ namespace Eclipse::Graphics::OpenGL
 			glShaderSource(GeoShaderID, 1, &src, NULL);
 		}
 		glCompileShader(GeoShaderID);
-		checkShader(GeoShaderID, "Geometry");
+		CheckShader(GeoShaderID, "Geometry");
 
 
 		PxShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -257,7 +274,7 @@ namespace Eclipse::Graphics::OpenGL
 			glShaderSource(PxShaderID, 1, &src, NULL);
 		}
 		glCompileShader(PxShaderID);
-		checkShader(PxShaderID, "Fragment");
+		CheckShader(PxShaderID, "Fragment");
 
 
 		ProgramID = glCreateProgram();
@@ -266,94 +283,43 @@ namespace Eclipse::Graphics::OpenGL
 		glAttachShader(ProgramID, PxShaderID);
 		glLinkProgram(ProgramID);
 
-		GLint linked = GL_FALSE;
-		glGetProgramiv(ProgramID, GL_LINK_STATUS, &linked);
-		if (!linked)
-		{
-			GLint len = 0;
-			glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &len);
-			std::string log(len > 1 ? len : 1, '\0');
-			glGetProgramInfoLog(ProgramID, len, NULL, log.data());
-			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
-			throw;
-		}
+		CheckProgram(ProgramID);
 
 		glBindVertexArray(0);
 
-		unsigned& ProgressComputeShaderID = particleDrawer->GetProgressComputeShaderID();
-		unsigned& ProgressParticleProgram = particleDrawer->GetProgressProgramID();
-
-
-		ProgressComputeShaderID = glCreateShader(GL_COMPUTE_SHADER);
-		{
-			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleProgressShader.cglsl";
-			std::fstream inputStream(AssetPath, std::ios::in);
-
-			size_t size = std::filesystem::file_size(AssetPath);
-			std::string ComputeShaderSource;
-			ComputeShaderSource.resize(size);
-
-			inputStream.read(ComputeShaderSource.data(), size);
-			const char* src = ComputeShaderSource.c_str();
-			glShaderSource(ProgressComputeShaderID, 1, &src, NULL);
-		}
-		glCompileShader(ProgressComputeShaderID);
-		checkShader(ProgressComputeShaderID, "Compute");
-
-
-		ProgressParticleProgram = glCreateProgram();
-		glAttachShader(ProgressParticleProgram, ProgressComputeShaderID);
-		glLinkProgram(ProgressParticleProgram);
-
-		glGetProgramiv(ProgressParticleProgram, GL_LINK_STATUS, &linked);
-		if (!linked)
-		{
-			GLint len = 0;
-			glGetProgramiv(ProgressParticleProgram, GL_INFO_LOG_LENGTH, &len);
-			std::string log(len > 1 ? len : 1, '\0');
-			glGetProgramInfoLog(ProgressParticleProgram, len, NULL, log.data());
-			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
-			throw;
-		}
-
-		unsigned& SpawningComputeShaderID = particleDrawer->GetSpawningComputeShaderID();
-		unsigned& SpawningParticleProgram = particleDrawer->GetSpawnProgramID();
-
-		SpawningComputeShaderID = glCreateShader(GL_COMPUTE_SHADER);
-		{
-			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles/ParticleSpawnShader.cglsl";
-			std::fstream inputStream(AssetPath, std::ios::in);
-
-			size_t size = std::filesystem::file_size(AssetPath);
-			std::string ComputeShaderSource;
-			ComputeShaderSource.resize(size);
-
-			inputStream.read(ComputeShaderSource.data(), size);
-			const char* src = ComputeShaderSource.c_str();
-			glShaderSource(SpawningComputeShaderID, 1, &src, NULL);
-		}
-		glCompileShader(SpawningComputeShaderID);
-		checkShader(SpawningComputeShaderID, "Compute");
-
-
-		SpawningParticleProgram = glCreateProgram();
-		glAttachShader(SpawningParticleProgram, SpawningComputeShaderID);
-		glLinkProgram(SpawningParticleProgram);
-
-		glGetProgramiv(SpawningParticleProgram, GL_LINK_STATUS, &linked);
-		if (!linked)
-		{
-			GLint len = 0;
-			glGetProgramiv(SpawningParticleProgram, GL_INFO_LOG_LENGTH, &len);
-			std::string log(len > 1 ? len : 1, '\0');
-			glGetProgramInfoLog(SpawningParticleProgram, len, NULL, log.data());
-			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
-			throw;
-		}
+		CreateComputeShaderProgram(particleDrawer->GetProgressComputeShaderID(), particleDrawer->GetProgressProgramID(), "ParticleProgressShader.cglsl");
+		CreateComputeShaderProgram(particleDrawer->GetSpawningComputeShaderID(), particleDrawer->GetSpawnProgramID(), "ParticleSpawnShader.cglsl");
+		CreateComputeShaderProgram(particleDrawer->GetDestroyAllComputeShaderID(), particleDrawer->GetDestroyAllProgramID(), "DeleteAllParticlesShader.cglsl");
 
 		return particleDrawer;
 	}
 
+
+	void OpenGL_GraphicsDevice::CreateComputeShaderProgram(unsigned& ComputeShaderID, unsigned& ComputeProgram, const char* name)
+	{
+		ComputeShaderID = glCreateShader(GL_COMPUTE_SHADER);
+		{
+			std::filesystem::path AssetPath = PathManager::GetEngineAssetsPath() / "Default/Shaders/Particles" / name;
+			std::fstream inputStream(AssetPath, std::ios::in);
+
+			size_t size = std::filesystem::file_size(AssetPath);
+			std::string ComputeShaderSource;
+			ComputeShaderSource.resize(size);
+
+			inputStream.read(ComputeShaderSource.data(), size);
+			const char* src = ComputeShaderSource.c_str();
+			glShaderSource(ComputeShaderID, 1, &src, NULL);
+		}
+		glCompileShader(ComputeShaderID);
+		CheckShader(ComputeShaderID, "Compute");
+
+
+		ComputeProgram = glCreateProgram();
+		glAttachShader(ComputeProgram, ComputeShaderID);
+		glLinkProgram(ComputeProgram);
+
+		CheckProgram(ComputeProgram);
+	}
 
 	void OpenGL_GraphicsDevice::CreateParticleShaderStorageBufferObject(unsigned& ParticleDataSSBO, unsigned& FreeListSSBO)
 	{
@@ -402,7 +368,7 @@ namespace Eclipse::Graphics::OpenGL
 		BindShader(material.GetProgramID());
 
 		Assets::Texture& texture = material.GetTexture();
-		if(texture.dataPtr)
+		if (texture.dataPtr)
 			BindTexture(0, texture); // Change to albedo slot
 	}
 }

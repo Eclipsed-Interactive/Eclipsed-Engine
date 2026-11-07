@@ -105,6 +105,16 @@ unsigned Eclipse::Graphics::ParticleDrawer::GetSpawningComputeShaderID() const
 	return SpawningComputeShaderID;
 }
 
+unsigned& Eclipse::Graphics::ParticleDrawer::GetDestroyAllComputeShaderID()
+{
+	return DestroyAllComputeShaderID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetDestroyAllComputeShaderID() const
+{
+	return DestroyAllComputeShaderID;
+}
+
 unsigned& Eclipse::Graphics::ParticleDrawer::GetProgressProgramID()
 {
 	return ProgressProgramID;
@@ -123,4 +133,14 @@ unsigned& Eclipse::Graphics::ParticleDrawer::GetSpawnProgramID()
 unsigned Eclipse::Graphics::ParticleDrawer::GetSpawnProgramID() const
 {
 	return SpawnProgramID;
+}
+
+unsigned& Eclipse::Graphics::ParticleDrawer::GetDestroyAllProgramID()
+{
+	return DestroyAllProgramID;
+}
+
+unsigned Eclipse::Graphics::ParticleDrawer::GetDestroyAllProgramID() const
+{
+	return DestroyAllProgramID;
 }

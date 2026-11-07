@@ -29,6 +29,7 @@ namespace Eclipse::Graphics::OpenGL
 		TextSprite* CreateTextSprite() override;
 		ParticleDrawer* CreateParticleDrawer() override;
 
+		void CreateComputeShaderProgram(unsigned& SpawningComputeShaderID, unsigned& SpawningParticleProgram, const char* name);
 		void CreateParticleShaderStorageBufferObject(unsigned& ParticleDataSSBO, unsigned& FreeListSSBO);
 
 	public:

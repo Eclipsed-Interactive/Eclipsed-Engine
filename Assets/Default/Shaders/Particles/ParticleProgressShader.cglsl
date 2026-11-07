@@ -3,12 +3,7 @@ layout(local_size_x = 64) in;
 
 layout(std140,binding=1) uniform SharedGPUParticlesBuffer
 {
-	vec3 Gravity;
 	float DeltaTime;
-	vec3 EmitterPosition;
-	uint SpawnCount;
-	uint FrameSeed;
-	
 	vec3 Padding;
 };
 
@@ -16,7 +11,8 @@ struct Particle
 {
 	vec4 Position; // xyz, w = size
 	vec4 Velocity; // xyz, w = lifetime
-	vec4 Color; // color
+	vec4 Color; // Color
+	vec4 Gravity; // xyz, w = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
 
@@ -30,7 +26,7 @@ void main()
 	Particle p = particle[i];
 	if (p.Velocity.w <= 0.0) return;
 
-	p.Velocity.xyz += Gravity * DeltaTime;
+	p.Velocity.xyz += p.Gravity.xyz * DeltaTime;
 	p.Position.xyz += p.Velocity.xyz * DeltaTime;
 	p.Velocity.w -= DeltaTime;
 

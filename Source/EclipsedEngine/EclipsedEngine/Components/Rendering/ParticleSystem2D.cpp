@@ -13,6 +13,7 @@
 #include "Core/Math/Random.h"
 
 #include "Core/GraphicsBuffers/SharedGPUParticlesBuffer.h"
+#include "Core/GraphicsBuffers/ParticleSpawnBuffer.h"
 
 #include <Renderer/IGraphicsBuffer.h>
 
@@ -20,14 +21,11 @@
 void Eclipse::ParticleSystem2D::Awake()
 {
 	{
-		Emitter& emitter2 = myEmmiter.emplace_back();
-		emitter2.SpawnPosition = { 6.f, 3.8f };
-		Emitter& emitter1 = myEmmiter.emplace_back();
-		emitter1.SpawnPosition = { -4.f, -2.f };
 		Emitter& emitter = myEmmiter.emplace_back();
-		emitter.SpawnPosition = { 2.f, -0.8f };
+		emitter.SpawnPosition = { 2.f, -0.f };
+		emitter.Gravity = { 0.f, 0.f };
 
-		emitter.SpawnShape = new CircleSpawnShape(0.25f);
+		emitter.SpawnShape = 1;
 
 		emitter.StartData.StartLifetimeMin = 1.8f;
 		emitter.StartData.StartLifetimeMax = 2.5f;
@@ -42,7 +40,9 @@ void Eclipse::ParticleSystem2D::Awake()
 	{
 		Emitter& emitter = myEmmiter.emplace_back();
 		emitter.SpawnPosition = { -1.5, 0.f };
-		emitter.SpawnShape = new RectSpawnShape({ 0.4f , 0.2f });
+
+
+		emitter.SpawnShape = 0;
 
 		emitter.StartData.StartLifetimeMin = 2.f;
 		emitter.StartData.StartLifetimeMax = 2.f;
@@ -101,11 +101,16 @@ void Eclipse::ParticleSystem2D::Update()
 	SharedGPUParticlesBuffer* sharedGpuParticleBuffer;
 	GraphicsBuffer->GetBuffer<SharedGPUParticlesBuffer>(sharedGpuParticleBuffer);
 
+	ParticleSpawnBuffer* particleSpawnGpuParticleBuffer;
+	GraphicsBuffer->GetBuffer<ParticleSpawnBuffer>(particleSpawnGpuParticleBuffer);
+
 	float deltaTime = Eclipse::Timer::GetDeltaTime();
 
-	sharedGpuParticleBuffer->Gravity = Math::Vector3f(0, -1, 0.f);
+	// Update
 	sharedGpuParticleBuffer->DeltaTime = deltaTime;
-	sharedGpuParticleBuffer->FrameSeed++;
+
+	// Spawning
+	particleSpawnGpuParticleBuffer->FrameSeed++;
 
 	GraphicsBuffer->SetOrCreateBuffer<SharedGPUParticlesBuffer>(1);
 
@@ -114,10 +119,15 @@ void Eclipse::ParticleSystem2D::Update()
 
 void Eclipse::ParticleSystem2D::OnDestroy()
 {
-	for (auto& Emitter : myEmmiter)
-	{
-		delete Emitter.SpawnShape;
-	}
+	//for (auto& Emitter : myEmmiter)
+	//{
+	//	delete Emitter.SpawnShape;
+	//}
+
+	Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+	Graphics::IComputer* computer = renderer.GetComputer();
+
+	computer->ComputeDestroyAllParticles();
 }
 
 void Eclipse::Emitter::Update()
@@ -131,14 +141,18 @@ void Eclipse::Emitter::Update()
 	unsigned ToSpawn = (unsigned)CurrentTime;
 	CurrentTime -= ToSpawn;
 
-	SharedGPUParticlesBuffer* sharedGpuParticleBuffer;
-	GraphicsBuffer->GetBuffer<SharedGPUParticlesBuffer>(sharedGpuParticleBuffer);
-
-	sharedGpuParticleBuffer->EmitterPosition = Math::Vector3f(ActivePosition.x, ActivePosition.y, 0.f);
-	sharedGpuParticleBuffer->SpawnCount = ToSpawn;
-
-	GraphicsBuffer->SetOrCreateBuffer<SharedGPUParticlesBuffer>(1);
-
 	if (ToSpawn)
+	{
+		ParticleSpawnBuffer* particleSpawnGpuParticleBuffer;
+		GraphicsBuffer->GetBuffer<ParticleSpawnBuffer>(particleSpawnGpuParticleBuffer);
+
+		particleSpawnGpuParticleBuffer->Gravity = Math::Vector3f(Gravity.x, Gravity.y, 0.f);
+		particleSpawnGpuParticleBuffer->EmitterPosition = Math::Vector3f(ActivePosition.x, ActivePosition.y, 0.f);
+		particleSpawnGpuParticleBuffer->SpawnCount = ToSpawn;
+		particleSpawnGpuParticleBuffer->SpawnShape = SpawnShape;
+
+		GraphicsBuffer->SetOrCreateBuffer<ParticleSpawnBuffer>(0);
+
 		computer->ComputeParticleSpawning(ToSpawn);
+	}
 }

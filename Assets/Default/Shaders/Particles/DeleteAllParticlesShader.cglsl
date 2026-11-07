@@ -1,0 +1,19 @@
+#version 430
+layout(local_size_x = 64) in;
+
+struct Particle
+{
+	vec4 Position; // xyz, w = sizea
+	vec4 Velocity; // xyz, w = lifetime
+	vec4 Color; // color
+	vec4 Gravity; // xyz, w = padding
+	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+};
+
+layout(std430, binding = 0) buffer Data { Particle particle[]; };
+
+void main()
+{
+	uint c = gl_GlobalInvocationID.x;
+	particle[c].Velocity.w = 0.f;
+}

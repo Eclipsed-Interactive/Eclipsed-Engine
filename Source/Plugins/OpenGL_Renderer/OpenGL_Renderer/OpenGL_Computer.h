@@ -9,5 +9,7 @@ namespace Eclipse::Graphics::OpenGL
 	public:
 		void ComputeParticleSpawning(unsigned ParticlesToSpawn) override;
 		void ComputeParticleUpdate() override;
+
+		void ComputeDestroyAllParticles() override;
 	};
 }

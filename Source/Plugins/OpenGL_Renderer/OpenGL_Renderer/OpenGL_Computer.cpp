@@ -17,7 +17,6 @@ namespace Eclipse::Graphics::OpenGL
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();
 	
-	
 		glUseProgram(drawer->myParticleDrawer->GetSpawnProgramID());
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, drawer->myParticleDrawer->GetParticleDataSSBOID());
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, drawer->myParticleDrawer->GetFreeListSSBOID());
@@ -29,15 +28,20 @@ namespace Eclipse::Graphics::OpenGL
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 		Graphics::IDrawer* drawer = renderer.GetDrawer();
 
-		//glEnable(GL_RASTERIZER_DISCARD);
-
 		glUseProgram(drawer->myParticleDrawer->GetProgressProgramID());
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, drawer->myParticleDrawer->GetParticleDataSSBOID());
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, drawer->myParticleDrawer->GetFreeListSSBOID());
 		glDispatchCompute((Particles::maxParticles + 63) / 64, 1, 1);
 
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	}
+	void OpenGL_Computer::ComputeDestroyAllParticles()
+	{
+		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
+		Graphics::IDrawer* drawer = renderer.GetDrawer();
 
-		//glDisable(GL_RASTERIZER_DISCARD);
+		glUseProgram(drawer->myParticleDrawer->GetDestroyAllProgramID());
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, drawer->myParticleDrawer->GetParticleDataSSBOID());
+		glDispatchCompute((Particles::maxParticles + 63) / 64, 1, 1);
 	}
 }

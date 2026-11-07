@@ -42,11 +42,17 @@ namespace Eclipse::Graphics
 		unsigned& GetSpawningComputeShaderID();
 		unsigned GetSpawningComputeShaderID() const;
 
+		unsigned& GetDestroyAllComputeShaderID();
+		unsigned GetDestroyAllComputeShaderID() const;
+
 		unsigned& GetProgressProgramID();
 		unsigned GetProgressProgramID() const;
 
 		unsigned& GetSpawnProgramID();
 		unsigned GetSpawnProgramID() const;
+
+		unsigned& GetDestroyAllProgramID();
+		unsigned GetDestroyAllProgramID() const;
 
 	private:
 		unsigned myVTXbuffer;
@@ -60,9 +66,11 @@ namespace Eclipse::Graphics
 
 		unsigned ProgressProgramID;
 		unsigned SpawnProgramID;
+		unsigned DestroyAllProgramID;
 
 		unsigned ProgressComputeShaderID;
 		unsigned SpawningComputeShaderID;
+		unsigned DestroyAllComputeShaderID;
 
 		unsigned ParticleDataSSBO;
 		unsigned FreeListSSBO;

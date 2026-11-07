@@ -17,9 +17,12 @@ namespace Eclipse
 			Math::Vector3f Velocity;
 			float LifeTime;
 
-			Math::Color color;
+			Math::Color Color;
 
-			float MaxLife, Rotation, pad0, pad1;
+			Math::Vector3f Gravity;
+			float pad0;
+
+			float MaxLife, Rotation, pad1, pad2;
 		};
 	}
 }

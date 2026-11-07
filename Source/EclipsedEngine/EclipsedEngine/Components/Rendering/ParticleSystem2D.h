@@ -104,13 +104,12 @@ namespace Eclipse
 
 		Math::Vector2f Gravity = {0, -1.f};
 
-		float SpawnInterval = 100.f;
+		float SpawnInterval = 100000.f;
 		float CurrentTime = 0;
 		Math::Vector2f SpawnPosition = {0, 0};
 		Math::Vector2f ActivePosition = {0, 0};
 
-		BaseParticleSpawnShape* SpawnShape = nullptr;
-		BaseParticleEmittingShape* EmmiterShape = nullptr;
+		unsigned SpawnShape = 0;
 		
 		struct ParticleStartData
 		{
