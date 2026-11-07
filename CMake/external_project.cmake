@@ -82,7 +82,7 @@ target_include_directories(${TARGET_NAME}
         PROPERTIES
             OUTPUT_NAME "Eclipsed.External.${PROJECT_KEY}"
             FOLDER "Externals"
-            UNITY_BUILD ON
+            UNITY_BUILD OFF
             UNITY_BUILD_BATCH_SIZE 50
     )
 

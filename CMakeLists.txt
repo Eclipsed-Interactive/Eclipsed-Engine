@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION "4.0.0")
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF) # Not using C++20 modules; skip the dependency scan step
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
-set(CMAKE_UNITY_BUILD ON)
+# set(CMAKE_UNITY_BUILD ON)
 
 option(BUILD_EDITOR "If enabled, then builds the editor." ON)
 

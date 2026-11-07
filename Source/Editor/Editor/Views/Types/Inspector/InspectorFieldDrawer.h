@@ -92,7 +92,14 @@ namespace Eclipse::Editor
 		using Scalar = typename NumericTraits<T>::Scalar;
 		constexpr int Count = NumericTraits<T>::Count;
 
+		Scalar min = 0, max = 0;
+
 		const Range* range = field.attributeContainer.TryGet<Range>();
+		if (range)
+		{
+			min = (Scalar)range->min;
+			max = (Scalar)range->max;
+		}
 
 		float step = std::is_floating_point_v<Scalar> ? 0.001f : 1;
 		const Step* stepAttr = field.attributeContainer.TryGet<Step>();
@@ -102,7 +109,7 @@ namespace Eclipse::Editor
 		T data = *reinterpret_cast<T*>(addr);
 
 		const bool changed = range 
-			? ImGui::SliderScalarN("##value", ToImGuiDataType<Scalar>(), &data, Count, &range->min, &range->max)
+			? ImGui::SliderScalarN("##value", ToImGuiDataType<Scalar>(), &data, Count, &min, &max)
 			: ImGui::DragScalarN("##value", ToImGuiDataType<Scalar>(), &data, Count, step);
 
 		if (changed) Set(field.owner, field.name, v, data);

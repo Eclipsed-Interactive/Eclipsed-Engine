@@ -28,16 +28,26 @@
 
 #include "PlayModeController.h"
 
+#include <Core/Logger/DebugLogger.h>
 
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
 	{
+		LOG("The editor is initialized.");
+		LOG_WARNING("The editor is also uninitialized!");
+		LOG_ERROR("The Editor FAILED to open the required president of component.");
+
 		ProjectManager::LoadOrSelectProject();
 	}
 
 	void Editor::Init()
 	{
+		const auto now = std::chrono::system_clock::now();
+		const auto local = std::chrono::zoned_time{ std::chrono::current_zone(), now }.get_local_time();
+		const auto sinceMidnight = std::chrono::floor<std::chrono::seconds>(local - std::chrono::floor<std::chrono::days>(local));
+		const auto t = sinceMidnight.count();
+
 		Engine::Init();
 
 		ImGui::SetCurrentContext((ImGuiContext*)Engine::GetImGuiContext());

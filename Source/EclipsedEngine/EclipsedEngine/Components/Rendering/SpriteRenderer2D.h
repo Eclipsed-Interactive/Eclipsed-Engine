@@ -72,6 +72,9 @@ namespace Eclipse
         [[SerializeField]]
         Math::Color Color;
 
+        [[SerializeField, Range(0.f, 4.f)]]
+        int hejsn = 2;
+
         Assets::Material PixelPickMaterial;
 
         Math::Vector2f Bounds;

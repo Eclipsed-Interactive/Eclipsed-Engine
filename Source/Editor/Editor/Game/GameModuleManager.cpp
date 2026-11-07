@@ -198,7 +198,7 @@ namespace Eclipse
 		}
 
 		dllPath = PathManager::GetEngineRoot() / oldDllPath.filename();
-		if (!std::filesystem::exists(dllPath))
+		if (!std::filesystem::exists(oldDllPath))
 			return false;
 
 		return std::filesystem::copy_file(oldDllPath, dllPath, std::filesystem::copy_options::overwrite_existing);
