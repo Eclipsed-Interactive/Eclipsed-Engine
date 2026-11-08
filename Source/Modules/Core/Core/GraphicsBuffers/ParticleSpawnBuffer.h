@@ -9,17 +9,21 @@ namespace Eclipse
     {
         Math::Vector3f Gravity = { 0.f, 0.f, 0.f };
         unsigned SpawnCount = 0;
+
         Math::Vector3f EmitterPosition = { 0.f, 0.f, 0.f };
         unsigned FrameSeed = 0;
 
-        float MinSize;
-        float MaxSize;
+        float MinSizeStart;
+        float MaxSizeStart;
+        float MinSizeEnd;
+        float MaxSizeEnd;
 
         float SpawnLifetimeMin;
         float SpawnLifetimeMax;
-
-        unsigned SpawnShape = 0;
+        float Padding0;
+        float Padding2;
 
         Math::Vector3f Padding;
+        unsigned SpawnShape = 0;
     };
 }

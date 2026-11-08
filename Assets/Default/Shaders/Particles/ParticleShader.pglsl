@@ -16,5 +16,5 @@ void main()
 {
     vec4 textureAlbedo = texture(material[TextureIndex].albedo, TexCoord);
 
-    frag_colour = textureAlbedo;
+    frag_colour = textureAlbedo * gColor;
 }

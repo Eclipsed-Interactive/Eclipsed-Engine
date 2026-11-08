@@ -43,7 +43,10 @@ void Eclipse::ParticleSystem2D::Awake()
 		emitter.StartData.StartLifetimeMax = 1.4f;
 
 		emitter.StartData.StartSizeMin = 0.02f;
-		emitter.StartData.StartSizeMax = 0.03f;
+		emitter.StartData.StartSizeMax = 0.02f;
+
+		emitter.StartData.EndSizeMin = 0.005f;
+		emitter.StartData.EndSizeMax = 0.005f;
 
 		emitter.StartData.StartSpeedMin = 0.8f;
 		emitter.StartData.StartSpeedMax = 1.4f;
@@ -59,8 +62,11 @@ void Eclipse::ParticleSystem2D::Awake()
 		emitter.StartData.StartLifetimeMin = 2.f;
 		emitter.StartData.StartLifetimeMax = 2.f;
 
-		emitter.StartData.StartSizeMin = 0.02f;
+		emitter.StartData.StartSizeMin = 0.03f;
 		emitter.StartData.StartSizeMax = 0.03f;
+
+		emitter.StartData.EndSizeMin = 0.03f;
+		emitter.StartData.EndSizeMax = 0.03f;
 
 		emitter.StartData.StartSpeedMin = 1.f;
 		emitter.StartData.StartSpeedMax = 1.4f;
@@ -179,8 +185,11 @@ void Eclipse::Emitter::Update()
 
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->SpawnLifetimeMin = StartData.StartLifetimeMin;
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->SpawnLifetimeMax = StartData.StartLifetimeMax;
-		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MinSize = StartData.StartSizeMin;
-		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MaxSize = StartData.StartSizeMax;
+
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MinSizeStart = StartData.StartSizeMin;
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MaxSizeStart = StartData.StartSizeMax;
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MinSizeEnd = StartData.EndSizeMin;
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MaxSizeEnd = StartData.EndSizeMax;
 
 		GraphicsBuffer->SetOrCreateBuffer<ParticleSpawnBuffer>(0);
 		GraphicsBuffer->SetOrCreateBuffer<ConeEmitterDataBuffer>(2);

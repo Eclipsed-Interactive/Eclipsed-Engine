@@ -9,10 +9,11 @@ layout(std140,binding=1) uniform SharedGPUParticlesBuffer
 
 struct Particle
 {
-	vec4 Position; // xyz, w = size
-	vec4 Velocity; // xyz, w = lifetime
+	vec4 Position; // xyz, w = Size
+	vec4 Velocity; // xyz, w = lifetime 
 	vec4 Color; // Color
-	vec4 Gravity; // xyz, w = padding
+	vec4 Gravity; // xyz, w = TextureIndex
+	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
 
@@ -25,6 +26,10 @@ void main()
 
 	Particle p = particle[i];
 	if (p.Velocity.w <= 0.0) return;
+
+	float DeltaLife = 1 - (p.Velocity.w / p.Params.x);
+
+	p.Position.w = mix(p.ChangeOverTime.x, p.ChangeOverTime.y, DeltaLife);
 
 	p.Velocity.xyz += p.Gravity.xyz * DeltaTime;
 	p.Position.xyz += p.Velocity.xyz * DeltaTime;

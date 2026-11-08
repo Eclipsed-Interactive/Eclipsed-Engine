@@ -127,6 +127,9 @@ namespace Eclipse
 
 			float StartSizeMin = 0.02f;
 			float StartSizeMax = 0.02f;
+
+			float EndSizeMin = 0.02f;
+			float EndSizeMax = 0.02f;
 		} StartData;
 	};
 

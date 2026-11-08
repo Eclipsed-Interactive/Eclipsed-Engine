@@ -1,15 +1,19 @@
 #version 460 core
 layout(location = 0)in vec4 Position; // xyz, w = size
 layout(location = 1)in vec4 Velocity; // xyz, w = lifetime
-layout(location = 2)in vec4 Color; // color
-layout(location = 3)in vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+layout(location = 2)in vec4 Color; // Color
+layout(location = 3)in vec4 Gravity; // xyz, w = TextureIndex
+layout(location = 4)in vec4 ChangeOverTime; // xyzw = padding
+layout(location = 5)in vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 
 struct Particle
 {
-	vec4 Position; // xyz, w = size
+	vec4 Position; // xyz, w = Size
 	vec4 Velocity; // xyz, w = lifetime
-	vec4 Color; // color
-	vec4 Params; // x = MaxLife, y = Rotation, z = TextureIndex, w = Padding
+	vec4 Color; // Color
+	vec4 Gravity; // xyz, w = TextureIndex
+	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
+	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
 
 layout(std430, binding = 0) readonly buffer Particles { Particle particles[]; };
@@ -34,7 +38,7 @@ out uint vTextureIndex;
 void main()
 {
     vLifeTime = Velocity.w;
-    vTextureIndex = uint(Params.z);
+    vTextureIndex = uint(Gravity.w);
 
     vColor = Color;
     vScale = Position.w;

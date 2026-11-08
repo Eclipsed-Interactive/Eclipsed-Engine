@@ -5,18 +5,22 @@ layout(std140,binding=0) uniform ParticleSpawnBuffer
 {
 	vec3 Gravity;
 	uint SpawnCount;
+
 	vec3 EmitterPosition;
 	uint FrameSeed;
 
-	float MinSize;
-	float MaxSize;
+	float MinSizeStart;
+	float MaxSizeStart;
+	float MinSizeEnd;
+	float MaxSizeEnd;
 
 	float SpawnLifeTimeMin;
 	float SpawnLifeTimeMax;
-
-	uint SpawnShape;
+	float Padding8129831;
+	float Padding823674;
 
 	vec3 Padding12312;
+	uint SpawnShape;
 };
 
 layout(std140,binding=2) uniform ConeEmitterDataBuffer
@@ -30,12 +34,14 @@ layout(std140,binding=2) uniform ConeEmitterDataBuffer
 
 struct Particle
 {
-	vec4 Position; // xyz, w = size
+	vec4 Position; // xyz, w = Size
 	vec4 Velocity; // xyz, w = lifetime
 	vec4 Color; // Color
-	vec4 Gravity; // xyz, w = padding
+	vec4 Gravity; // xyz, w = TextureIndex
+	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
+
 
 layout(std430, binding = 0) buffer Data { Particle particle[]; };
 layout(std430, binding = 1) buffer FreeList { uint freeCount; uint freeIdx[]; };
@@ -106,7 +112,8 @@ void main()
 
 	Particle p;
 	p.Position.xyz = EmitterPosition;
-	p.Position.w = mix(MinSize, MaxSize, rand(seed));
+	p.ChangeOverTime.x = mix(MinSizeStart, MaxSizeStart, rand(seed));
+	p.ChangeOverTime.y = mix(MinSizeEnd, MaxSizeEnd, rand(seed));
 
 	if(SpawnShape == 0)
 	{
@@ -118,11 +125,12 @@ void main()
 	}
 	
 	p.Velocity.w = mix(SpawnLifeTimeMin, SpawnLifeTimeMax, rand(seed));
+	p.Params.x = p.Velocity.w;
 	
-	p.Color = vec4(0.0, 1.0, 0.0, 1.0);
+	p.Color = vec4(1.0, 1.0, 1.0, 1.0);
 	p.Gravity.xyz = Gravity;
 
-	p.Params.z = mix(0, 7, rand(seed));
+	p.Gravity.w = mix(0, 7, rand(seed));
 
 	particle[slot] = p;
 }

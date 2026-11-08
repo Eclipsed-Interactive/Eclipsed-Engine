@@ -20,9 +20,11 @@ namespace Eclipse
 			Math::Color Color;
 
 			Math::Vector3f Gravity;
-			float pad0;
+			float TextureIndex;
 
-			float MaxLife, Rotation, pad1, pad2;
+			float pad0, pad1, pad2, pad3; // Change over time
+
+			float MaxLife, Rotation, pad4, pad5;
 		};
 	}
 }
