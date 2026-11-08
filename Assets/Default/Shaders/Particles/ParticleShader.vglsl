@@ -9,7 +9,7 @@ struct Particle
 	vec4 Position; // xyz, w = size
 	vec4 Velocity; // xyz, w = lifetime
 	vec4 Color; // color
-	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
+	vec4 Params; // x = MaxLife, y = Rotation, z = TextureIndex, w = Padding
 };
 
 layout(std430, binding = 0) readonly buffer Particles { Particle particles[]; };
@@ -29,9 +29,12 @@ out float vRotation;
 out float vResolutionRatio;
 out float vLifeTime;
 
+out uint vTextureIndex;
+
 void main()
 {
     vLifeTime = Velocity.w;
+    vTextureIndex = uint(Params.z);
 
     vColor = Color;
     vScale = Position.w;

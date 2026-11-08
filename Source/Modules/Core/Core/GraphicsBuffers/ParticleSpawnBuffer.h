@@ -12,7 +12,14 @@ namespace Eclipse
         Math::Vector3f EmitterPosition = { 0.f, 0.f, 0.f };
         unsigned FrameSeed = 0;
 
-        Math::Vector3f Padding = { 0.f, 0.f, 0.f };
+        float MinSize;
+        float MaxSize;
+
+        float SpawnLifetimeMin;
+        float SpawnLifetimeMax;
+
         unsigned SpawnShape = 0;
+
+        Math::Vector3f Padding;
     };
 }

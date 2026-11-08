@@ -32,7 +32,7 @@ namespace Eclipse::Graphics
 			sprintf_s(
 				message,
 				"The renderer dll dont exist at path: %s",
-				rendererPath
+				rendererPath.c_str()
 			);
 
 			assert(false && message);

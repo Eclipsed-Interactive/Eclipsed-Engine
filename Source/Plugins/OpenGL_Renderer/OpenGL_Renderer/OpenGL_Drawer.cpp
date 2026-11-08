@@ -24,6 +24,11 @@ namespace Eclipse::Graphics::OpenGL
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
 
 		glUseProgram(myParticleDrawer->GetProgramID());
+
+		unsigned albedo0 = glGetUniformLocation(myParticleDrawer->GetProgramID(), "material[0].albedo");
+		for(int i = 0; i < 8; i++)
+			glUniform1i(albedo0 + i, i);
+
 		glBindVertexArray(myParticleDrawer->GetBufferID());
 		glDrawArrays(GL_POINTS, 0, Particles::maxParticles);
 		glBindVertexArray(0);

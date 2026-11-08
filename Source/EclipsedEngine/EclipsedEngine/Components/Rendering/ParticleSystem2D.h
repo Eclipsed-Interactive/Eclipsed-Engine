@@ -6,6 +6,10 @@
 #include "Renderer/ParticleDrawer.h"
 #include "Core/Math/CommonMath.h"
 
+#include <array>
+
+#include "Assets/Assets/TextureAsset.h"
+
 namespace Eclipse
 {
 	namespace Graphics
@@ -104,7 +108,7 @@ namespace Eclipse
 
 		Math::Vector2f Gravity = {0, -1.f};
 
-		float SpawnInterval = 100000.f;
+		float SpawnInterval = 100.f;
 		float CurrentTime = 0;
 		Math::Vector2f SpawnPosition = {0, 0};
 		Math::Vector2f ActivePosition = {0, 0};
@@ -115,11 +119,14 @@ namespace Eclipse
 		{
 			Math::Vector2f StartPosition = { 0.f, 0.f };
 
-			Math::Vector2f StartVelocityMin = { -0.5f, 1.f };
-			Math::Vector2f StartVelocityMax = { -0.5f, 1.f };
+			float StartSpeedMin = 1.f;
+			float StartSpeedMax = 1.f;
 
-			float StartLifetimeMin = 2.5f;
-			float StartLifetimeMax = 2.5f;
+			float StartLifetimeMin = 1.f;
+			float StartLifetimeMax = 1.f;
+
+			float StartSizeMin = 0.02f;
+			float StartSizeMax = 0.02f;
 		} StartData;
 	};
 
@@ -139,5 +146,28 @@ namespace Eclipse
 
 	private:
 		std::vector<Emitter> myEmmiter;
+
+	public:
+		static inline class ParticleSpawnBuffer* ParticleSpawnGpuParticleBuffer;
+		static inline class ConeEmitterDataBuffer* ConeEmitterParticleBuffer;
+		static inline class SharedGPUParticlesBuffer* SharedParticleBuffer;
+
+		[[SerializeField]]
+		Assets::Texture Texture0;
+		[[SerializeField]]
+		Assets::Texture Texture1;
+		[[SerializeField]]
+		Assets::Texture Texture2;
+		[[SerializeField]]
+		Assets::Texture Texture3;
+		[[SerializeField]]
+		Assets::Texture Texture4;
+		[[SerializeField]]
+		Assets::Texture Texture5;
+		[[SerializeField]]
+		Assets::Texture Texture6;
+		[[SerializeField]]
+		Assets::Texture Texture7;
+
 	};
 }

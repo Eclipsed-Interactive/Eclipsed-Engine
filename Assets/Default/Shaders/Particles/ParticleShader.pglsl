@@ -1,10 +1,20 @@
 #version 460 core
 out vec4 frag_colour;
 
+struct Material 
+{
+   sampler2D albedo;
+};
+uniform Material material[8];
+
 in vec4 gColor;
+in vec2 TexCoord;
+
+flat in uint TextureIndex;
 
 void main()
 {
-    //frag_colour = gColor;
-    frag_colour = vec4(1, 1, 1, 1);
+    vec4 textureAlbedo = texture(material[TextureIndex].albedo, TexCoord);
+
+    frag_colour = textureAlbedo;
 }

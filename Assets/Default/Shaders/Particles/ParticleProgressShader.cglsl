@@ -3,8 +3,8 @@ layout(local_size_x = 64) in;
 
 layout(std140,binding=1) uniform SharedGPUParticlesBuffer
 {
-	float DeltaTime;
 	vec3 Padding;
+	float DeltaTime;
 };
 
 struct Particle
