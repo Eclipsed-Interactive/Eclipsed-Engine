@@ -115,7 +115,7 @@ function(CreateProject TYPE)
     set_target_properties(${TARGET_NAME}
         PROPERTIES
             OUTPUT_NAME "Eclipsed.${PROJECT_KEY}"
-            UNITY_BUILD OFF
+            UNITY_BUILD ON
             UNITY_BUILD_BATCH_SIZE 50
     )
 

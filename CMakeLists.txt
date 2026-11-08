@@ -10,6 +10,7 @@ option(BUILD_EDITOR "If enabled, then builds the editor." ON)
 
 add_compile_definitions(
     WIN32_LEAN_AND_MEAN
+    NOMINMAX
 )
 
 if(BUILD_EDITOR)

@@ -54,7 +54,14 @@ endif()
 
 set_target_properties(OpenGL PROPERTIES FOLDER "Externals")
 
-set_target_properties(OpenGL PROPERTIES UNITY_BUILD OFF UNITY_BUILD_BATCH_SIZE 50)
+set_target_properties(OpenGL PROPERTIES UNITY_BUILD ON UNITY_BUILD_BATCH_SIZE 50)
+
+# imgui's gl3w loader #defines gl* names that collide with glad, so keep its backends out of unity batches
+set_source_files_properties(
+    "${CMAKE_CURRENT_SOURCE_DIR}/ImGui/imgui_impl_opengl3.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ImGui/imgui_impl_glfw.cpp"
+    PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+)
 
 set_source_files_properties("${CMAKE_SOURCE_DIR}/Source/Externals/OpenGL/glad/glad.c" PROPERTIES LANGUAGE C)
 set_target_properties(OpenGL PROPERTIES C_STANDARD 11)

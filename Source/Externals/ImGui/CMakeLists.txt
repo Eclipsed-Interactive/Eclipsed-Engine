@@ -22,6 +22,7 @@ target_include_directories(ImGui
 set_target_properties(ImGui PROPERTIES
     FOLDER "Externals"
     EXCLUDE_FROM_ALL TRUE
+    UNITY_BUILD OFF
 
     ARCHIVE_OUTPUT_DIRECTORY
         "${CMAKE_SOURCE_DIR}/Bin/Libs/Externals/$<CONFIG>"
