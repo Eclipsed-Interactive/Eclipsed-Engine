@@ -48,7 +48,7 @@ namespace Eclipse::Editor
 		unsigned id = aGameObject->GetID();
 		bool goIsOpen = gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end();
 
-		ImGui::PushFont(Editor::EditorUI::FontExtraSmall);
+		ImGui::PushFont(EditorUI::FontExtraSmall);
 		if (aGameObject->GetChildCount() > 0)
 		{
 			float cursorXpos = ImGui::GetCursorPosX() + totalIndent;

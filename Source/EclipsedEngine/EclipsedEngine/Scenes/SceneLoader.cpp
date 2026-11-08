@@ -13,6 +13,11 @@
 
 #include "Reflection/Runtime/ReflectionRegistry.h"
 
+// Windows.h (included by other files in the unity batch) defines GetObject as a macro
+#ifdef GetObject
+#undef GetObject
+#endif
+
 namespace Eclipse
 {
 	void SceneSerializer::LoadScene(const std::string& scene)

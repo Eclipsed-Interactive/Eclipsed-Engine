@@ -24,7 +24,7 @@ namespace Eclipse::Editor
 
 
 		void OpenFile(const Utilities::FileInfo& fifo);
-		void OnFileAdded(const Editor::FileWatcherEvent& e);
+		void OnFileAdded(const FileWatcherEvent& e);
 
 	private:
 		bool CheckFileDoubleClicked();
