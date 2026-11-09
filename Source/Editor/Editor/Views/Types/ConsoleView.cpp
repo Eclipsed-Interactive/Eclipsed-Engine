@@ -127,7 +127,7 @@ namespace Eclipse::Editor
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip(tooltip);
 			};
 
-		button(ICON_FA_GEARS, "Engine logs", true);
+		button(ICON_FA_MICROCHIP, "Engine logs", true);
 		ImGui::SameLine(0.f, 0.f);
 		button(ICON_FA_GAMEPAD, "Game logs", false);
 	}
