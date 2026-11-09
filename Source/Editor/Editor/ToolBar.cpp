@@ -9,6 +9,7 @@
 
 #include <regex>
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 #include "Core/Settings/EditorSettings.h"
 
 #include "rapidjson/document.h"
@@ -23,57 +24,51 @@ namespace Eclipse::Editor
 {
 	void ToolBar::Draw()
 	{
-		static PlayMode mode = PlayMode::Stopped;
-
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
-
-		ImVec2 workPos = viewport->WorkPos;
-		ImVec2 workSize = viewport->WorkSize;
-
-		ImGui::SetNextWindowPos(ImVec2(workPos.x, workPos.y));
-		ImGui::SetNextWindowSize(ImVec2(workSize.x, ToolBarHeight));
-
 		ImGuiWindowFlags flags =
-			ImGuiWindowFlags_NoTitleBar |
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoMove |
 			ImGuiWindowFlags_NoCollapse |
 			ImGuiWindowFlags_NoSavedSettings |
-			ImGuiWindowFlags_NoDocking |
-			ImGuiWindowFlags_NoScrollbar;
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoScrollWithMouse;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6.0f, 4.0f));
 
-		ImGui::Begin("##EditorToolbar", nullptr, flags);
-
-		//ImGui::Button(ICON_FA_PAUSE, PlayModeButtonSize);
-
-		switch (PlayModeController::GetPlayMode())
+		if (ImGui::BeginViewportSideBar("##EditorToolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ToolBarHeight, flags))
 		{
-		case PlayMode::Playing: DrawPlayMode();
-			break;
-		case PlayMode::Paused: DrawPausedMode();
-			break;
-		case PlayMode::Stopped: DrawStoppedMode();
-			break;
+			switch (PlayModeController::GetPlayMode())
+			{
+			case PlayMode::Playing: DrawPlayMode();
+				break;
+			case PlayMode::Paused: DrawPausedMode();
+				break;
+			case PlayMode::Stopped: DrawStoppedMode();
+				break;
+			}
 		}
-
 		ImGui::End();
 
-		ImGui::PopStyleVar(3);
+		ImGui::PopStyleVar(2);
+	}
+
+	void ToolBar::CenterButtons(int buttonCount)
+	{
+		const float groupWidth = buttonCount * PlayModeButtonSize.x + (buttonCount - 1) * PlayModeButtonSpacing;
+
+		ImGui::SetCursorPos(ImVec2(
+			(ImGui::GetWindowWidth() - groupWidth) * 0.5f,
+			(ImGui::GetWindowHeight() - PlayModeButtonSize.y) * 0.5f));
 	}
 
 	void ToolBar::DrawPlayMode()
 	{
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f - PlayModeButtonsPadding);
+		CenterButtons(2);
+
 		if (ImGui::Button(ICON_FA_PAUSE, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Paused);
 		}
 
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f + PlayModeButtonsPadding);
+		ImGui::SameLine(0.f, PlayModeButtonSpacing);
 		if (ImGui::Button(ICON_FA_STOP, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Stopped);
@@ -82,19 +77,20 @@ namespace Eclipse::Editor
 
 	void ToolBar::DrawPausedMode()
 	{
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f - (PlayModeButtonsPadding * 2));
+		CenterButtons(3);
+
 		if (ImGui::Button(ICON_FA_PLAY, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Playing);
 		}
 
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f);
+		ImGui::SameLine(0.f, PlayModeButtonSpacing);
 		if (ImGui::Button(ICON_FA_STOP, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Stopped);
 		}
 
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f + (PlayModeButtonsPadding * 2));
+		ImGui::SameLine(0.f, PlayModeButtonSpacing);
 		if (ImGui::Button(ICON_FA_FORWARD_STEP, PlayModeButtonSize))
 		{
 			PlayModeController::Step();
@@ -103,7 +99,8 @@ namespace Eclipse::Editor
 
 	void ToolBar::DrawStoppedMode()
 	{
-		ImGui::SameLine((ImGui::GetWindowWidth() - 25) * 0.5f);
+		CenterButtons(1);
+
 		if (ImGui::Button(ICON_FA_PLAY, PlayModeButtonSize))
 		{
 			PlayModeController::SetPlayMode(PlayMode::Playing);

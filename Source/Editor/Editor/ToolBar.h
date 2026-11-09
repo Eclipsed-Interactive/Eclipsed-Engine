@@ -16,10 +16,12 @@ namespace Eclipse::Editor
 		static void DrawPausedMode();
 		static void DrawStoppedMode();
 
+		static void CenterButtons(int buttonCount);
+
 	public:
 		static inline ImVec2 PlayModeButtonSize = ImVec2(25, 25);
 
-		static inline float PlayModeButtonsPadding = 15;
+		static inline float PlayModeButtonSpacing = 5.f;
 		static inline float ToolBarHeight = 30.f;
 	};
 }

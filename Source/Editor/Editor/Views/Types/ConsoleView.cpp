@@ -313,7 +313,7 @@ namespace Eclipse::Editor
 		filter.Draw("##console-search-bar", ImGui::GetContentRegionAvail().x - 400);
 
 		ImGui::SameLine(0.f, 0.f);
-		if (ImGui::Button(ICON_FA_CROSS))
+		if (ImGui::Button(ICON_FA_XMARK))
 		{
 			filter.Clear();
 		}

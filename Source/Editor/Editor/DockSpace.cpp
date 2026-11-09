@@ -12,11 +12,8 @@ namespace Eclipse::Editor
 		ImVec2 workPos = viewport->WorkPos;
 		ImVec2 workSize = viewport->WorkSize;
 
-		const float dockY = workPos.y + ToolBar::ToolBarHeight;
-		const float dockHeight = workSize.y - ToolBar::ToolBarHeight;
-
-		ImGui::SetNextWindowPos(ImVec2(workPos.x, dockY));
-		ImGui::SetNextWindowSize(ImVec2(workSize.x, dockHeight));
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(workSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
 
 		ImGuiWindowFlags flags =
