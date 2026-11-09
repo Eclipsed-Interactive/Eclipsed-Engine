@@ -135,7 +135,7 @@ namespace Eclipse
 		if (Process::RunBatchAndWait(batchPath, logPath, exitCode))
 			return true;
 
-		LOG_ERROR("Game " + stepName + " failed (exit code " + std::to_string(exitCode) + "). Log: " + logPath.generic_string());
+		Eclipse::Core::DebugLogger::AddGameLogMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage("Game " + stepName + " failed (exit code " + std::to_string(exitCode) + "). Log: " + logPath.generic_string(), "C:\\Users\\zulto\\Desktop\\MyFiles\\Projects\\Eclipsed-Engine\\Source\\Editor\\Editor\\Game\\GameModuleManager.cpp", Eclipse::DiagnosticSeverity::Error), 138);;
 
 		return false;
 	}

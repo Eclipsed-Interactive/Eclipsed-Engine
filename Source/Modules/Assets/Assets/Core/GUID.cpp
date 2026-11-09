@@ -4,7 +4,8 @@
 #include <memory>
 #include <sstream>
 #include <iomanip>
-#include <iostream>
+
+#include <Core/Logger/DebugLogger.h>
 
 namespace Eclipse::Assets
 {
@@ -36,6 +37,14 @@ namespace Eclipse::Assets
 	{
 		if (hashStr.empty()) return;
 
+		if (hashStr.size() != 32 || hashStr.find_first_not_of("0123456789abcdefABCDEF") != std::string::npos)
+		{
+			LOG_ERROR("Invalid GUID string '" + hashStr + "' expected 32 characters.");
+			high = 0;
+			low = 0;
+			return;
+		}
+
 		high = std::stoull(hashStr.substr(0, 16), nullptr, 16);
 		low= std::stoull(hashStr.substr(16, 32), nullptr, 16);
 	}
@@ -55,7 +64,7 @@ namespace Eclipse::Assets
 
 		if (high != parsedHigh && parsedLow != low)
 		{
-			std::cout << "Its wrong somehwere" << std::endl;
+			LOG_ERROR("Failed to parse GUID to std::string: ")
 		}
 
 		return hexGuid;

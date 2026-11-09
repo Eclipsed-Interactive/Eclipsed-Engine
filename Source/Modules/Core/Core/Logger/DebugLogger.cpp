@@ -54,5 +54,15 @@ namespace Eclipse::Core
 		EngineBuffer.Clear();
 		GameBuffer.Clear();
 	}
+
+	void DebugLogger::ClearGameBuffer()
+	{
+		GameBuffer.Clear();
+	}
+
+	void DebugLogger::ClearEngineBuffer()
+	{
+		EngineBuffer.Clear();
+	}
 }
 #endif

@@ -17,8 +17,8 @@ namespace Eclipse::Editor
 
 		filter = {};
 
-		if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
-		else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
+		if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearGameBuffer);
+		else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearGameBuffer);
 	}
 
 	void ConsoleView::Draw()
@@ -144,8 +144,8 @@ namespace Eclipse::Editor
 		ImGui::SameLine();
 		if (ImGui::Checkbox("##clear-on-play", &ClearOnPlay))
 		{
-			if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
-			else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
+			if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearGameBuffer);
+			else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearGameBuffer);
 		}
 
 		if (ImGui::IsItemHovered()) ImGui::SetTooltip(tooltip);

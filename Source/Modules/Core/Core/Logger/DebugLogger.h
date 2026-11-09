@@ -32,6 +32,8 @@ namespace Eclipse::Core
 		static const DebugLoggerBuffer& GetEngineBuffer();
 
 		static void ClearBuffers();
+		static void ClearGameBuffer();
+		static void ClearEngineBuffer();
 
 	private:
 		static DebugLoggerBuffer GameBuffer;
