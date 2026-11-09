@@ -16,11 +16,10 @@ namespace Eclipse
 		return m;
 	}
 
-	DebugMessage DebugMessageFactory::ConstructSourceCodeMessage(const std::string& message, const std::string& file, int line, DiagnosticSeverity severity)
+	DebugMessage DebugMessageFactory::ConstructSourceCodeMessage(const std::string& message, const std::string& file, DiagnosticSeverity severity)
 	{
 		DebugMessage m = ConstructDefaultMessage(message, severity);
 		m.diagnosticKind = DiagnosticKind::SourceCode;
-		m.line = line;
 		m.file = file;
 
 		return m;

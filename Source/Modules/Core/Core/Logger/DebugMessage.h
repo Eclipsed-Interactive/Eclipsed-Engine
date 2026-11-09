@@ -25,18 +25,22 @@ namespace Eclipse
 		DiagnosticSeverity diagnosticSeverity = DiagnosticSeverity::Info;
 		DiagnosticKind diagnosticKind = DiagnosticKind::Text;
 
-		int line = -1;
+		mutable int count = 0;
 
 		std::string message = "";
 		std::string file = "";
 
-		bool operator==(const DebugMessage&) const = default;
+		bool operator==(const DebugMessage& o) const
+		{
+			return message == o.message;
+		}
 	};
 
 	struct CORE_API DebugMessageInstance
 	{
 		// Time since midnight.
 		std::chrono::seconds timeStamp{};
+		int line = -1;
 
 		const DebugMessage* message;
 	};
@@ -53,7 +57,6 @@ namespace Eclipse
 				};
 
 			combine(std::hash<std::string>{}(m.file));
-			combine(std::hash<int>{}(m.line));
 			combine(static_cast<size_t>(m.diagnosticSeverity));
 			combine(static_cast<size_t>(m.diagnosticKind));
 

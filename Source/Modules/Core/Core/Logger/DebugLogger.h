@@ -1,42 +1,53 @@
 #pragma once
 
-#ifdef ECL_EDITOR
+#ifndef CHANGE_THIS_TO_A_SHIPPING_DEFINE
 #include "Core/Containers/RingBuffer.h"
 #include <string>
 #include <chrono>
 #include <unordered_set>
 #include "DebugMessage.h"
 #include "DebugMessageFactory.h"
+#include "DebugLoggerBuffer.h"
 
 #include "Core.Core.hpp"
 
 namespace Eclipse::Core
 {
-#define DEBUG_LOGGER_BUFFER_SIZE 40'000
-
 	class CORE_API DebugLogger
 	{
 	public:
 		friend class ConsoleWindow;
 
 	public:
-		static void AddMessage(const DebugMessage& message);
+		static void AddGameLogMessage(const DebugMessage& message, int line);
+		static void AddEngineLogMessage(const DebugMessage& message, int line);
 
-		static const RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE>& GetMessages();
-		static void Clear();
+	public:
+		static const std::unordered_set<DebugMessage, DebugMessageHash>& GetUniqueGameMessages();
+		static const RingBuffer<DebugMessageInstance, LOGGER_SIZE>& GetGameMessageInstances();
+		static const DebugLoggerBuffer& GetGameBuffer();
+
+		static const std::unordered_set<DebugMessage, DebugMessageHash>& GetUniqueEngineMessages();
+		static const RingBuffer<DebugMessageInstance, LOGGER_SIZE>& GetEngineMessageInstances();
+		static const DebugLoggerBuffer& GetEngineBuffer();
+
+		static void ClearBuffers();
 
 	private:
-		static std::chrono::seconds GetTimestamp();
-
-	private:
-		static std::unordered_set<DebugMessage, DebugMessageHash> uniqueMessages;
-		static RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE> messageInstanceBuffer;
+		static DebugLoggerBuffer GameBuffer;
+		static DebugLoggerBuffer EngineBuffer;
 	};
 }
 
-#define LOG(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Info))
-#define LOG_WARNING(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Warning))
-#define LOG_ERROR(MESSAGE) Eclipse::Core::DebugLogger::AddMessage(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(MESSAGE, __FILE__, __LINE__, Eclipse::DiagnosticSeverity::Error))
+#ifdef ECL_GAME
+#define LOG_FUNC Eclipse::Core::DebugLogger::AddGameLogMessage
+#else
+#define LOG_FUNC Eclipse::Core::DebugLogger::AddEngineLogMessage
+#endif
+
+#define LOG(message) LOG_FUNC(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(message, __FILE__, Eclipse::DiagnosticSeverity::Info), __LINE__);
+#define LOG_WARNING(message) LOG_FUNC(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(message, __FILE__, Eclipse::DiagnosticSeverity::Warning), __LINE__);
+#define LOG_ERROR(message) LOG_FUNC(Eclipse::DebugMessageFactory::ConstructSourceCodeMessage(message, __FILE__, Eclipse::DiagnosticSeverity::Error), __LINE__);
 
 #else
 #define LOG(MESSAGE)

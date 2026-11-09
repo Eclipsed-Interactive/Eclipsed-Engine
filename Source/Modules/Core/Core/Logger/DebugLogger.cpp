@@ -5,30 +5,54 @@
 
 namespace Eclipse::Core
 {
-	std::unordered_set<DebugMessage, DebugMessageHash> DebugLogger::uniqueMessages;
-	RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE> DebugLogger::messageInstanceBuffer;
+	DebugLoggerBuffer DebugLogger::GameBuffer;
+	DebugLoggerBuffer DebugLogger::EngineBuffer;
 
-	void DebugLogger::AddMessage(const DebugMessage& message)
+	void DebugLogger::AddGameLogMessage(const DebugMessage& message, int line)
 	{
-		auto [it, inserted] = uniqueMessages.emplace(message);
-		messageInstanceBuffer.Push(DebugMessageInstance{ .timeStamp = GetTimestamp(), .message = &(*it) });
+		GameBuffer.AddMessage(message, line);
 	}
 
-	const RingBuffer<DebugMessageInstance, DEBUG_LOGGER_BUFFER_SIZE>& DebugLogger::GetMessages()
+
+	void DebugLogger::AddEngineLogMessage(const DebugMessage& message, int line)
 	{
-		return messageInstanceBuffer;
+		EngineBuffer.AddMessage(message, line);
 	}
 
-	void DebugLogger::Clear()
+	const std::unordered_set<DebugMessage, DebugMessageHash>& DebugLogger::GetUniqueGameMessages()
 	{
-		uniqueMessages.clear();
-		messageInstanceBuffer.Clear();
+		return GameBuffer.GetUniqueMessages();
 	}
 
-	std::chrono::seconds DebugLogger::GetTimestamp()
+	const RingBuffer<DebugMessageInstance, LOGGER_SIZE>& DebugLogger::GetGameMessageInstances()
 	{
-		const auto local = std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time();
-		return std::chrono::floor<std::chrono::seconds>(local - std::chrono::floor<std::chrono::days>(local));
+		return GameBuffer.GetMessageInstances();
+	}
+	
+	const DebugLoggerBuffer& DebugLogger::GetGameBuffer()
+	{
+		return GameBuffer;
+	}
+
+	const std::unordered_set<DebugMessage, DebugMessageHash>& DebugLogger::GetUniqueEngineMessages()
+	{
+		return EngineBuffer.GetUniqueMessages();
+	}
+
+	const RingBuffer<DebugMessageInstance, LOGGER_SIZE>& DebugLogger::GetEngineMessageInstances()
+	{
+		return EngineBuffer.GetMessageInstances();
+	}
+
+	const DebugLoggerBuffer& DebugLogger::GetEngineBuffer()
+	{
+		return EngineBuffer;
+	}
+
+	void DebugLogger::ClearBuffers()
+	{
+		EngineBuffer.Clear();
+		GameBuffer.Clear();
 	}
 }
 #endif
