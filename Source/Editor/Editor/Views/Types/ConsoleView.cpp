@@ -106,10 +106,15 @@ namespace Eclipse::Editor
 		selectedMessage = nullptr;
 	}
 
+
+
 	void ConsoleView::DrawLogMessages(const Core::DebugLoggerBuffer& logBuffer)
 	{
-		if (IsCollapsing) DrawCollapsed(logBuffer);
-		else DrawInstances(logBuffer);
+		std::vector<ConsoleRow> rows;
+		GetMessages(logBuffer, rows);
+
+		if (IsCollapsing) DrawCollapsed(rows);
+		else DrawInstances(rows);
 	}
 
 	void ConsoleView::DrawSourceSwitch()
@@ -308,6 +313,20 @@ namespace Eclipse::Editor
 		return passed;
 	}
 
+	bool ConsoleView::PassFilter(const DebugMessage* message)
+	{
+		bool passed = PassSearchFilter(message);
+		
+		switch (message->diagnosticSeverity)
+		{
+		case DiagnosticSeverity::Info: passed &= DrawInfoLogs; break;
+		case DiagnosticSeverity::Warning: passed &= DrawWarningLogs; break;
+		case DiagnosticSeverity::Error: passed &= DrawErrorLogs; break;
+		}
+
+		return passed;
+	}
+
 	void ConsoleView::DrawSearchBar()
 	{
 		filter.Draw("##console-search-bar", ImGui::GetContentRegionAvail().x - 400);
@@ -367,16 +386,9 @@ namespace Eclipse::Editor
 		ImGui::PopID();
 	}
 
-	void ConsoleView::DrawCollapsed(const Core::DebugLoggerBuffer& buffer)
+	void ConsoleView::DrawCollapsed(const std::vector<ConsoleRow>& messages)
 	{
-		const auto& messageBuffer = buffer.GetUniqueMessages();
-
 		ImGui::TableSetupColumn("##count", ImGuiTableColumnFlags_WidthFixed, 40.0f);
-
-		std::vector<const DebugMessage*> messages;
-		messages.reserve(messageBuffer.size());
-		for (const DebugMessage& m : messageBuffer)
-			messages.push_back(&m);
 
 		ImGuiListClipper clipper;
 		clipper.Begin(static_cast<int>(messages.size()), Row_Height);
@@ -384,10 +396,8 @@ namespace Eclipse::Editor
 		{
 			for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
 			{
-				const DebugMessage& message = *messages[i];
-				const SeverityStyle style = GetSeverityStyle(message.diagnosticSeverity);
-
-				if (!PassSearchFilter(&message)) continue;
+				const ConsoleRow& message = messages[i];
+				const SeverityStyle style = GetSeverityStyle(message.message->diagnosticSeverity);
 
 				ImGui::PushID(i);
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, Row_Height);
@@ -397,21 +407,21 @@ namespace Eclipse::Editor
 
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(ImGui::GetStyle().ItemSpacing.x, 0.0f));
 
-				const bool clicked = ImGui::Selectable("##row", selectedMessage == &message,
+				const bool clicked = ImGui::Selectable("##row", selectedMessage == message.message,
 					ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
 					ImVec2(0.f, Row_Height));
 				ImGui::PopStyleVar();
 
-				if (clicked) selectedMessage = &message;
+				if (clicked) selectedMessage = message.message;
 
 				DrawSeverityIcon(style, cellStart, Row_Height);
 
 				ImGui::TableSetColumnIndex(1);
 
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
-				ImGui::TextUnformatted(message.message.c_str());
+				ImGui::TextUnformatted(message.message->message.c_str());
 
-				const std::string countText = std::to_string(message.count);
+				const std::string countText = std::to_string(message.message->count);
 				const float textWidth = ImGui::CalcTextSize(countText.c_str()).x;
 
 				ImGui::TableSetColumnIndex(2);
@@ -423,26 +433,20 @@ namespace Eclipse::Editor
 		}
 	}
 
-	void ConsoleView::DrawInstances(const Core::DebugLoggerBuffer& buffer)
+	void ConsoleView::DrawInstances(const std::vector<ConsoleRow>& messages)
 	{
-		const auto& messageBuffer = buffer.GetMessageInstances();
-
 		ImGuiListClipper clipper;
-		clipper.Begin(static_cast<int>(messageBuffer.Count()), Row_Height);
+		clipper.Begin(static_cast<int>(messages.size()), Row_Height);
 		while (clipper.Step())
 		{
 			int index = 0;
 			for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
 			{
 				const bool wasSelected = i == selectedIndex;
+				const ConsoleRow& row = messages[i];
+				const DebugMessage* message = row.message;
 
-				const auto& mes = messageBuffer.Get(i);
-				if (!PassSearchFilter(mes.message)) continue;
-
-
-				const SeverityStyle style = GetSeverityStyle(mes.message->diagnosticSeverity);
-
-
+				const SeverityStyle style = GetSeverityStyle(message->diagnosticSeverity);
 
 				ImGui::PushID(i);
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, Row_Height);
@@ -467,14 +471,15 @@ namespace Eclipse::Editor
 				ImGui::SameLine(0, 0);
 
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.42f, 0.42f, 0.45f, 1.0f));
-				ImGui::TextUnformatted(std::format("{:%T}", mes.timeStamp).c_str());
+				//ImGui::TextUnformatted(std::format("{:%T}", 0).c_str());
+				ImGui::TextUnformatted("TIME");
 				ImGui::PopStyleColor();
 				ImGui::SameLine(0, 0);
 
 				ImGui::TextUnformatted("]");
 				ImGui::SameLine();
 
-				ImGui::TextUnformatted(mes.message->message.c_str());
+				ImGui::TextUnformatted(message->message.c_str());
 
 				ImGui::PopID();
 			}
@@ -549,6 +554,48 @@ namespace Eclipse::Editor
 		case Eclipse::DiagnosticSeverity::Error: return { ICON_FA_TRIANGLE_EXCLAMATION, ImVec4(0.94f, 0.38f, 0.36f, 1.f) };
 		case Eclipse::DiagnosticSeverity::Info:
 		default: return { ICON_FA_CIRCLE_INFO, ImVec4(0.42f, 0.71f, 0.93f, 1.f) };
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	void ConsoleView::GetMessages(const Core::DebugLoggerBuffer& buffer, std::vector<ConsoleRow>& outMessages)
+	{
+		if (IsCollapsing)
+		{
+			for (const DebugMessage& message : buffer.GetUniqueMessages())
+			{
+				if (!PassFilter(&message)) continue;
+
+				outMessages.push_back(ConsoleRow{ .message = &message });
+			}
+		}
+		else
+		{
+			for (int i = 0; i < buffer.GetMessageInstances().Count(); i++)
+			{
+				const DebugMessageInstance& instance = buffer.GetMessageInstances().Get(i);
+
+				if (!PassFilter(instance.message)) continue;
+
+				outMessages.push_back(ConsoleRow{ .message = instance.message, .instanceIndex = i });
+			}
+
 		}
 	}
 }

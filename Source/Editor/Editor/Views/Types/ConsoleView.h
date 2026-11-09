@@ -13,6 +13,12 @@ namespace Eclipse::Editor
 		ImVec4 color;
 	};
 
+	struct ConsoleRow
+	{
+		const DebugMessage* message = nullptr;
+		int instanceIndex = -1;
+	};
+
 	class ConsoleView : public EditorView<ConsoleView>
 	{
 		BASIC_VIEW("Console")
@@ -36,9 +42,11 @@ namespace Eclipse::Editor
 
 		void ResetSelected();
 
+		void GetMessages(const Core::DebugLoggerBuffer& buffer, std::vector<ConsoleRow>& outMessages);
+
 	private:
-		void DrawCollapsed(const Core::DebugLoggerBuffer& logBuffer);
-		void DrawInstances(const Core::DebugLoggerBuffer& logBuffer);
+		void DrawCollapsed(const std::vector<ConsoleRow>& messages);
+		void DrawInstances(const std::vector<ConsoleRow>& messages);
 
 		void DrawLogMessages(const Core::DebugLoggerBuffer& logBuffer);
 
@@ -51,6 +59,7 @@ namespace Eclipse::Editor
 		void DrawContextMenu();
 
 		bool PassSearchFilter(const DebugMessage* message);
+		bool PassFilter(const DebugMessage* message);
 		void DrawSearchBar();
 
 	private:
