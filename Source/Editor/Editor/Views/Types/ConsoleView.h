@@ -48,11 +48,18 @@ namespace Eclipse::Editor
 		void DrawMessageBox();
 		void DrawSelectedMessageBox();
 
+		void DrawContextMenu();
+
+		bool PassSearchFilter(const DebugMessage* message);
+		void DrawSearchBar();
+
 	private:
 		void DrawSelectedMessage(const Core::DebugLoggerBuffer& buffer, const DebugMessage* message);
 
 	private:
-		float messageListHeight = 300.0f;
+		ImGuiTextFilter filter;
+
+		bool messageBoxWasAtBottom = true;
 
 		constexpr static float Row_Height = 40;
 		int selectedIndex = -1;

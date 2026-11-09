@@ -4,15 +4,34 @@
 
 #include <FontAwesome/7/IconsFontAwesome7.h>
 
+#include <vector>
+#include <windows.h>
+
+#include <Core/EventSystem/EventSystem.h>
+
 namespace Eclipse::Editor
 {
 	void ConsoleView::OnOpen()
 	{
+		// Load settings.
 
+		filter = {};
+
+		if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
+		else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
 	}
 
 	void ConsoleView::Draw()
 	{
+		// Reset selection if pressing middle mouse button
+		if (ImGui::GetIO().MouseClicked[2])
+			ResetSelected();
+
+		if ((selectedIndex != -1 || selectedMessage) && ImGui::GetIO().MouseClicked[1])
+		{
+			ImGui::OpenPopup("##Console Context");
+		}
+
 		{ // Drawing toolbar.
 			DrawClearButton();
 
@@ -27,14 +46,25 @@ namespace Eclipse::Editor
 			DrawSourceSwitch();
 
 			ImGui::SameLine();
+			ImGui::Dummy({ 20, 0 });
+			ImGui::SameLine();
+
+			DrawSearchBar();
+
+			ImGui::SameLine();
 
 			DrawClearOnPlayToggle();
 		}
+
+		if (filter.IsActive())
+			ResetSelected();
 
 		{ // Message boxes
 			DrawMessageBox();
 			DrawSelectedMessageBox();
 		}
+
+		DrawContextMenu();
 	}
 
 	void ConsoleView::DrawSourceToggle(const char* icon, const char* tooltip, bool& enabled)
@@ -91,9 +121,9 @@ namespace Eclipse::Editor
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip(tooltip);
 			};
 
-		button(ICON_FA_GEARS, "Engine logs", false);
+		button(ICON_FA_GEARS, "Engine logs", true);
 		ImGui::SameLine(0.f, 0.f);
-		button(ICON_FA_GAMEPAD, "Game logs", true);
+		button(ICON_FA_GAMEPAD, "Game logs", false);
 	}
 
 	void ConsoleView::DrawClearOnPlayToggle()
@@ -106,7 +136,11 @@ namespace Eclipse::Editor
 
 		ImGui::TextUnformatted(text);
 		ImGui::SameLine();
-		ImGui::Checkbox("##clear-on-play", &ClearOnPlay);
+		if (ImGui::Checkbox("##clear-on-play", &ClearOnPlay))
+		{
+			if (ClearOnPlay) EventSystem::Subscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
+			else EventSystem::Unsubscribe("OnEnterPlaymode", Core::DebugLogger::ClearBuffers);
+		}
 
 		if (ImGui::IsItemHovered()) ImGui::SetTooltip(tooltip);
 	}
@@ -145,8 +179,13 @@ namespace Eclipse::Editor
 			ImGui::PopStyleVar();
 		}
 
-		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-			ImGui::SetScrollHereY(1.f);
+		{
+			const bool stickToBottom = ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 1.0f;
+			if (stickToBottom)
+				ImGui::SetScrollHereY(1.f);
+
+			messageBoxWasAtBottom = stickToBottom;
+		}
 
 		ImGui::EndChild();
 	}
@@ -219,23 +258,85 @@ namespace Eclipse::Editor
 		ImGui::EndChild();
 	}
 
+	void ConsoleView::DrawContextMenu()
+	{
+		if (ImGui::BeginPopup("##Console Context"))
+		{
+			if (ImGui::Button("Copy"))
+			{
+				const DebugMessage* messagePtr = selectedMessage;
+
+				if (selectedIndex != -1)
+				{
+					const Core::DebugLoggerBuffer& buffer = DrawEngineLogs ? Core::DebugLogger::GetEngineBuffer() : Core::DebugLogger::GetGameBuffer();
+					messagePtr = buffer.GetMessageInstances().Get(selectedIndex).message;
+				}
+
+				const char* message = messagePtr->message.c_str();
+				const size_t lenght = messagePtr->message.size() + 1;
+
+				HGLOBAL hgl = GlobalAlloc(GMEM_MOVEABLE, lenght);
+				memcpy(GlobalLock(hgl), message, lenght);
+				GlobalUnlock(hgl);
+
+				OpenClipboard(NULL);
+				EmptyClipboard();
+				SetClipboardData(CF_TEXT, hgl);
+				CloseClipboard();
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	bool ConsoleView::PassSearchFilter(const DebugMessage* message)
+	{
+		const char* messageStr = message->message.c_str();
+		const char* messageFileStr = message->file.c_str();
+
+		bool passed = filter.PassFilter(messageStr);
+		passed |= filter.PassFilter(messageFileStr);
+
+		return passed;
+	}
+
+	void ConsoleView::DrawSearchBar()
+	{
+		filter.Draw("##console-search-bar", ImGui::GetContentRegionAvail().x - 300);
+		
+		ImGui::SameLine(0.f, 0.f);
+		if (ImGui::Button(ICON_FA_CROSS))
+		{
+			filter.Clear();
+		}
+	}
+
+
 	void ConsoleView::DrawCollapsed(const Core::DebugLoggerBuffer& buffer)
 	{
-		const float textOffsetY = (Row_Height - ImGui::GetTextLineHeight()) * 0.5f;
 		const auto& messageBuffer = buffer.GetUniqueMessages();
 
 		ImGui::TableSetupColumn("##count", ImGuiTableColumnFlags_WidthFixed, 40.0f);
 
+		std::vector<const DebugMessage*> messages;
+		messages.reserve(messageBuffer.size());
+		for (const DebugMessage& m : messageBuffer)
+			messages.push_back(&m);
+
 		ImGuiListClipper clipper;
-		clipper.Begin(static_cast<int>(messageBuffer.size()), Row_Height);
+		clipper.Begin(static_cast<int>(messages.size()), Row_Height);
 		while (clipper.Step())
 		{
-			int index = 0;
-			for (const DebugMessage& message : buffer.GetUniqueMessages())
+			for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
 			{
+				const DebugMessage& message = *messages[i];
 				const SeverityStyle style = GetSeverityStyle(message.diagnosticSeverity);
 
-				ImGui::PushID(index);
+				if (!PassSearchFilter(&message)) continue;
+
+				ImGui::PushID(i);
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, Row_Height);
 
 				ImGui::TableSetColumnIndex(0);
@@ -243,14 +344,13 @@ namespace Eclipse::Editor
 
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(ImGui::GetStyle().ItemSpacing.x, 0.0f));
 
-				const bool clicked = ImGui::Selectable("##row", selectedIndex == index,
+				const bool clicked = ImGui::Selectable("##row", selectedMessage == &message,
 					ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
 					ImVec2(0.f, Row_Height));
 				ImGui::PopStyleVar();
 
 				if (clicked) selectedMessage = &message;
 
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + textOffsetY);
 				DrawSeverityIcon(style, cellStart, Row_Height);
 
 				ImGui::TableSetColumnIndex(1);
@@ -266,15 +366,12 @@ namespace Eclipse::Editor
 				ImGui::TextUnformatted(countText.c_str());
 
 				ImGui::PopID();
-
-				index++;
 			}
 		}
 	}
 
 	void ConsoleView::DrawInstances(const Core::DebugLoggerBuffer& buffer)
 	{
-		const float textOffsetY = (Row_Height - ImGui::GetTextLineHeight()) * 0.5f;
 		const auto& messageBuffer = buffer.GetMessageInstances();
 
 		ImGuiListClipper clipper;
@@ -287,7 +384,12 @@ namespace Eclipse::Editor
 				const bool wasSelected = i == selectedIndex;
 
 				const auto& mes = messageBuffer.Get(i);
+				if (!PassSearchFilter(mes.message)) continue;
+
+
 				const SeverityStyle style = GetSeverityStyle(mes.message->diagnosticSeverity);
+
+
 
 				ImGui::PushID(i);
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, Row_Height);
@@ -303,7 +405,6 @@ namespace Eclipse::Editor
 
 				if (clicked) selectedIndex = i;
 
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + textOffsetY);
 				DrawSeverityIcon(style, cellStart, Row_Height);
 
 				ImGui::TableSetColumnIndex(1);

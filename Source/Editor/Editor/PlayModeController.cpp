@@ -4,6 +4,7 @@
 #include "Core/Timer.h"
 
 #include <ECS/ComponentManager.h>
+#include <Core/EventSystem/EventSystem.h>
 
 namespace Eclipse
 {
@@ -47,6 +48,8 @@ namespace Eclipse
 	{
 		SceneSnapshot = SceneManager::CaptureSnapshot();
 		Timer::SetTimeScale(1.f);
+
+		EventSystem::Trigger("OnEnterPlaymode");
 	}
 
 	void PlayModeController::ExitPlay()
@@ -54,6 +57,8 @@ namespace Eclipse
 		Timer::SetTimeScale(1.f);
 		SceneManager::RestoreSnapshot(SceneSnapshot);
 		SceneSnapshot.clear();
+
+		EventSystem::Trigger("OnExitPlaymode");
 	}
 
 	void PlayModeController::Pause()
