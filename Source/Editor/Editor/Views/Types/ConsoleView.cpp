@@ -52,6 +52,12 @@ namespace Eclipse::Editor
 			DrawSearchBar();
 
 			ImGui::SameLine();
+			ImGui::Dummy({ 20, 0 });
+			ImGui::SameLine();
+
+			DrawLogToggles();
+
+			ImGui::SameLine();
 
 			DrawClearOnPlayToggle();
 		}
@@ -304,8 +310,8 @@ namespace Eclipse::Editor
 
 	void ConsoleView::DrawSearchBar()
 	{
-		filter.Draw("##console-search-bar", ImGui::GetContentRegionAvail().x - 300);
-		
+		filter.Draw("##console-search-bar", ImGui::GetContentRegionAvail().x - 400);
+
 		ImGui::SameLine(0.f, 0.f);
 		if (ImGui::Button(ICON_FA_CROSS))
 		{
@@ -313,6 +319,53 @@ namespace Eclipse::Editor
 		}
 	}
 
+	void ConsoleView::DrawLogToggles()
+	{
+		DrawLogToggle(DiagnosticSeverity::Error, "Error", DrawErrorLogs);
+		ImGui::SameLine();
+		DrawLogToggle(DiagnosticSeverity::Warning, "Warning", DrawWarningLogs);
+		ImGui::SameLine();
+		DrawLogToggle(DiagnosticSeverity::Info, "Info", DrawInfoLogs);
+	}
+
+	void ConsoleView::DrawLogToggle(DiagnosticSeverity severity, const char* label, bool& toggle)
+	{
+		SeverityStyle style = GetSeverityStyle(severity);
+		const bool wasActive = toggle;
+
+		const ImGuiStyle& s = ImGui::GetStyle();
+		const float spacing = s.ItemInnerSpacing.x;
+
+		const ImVec2 size = ImVec2(
+			s.FramePadding.x * 2 + ImGui::CalcTextSize(style.icon).x + spacing + ImGui::CalcTextSize(label).x,
+			ImGui::GetFrameHeight()
+		);
+
+		ImGui::PushID(label);
+		ImGui::BeginGroup();
+
+		if (wasActive)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+		}
+
+		const ImVec2 start = ImGui::GetCursorPos();
+		if (ImGui::Button("##logtoggle", size))
+			toggle = !toggle;
+
+		if (wasActive)
+			ImGui::PopStyleColor(2);
+
+
+		ImGui::SetCursorPos(ImVec2(start.x + s.FramePadding.x, start.y + s.FramePadding.y));
+		ImGui::TextColored(style.color, style.icon);
+		ImGui::SameLine(0, spacing);
+		ImGui::TextUnformatted(label);
+
+		ImGui::EndGroup();
+		ImGui::PopID();
+	}
 
 	void ConsoleView::DrawCollapsed(const Core::DebugLoggerBuffer& buffer)
 	{

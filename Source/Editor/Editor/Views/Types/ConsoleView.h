@@ -57,6 +57,11 @@ namespace Eclipse::Editor
 		void DrawSelectedMessage(const Core::DebugLoggerBuffer& buffer, const DebugMessage* message);
 
 	private:
+		void DrawLogToggles();
+
+		void DrawLogToggle(DiagnosticSeverity severity, const char* label, bool& toggle);
+
+	private:
 		ImGuiTextFilter filter;
 
 		bool messageBoxWasAtBottom = true;
@@ -68,6 +73,7 @@ namespace Eclipse::Editor
 		bool IsCollapsing = false;
 
 		bool ClearOnPlay = true;
+
 		bool DrawInfoLogs = true;
 		bool DrawWarningLogs = true;
 		bool DrawErrorLogs = true;
