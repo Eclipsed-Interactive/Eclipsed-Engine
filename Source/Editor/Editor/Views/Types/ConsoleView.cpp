@@ -23,6 +23,9 @@ namespace Eclipse::Editor
 
 	void ConsoleView::Draw()
 	{
+		if ((selectedIndex != -1 || selectedMessage) && Core::DebugLogger::GetGameBuffer().GetUniqueMessages().size() == 0)
+			ResetSelected();
+
 		// Reset selection if pressing middle mouse button
 		if (ImGui::GetIO().MouseClicked[2])
 			ResetSelected();
@@ -209,7 +212,7 @@ namespace Eclipse::Editor
 
 
 		ImGui::BeginChild("##selected_message_box");
-		if (selectedIndex != -1)
+		if (selectedIndex != -1 && buffer.GetMessageInstances().Count() > 0)
 		{
 			const DebugMessageInstance& message = buffer.GetMessageInstances().Get(selectedIndex);
 			SeverityStyle style = GetSeverityStyle(message.message->diagnosticSeverity);
