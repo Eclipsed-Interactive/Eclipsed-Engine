@@ -64,10 +64,11 @@ namespace Eclipse
 	bool GameModuleManager::Reload()
 	{
 		SceneManager::UnloadActive();
-		const bool s = TryCompileAndLoad();
+		const bool ok = TryCompileAndLoad();
+
 		SceneManager::LoadLastActive();
 
-		return s;
+		return ok;
 	}
 
 	bool GameModuleManager::IsLoaded()

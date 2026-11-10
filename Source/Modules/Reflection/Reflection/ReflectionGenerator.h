@@ -2,10 +2,14 @@
 
 #include <filesystem>
 
+#include "Reflection.Core.hpp"
+
+#include <Core/Standard//Traits/VectorTraits.hpp>
+
 namespace Eclipse::Reflection
 {
 	class TypeDescriptor;
-	class ReflectionGenerator final
+	class REFLECTION_API ReflectionGenerator final
 	{
 	public:
 		static void Clear(const std::filesystem::path& path);

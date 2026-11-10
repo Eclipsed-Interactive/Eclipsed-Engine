@@ -53,4 +53,9 @@ namespace Eclipse::Reflection
 
 		return &registererd[typeName];
 	}
+
+	void ReflectionRegistry::RegisterContainer(TypeID aTypeId, ContainerOps aContainerOps)
+	{
+		containers.insert_or_assign(aTypeId, std::move(aContainerOps));
+	}
 }
