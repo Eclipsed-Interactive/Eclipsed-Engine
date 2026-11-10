@@ -70,7 +70,6 @@ namespace Eclipse::Editor
 
 		{ // Message boxes
 			DrawMessageBox();
-			DrawSelectedMessageBox();
 		}
 
 		DrawContextMenu();
@@ -111,13 +110,10 @@ namespace Eclipse::Editor
 
 
 
-	void ConsoleView::DrawLogMessages(const Core::DebugLoggerBuffer& logBuffer)
+	void ConsoleView::DrawLogMessages(const std::vector<ConsoleRow>& messages)
 	{
-		std::vector<ConsoleRow> rows;
-		GetMessages(logBuffer, rows);
-
-		if (IsCollapsing) DrawCollapsed(rows);
-		else DrawInstances(rows);
+		if (IsCollapsing) DrawCollapsed(messages);
+		else DrawInstances(messages);
 	}
 
 	void ConsoleView::DrawSourceSwitch()
@@ -161,6 +157,11 @@ namespace Eclipse::Editor
 
 	void ConsoleView::DrawMessageBox()
 	{
+		const Core::DebugLoggerBuffer& buffer = DrawEngineLogs ? Core::DebugLogger::GetEngineBuffer() : Core::DebugLogger::GetGameBuffer();
+
+		std::vector<ConsoleRow> messages;
+		GetMessages(buffer, messages);
+
 		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.35f, 0.35f, 0.40f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 4.0f);
@@ -183,9 +184,7 @@ namespace Eclipse::Editor
 			ImGui::TableSetupColumn("##icon", ImGuiTableColumnFlags_WidthFixed, Row_Height * 1.25f);
 			ImGui::TableSetupColumn("##message", ImGuiTableColumnFlags_WidthStretch);
 
-			const Core::DebugLoggerBuffer& buffer = DrawEngineLogs ? Core::DebugLogger::GetEngineBuffer() : Core::DebugLogger::GetGameBuffer();
-
-			DrawLogMessages(buffer);
+			DrawLogMessages(messages);
 
 			ImGui::EndTable();
 
@@ -202,9 +201,11 @@ namespace Eclipse::Editor
 		}
 
 		ImGui::EndChild();
+
+		DrawSelectedMessageBox(messages);
 	}
 
-	void ConsoleView::DrawSelectedMessageBox()
+	void ConsoleView::DrawSelectedMessageBox(const std::vector<ConsoleRow>& messages)
 	{
 		if (selectedIndex == -1 && !selectedMessage) return;
 
@@ -214,7 +215,9 @@ namespace Eclipse::Editor
 		ImGui::BeginChild("##selected_message_box");
 		if (selectedIndex != -1 && buffer.GetMessageInstances().Count() > 0)
 		{
-			const DebugMessageInstance& message = buffer.GetMessageInstances().Get(selectedIndex);
+			const ConsoleRow& row = messages[selectedIndex];
+
+			const DebugMessageInstance& message = buffer.GetMessageInstances().Get(row.instanceIndex);
 			SeverityStyle style = GetSeverityStyle(message.message->diagnosticSeverity);
 
 			const float footerHeight = ImGui::GetStyle().ItemSpacing.y * 2.0f + ImGui::GetTextLineHeightWithSpacing();
@@ -438,6 +441,8 @@ namespace Eclipse::Editor
 
 	void ConsoleView::DrawInstances(const std::vector<ConsoleRow>& messages)
 	{
+		const Core::DebugLoggerBuffer& buffer = DrawEngineLogs ? Core::DebugLogger::GetEngineBuffer() : Core::DebugLogger::GetGameBuffer();
+
 		ImGuiListClipper clipper;
 		clipper.Begin(static_cast<int>(messages.size()), Row_Height);
 		while (clipper.Step())
@@ -474,8 +479,7 @@ namespace Eclipse::Editor
 				ImGui::SameLine(0, 0);
 
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.42f, 0.42f, 0.45f, 1.0f));
-				//ImGui::TextUnformatted(std::format("{:%T}", 0).c_str());
-				ImGui::TextUnformatted("TIME");
+				ImGui::TextUnformatted(std::format("{:%T}", buffer.GetMessageInstances().Get(row.instanceIndex).timeStamp).c_str());
 				ImGui::PopStyleColor();
 				ImGui::SameLine(0, 0);
 

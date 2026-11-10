@@ -48,13 +48,13 @@ namespace Eclipse::Editor
 		void DrawCollapsed(const std::vector<ConsoleRow>& messages);
 		void DrawInstances(const std::vector<ConsoleRow>& messages);
 
-		void DrawLogMessages(const Core::DebugLoggerBuffer& logBuffer);
+		void DrawLogMessages(const std::vector<ConsoleRow>& messages);
 
 		void DrawSourceSwitch();
 
 		void DrawClearOnPlayToggle();
 		void DrawMessageBox();
-		void DrawSelectedMessageBox();
+		void DrawSelectedMessageBox(const std::vector<ConsoleRow>& messages);
 
 		void DrawContextMenu();
 
