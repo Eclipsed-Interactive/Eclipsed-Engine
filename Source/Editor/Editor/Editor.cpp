@@ -48,7 +48,10 @@ namespace Eclipse::Editor
 		EditorUI::Init();
 		EditorLayout::Init();
 
-		GameModuleManager::TryCompileAndLoad();
+		if (!GameModuleManager::TryCompileAndLoad())
+		{
+
+		}
 
 		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup())
 			SceneManager::LoadLastActive();

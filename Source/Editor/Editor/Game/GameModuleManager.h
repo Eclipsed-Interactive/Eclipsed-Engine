@@ -24,6 +24,8 @@ namespace Eclipse
         static bool HasChanged();
         static bool DllFileExists(const char* dllPath);
 
+        [[nodiscard]] static bool HasBuildErrors() { return hasBuildErrors; }
+
     private:
         static bool RunBuildStep(const std::string& stepName, const std::filesystem::path& batchPath);
 
