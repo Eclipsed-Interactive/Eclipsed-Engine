@@ -41,6 +41,8 @@ namespace Eclipse::Reflection
 		template<typename T>
 		static void RegisterType();
 
+		static const ContainerOps* TryGetContainer(TypeID id);
+
 	private:
 		static void RegisterContainer(TypeID aTypeId, ContainerOps aContainerOps);
 

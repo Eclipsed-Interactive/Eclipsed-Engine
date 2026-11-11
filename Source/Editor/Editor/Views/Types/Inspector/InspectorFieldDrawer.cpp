@@ -139,7 +139,6 @@ namespace Eclipse::Editor
 			return a.GetAssetID() == b.GetAssetID();
 		}
 
-		// Returns true if the asset was changed this frame.
 		template<typename TAsset>
 		bool DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
 		{
@@ -220,13 +219,14 @@ namespace Eclipse::Editor
 
 	void InspectorFieldDrawer::Draw(void* v, const Reflection::FieldEntry& field)
 	{
-		if (!drawInspectorFuncs.contains(field.type))
+		unsigned char* object = reinterpret_cast<unsigned char*>(v) + field.offset;
+
+		if (DrawValue(object, field.type, field.attributeContainer))
 		{
-			NoDrawMethod();
+			InvokeOnChange(object, field);
 			return;
 		}
 
-		drawInspectorFuncs[field.type](v, field);
 	}
 
 
@@ -239,7 +239,7 @@ namespace Eclipse::Editor
 	{
 		using namespace Reflection;
 
-		// register all of the numeric types (Uses generic drawer)
+		// register all of the numeric types
 		RegisterNumeric<
 			char, signed char, unsigned char,
 			short, unsigned short,
@@ -252,56 +252,47 @@ namespace Eclipse::Editor
 			Math::Vector4i, Math::Vector4ui, Math::Vector4f, Math::Vector4d
 		>();
 
-		Register<bool>([](void* v, const FieldEntry& entry) {
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			bool data = *reinterpret_cast<bool*>(addr);
-
-			bool changed = ImGui::Checkbox("##value", &data);
-			if (changed) Set(entry.owner, entry.name, v, data);
+		Register<bool>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
+			return ImGui::Checkbox("##value", reinterpret_cast<bool*>(v));
 			}
 		);
 
-		Register<std::string>([](void* v, const FieldEntry& entry) {
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			std::string data = *reinterpret_cast<std::string*>(addr);
-
-			bool changed = ImGui::InputText("##value", &data);
-			if (changed) Set(entry.owner, entry.name, v, data);
+		Register<std::string>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return ImGui::InputText("##value", reinterpret_cast<std::string*>(v));
 			}
 		);
 
-		Register<Math::Color>([](void* v, const FieldEntry& entry) {
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			Math::Color data = *reinterpret_cast<Math::Color*>(addr);
-
-			bool changed = ImGui::ColorEdit4("##value", &data.r);
-			if (changed) Set(entry.owner, entry.name, v, data);
+		Register<Math::Color>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return ImGui::ColorEdit4("##value", &reinterpret_cast<Math::Color*>(v)->r);
 			}
 		);
 
-		Register<Assets::AudioClip>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip"))
-				InvokeOnChange(v, entry);
+		Register<Assets::AudioClip>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(v), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip");
 			}
 		);
 
-		Register<Assets::Texture>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::Texture*>(addr), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture"))
-				InvokeOnChange(v, entry);
+		Register<Assets::Texture>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::Texture*>(v), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture");
 			}
 		);
 
-		Register<Assets::Material>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::Material*>(addr), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material"))
-				InvokeOnChange(v, entry);
+		Register<Assets::Material>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::Material*>(v), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material");
 			}
 		);
+	}
+
+	bool InspectorFieldDrawer::DrawValue(void* value, TypeID type, const Reflection::AttributeContainer& attrs)
+	{
+		if (auto it = drawInspectorFuncs.find(type);  it != drawInspectorFuncs.end())
+			return it->second(value, attrs);
+
+		if (const Reflection::ContainerOps* ops = Reflection::ReflectionRegistry::TryGetContainer(type))
+			return DrawContainer(value, *ops, attrs);
+
+		NoDrawMethod();
+		return false;
 	}
 
 	void InspectorFieldDrawer::NoDrawMethod()
@@ -311,26 +302,11 @@ namespace Eclipse::Editor
 		ImGui::Text("No draw method.");
 		ImGui::PopStyleColor();
 	}
+
+	bool InspectorFieldDrawer::DrawContainer(void* container, const Reflection::ContainerOps& ops, const Reflection::AttributeContainer& attrs)
+	{
+		ImGui::Text("This is the vector!");
+
+		return false;
+	}
 }
-
-
-
-
-		//Register<int>([](void* v, const FieldEntry& entry) {
-		//	const Range* range = entry.attributeContainer.TryGet<Range>();
-
-		//	float step = 1.f;
-		//	const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-		//	if (stepAttr) step = stepAttr->step;
-
-		//	unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-		//	int data = *reinterpret_cast<int*>(addr);
-
-		//	bool changed = range
-		//		? ImGui::SliderInt("##value", &data, range->min, range->max)
-		//		: ImGui::DragInt("##value", &data, step);
-
-		//	if (changed) Set(entry.owner, entry.name, v, data);
-
-		//	}
-		//);

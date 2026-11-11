@@ -26,39 +26,41 @@ namespace Eclipse::Editor
 		static void Draw(void* v, const Reflection::FieldEntry& field);
 
 		static void RegisterDefaults();
+		static bool DrawValue(void* value, TypeID type, const Reflection::AttributeContainer& attrs);
 
 	private:
 		template<typename T>
-		static void Register(std::function<void(void*, const Reflection::FieldEntry&)> drawInspectorFunc);
+		static void Register(std::function<bool(void*, const Reflection::AttributeContainer&)> drawInspectorFunc);
 
 		static void NoDrawMethod();
 
 
 		template<typename T>
-		static void DrawNumerical(void* v, const Reflection::FieldEntry& field);
+		static bool DrawNumerical(void* v, const Reflection::AttributeContainer& attrs);
 
 		template<typename... Ts>
 		static void RegisterNumeric() { (Register<Ts>(&DrawNumerical<Ts>), ...); }
 
+		static bool DrawContainer(void* container, const Reflection::ContainerOps& ops, const Reflection::AttributeContainer& attrs);
+
 	private:
-		static inline std::unordered_map<TypeID, std::function<void(void*, const Reflection::FieldEntry&)>> drawInspectorFuncs;
+		static inline std::unordered_map<TypeID, std::function<bool(void*, const Reflection::AttributeContainer&)>> drawInspectorFuncs;
 	};
 
 	template<typename T>
 	inline void InspectorFieldDrawer::Draw(T& v, const Reflection::FieldEntry& field)
 	{
-		const TypeID id = Type::GetTypeID<T>();
-		if (!drawInspectorFuncs.contains(id))
+		unsigned char* object = reinterpret_cast<unsigned char*>(v) + field.offset;
+
+		if (DrawValue(object, field.type, field.attributeContainer))
 		{
-			NoDrawMethod();
+			InvokeOnChange(object, field);
 			return;
 		}
-
-		drawInspectorFuncs[id](&v, field);
 	}
 
 	template<typename T>
-	inline void InspectorFieldDrawer::Register(std::function<void(void*, const Reflection::FieldEntry&)> drawInspectorFunc)
+	inline void InspectorFieldDrawer::Register(std::function<bool(void*, const Reflection::AttributeContainer&)> drawInspectorFunc)
 	{
 		drawInspectorFuncs.insert_or_assign(Type::GetTypeID<T>(), drawInspectorFunc);
 	}
@@ -85,7 +87,7 @@ namespace Eclipse::Editor
 	}
 
 	template<typename T>
-	inline void InspectorFieldDrawer::DrawNumerical(void* v, const Reflection::FieldEntry& field)
+	inline bool InspectorFieldDrawer::DrawNumerical(void* v, const Reflection::AttributeContainer& attrs)
 	{
 		using namespace Reflection;
 
@@ -94,7 +96,7 @@ namespace Eclipse::Editor
 
 		Scalar min = 0, max = 0;
 
-		const Range* range = field.attributeContainer.TryGet<Range>();
+		const Range* range = attrs.TryGet<Range>();
 		if (range)
 		{
 			min = (Scalar)range->min;
@@ -102,16 +104,13 @@ namespace Eclipse::Editor
 		}
 
 		float step = std::is_floating_point_v<Scalar> ? 0.001f : 1;
-		const Step* stepAttr = field.attributeContainer.TryGet<Step>();
+		const Step* stepAttr = attrs.TryGet<Step>();
 		if (stepAttr) step = stepAttr->step;
 
-		unsigned char* addr = reinterpret_cast<unsigned char*>(v) + field.offset;
-		T data = *reinterpret_cast<T*>(addr);
-
 		const bool changed = range 
-			? ImGui::SliderScalarN("##value", ToImGuiDataType<Scalar>(), &data, Count, &min, &max)
-			: ImGui::DragScalarN("##value", ToImGuiDataType<Scalar>(), &data, Count, step);
+			? ImGui::SliderScalarN("##value", ToImGuiDataType<Scalar>(), v, Count, &min, &max)
+			: ImGui::DragScalarN("##value", ToImGuiDataType<Scalar>(), v, Count, step);
 
-		if (changed) Set(field.owner, field.name, v, data);
+		return changed;
 	}
 }
