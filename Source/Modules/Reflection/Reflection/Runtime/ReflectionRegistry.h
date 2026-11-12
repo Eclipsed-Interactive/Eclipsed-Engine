@@ -16,13 +16,14 @@
 
 #include <Core/Standard/Traits/VectorTraits.hpp>
 
-#include <Core/Standard/Serialization/Serialization.hpp>
-
 namespace Eclipse::Reflection
 {
 	class REFLECTION_API ReflectionRegistry
 	{
 	public:
+		template<typename T>
+		[[nodiscard]] static TypeEntry& RegisterType(const char* aTypeName);
+
 		static void RegisterType(TypeEntry type);
 		static void RegisterField(const std::string& typeName, FieldEntry field);
 
@@ -30,10 +31,14 @@ namespace Eclipse::Reflection
 
 	public:
 		static const FieldEntry& GetField(const std::string& typeName, const std::string& fieldName);
+		static const FieldEntry& GetField(TypeID type, const std::string& fieldName);
+
+		static const TypeEntry& GetType(TypeID aID);
 		static const TypeEntry& GetType(const std::string& typeName);
 
-		static const std::unordered_map<std::string, TypeEntry>& GetTypes();
+		static const std::unordered_map<TypeID, TypeEntry>& GetTypes();
 
+		static const TypeEntry* TryGetType(TypeID aID);
 		static const TypeEntry* TryGetType(const std::string& typeName);
 
 	public:
@@ -50,7 +55,9 @@ namespace Eclipse::Reflection
 
 	private:
 		static inline std::unordered_map<TypeID, ContainerOps> containers;
-		static inline std::unordered_map<std::string, TypeEntry> registererd;
+
+		static inline std::unordered_map<TypeID, TypeEntry> IdToType;
+		static inline std::unordered_map<std::string, TypeID> typeNameToID;
 	};
 }
 
@@ -58,6 +65,17 @@ namespace Eclipse::Reflection
 
 namespace Eclipse::Reflection
 {
+	template<typename T>
+	inline TypeEntry& ReflectionRegistry::RegisterType(const char* aTypeName)
+	{
+		TypeEntry entry;
+		entry.name = aTypeName;
+		entry.id = Type::GetTypeID<T>();
+
+		typeNameToID.insert_or_assign(entry.name, entry.id);
+		IdToType.insert_or_assign(entry.id, std::move(entry));
+	}
+
 	template<typename T>
 	inline void ReflectionRegistry::RegisterType()
 	{
@@ -72,59 +90,12 @@ namespace Eclipse::Reflection
 				.elementType = Type::GetTypeID<Element>(),
 				.size = [](const void* container) -> size_t { return static_cast<const Vector*>(container)->size(); },
 				.at = [](void* container, size_t i) -> void* { return &(*static_cast<Vector*>(container))[i]; },
+				.atConst = [](const void* container, size_t i) -> const void* { return &(*static_cast<const Vector*>(container))[i]; },
 				.resize = [](void* container, size_t newSize) -> void { static_cast<Vector*>(container)->resize(newSize); },
 				.erase = [](void* container, size_t i) -> void {Vector& v = *static_cast<Vector*>(container); v.erase(v.begin() + i); }
 				});
 
 			RegisterType<Element>();
-
-			using Alloc = rapidjson::Document::AllocatorType;
-			Serialization::Serialization::RegisterJson<Vector>(
-				[](const Vector& vec, Alloc& alloc)
-				{
-					const TypeID elementType = Type::GetTypeID<Element>();
-
-					rapidjson::Value arr(rapidjson::kArrayType);
-					arr.Reserve(vec.size(), alloc);
-					for (const Element& el : vec)
-						arr.PushBack(Serialization::ToJson(elementType, const_cast<Element*>(&el), alloc), alloc);
-
-					return arr;
-				},
-				[](void* v, const rapidjson::Value& json)
-				{
-					if (!json.IsArray()) return;
-
-					Vector& vec = *static_cast<Vector*>(v);
-					const TypeID elementType = Type::GetTypeID<Element>();
-
-					vec.clear();
-					vec.resize(json.Size());
-					for (size_t i = 0; i < json.Size(); i++)
-					{
-						Serialization::FromJson(elementType, &vec[i], json[i]);
-					}
-				}
-			);
 		}
 	}
-
-	//template<typename T>
-	//inline void ReflectionRegistry::RegisterType()
-	//{
-	//	using Trait = Traits::TypeTrait<T>;
-
-	//	if constexpr (Traits::is_vector_v<T>)
-	//	{
-	//		using Vector = Trait::Container;
-	//		using Type = Trait::Element;
-
-	//		RegisterContainer(TypeID::GetTypeID<T>(), ContainerOps{
-	//			.elementType = TypeID::GetTypeID<Trait::Element>(),
-	//			.size = [](const void* container) -> size_t {return static_cast<const Vector*>(container)->size();}
-	//			});
-
-	//		RegisterType<Type>();
-	//	}
-	//}
 }

@@ -2,10 +2,13 @@
 
 #include "Reflection/Attributes/Attributes.hpp"
 #include "Reflection/Attributes/AttributeContainer.h"
+#include "ReflectionRegistry.h"
 
 namespace Eclipse::Reflection
 {
-	template<typename T>
+
+
+    template<typename T>
     inline TypeEntry* ReflectionRegistry::GetType()
 	{
 		// No type.

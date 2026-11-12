@@ -246,10 +246,7 @@ namespace Eclipse::Editor
 			int, unsigned,
 			long, unsigned long,
 			long long, unsigned long long,
-			float, double,
-			Math::Vector2i, Math::Vector2ui, Math::Vector2f, Math::Vector2d,
-			Math::Vector3i, Math::Vector3ui, Math::Vector3f, Math::Vector3d,
-			Math::Vector4i, Math::Vector4ui, Math::Vector4f, Math::Vector4d
+			float, double
 		>();
 
 		Register<Math::Vector2<bool>>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
@@ -307,6 +304,41 @@ namespace Eclipse::Editor
 		if (const Reflection::ContainerOps* ops = Reflection::ReflectionRegistry::TryGetContainer(type))
 			return DrawContainer(value, *ops, attrs);
 
+		if (const auto* reflected = Reflection::ReflectionRegistry::TryGetType(type); reflected != nullptr)
+		{
+			bool wasChanged = false;
+			if (ImGui::BeginTable("##fields", 2, ImGuiTableFlags_Resizable))
+			{
+				ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize, 100);
+				ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+				for (const std::string& fieldName : reflected->fieldOrder)
+				{
+					const Reflection::FieldEntry& field = Reflection::ReflectionRegistry::GetField(type, fieldName);
+
+					ImGui::PushID(fieldName.c_str());
+					ImGui::TableNextRow();
+
+					ImGui::TableNextColumn();
+					ImGui::AlignTextToFramePadding();
+					ImGui::TextUnformatted(fieldName.c_str()); // Format the name
+
+					ImGui::TableNextColumn();
+					ImGui::PushItemWidth(-FLT_MIN);
+
+					void* fieldPtr = static_cast<unsigned char*>(value) + field.offset;
+					wasChanged |= InspectorFieldDrawer::DrawValue(fieldPtr, field.type, field.attributeContainer);
+					ImGui::PopItemWidth();
+					ImGui::PopID();
+				}
+				ImGui::EndTable();
+
+				ImGui::Separator();
+			}
+
+			return wasChanged;
+		}
+
 		NoDrawMethod();
 		return false;
 	}
@@ -333,7 +365,7 @@ namespace Eclipse::Editor
 
 		const float sizeDragWidth = 50.f;
 
-		const float controlsWidth =  style.ItemSpacing.x
+		const float controlsWidth = style.ItemSpacing.x
 			+ sizeDragWidth + style.ItemSpacing.x
 			+ btn + style.ItemSpacing.x
 			+ btn;

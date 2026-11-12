@@ -23,4 +23,6 @@ namespace Eclipse::Reflection
 	{
 		std::function<void(void*)> event;
 	};
+
+	struct SameLine {};
 }

@@ -2,7 +2,7 @@
 
 #include "Core/Math/Color.h"
 
-#include "Core/Standard/Serialization/SerializerRegistrator.hpp"
+#include "Serialization/SerializerRegistrator.hpp"
 #include <charconv>
 
 #include <rapidjson/stringbuffer.h>

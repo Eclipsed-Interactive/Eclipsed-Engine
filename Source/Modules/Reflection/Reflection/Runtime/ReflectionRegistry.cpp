@@ -6,14 +6,15 @@ namespace Eclipse::Reflection
 {
 	void ReflectionRegistry::RegisterType(TypeEntry type)
 	{
-		registererd.insert_or_assign(type.name, std::move(type));
+		typeNameToID.insert_or_assign(type.name, type.id);
+		IdToType.insert_or_assign(type.id, std::move(type));
 	}
 
 	void ReflectionRegistry::RegisterField(const std::string& typeName, FieldEntry field)
 	{
-		if (registererd.contains(typeName))
+		if (typeNameToID.contains(typeName))
 		{
-			TypeEntry& entry = registererd[typeName];
+			TypeEntry& entry = IdToType[typeNameToID[typeName]];
 			entry.fields.insert_or_assign(field.name, std::move(field));
 		}
 	}
@@ -34,24 +35,41 @@ namespace Eclipse::Reflection
 		return type.fields.at(fieldName);
 	}
 
+	const FieldEntry& ReflectionRegistry::GetField(TypeID type, const std::string& fieldName)
+	{
+		return IdToType[type].fields[fieldName];
+	}
+
+	const TypeEntry& ReflectionRegistry::GetType(TypeID aID)
+	{
+		auto it = IdToType.find(aID);
+		return it != IdToType.end() ? it->second : throw;
+	}
+
 	const TypeEntry& ReflectionRegistry::GetType(const std::string& typeName)
 	{
-		if (!registererd.contains(typeName))
-			throw std::runtime_error("The type dont exist.");
-
-		return registererd[typeName];
+		auto it = typeNameToID.find(typeName);
+		return it != typeNameToID.end() ? GetType(it->second) : throw;
 	}
 
-	const std::unordered_map<std::string, TypeEntry>& ReflectionRegistry::GetTypes()
+	const std::unordered_map<TypeID, TypeEntry>& ReflectionRegistry::GetTypes()
 	{
-		return registererd;
+		return IdToType;
 	}
+
+
+
+
+	const TypeEntry* ReflectionRegistry::TryGetType(TypeID aID)
+	{
+		auto it = IdToType.find(aID);
+		return it != IdToType.end() ? &it->second : nullptr;
+	}
+	
 	const TypeEntry* ReflectionRegistry::TryGetType(const std::string& typeName)
 	{
-		if (!registererd.contains(typeName))
-			return nullptr;
-
-		return &registererd[typeName];
+		auto it = typeNameToID.find(typeName);
+		return it != typeNameToID.end() ? TryGetType(it->second) : nullptr;
 	}
 
 	const ContainerOps* ReflectionRegistry::TryGetContainer(TypeID id)

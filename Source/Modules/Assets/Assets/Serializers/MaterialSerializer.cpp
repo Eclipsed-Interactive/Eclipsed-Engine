@@ -3,7 +3,7 @@
 #include <Assets/MaterialAsset.h>
 #include "Assets/AssetManager.h"
 
-#include "Core/Standard/Serialization/SerializerRegistrator.hpp"
+#include "Serialization/SerializerRegistrator.hpp"
 #include <charconv>
 
 #include <rapidjson/stringbuffer.h>

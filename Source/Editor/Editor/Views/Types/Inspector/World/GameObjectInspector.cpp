@@ -15,6 +15,7 @@
 #include "Editor/ImGui/ImGui_Impl.h"
 
 #include "Editor/Views/Types/Inspector/InspectorFieldDrawer.h"
+#include <Reflection/Attributes/Attributes.hpp>
 
 namespace Eclipse::Editor
 {
@@ -104,6 +105,10 @@ namespace Eclipse::Editor
 
 					for (const auto& fieldName : type->fieldOrder)
 					{
+						const Reflection::FieldEntry& field = type->fields.at(fieldName);
+						if (field.attributeContainer.TryGet<Reflection::SameLine>() != nullptr)
+							ImGui::SameLine();
+
 						ImGui::PushID(fieldName.c_str());
 						ImGui::TableNextRow();
 
@@ -113,7 +118,6 @@ namespace Eclipse::Editor
 
 						ImGui::TableNextColumn();
 						ImGui::PushItemWidth(-FLT_MIN);
-						const Reflection::FieldEntry& field = type->fields.at(fieldName);
 						InspectorFieldDrawer::Draw((void*)comp, field);
 						ImGui::PopItemWidth();
 						ImGui::PopID();
@@ -149,11 +153,11 @@ namespace Eclipse::Editor
 				if (type.flag != Reflection::ReflectionFlags::Component)
 					continue;
 
-				if (ImGui::Button(name.c_str(), ImVec2(-FLT_MIN, 0)))
+				if (ImGui::Button(type.name.c_str(), ImVec2(-FLT_MIN, 0)))
 				{
 					ComponentManager::AddComponent(gobjId, type.createAtAddress, type.size);
 					ImGui::CloseCurrentPopup();
-					filter = {};
+					filter.Clear();
 					compSearchIsFocused = false;
 				}
 			}

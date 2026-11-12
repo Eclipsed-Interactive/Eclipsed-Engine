@@ -1,6 +1,6 @@
 #include "SceneSerializer.h"
 
-#include "Core/Standard/Serialization/Serialization.hpp"
+#include "Serialization/Serialization.hpp"
 
 #include "ECS/ComponentManager.h"
 

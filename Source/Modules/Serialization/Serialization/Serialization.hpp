@@ -6,8 +6,10 @@
 
 #include "Core/Standard/TypeIDGenerator.hpp"
 
-#include "Core.Core.hpp"
+#include "Serialization.Core.hpp"
 #include "rapidjson/document.h"
+
+#include <Reflection/Runtime/ReflectionRegistry.h>
 
 namespace Eclipse::Serialization
 {
@@ -21,7 +23,7 @@ namespace Eclipse::Serialization
 		FromJsonFunction fromJson;
 	};
 
-	class CORE_API Serialization final
+	class SERIALIZATION_API Serialization final
 	{
 	public:
 		template<typename T>
@@ -31,6 +33,14 @@ namespace Eclipse::Serialization
 		template<typename T>
 		static const JsonSerializer& GetJson();
 		static const JsonSerializer& GetJson(unsigned long long typeID);
+
+		static const JsonSerializer* TryGetJson(TypeID type);
+
+		static rapidjson::Value ContainerToJson(const void* v, const Reflection::ContainerOps* ops, rapidjson::Document::AllocatorType& allocator);
+		static void ContainerFromJson(void* v, const Reflection::ContainerOps* ops, const rapidjson::Value& value);
+
+		static rapidjson::Value ReflectedToJson(const void* v, const Reflection::TypeEntry* type, rapidjson::Document::AllocatorType& allocator);
+		static void ReflectedFromJson(void* v, const Reflection::TypeEntry* type, const rapidjson::Value& value);
 
 	private:
 		static inline std::unordered_map<unsigned long long, JsonSerializer> jsonRegistry;
@@ -42,14 +52,32 @@ namespace Eclipse::Serialization
 		return Serialization::GetJson<T>().toJson(reinterpret_cast<const void*>(&v), allocator);
 	}
 
-	inline rapidjson::Value ToJson(unsigned long long typeID, void* v, rapidjson::Document::AllocatorType& allocator)
+	inline rapidjson::Value ToJson(unsigned long long typeID, const void* v, rapidjson::Document::AllocatorType& allocator)
 	{
-		return Serialization::GetJson(typeID).toJson(v, allocator);
+		if (const JsonSerializer* s = Serialization::TryGetJson(typeID))
+			return s->toJson(v, allocator);
+
+		if (const Reflection::ContainerOps* ops = Reflection::ReflectionRegistry::TryGetContainer(typeID))
+			return Serialization::ContainerToJson(v, ops, allocator);
+
+		if (const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(typeID))
+			return Serialization::ReflectedToJson(v, type, allocator);
+
+		throw std::runtime_error("No serializer for tpye.");
 	}
 
 	inline void FromJson(unsigned long long typeID, void* v, const rapidjson::Value& value)
 	{
-		return Serialization::GetJson(typeID).fromJson(v, value);
+		if (const JsonSerializer* s = Serialization::TryGetJson(typeID))
+			return s->fromJson(v, value);
+
+		if (const Reflection::ContainerOps* ops = Reflection::ReflectionRegistry::TryGetContainer(typeID))
+			return Serialization::ContainerFromJson(v, ops, value);
+
+		if (const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(typeID))
+			return Serialization::ReflectedFromJson(v, type, value);
+
+		throw std::runtime_error("No serializer for tpye.");
 	}
 
 	template<typename T>
@@ -70,7 +98,7 @@ namespace Eclipse::Serialization
 	template<typename T>
 	inline std::string ToBinary(const T& v)
 	{
-
+		return {};
 	}
 
 	template<typename T>

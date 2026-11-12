@@ -30,6 +30,7 @@ target_link_libraries(EclipsedEngine
         Physics
         Networking
         Reflection
+        Serialization
 
     PRIVATE
         ImGui

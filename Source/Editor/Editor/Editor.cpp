@@ -20,7 +20,7 @@
 #include "Editor/Game/GameModuleManager.h"
 #include "Reflection/Reflection.hpp"
 
-#include "Core/Standard/Serialization/Serialization.hpp"
+#include "Serialization/Serialization.hpp"
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "Editor/Common/EditorActions.h"
@@ -50,7 +50,7 @@ namespace Eclipse::Editor
 
 		GameModuleManager::TryCompileAndLoad();
 		
-		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup())
+		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup() && !GameModuleManager::HasBuildErrors())
 			SceneManager::LoadLastActive();
 
 		Engine::LateInit();
