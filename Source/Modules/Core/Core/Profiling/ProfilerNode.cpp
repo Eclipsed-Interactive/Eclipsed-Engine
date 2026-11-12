@@ -4,8 +4,8 @@ namespace Eclipse::Profiler
 {
 	using namespace std::chrono;
 
-	ProfilerNode::ProfilerNode(const char* aFunctionName)
-		: functionName(aFunctionName)
+	ProfilerNode::ProfilerNode(const char* aFunctionName, int aLine)
+		: functionName(aFunctionName), line(aLine)
 	{
 		
 	}

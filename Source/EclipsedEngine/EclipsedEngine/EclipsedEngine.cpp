@@ -174,6 +174,8 @@ namespace Eclipse
 
 	void Engine::ImGui_Init()
 	{
+		PROFILE_SCOPED;
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();

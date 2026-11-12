@@ -8,7 +8,7 @@ namespace Eclipse::Profiler
 	class CORE_API Scope final
 	{
 	public:
-		Scope(const char* aFunctionName);
+		Scope(const char* aFunctionName, int aLine);
 		~Scope();
 
 	private:

@@ -9,7 +9,7 @@ namespace Eclipse::Profiler
 	class CallTree  final
 	{
 	public:
-		void Push(const char* aFunctionName);
+		void Push(const char* aFunctionName, int aLine);
 		void Pop(std::chrono::microseconds duration);
 
 		class ProfilerNode* GetRoot() { return Root; }

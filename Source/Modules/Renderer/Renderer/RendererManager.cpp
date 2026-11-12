@@ -17,6 +17,8 @@ namespace Eclipse::Graphics
 
 	IRenderer& RendererManager::LoadRenderer(RendererAPI api)
 	{
+		PROFILE_SCOPED;
+
 		std::string rendererPath = "";
 		switch (api)
 		{

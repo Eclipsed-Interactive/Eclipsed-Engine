@@ -16,6 +16,8 @@ namespace Eclipse::Audio
 
 	AudioError AudioManager::LoadBackend(const std::filesystem::path& path)
 	{
+		PROFILE_SCOPED;
+
 		if (ActiveBackendDLL != nullptr)
 		{
 			return AudioError::AlreadyInitialized;

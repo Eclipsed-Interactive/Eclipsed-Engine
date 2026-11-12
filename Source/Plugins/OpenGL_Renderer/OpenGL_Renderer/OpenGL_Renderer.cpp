@@ -22,6 +22,8 @@ namespace Eclipse::Graphics::OpenGL
 {
 	ErrorCode OpenGL_Renderer::Init()
 	{
+		PROFILE_SCOPED;
+
 		if (!glfwInit())
 		{
 			return ErrorCode{};
@@ -47,16 +49,37 @@ namespace Eclipse::Graphics::OpenGL
 
 		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-		device = new OpenGL_GraphicsDevice;
-		graphicsBuffer = new OpenGL_GraphicsBuffer;
-		uniformVariableManager = new OpenGL_UniformVariableManager;
+		{
+			PROFILE_SCOPED;
+			device = new OpenGL_GraphicsDevice;
+		}
 
-		drawer = new OpenGL_Drawer;
-		drawer->mySprite = device->CreateSprite();
-		drawer->myParticleDrawer = device->CreateParticleDrawer();
+		{
+			PROFILE_SCOPED;
+			graphicsBuffer = new OpenGL_GraphicsBuffer;
+		}
 
-		debugDrawer = new OpenGL_DebugDrawer;
-		debugDrawer->Init();
+		{
+			PROFILE_SCOPED;
+			uniformVariableManager = new OpenGL_UniformVariableManager;
+		}
+
+		{
+			PROFILE_SCOPED;
+			drawer = new OpenGL_Drawer;
+			drawer->mySprite = device->CreateSprite();
+			drawer->myParticleDrawer = device->CreateParticleDrawer();
+		}
+
+		{
+			PROFILE_SCOPED;
+			debugDrawer = new OpenGL_DebugDrawer;
+		}
+			
+		{
+			PROFILE_SCOPED;
+			debugDrawer->Init();
+		}
 
 		computer = new OpenGL_Computer;
 
@@ -112,7 +135,7 @@ namespace Eclipse::Graphics::OpenGL
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 460");
 	}
-	
+
 	void OpenGL_Renderer::ImGui_Render()
 	{
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

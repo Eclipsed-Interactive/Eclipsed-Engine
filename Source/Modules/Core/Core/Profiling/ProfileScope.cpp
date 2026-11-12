@@ -4,11 +4,11 @@
 
 namespace Eclipse::Profiler
 {
-	Scope::Scope(const char* aFunctionName)
+	Scope::Scope(const char* aFunctionName, int aLine)
 		: myTree(ProfilerManager::Active())
 	{
 		myStartTime = std::chrono::steady_clock::now();
-		ProfilerManager::Active()->Push(aFunctionName);
+		ProfilerManager::Active()->Push(aFunctionName, aLine);
 	}
 
 	Scope::~Scope()

@@ -4,15 +4,15 @@
 
 namespace Eclipse::Profiler
 {
-	void CallTree::Push(const char* aFunctionName)
+	void CallTree::Push(const char* aFunctionName, int aLine)
 	{
 		if (ActiveNode == nullptr)
 		{
-			Root = ActiveNode = new ProfilerNode(aFunctionName);
+			Root = ActiveNode = new ProfilerNode(aFunctionName, aLine);
 			return;
 		}
 
-		ActiveNode->children.emplace_back(new ProfilerNode(aFunctionName));
+		ActiveNode->children.emplace_back(new ProfilerNode(aFunctionName, aLine));
 
 		ProfilerNode* parent = ActiveNode;
 		ActiveNode = ActiveNode->children.back();

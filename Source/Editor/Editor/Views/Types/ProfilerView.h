@@ -15,6 +15,6 @@ namespace Eclipse::Editor
 		void Draw() override;
 
 	private:
-		void S(const Profiler::ProfilerNode* node);
+		void DrawNode(const Profiler::ProfilerNode* node);
 	};
 }
