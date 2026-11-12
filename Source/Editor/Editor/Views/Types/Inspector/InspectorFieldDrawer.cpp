@@ -139,7 +139,6 @@ namespace Eclipse::Editor
 			return a.GetAssetID() == b.GetAssetID();
 		}
 
-		// Returns true if the asset was changed this frame.
 		template<typename TAsset>
 		bool DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
 		{
@@ -220,13 +219,14 @@ namespace Eclipse::Editor
 
 	void InspectorFieldDrawer::Draw(void* v, const Reflection::FieldEntry& field)
 	{
-		if (!drawInspectorFuncs.contains(field.type))
+		unsigned char* object = reinterpret_cast<unsigned char*>(v) + field.offset;
+
+		if (DrawValue(object, field.type, field.attributeContainer))
 		{
-			NoDrawMethod();
+			InvokeOnChange(v, field);
 			return;
 		}
 
-		drawInspectorFuncs[field.type](v, field);
 	}
 
 
@@ -239,7 +239,7 @@ namespace Eclipse::Editor
 	{
 		using namespace Reflection;
 
-		// register all of the numeric types (Uses generic drawer)
+		// register all of the numeric types
 		RegisterNumeric<
 			char, signed char, unsigned char,
 			short, unsigned short,
@@ -252,56 +252,63 @@ namespace Eclipse::Editor
 			Math::Vector4i, Math::Vector4ui, Math::Vector4f, Math::Vector4d
 		>();
 
-		Register<bool>([](void* v, const FieldEntry& entry) {
+		Register<Math::Vector2<bool>>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
 
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			bool data = *reinterpret_cast<bool*>(addr);
+			ImGui::Text("X");
+			ImGui::SameLine();
+			bool changed = ImGui::Checkbox("##valuex", reinterpret_cast<bool*>(v));
 
-			bool changed = ImGui::Checkbox("##value", &data);
-			if (changed) Set(entry.owner, entry.name, v, data);
+			ImGui::SameLine();
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			changed |= ImGui::Checkbox("##valuey", reinterpret_cast<bool*>(v) + sizeof(bool));
+
+			return changed;
 			}
 		);
 
-		Register<std::string>([](void* v, const FieldEntry& entry) {
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			std::string data = *reinterpret_cast<std::string*>(addr);
-
-			bool changed = ImGui::InputText("##value", &data);
-			if (changed) Set(entry.owner, entry.name, v, data);
+		Register<bool>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
+			return ImGui::Checkbox("##value", reinterpret_cast<bool*>(v));
 			}
 		);
 
-		Register<Math::Color>([](void* v, const FieldEntry& entry) {
-
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			Math::Color data = *reinterpret_cast<Math::Color*>(addr);
-
-			bool changed = ImGui::ColorEdit4("##value", &data.r);
-			if (changed) Set(entry.owner, entry.name, v, data);
+		Register<std::string>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return ImGui::InputText("##value", reinterpret_cast<std::string*>(v));
 			}
 		);
 
-		Register<Assets::AudioClip>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(addr), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip"))
-				InvokeOnChange(v, entry);
+		Register<Math::Color>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return ImGui::ColorEdit4("##value", &reinterpret_cast<Math::Color*>(v)->r);
 			}
 		);
 
-		Register<Assets::Texture>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::Texture*>(addr), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture"))
-				InvokeOnChange(v, entry);
+		Register<Assets::AudioClip>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::AudioClip*>(v), Utilities::FileInfo::FileType_Audio, Assets::AssetType::AudioClip, "Audio Clip");
 			}
 		);
 
-		Register<Assets::Material>([](void* v, const FieldEntry& entry) {
-			unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-			if (DrawAssetField(*reinterpret_cast<Assets::Material*>(addr), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material"))
-				InvokeOnChange(v, entry);
+		Register<Assets::Texture>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::Texture*>(v), Utilities::FileInfo::FileType_Texture, Assets::AssetType::Texture, "Texture");
 			}
 		);
+
+		Register<Assets::Material>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(*reinterpret_cast<Assets::Material*>(v), Utilities::FileInfo::FileType_Material, Assets::AssetType::Material, "Material");
+			}
+		);
+	}
+
+	bool InspectorFieldDrawer::DrawValue(void* value, TypeID type, const Reflection::AttributeContainer& attrs)
+	{
+		if (auto it = drawInspectorFuncs.find(type);  it != drawInspectorFuncs.end())
+			return it->second(value, attrs);
+
+		if (const Reflection::ContainerOps* ops = Reflection::ReflectionRegistry::TryGetContainer(type))
+			return DrawContainer(value, *ops, attrs);
+
+		NoDrawMethod();
+		return false;
 	}
 
 	void InspectorFieldDrawer::NoDrawMethod()
@@ -311,26 +318,86 @@ namespace Eclipse::Editor
 		ImGui::Text("No draw method.");
 		ImGui::PopStyleColor();
 	}
+
+
+
+	bool InspectorFieldDrawer::DrawContainer(void* container, const Reflection::ContainerOps& ops, const Reflection::AttributeContainer& attrs)
+	{
+		size_t size = ops.size(container);
+
+		const ImGuiStyle& style = ImGui::GetStyle();
+
+		const float rightEdge = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x;
+		const float btn = ImGui::GetFrameHeight();
+		const float btnPos = rightEdge - btn * 2 - ImGui::GetStyle().ItemInnerSpacing.x;
+
+		const float sizeDragWidth = 50.f;
+
+		const float controlsWidth =  style.ItemSpacing.x
+			+ sizeDragWidth + style.ItemSpacing.x
+			+ btn + style.ItemSpacing.x
+			+ btn;
+
+		const float btnWidth = btn * 2 + style.ItemInnerSpacing.x;
+
+		const std::string sizeStr = std::to_string(size);
+		const std::string header = size > 0 ? (size == 1 ? sizeStr + " element" : sizeStr + " element") : "Empty";
+
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		const float oldWorkMaxX = window->WorkRect.Max.x;
+		window->WorkRect.Max.x -= controlsWidth + style.ItemSpacing.x;
+		bool open = ImGui::TreeNodeEx(header.c_str(), ImGuiTreeNodeFlags_AllowOverlap);
+		window->WorkRect.Max.x = oldWorkMaxX;
+
+
+		bool wasChanged = false;
+
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(rightEdge - controlsWidth);
+		ImGui::SetNextItemWidth(sizeDragWidth);
+
+		if (ImGui::DragScalar("##size", ImGuiDataType_U64, &size, 1, nullptr, nullptr, nullptr, ImGuiSliderFlags_AlwaysClamp))
+		{
+			ops.resize(container, size);
+			wasChanged = true;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("+", ImVec2(btn, btn)))
+		{
+			ops.resize(container, size + 1);
+			wasChanged = true;
+		}
+
+		ImGui::SameLine();
+
+		ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
+
+		ImGui::BeginDisabled(size == 0);
+		if (ImGui::Button("-", ImVec2(btn, btn)))
+		{
+			ops.resize(container, size - 1);
+			wasChanged = true;
+		}
+		ImGui::EndDisabled();
+
+		if (open)
+		{
+			for (size_t i = 0; i < ops.size(container); i++)
+			{
+				ImGui::Text(("Element " + std::to_string(i + 1)).c_str());
+
+				ImGui::SameLine();
+
+				ImGui::PushID(i);
+				wasChanged |= DrawValue(ops.at(container, i), ops.elementType, attrs);
+				ImGui::PopID();
+			}
+
+			ImGui::TreePop();
+		}
+
+		return wasChanged;
+	}
 }
-
-
-
-
-		//Register<int>([](void* v, const FieldEntry& entry) {
-		//	const Range* range = entry.attributeContainer.TryGet<Range>();
-
-		//	float step = 1.f;
-		//	const Step* stepAttr = entry.attributeContainer.TryGet<Step>();
-		//	if (stepAttr) step = stepAttr->step;
-
-		//	unsigned char* addr = reinterpret_cast<unsigned char*>(v) + entry.offset;
-		//	int data = *reinterpret_cast<int*>(addr);
-
-		//	bool changed = range
-		//		? ImGui::SliderInt("##value", &data, range->min, range->max)
-		//		: ImGui::DragInt("##value", &data, step);
-
-		//	if (changed) Set(entry.owner, entry.name, v, data);
-
-		//	}
-		//);

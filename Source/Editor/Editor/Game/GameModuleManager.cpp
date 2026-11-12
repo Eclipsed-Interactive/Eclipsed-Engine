@@ -10,6 +10,8 @@
 #include <EclipsedEngine/Scenes/SceneManager.h>
 #include <Core/Logger/DebugLogger.h>
 
+#include <Core/EventSystem/EventSystem.h>
+
 namespace Eclipse
 {
 	void* GameModuleManager::gameModule = nullptr;
@@ -21,16 +23,8 @@ namespace Eclipse
 
 	bool GameModuleManager::TryCompileAndLoad()
 	{
-		if (!BuildDLL())
-		{
-			hasBuildErrors = false;
-			return hasBuildErrors;
-		}
-
-		Load();
-
-		hasBuildErrors = true;
-		return hasBuildErrors;
+		hasBuildErrors = !BuildDLL() || !Load();
+		return !hasBuildErrors;
 	}
 
 	bool GameModuleManager::Load()
@@ -70,12 +64,11 @@ namespace Eclipse
 	bool GameModuleManager::Reload()
 	{
 		SceneManager::UnloadActive();
-		const bool s = TryCompileAndLoad();
+		const bool ok = TryCompileAndLoad();
+
 		SceneManager::LoadLastActive();
 
-		hasBuildErrors = s;
-
-		return s;
+		return ok;
 	}
 
 	bool GameModuleManager::IsLoaded()

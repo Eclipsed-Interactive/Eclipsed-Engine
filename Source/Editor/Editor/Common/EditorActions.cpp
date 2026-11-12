@@ -29,6 +29,7 @@
 #include "Assets/Core/AssetDatabase.h"
 
 #include <Editor/PlayModeController.h>
+#include <Editor/Game/GameModuleManager.h>
 
 namespace Eclipse::Editor
 {
@@ -56,7 +57,7 @@ namespace Eclipse::Editor
 	{
 		if (true)
 		{
-			if (!PlayModeController::IsInPlaySession())
+			if (!PlayModeController::IsInPlaySession() && !GameModuleManager::HasBuildErrors())
 			{
 				SaveScene();
 			}

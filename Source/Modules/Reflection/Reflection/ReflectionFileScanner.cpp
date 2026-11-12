@@ -17,6 +17,18 @@ namespace Eclipse::Reflection
 {
 	namespace
 	{
+		static  std::regex typeRegex(
+			R"(\b(?:class|struct)\s+(?:[A-Za-z_][A-Za-z0-9_]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
+		);
+
+		const std::regex fieldsRegex(
+			R"(\[\[([^\]]*)\]\]\s*(?:(inline)\s+)?([^;{}()=\[\]]+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?=[=;{]))"
+		);
+
+		const std::regex attributesRegex(
+			R"(\s*([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)(?:\s*\((.*?)\))?\s*(?:,|$))"
+		);
+
 		std::string MaskNonCode(const std::string& source)
 		{
 			std::string result = source;
@@ -137,17 +149,14 @@ namespace Eclipse::Reflection
 		}
 	}
 
-	void ReflectionFileScanner::ScanAndReflectFiles(
-		const std::filesystem::path& root)
+	void ReflectionFileScanner::ScanAndReflectFiles(const std::filesystem::path& root)
 	{
-		for (const auto& entry :
-			std::filesystem::recursive_directory_iterator(root))
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(root))
 		{
 			if (!entry.is_regular_file())
 				continue;
 
-			const std::string extension =
-				entry.path().extension().string();
+			const std::string extension = entry.path().extension().string();
 
 			if (extension == ".h" || extension == ".hpp")
 				ReflectFile(entry.path());
@@ -159,163 +168,31 @@ namespace Eclipse::Reflection
 		const std::string original = ReadFile(path);
 		const std::string source = MaskNonCode(original);
 
-		const std::regex typeRegex(
-			R"(\b(?:class|struct)\s+(?:[A-Za-z_][A-Za-z0-9_]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:final\s*)?(?::[^;{}]*)?\{)"
-		);
-
-		const std::regex fieldsRegex(
-			R"(\[\[([^\]]*)\]\]\s*(?:(inline)\s+)?([^;{}()=\[\]]+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?=[=;{]))"
-		);
-
-		const std::regex attributesRegex(
-			R"(\s*([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)(?:\s*\((.*?)\))?\s*(?:,|$))"
-		);
-
-		const auto typesBegin = std::sregex_iterator(
-			source.begin(),
-			source.end(),
-			typeRegex
-		);
-
-		for (auto typeIt = typesBegin;
-			typeIt != std::sregex_iterator();
-			++typeIt)
+		const auto typesBegin = std::sregex_iterator(source.begin(), source.end(), typeRegex);
+		for (auto typeIt = typesBegin; typeIt != std::sregex_iterator(); ++typeIt)
 		{
 			const std::smatch& match = *typeIt;
 
-			const auto bodyStart =
-				static_cast<std::size_t>(match.position()) +
-				static_cast<std::size_t>(match.length());
+			const size_t bodyStart = match.position() + match.length();
+			ReflectionFlags flags;
 
-			std::size_t bodyEnd = bodyStart;
-			std::size_t depth = 1;
+			size_t bodyEnd = FindBodyEnd(source, bodyStart);
+			if (bodyEnd == 0) continue;
 
-			while (bodyEnd < source.size() && depth > 0)
-			{
-				if (source[bodyEnd] == '{')
-					++depth;
-				else if (source[bodyEnd] == '}')
-					--depth;
-
-				++bodyEnd;
-			}
-
-			if (depth != 0)
-			{
-				std::cerr << "Unclosed class or struct in "
-					<< path << '\n';
-				continue;
-			}
-
-			const std::string body = source.substr(
-				bodyStart,
-				bodyEnd - bodyStart - 1
-			);
+			const size_t bodySize = bodyEnd - bodyStart - 1;
+			const std::string body = source.substr(bodyStart, bodySize);
 
 			if (body.find("MAKE_REFLECTABLE") == std::string::npos)
 				continue;
 
-			TypeDescriptor type;
-			type.Name = match[1].str();
-			type.FilePath = path.generic_string();
-
-			size_t start = body.find("REFLECTION_FLAG");
-			if (start != std::string::npos)
-			{
-				start += std::string("REFLECTION_FLAG(").length();
-				size_t end = body.find(')', start);
-
-				if (end != std::string::npos)
-				{
-					std::string flag = body.substr(start, end - start);
-					std::transform(flag.begin(), flag.end(), flag.begin(),
-						[](unsigned char c) {
-							return static_cast<char>(std::toupper(c));
-						});
-
-					if (flag == "COMPONENT")
-						type.flag = ReflectionFlags::Component;
-					else if (flag == "SERIALIZABLE")
-						type.flag = ReflectionFlags::Serializable;
-				}
-			}
-			else type.flag = ReflectionFlags::None;
-
-			std::vector<std::size_t> fieldDepths(body.size());
-			depth = 0;
-
-			for (std::size_t i = 0; i < body.size(); ++i)
-			{
-				fieldDepths[i] = depth;
-
-				if (body[i] == '{')
-					++depth;
-				else if (body[i] == '}' && depth > 0)
-					--depth;
-			}
-
-			const auto fieldsBegin = std::sregex_iterator(
-				body.begin(),
-				body.end(),
-				fieldsRegex
-			);
-
-			for (auto fieldIt = fieldsBegin;
-				fieldIt != std::sregex_iterator();
-				++fieldIt)
-			{
-				const std::smatch& fieldMatch = *fieldIt;
-
-				const auto fieldPosition =
-					static_cast<std::size_t>(fieldMatch.position());
-
-				if (fieldDepths[fieldPosition] != 0)
-					continue;
-
-				FieldDescriptor field;
-				field.Name = fieldMatch[4].str();
-				field.Type = Trim(fieldMatch[3].str());
-
-				if (field.Type.empty())
-					continue;
-
-				// Recover original attribute arguments, including strings.
-				const auto attributesPosition = bodyStart +
-					static_cast<std::size_t>(fieldMatch.position(1));
-
-				const std::string attributes = original.substr(
-					attributesPosition,
-					static_cast<std::size_t>(fieldMatch.length(1))
-				);
-
-				const auto attributesBegin = std::sregex_iterator(
-					attributes.begin(),
-					attributes.end(),
-					attributesRegex
-				);
-
-				for (auto attributeIt = attributesBegin;
-					attributeIt != std::sregex_iterator();
-					++attributeIt)
-				{
-					const std::smatch& attributeMatch = *attributeIt;
-
-					field.attributes.emplace_back(
-						attributeMatch[1].str(),
-						attributeMatch[2].str()
-					);
-				}
-
-				if (!field.attributes.empty())
-					type.Fields.emplace_back(std::move(field));
-			}
+			TypeDescriptor type = ConstructType(match[1].str(), path, FindReflectionFlag(body));
+			FindFields(type, body, original, bodyStart);
 
 			TypeRegistry::Register(type);
 		}
 	}
 
-	std::string ReflectionFileScanner::ReadFile(
-		const std::filesystem::path& path)
+	std::string ReflectionFileScanner::ReadFile(const std::filesystem::path& path)
 	{
 		std::ifstream file(path, std::ios::binary);
 
@@ -329,5 +206,120 @@ namespace Eclipse::Reflection
 			std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>()
 		);
+	}
+
+	void ReflectionFileScanner::CheckDepth(const std::string& abody, std::vector<int>* outDepths)
+	{
+		size_t depth = 0;
+		for (std::size_t i = 0; i < abody.size(); ++i)
+		{
+			if (outDepths) (*outDepths)[i] = depth;
+
+			if (abody[i] == '{')
+				++depth;
+			else if (abody[i] == '}' && depth > 0)
+				--depth;
+		}
+	}
+
+	size_t ReflectionFileScanner::FindBodyEnd(const std::string& aSource, size_t aBodyStart)
+	{
+		size_t bodyEnd = aBodyStart;
+		size_t depth = 1;
+
+		while (bodyEnd < aSource.size() && depth > 0)
+		{
+			if (aSource[bodyEnd] == '{')
+				++depth;
+			else if (aSource[bodyEnd] == '}')
+				--depth;
+
+			++bodyEnd;
+		}
+
+		if (depth != 0)
+		{
+			std::cerr << "Unclosed class or struct in " << aSource << '\n';
+			return 0;
+		}
+
+		return bodyEnd;
+	}
+
+	void ReflectionFileScanner::FindFields(TypeDescriptor& aType, const std::string& aBody, const std::string& aOriginal, size_t aBodyStart)
+	{
+		std::vector<int> fieldDepths(aBody.size());
+		CheckDepth(aBody, &fieldDepths);
+
+		const std::sregex_iterator fieldsBegin = std::sregex_iterator(aBody.begin(), aBody.end(), fieldsRegex);
+
+		for (auto fieldIt = fieldsBegin; fieldIt != std::sregex_iterator(); ++fieldIt)
+		{
+			const std::smatch& fieldMatch = *fieldIt;
+
+			const size_t fieldPosition = fieldMatch.position();
+
+			if (fieldDepths[fieldPosition] != 0)
+				continue;
+
+			FieldDescriptor field;
+			field.Name = fieldMatch[4].str();
+			field.Type = Trim(fieldMatch[3].str());
+
+			if (field.Type.empty())
+				continue;
+
+			const std::string attributes = aOriginal.substr(aBodyStart + fieldMatch.position(1), fieldMatch.length(1));
+			AddAttributesToField(attributes, field);
+
+			if (!field.attributes.empty()) // Only adds the field to the type if there are attributes.
+				aType.Fields.emplace_back(std::move(field));
+		}
+	}
+
+	ReflectionFlags ReflectionFileScanner::FindReflectionFlag(const std::string& aBody)
+	{
+		size_t start = aBody.find("REFLECTION_FLAG");
+		if (start != std::string::npos)
+		{
+			start += std::string("REFLECTION_FLAG(").length();
+			size_t end = aBody.find(')', start);
+
+			if (end != std::string::npos)
+			{
+				std::string flag = aBody.substr(start, end - start);
+				std::transform(flag.begin(), flag.end(), flag.begin(),
+					[](unsigned char c) {
+						return static_cast<char>(std::toupper(c));
+					});
+
+				if (flag == "COMPONENT")
+					return ReflectionFlags::Component;
+				else if (flag == "SERIALIZABLE")
+					return ReflectionFlags::Serializable;
+			}
+		}
+		else return ReflectionFlags::None;
+	}
+
+	TypeDescriptor ReflectionFileScanner::ConstructType(const std::string& aTypeName, const std::filesystem::path& aSourceFilePath, ReflectionFlags aReflectionFlag)
+	{
+		TypeDescriptor type;
+		type.Name = aTypeName;
+		type.FilePath = aSourceFilePath.generic_string();
+		type.flag = aReflectionFlag;
+
+		return type;
+	}
+
+	void ReflectionFileScanner::AddAttributesToField(const std::string& aAttributes, FieldDescriptor& aField)
+	{
+		const std::sregex_iterator attributesBegin = std::sregex_iterator(aAttributes.begin(), aAttributes.end(), attributesRegex);
+		for (auto attributeIt = attributesBegin;attributeIt != std::sregex_iterator();++attributeIt)
+		{
+			const std::smatch& attributeMatch = *attributeIt;
+
+			aField.attributes.emplace_back(attributeMatch[1].str(), attributeMatch[2].str());
+		}
 	}
 }

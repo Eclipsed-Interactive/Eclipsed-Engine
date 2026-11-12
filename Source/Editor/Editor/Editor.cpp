@@ -49,7 +49,7 @@ namespace Eclipse::Editor
 		EditorLayout::Init();
 
 		GameModuleManager::TryCompileAndLoad();
-
+		
 		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup())
 			SceneManager::LoadLastActive();
 

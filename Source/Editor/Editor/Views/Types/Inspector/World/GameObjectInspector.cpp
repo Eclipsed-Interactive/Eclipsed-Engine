@@ -41,8 +41,7 @@ namespace Eclipse::Editor
 		ImGui::SameLine();
 
 		char* name = GetNameBuffer(gameObject->GetID(), gameObject->GetName());
-		if (ImGui::InputText("##gameobject_name", name, NAME_BUFFER_LENGTH,
-			ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputText("##gameobject_name", name, NAME_BUFFER_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			gameObject->SetName(std::string(name));
 		}
@@ -63,12 +62,11 @@ namespace Eclipse::Editor
 			if (!comp)
 				continue;
 
-			std::string id = comp->GetComponentName();
-			id += "##" + std::to_string(counter);
+			ImGui::PushID(comp);
 
-			counter++;
+			const char* compName = comp->GetComponentName();
 
-			ImGui_Impl::DrawComponentHeader(id.c_str(), comp->myInspectorWasDrawn);
+			ImGui_Impl::DrawComponentHeader(compName, comp->myInspectorWasDrawn);
 
 			if (ImGui::IsItemHovered())
 			{
@@ -79,13 +77,17 @@ namespace Eclipse::Editor
 				}
 			}
 
-			if (!comp->myInspectorWasDrawn) continue;
+			if (!comp->myInspectorWasDrawn)
+			{
+				ImGui::PopID();
+				continue;
+			}
 
 
 			ImGui::Indent(20.f);
 			ImGui::Text("Is Replicated");
 			ImGui::SameLine();
-			ImGui::Checkbox(("##IsReplicatedBool" + id).c_str(), &comp->IsReplicated);
+			ImGui::Checkbox("##is_replicated", &comp->IsReplicated);
 
 			const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(comp->GetComponentName());
 			if (!type)
@@ -95,16 +97,30 @@ namespace Eclipse::Editor
 			else
 			{
 				ImGui::PushID(comp);
-				for (const auto& fieldName : type->fieldOrder)
+				if (ImGui::BeginTable("##fields", 2, ImGuiTableFlags_Resizable))
 				{
-					ImGui::PushID(fieldName.c_str());
-					ImGui::Text(fieldName.c_str());
-					ImGui::SameLine();
+					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize, 100);
+					ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
-					const Reflection::FieldEntry& field = type->fields.at(fieldName);
-					InspectorFieldDrawer::Draw((void*)comp, field);
-					ImGui::PopID();
+					for (const auto& fieldName : type->fieldOrder)
+					{
+						ImGui::PushID(fieldName.c_str());
+						ImGui::TableNextRow();
+
+						ImGui::TableNextColumn();
+						ImGui::AlignTextToFramePadding();
+						ImGui::TextUnformatted(fieldName.c_str()); // Format the name
+
+						ImGui::TableNextColumn();
+						ImGui::PushItemWidth(-FLT_MIN);
+						const Reflection::FieldEntry& field = type->fields.at(fieldName);
+						InspectorFieldDrawer::Draw((void*)comp, field);
+						ImGui::PopItemWidth();
+						ImGui::PopID();
+					}
+					ImGui::EndTable();
 				}
+
 				ImGui::PopID();
 			}
 
@@ -112,7 +128,10 @@ namespace Eclipse::Editor
 
 			ImGui::Dummy({ 0, 30 });
 			ImGui::Separator();
+		
+			ImGui::PopID();
 		}
+
 
 		if (ImGui::BeginCombo("##ADD_COMPONENTS", "Add Component"))
 		{

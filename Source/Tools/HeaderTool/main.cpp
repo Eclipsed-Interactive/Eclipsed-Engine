@@ -17,6 +17,11 @@ int main(int argc, char** argv)
     const std::filesystem::path generatedDestination = argv[2];
     const bool useStatic = std::string_view(argv[3]) == "true";
 
+
+    //const std::filesystem::path contentPath = "C:/Users/zulto/Desktop/MyFiles/Projects/Project-Nova/Content";
+    //const std::filesystem::path generatedDestination = "C:/Users/zulto/Desktop/MyFiles/Projects/Project-Nova/Generated/Reflection";
+    //const bool useStatic = true;
+
     if (!std::filesystem::is_directory(contentPath))
     {
         std::cerr << "Content directory missing: " << contentPath << '\n';

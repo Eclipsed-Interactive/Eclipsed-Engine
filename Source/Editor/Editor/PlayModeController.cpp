@@ -5,6 +5,7 @@
 
 #include <ECS/ComponentManager.h>
 #include <Core/EventSystem/EventSystem.h>
+#include <Editor/Game/GameModuleManager.h>
 
 namespace Eclipse
 {
@@ -88,6 +89,8 @@ namespace Eclipse
 
 	void PlayModeController::ApplyMode()
 	{
+		if (GameModuleManager::HasBuildErrors()) return;
+
 		if (CurrentMode == RequestedMode)
 			return;
 
@@ -98,8 +101,6 @@ namespace Eclipse
 		switch (previousMode)
 		{
 		case PlayMode::Stopped:
-			// Stopped -> Playing / Paused: start a new play session.
-			// Nothing has ticked yet, so there is nothing to pause.
 			EnterPlay();
 			break;
 

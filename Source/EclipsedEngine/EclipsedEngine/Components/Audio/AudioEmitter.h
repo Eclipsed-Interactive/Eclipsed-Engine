@@ -65,7 +65,7 @@ namespace Eclipse
 
 		[[SerializeField]] bool EnableSpatial = false;
 		[[SerializeField]] bool playOnAwake = false;
-		[[SerializeField, OnChange(ApplyVolume), Range(0.f, 1.f)]] float volume = 1.f;
+		[[SerializeField, OnChange(ApplyVolume), Range(0.f, 1.f)]] float volume = 0.5f;
 		[[SerializeField, OnChange(ApplyPan), Range(-1.f, 1.f)]] float pan = 0.f;
 
 	private:

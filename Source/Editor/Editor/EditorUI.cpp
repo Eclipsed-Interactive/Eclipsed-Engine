@@ -32,12 +32,12 @@ namespace Eclipse::Editor
 	{
 
 	}
-	
+
 	void EditorUI::EndFrame()
 	{
 
 	}
-	
+
 	void EditorUI::LoadFonts()
 	{
 		ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
@@ -46,7 +46,7 @@ namespace Eclipse::Editor
 		icons_config.MergeMode = true;
 		icons_config.PixelSnapH = true;
 
-		
+
 
 		std::string arial = (PathManager::GetEngineAssetsPath() / "Fonts/ARIAL.TTF").generic_string();
 		std::string faSolid900 = (PathManager::GetEngineAssetsPath() / "Fonts/FontAwesome/7/fa-solid-900.otf").generic_string();
@@ -55,7 +55,7 @@ namespace Eclipse::Editor
 
 		ImGuiIO& io = ImGui::GetIO();
 
-		auto LoadFont = [&](int fontSize) -> ImFont*{
+		auto LoadFont = [&](int fontSize) -> ImFont* {
 			ImFont* font = io.Fonts->AddFontFromFileTTF(
 				arial.c_str(),
 				fontSize
@@ -78,7 +78,7 @@ namespace Eclipse::Editor
 
 		io.FontDefault = FontSmall;
 	}
-	
+
 	void EditorUI::SetupStyle()
 	{
 		ImGuiIO& io = ImGui::GetIO();

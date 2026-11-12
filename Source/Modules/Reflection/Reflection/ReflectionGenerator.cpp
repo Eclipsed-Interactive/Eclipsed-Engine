@@ -52,6 +52,7 @@ namespace Eclipse::Reflection
 			<< "\n"
 			<< "#include <cstddef>\n"
 			<< "#include \"Reflection/Runtime/ReflectionRegistry.h\"\n"
+			<< "#include \"Reflection/ReflectionGenerator.h\"\n"
 			<< "#include \"Reflection/Attributes/Attributes.hpp\"\n"
 			<< "#include \"Reflection/ReflectionRegistrar.hpp\"\n"
 			<< "#include \"Core/Standard/TypeIDGenerator.hpp\"\n"
@@ -91,7 +92,7 @@ namespace Eclipse::Reflection
 			if (i < descriptor.Fields.size() - 1) file << ", ";
 		}
 
-			file << "}\n"
+		file << "}\n"
 			<< "\t\t\t}\n"
 			<< "\t\t);\n"
 			<< "\n";
@@ -112,6 +113,7 @@ namespace Eclipse::Reflection
 				<< "\t\t\t};\n"
 				<< "\n";
 
+			file << "\t\t\tReflection::ReflectionRegistry::RegisterType<" << field.Type << ">();\n";
 
 			for (auto attr : field.attributes)
 			{
