@@ -26,6 +26,7 @@ namespace Eclipse::Serialization
 	public:
 		template<typename T>
 		static void RegisterJson(rapidjson::Value(*toJson)(const T&, rapidjson::Document::AllocatorType& allocator), void(*fromJson)(void* v, const rapidjson::Value& sv));
+		static void RegisterJson(unsigned long long typeId, JsonSerializer serializer);
 
 		template<typename T>
 		static const JsonSerializer& GetJson();
@@ -80,16 +81,12 @@ namespace Eclipse::Serialization
 			.fromJson = [fromJson](void* v,const rapidjson::Value& value) {return fromJson(v, value);},
 		};
 
-		jsonRegistry.insert_or_assign(Type::GetTypeID<T>(), serializer);
+		RegisterJson(Type::GetTypeID<T>(), std::move(serializer));
 	}
 
 	template<typename T>
 	inline const JsonSerializer& Serialization::GetJson()
 	{
-		TypeID id = Type::GetTypeID<T>();
-		if (!jsonRegistry.contains(id))
-			throw std::runtime_error("Serializer not registered.");
-
-		return jsonRegistry.at(id);
+		return GetJson(Type::GetTypeID<T>());
 	}
 }

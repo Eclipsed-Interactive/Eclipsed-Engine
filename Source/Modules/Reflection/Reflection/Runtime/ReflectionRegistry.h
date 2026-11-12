@@ -16,6 +16,8 @@
 
 #include <Core/Standard/Traits/VectorTraits.hpp>
 
+#include <Core/Standard/Serialization/Serialization.hpp>
+
 namespace Eclipse::Reflection
 {
 	class REFLECTION_API ReflectionRegistry
@@ -66,9 +68,6 @@ namespace Eclipse::Reflection
 			using Vector = Trait::Container;
 			using Element = Trait::Element;
 
-			Vector d;
-			Element f;
-
 			RegisterContainer(Type::GetTypeID<Vector>(), ContainerOps{
 				.elementType = Type::GetTypeID<Element>(),
 				.size = [](const void* container) -> size_t { return static_cast<const Vector*>(container)->size(); },
@@ -78,6 +77,35 @@ namespace Eclipse::Reflection
 				});
 
 			RegisterType<Element>();
+
+			using Alloc = rapidjson::Document::AllocatorType;
+			Serialization::Serialization::RegisterJson<Vector>(
+				[](const Vector& vec, Alloc& alloc)
+				{
+					const TypeID elementType = Type::GetTypeID<Element>();
+
+					rapidjson::Value arr(rapidjson::kArrayType);
+					arr.Reserve(vec.size(), alloc);
+					for (const Element& el : vec)
+						arr.PushBack(Serialization::ToJson(elementType, const_cast<Element*>(&el), alloc), alloc);
+
+					return arr;
+				},
+				[](void* v, const rapidjson::Value& json)
+				{
+					if (!json.IsArray()) return;
+
+					Vector& vec = *static_cast<Vector*>(v);
+					const TypeID elementType = Type::GetTypeID<Element>();
+
+					vec.clear();
+					vec.resize(json.Size());
+					for (size_t i = 0; i < json.Size(); i++)
+					{
+						Serialization::FromJson(elementType, &vec[i], json[i]);
+					}
+				}
+			);
 		}
 	}
 
