@@ -19,7 +19,6 @@ layout(location=1)in vec2 TexCoord;
 // Outs
 out vec2 outTexCoord;
 
-
 layout(std140,binding=0) uniform CameraBuffer
 {
    vec2 cameraPosition;

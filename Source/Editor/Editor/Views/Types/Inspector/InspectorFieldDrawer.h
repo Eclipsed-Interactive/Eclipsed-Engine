@@ -54,7 +54,7 @@ namespace Eclipse::Editor
 
 		if (DrawValue(object, field.type, field.attributeContainer))
 		{
-			InvokeOnChange(object, field);
+			InvokeOnChange(v, field);
 			return;
 		}
 	}

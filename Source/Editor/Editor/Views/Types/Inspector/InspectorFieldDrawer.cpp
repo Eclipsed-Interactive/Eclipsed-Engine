@@ -223,7 +223,7 @@ namespace Eclipse::Editor
 
 		if (DrawValue(object, field.type, field.attributeContainer))
 		{
-			InvokeOnChange(object, field);
+			InvokeOnChange(v, field);
 			return;
 		}
 
@@ -251,6 +251,22 @@ namespace Eclipse::Editor
 			Math::Vector3i, Math::Vector3ui, Math::Vector3f, Math::Vector3d,
 			Math::Vector4i, Math::Vector4ui, Math::Vector4f, Math::Vector4d
 		>();
+
+		Register<Math::Vector2<bool>>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
+
+			ImGui::Text("X");
+			ImGui::SameLine();
+			bool changed = ImGui::Checkbox("##valuex", reinterpret_cast<bool*>(v));
+
+			ImGui::SameLine();
+
+			ImGui::Text("Y");
+			ImGui::SameLine();
+			changed |= ImGui::Checkbox("##valuey", reinterpret_cast<bool*>(v) + sizeof(bool));
+
+			return changed;
+			}
+		);
 
 		Register<bool>([](void* v, const Reflection::AttributeContainer& attrs) -> bool {
 			return ImGui::Checkbox("##value", reinterpret_cast<bool*>(v));
@@ -303,10 +319,85 @@ namespace Eclipse::Editor
 		ImGui::PopStyleColor();
 	}
 
+
+
 	bool InspectorFieldDrawer::DrawContainer(void* container, const Reflection::ContainerOps& ops, const Reflection::AttributeContainer& attrs)
 	{
-		ImGui::Text("This is the vector!");
+		size_t size = ops.size(container);
 
-		return false;
+		const ImGuiStyle& style = ImGui::GetStyle();
+
+		const float rightEdge = ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x;
+		const float btn = ImGui::GetFrameHeight();
+		const float btnPos = rightEdge - btn * 2 - ImGui::GetStyle().ItemInnerSpacing.x;
+
+		const float sizeDragWidth = 50.f;
+
+		const float controlsWidth =  style.ItemSpacing.x
+			+ sizeDragWidth + style.ItemSpacing.x
+			+ btn + style.ItemSpacing.x
+			+ btn;
+
+		const float btnWidth = btn * 2 + style.ItemInnerSpacing.x;
+
+		const std::string sizeStr = std::to_string(size);
+		const std::string header = size > 0 ? (size == 1 ? sizeStr + " element" : sizeStr + " element") : "Empty";
+
+		ImGuiWindow* window = ImGui::GetCurrentWindow();
+		const float oldWorkMaxX = window->WorkRect.Max.x;
+		window->WorkRect.Max.x -= controlsWidth + style.ItemSpacing.x;
+		bool open = ImGui::TreeNodeEx(header.c_str(), ImGuiTreeNodeFlags_AllowOverlap);
+		window->WorkRect.Max.x = oldWorkMaxX;
+
+
+		bool wasChanged = false;
+
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(rightEdge - controlsWidth);
+		ImGui::SetNextItemWidth(sizeDragWidth);
+
+		if (ImGui::DragScalar("##size", ImGuiDataType_U64, &size, 1, nullptr, nullptr, nullptr, ImGuiSliderFlags_AlwaysClamp))
+		{
+			ops.resize(container, size);
+			wasChanged = true;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("+", ImVec2(btn, btn)))
+		{
+			ops.resize(container, size + 1);
+			wasChanged = true;
+		}
+
+		ImGui::SameLine();
+
+		ImGui::SetNextItemWidth(ImGui::GetFrameHeight());
+
+		ImGui::BeginDisabled(size == 0);
+		if (ImGui::Button("-", ImVec2(btn, btn)))
+		{
+			ops.resize(container, size - 1);
+			wasChanged = true;
+		}
+		ImGui::EndDisabled();
+
+		if (open)
+		{
+			for (size_t i = 0; i < ops.size(container); i++)
+			{
+				ImGui::Text(("Element " + std::to_string(i + 1)).c_str());
+
+				ImGui::SameLine();
+
+				ImGui::PushID(i);
+				wasChanged |= DrawValue(ops.at(container, i), ops.elementType, attrs);
+				ImGui::PopID();
+			}
+
+			ImGui::TreePop();
+		}
+
+		return wasChanged;
 	}
 }

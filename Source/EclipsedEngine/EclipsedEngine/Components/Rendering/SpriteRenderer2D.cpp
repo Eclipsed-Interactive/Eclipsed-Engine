@@ -15,72 +15,92 @@
 
 namespace Eclipse
 {
-#ifdef ECLIPSED_NETWORKING
-	//void SpriteRenderer2D::sprite_OnRep()
-	//{
-	//	SetSprite(Sprite->GetAssetID());
-	//}
-#endif
-
 	void SpriteRenderer2D::SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax)
 	{
-		spriteRectMin = aMin * Sprite.GetDimDivOne();
-		spriteRectMax = aMax * Sprite.GetDimDivOne();
+		spriteRectMin = aMin * mySprite.GetDimDivOne();
+		spriteRectMax = aMax * mySprite.GetDimDivOne();
 	}
 
-	void SpriteRenderer2D::SetXMirror(bool aMirror)
+	void SpriteRenderer2D::OnChangeColor()
 	{
-		mirroredX = aMirror;
+		// Apply the change to the buffer.
 	}
-	void SpriteRenderer2D::SetYMirror(bool aMirror) { mirroredY = aMirror; }
 
-#pragma region --- Set Sprite
+	void SpriteRenderer2D::OnChangeMaterial()
+	{
+		hasMaterial = myMaterial.IsValid();
+
+	}
+
+	void SpriteRenderer2D::OnChangeSprite()
+	{
+		hasSprite = mySprite.IsValid();
+
+	}
+
+	void SpriteRenderer2D::OnChangeMirror()
+	{
+		mySpriteBuffer.mirrored = { myMirror.x ? -1.f : 1.f, myMirror.y ? -1.f : 1.f };
+	}
+
+	void SpriteRenderer2D::OnChangeZIndex()
+	{
+		
+	}
+
 	void SpriteRenderer2D::SetSprite(const Assets::GUID& aGuid)
 	{
-		assert("No loading assets implemented.");
-		//sprite = Resources::Get<Eclipse::Texture>(aGuid);
-		hasSprite = true;
+		if (!aGuid.IsEmpty())
+		{
+			hasSprite = false;
+			return;
+		}
 
-		//REPLICATEGARANTIED(sprite);
+		SetSprite(Assets::AssetManager::Load<Assets::Texture>(aGuid));
 	}
 
 	void SpriteRenderer2D::SetSprite(const Assets::Texture& aSprite)
 	{
-		Sprite = aSprite;
-		hasSprite = true;
-
-		//REPLICATEGARANTIED(sprite);
+		mySprite = aSprite;
+		
+		if (mySprite.IsValid()) OnChangeSprite();
 	}
-#pragma endregion
+
+
 	void SpriteRenderer2D::SetMaterial(const Assets::GUID& aGuid)
 	{
-		assert("No loading assets implemented.");
-		//material = Resources::Get<Assets::Material>(aGuid);
-		hasMaterial = true;
+		if (!aGuid.IsEmpty())
+		{
+			hasMaterial = false;
+			return;
+		}
+
+		SetSprite(Assets::AssetManager::Load<Assets::Texture>(aGuid));
 	}
 
 	void SpriteRenderer2D::SetMaterial(const Assets::Material& aMaterial)
 	{
-		Material = aMaterial;
-		hasMaterial = true;
+		myMaterial = aMaterial;
+
+		if (myMaterial.IsValid()) OnChangeMaterial();
 	}
 
-
-	Assets::Texture SpriteRenderer2D::GetSprite()
+	void SpriteRenderer2D::SetColor(const Math::Color& aColor)
 	{
-		return Sprite;
+		myColor = aColor;
+		OnChangeColor();
 	}
 
 	void SpriteRenderer2D::OnComponentAdded()
 	{
 		PixelPickMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::PIXELPICK_MATERIAL);
 
-		if (Material.IsValid()) hasMaterial = true;
-		if (Sprite.IsValid()) hasSprite = true;
+		if (myMaterial.IsValid()) hasMaterial = true;
+		if (mySprite.IsValid()) hasSprite = true;
 
 		if (!hasMaterial)
 		{
-			Material = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
+			myMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
 			hasMaterial = true;
 		}
 	}
@@ -131,13 +151,9 @@ namespace Eclipse
 		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
 
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		Material.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		myMaterial.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 
 		Math::Vector2f scaleMultiplier;
-
-
-
-		mySpriteBuffer.mirrored = { mirroredX ? -1.f : 1.f, mirroredY ? -1.f : 1.f };
 
 #ifdef ECL_EDITOR
 		EditorBuffer* editorBuffer;
@@ -151,22 +167,22 @@ namespace Eclipse
 		if (editorBuffer->PixelPicking)
 			graphicsDevice->BindMaterial(PixelPickMaterial);
 		else
-			graphicsDevice->BindMaterial(Material);
+			graphicsDevice->BindMaterial(myMaterial);
 #else
 		graphicsDevice->BindMaterial(material);
 #endif
 
-		if (Sprite.IsValid())
+		if (mySprite.IsValid())
 		{
-			scaleMultiplier = Sprite.GetTextureSizeNormilized();
-			graphicsDevice->BindTexture(0, Sprite);
+			scaleMultiplier = mySprite.GetTextureSizeNormilized();
+			graphicsDevice->BindTexture(0, mySprite);
 		}
 		else
-			scaleMultiplier = Material.GetTexture().GetTextureSizeNormilized();
+			scaleMultiplier = myMaterial.GetTexture().GetTextureSizeNormilized();
 
 		buffer->SetOrCreateBuffer(1, transformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
-		buffer->SetOrCreateBuffer(5, Material.GetBuffer());
+		buffer->SetOrCreateBuffer(5, myMaterial.GetBuffer());
 
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();

@@ -73,6 +73,8 @@ namespace Eclipse::Reflection
 				.elementType = Type::GetTypeID<Element>(),
 				.size = [](const void* container) -> size_t { return static_cast<const Vector*>(container)->size(); },
 				.at = [](void* container, size_t i) -> void* { return &(*static_cast<Vector*>(container))[i]; },
+				.resize = [](void* container, size_t newSize) -> void { static_cast<Vector*>(container)->resize(newSize); },
+				.erase = [](void* container, size_t i) -> void {Vector& v = *static_cast<Vector*>(container); v.erase(v.begin() + i); }
 				});
 
 			RegisterType<Element>();

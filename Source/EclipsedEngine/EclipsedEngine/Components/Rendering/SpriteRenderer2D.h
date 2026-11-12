@@ -35,21 +35,31 @@ namespace Eclipse
         void Render() override;
         void Draw(unsigned aProgramID = 0);
 
-        Assets::Texture GetSprite();
 
         void SetSprite(const Assets::GUID& aGuid);
         void SetSprite(const Assets::Texture& aSprite);
+        [[nodiscard]] Assets::Texture GetSprite() const { return mySprite; }
 
         void SetMaterial(const Assets::GUID& aGuid);
         void SetMaterial(const Assets::Material& aMaterial);
-        Assets::Material* GetMaterial() { return nullptr; }
+        [[nodiscard]] Assets::Material GetMaterial() const { return myMaterial; }
+
+        void SetColor(const Math::Color& aColor);
+        [[nodiscard]] Math::Color GetColor() const { return myColor; }
 
         void SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax);
 
-        void SetXMirror(bool aMirror);/* { mirroredX = aMirror; }*/
-        void SetYMirror(bool aMirror); /*{ mirroredY = aMirror; }*/
+        void SetXMirror(bool aMirror) { myMirror.x = aMirror; }
+        void SetYMirror(bool aMirror) { myMirror.y = aMirror; }
 
-        //void DrawInspector() override;
+        float GetZIndex() override { return zIndex; }
+
+
+        void OnChangeColor();
+        void OnChangeMaterial();
+        void OnChangeSprite();
+        void OnChangeMirror();
+        void OnChangeZIndex();
 
         Math::Vector2f spriteRectMin = { 0.f, 0.f };
         Math::Vector2f spriteRectMax = { 1.f, 1.f };
@@ -58,25 +68,26 @@ namespace Eclipse
         bool hasSprite = false;
         bool hasMaterial = false;
 
-        bool mirroredX = false;
-        bool mirroredY = false;
-
         SpriteBuffer mySpriteBuffer;
         
-        [[SerializeField]]
-        Assets::Texture Sprite;
-
-        [[SerializeField]]
-        Assets::Material Material;
-
-        [[SerializeField]]
-        Math::Color Color;
-
-        [[SerializeField, Range(0.f, 4.f)]]
-        int hejsn = 2;
-
         Assets::Material PixelPickMaterial;
 
         Math::Vector2f Bounds;
+
+    private:
+        [[SerializeField, OnChange(OnChangeSprite)]]
+        Assets::Texture mySprite;
+
+        [[SerializeField, OnChange(OnChangeMaterial)]]
+        Assets::Material myMaterial;
+
+        [[SerializeField, OnChange(OnChangeColor)]]
+        Math::Color myColor;
+
+        [[SerializeField, OnChange(OnChangeMirror)]]
+        Math::Vector2<bool> myMirror = { false, false };
+        
+        [[SerializeField, OnChange(OnChangeZIndex)]]
+        int zIndex = 0;
     };
 }

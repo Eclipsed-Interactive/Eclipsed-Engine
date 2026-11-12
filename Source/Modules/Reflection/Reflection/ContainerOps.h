@@ -18,5 +18,7 @@ namespace Eclipse::Reflection
 
 		size_t(*size)(const void* container) = nullptr;
 		void* (*at)(void* container, size_t index) = nullptr;
+		void (*resize)(void* container, size_t newSize) = nullptr;
+		void (*erase)(void* container, size_t index) = nullptr;
 	};
 }
