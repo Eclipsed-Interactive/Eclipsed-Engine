@@ -84,9 +84,7 @@ namespace Eclipse::Serialization
 	inline T FromJson(const rapidjson::Value& v)
 	{
 		T t{};
-		//Serialization::GetJson<T>().fromJson(&t, v);
-
-		return t;
+		return FromJson(Type::GetTypeID<T>(), &t, v);
 	}
 
 	template<typename T>
