@@ -112,6 +112,7 @@ namespace Eclipse::Editor
 
 	void TextureIconManager::LoadAllTextureIcons()
 	{
+		PROFILE_SCOPED;
 		namespace fs = std::filesystem;
 
 		std::vector<std::string> texturesPathsToLoad;

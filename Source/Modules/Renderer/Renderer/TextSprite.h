@@ -35,16 +35,10 @@ namespace Eclipse::Graphics
     public:
 #pragma region hard_coded_verts_indecies
         // 4 vertices
-        static inline Vertex Vertices[]{
-            {0.f, 0.f, 0, 0},
-            {1.f, 0.f, 1, 0},
-            {0.f, 1.f, 0, 1},
-            {1.f, 1.f, 1, 1}};
+        static Vertex Vertices[4];
 
         // 6 indices
-        static inline unsigned Indices[]{
-            0, 1, 2,
-            2, 1, 3};
+        static unsigned Indices[6];
 
 #pragma endregion
     };

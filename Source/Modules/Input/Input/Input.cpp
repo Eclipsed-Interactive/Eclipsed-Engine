@@ -40,6 +40,7 @@ namespace Eclipse::Input
 
 	void Input::Init(AbstractInput* inputInstance, void* imguiCtx)
 	{
+		PROFILE_SCOPED;
 		ImGui::SetCurrentContext((ImGuiContext*)imguiCtx);
 
 		input = inputInstance;

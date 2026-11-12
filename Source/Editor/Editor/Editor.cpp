@@ -28,8 +28,6 @@
 
 #include "PlayModeController.h"
 
-#include <Core/Logger/DebugLogger.h>
-
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
@@ -39,6 +37,7 @@ namespace Eclipse::Editor
 
 	void Editor::Init()
 	{
+		PROFILE_SCOPED;
 		Engine::Init();
 
 		ImGui::SetCurrentContext((ImGuiContext*)Engine::GetImGuiContext());

@@ -43,11 +43,6 @@ namespace Eclipse::Editor
 		static inline EditorViewRegistry registry;
 		static inline std::vector<EditorViewInstance*> activeViews;
 
-
-
-
-
-
 	public:
 	private:
         static inline std::string layoutToOpen = "";

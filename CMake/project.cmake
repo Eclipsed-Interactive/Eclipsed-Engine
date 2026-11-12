@@ -47,6 +47,11 @@ function(CreateProject TYPE)
 
     add_library(${TARGET_NAME} ${TYPE})
 
+    target_precompile_headers(${TARGET_NAME}
+        PRIVATE
+            "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Source/Modules/Core/Core/Eclipsed.pch.h>"
+    )
+
     target_sources(${TARGET_NAME}
         PRIVATE
             ${_SOURCES}

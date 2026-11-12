@@ -23,12 +23,14 @@ namespace Eclipse
 
 	bool GameModuleManager::TryCompileAndLoad()
 	{
+		PROFILE_SCOPED;
 		hasBuildErrors = !BuildDLL() || !Load();
 		return !hasBuildErrors;
 	}
 
 	bool GameModuleManager::Load()
 	{
+		PROFILE_SCOPED;
 		const std::string dllString = dllPath.generic_string();
 		gameModule = LoadLibraryA(dllString.c_str());
 		if (!gameModule)
@@ -49,6 +51,7 @@ namespace Eclipse
 
 	void GameModuleManager::Unload()
 	{
+		PROFILE_SCOPED;
 		if (!gameModule)
 			return;
 
@@ -63,6 +66,7 @@ namespace Eclipse
 
 	bool GameModuleManager::Reload()
 	{
+		PROFILE_SCOPED;
 		SceneManager::UnloadActive();
 		const bool ok = TryCompileAndLoad();
 

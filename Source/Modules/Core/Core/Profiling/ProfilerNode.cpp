@@ -1,122 +1,12 @@
-#include "Profiling/ProfilerNode.h"
+#include "ProfilerNode.h"
 
-#include <assert.h>
-#include <string.h>
-
-#include "Profiling/PerformanceProfilerManager.h"
-
-ProfilerNode::ProfilerNode(const char* aName, const char* aFile, int aLine)
-	: myLine(aLine)
+namespace Eclipse::Profiler
 {
-	myName = new char[strlen(aName) + 1];
-	strcpy_s(myName, strlen(aName) + 1, aName);
+	using namespace std::chrono;
 
-	myFilePath = new char[strlen(aFile) + 1];
-	strcpy_s(myFilePath, strlen(aFile) + 1, aFile);
-}
-
-ProfilerNode::~ProfilerNode()
-{
-	delete[] myName;
-	delete[] myFilePath;
-
-	for (ProfilerNode* node : myChildNodes)
+	ProfilerNode::ProfilerNode(const char* aFunctionName)
+		: functionName(aFunctionName)
 	{
-		delete node;
+		
 	}
-
-	myChildNodes.clear();
-}
-
-const char* ProfilerNode::GetName() const
-{
-	return myName;
-}
-
-const char* ProfilerNode::GetFilePath() const
-{
-	return myFilePath;
-}
-
-int ProfilerNode::GetLine() const
-{
-	return myLine;
-}
-
-const ProfilerNode* ProfilerNode::GetChild(int anIndex) const
-{
-	assert(myChildNodes.size() < anIndex);
-	return myChildNodes[anIndex];
-}
-
-ProfilerNode* ProfilerNode::GetChild(int anIndex)
-{
-	assert(myChildNodes.size() < anIndex);
-	return myChildNodes[anIndex];
-}
-
-const std::vector<ProfilerNode*>& ProfilerNode::GetChildren() const
-{
-	return myChildNodes;
-}
-
-void ProfilerNode::AddChildren(ProfilerNode* aNode)
-{
-	myChildNodes.push_back(aNode);
-}
-
-void ProfilerNode::SetParentNode(ProfilerNode* aNode)
-{
-	myParentNode = aNode;
-}
-
-const ProfilerNode* ProfilerNode::GetParentNode() const
-{
-	return myParentNode;
-}
-
-ProfilerNode* ProfilerNode::GetParentNode()
-{
-	return myParentNode;
-}
-
-void ProfilerNode::SetStartTime()
-{
-	SetCurrentTime(myStartTime);
-}
-
-void ProfilerNode::SetEndTime()
-{
-	SetCurrentTime(myEndTime);
-	CalculateDuration();
-}
-
-double ProfilerNode::GetDuration() const
-{
-	return myDurationUs.count() * 0.001;
-}
-
-void ProfilerNode::CalculateDuration()
-{
-	myDurationUs = std::chrono::duration_cast<std::chrono::microseconds>(myEndTime - myStartTime);
-}
-
-void ProfilerNode::AddMemoryAllocated(int size)
-{
-	memoryAllocated += size;
-}
-
-void ProfilerNode::AddMemoryFreed(int size)
-{
-	memoryFreed += size;
-}
-
-int ProfilerNode::GetMemoryAllocated() const
-{
-	return memoryAllocated;
-}
-
-void ProfilerNode::SetCurrentTime(std::chrono::steady_clock::time_point& aTimePoint)
-{
-	aTimePoint = std::chrono::steady_clock::now();
 }

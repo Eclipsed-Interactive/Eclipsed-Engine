@@ -49,6 +49,7 @@ namespace Eclipse::Assets
 
 	void AssetDatabase::ProcessSource(const std::filesystem::path& path, const std::string& key)
 	{
+		PROFILE_SCOPED;
 		sourceToKey[path.generic_string()] = key;
 
 		std::vector<AssetCandidate> candidates = AssetScanner::Scan(path);
