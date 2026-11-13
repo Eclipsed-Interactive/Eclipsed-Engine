@@ -16,7 +16,7 @@
 
 #include "Core/Files/FileWatcher.h"
 
-#include "Core/Settings/EditorSettings.h"
+#include "Editor/EditorSettings.h"
 
 #include "Editor/SelectionContext.h"
 
@@ -453,7 +453,6 @@ namespace Eclipse::Editor
 			Assets::GUID guid = database.GetGUIDFromFullPath(fifo.filePath);
 
 			SceneManager::Load(guid);
-			Settings::EditorSettings::SetLastActiveScene(guid.ToString());
 
 			SceneView::ResetCamera();
 		}

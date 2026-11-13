@@ -11,8 +11,9 @@
 
 #include <regex>
 #include "ImGui/imgui.h"
-#include "Core/Settings/EditorSettings.h"
+#include "EditorSettings.h"
 
+#include <fstream>
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"

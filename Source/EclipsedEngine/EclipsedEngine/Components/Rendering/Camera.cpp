@@ -6,7 +6,7 @@
 
 //#include "Renderer/OpenGL/DebugDrawers/DebugDrawer.h"
 #include "Core/MainSingleton.h"
-#include "Core/Settings/EngineSettings.h"
+#include "EngineSettings.h"
 
 #include "Renderer/IRenderer.h"
 #include "Renderer/RendererManager.h"

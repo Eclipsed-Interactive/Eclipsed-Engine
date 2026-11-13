@@ -24,7 +24,7 @@
 
 #include "EclipsedEngine/Scenes/SceneManager.h"
 #include "Editor/Common/EditorActions.h"
-#include "Core/Settings/EditorSettings.h"
+#include "EditorSettings.h"
 
 #include "PlayModeController.h"
 
@@ -49,8 +49,16 @@ namespace Eclipse::Editor
 
 		GameModuleManager::TryCompileAndLoad();
 		
-		if (Settings::EditorSettings::GetOpenLastOpenSceneOnStartup() && !GameModuleManager::HasBuildErrors())
-			SceneManager::LoadLastActive();
+		SceneManager::SetOnSceneChangeCallback([](Assets::GUID guid) {
+			Settings::GetEditorSettings().lastActiveScene = guid.ToString();
+			});
+
+		if (Settings::GetEditorSettings().openLastActiveSceneOnStartup && !GameModuleManager::HasBuildErrors())
+		{
+			Assets::GUID guid;
+			guid.FromString(Settings::GetEditorSettings().lastActiveScene);
+			SceneManager::Load(guid);
+		}
 
 		Engine::LateInit();
 	}

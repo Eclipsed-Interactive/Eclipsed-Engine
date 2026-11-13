@@ -70,7 +70,7 @@ namespace Eclipse
 		SceneManager::UnloadActive();
 		const bool ok = TryCompileAndLoad();
 
-		SceneManager::LoadLastActive();
+		SceneManager::ReloadActive();
 
 		return ok;
 	}

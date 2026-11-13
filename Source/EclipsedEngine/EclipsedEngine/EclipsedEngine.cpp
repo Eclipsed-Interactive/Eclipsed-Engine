@@ -35,6 +35,8 @@
 
 #include <Core/Profiling/ProfilerMacros.hpp>
 
+#include <Core/Settings/SettingsRegistry.h>
+
 namespace Eclipse
 {
 	Graphics::IRenderer* Engine::renderer = nullptr;
@@ -45,6 +47,8 @@ namespace Eclipse
 	void Engine::Init()
 	{
 		PROFILE_SCOPED;
+		Settings::SettingsRegistry::LoadAll();
+
 		MainSingleton::RegisterInstance<TextManager>();
 
 		EventSystem::Trigger("Engine-Load");
@@ -105,6 +109,7 @@ namespace Eclipse
 	void Engine::Shutdown()
 	{
 		EventSystem::Trigger("Engine-Shutdown");
+		Settings::SettingsRegistry::SaveAll();
 	}
 
 	void* Engine::GetImGuiContext()

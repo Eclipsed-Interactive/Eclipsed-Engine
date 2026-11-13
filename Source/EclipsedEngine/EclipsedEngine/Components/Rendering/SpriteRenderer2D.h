@@ -13,8 +13,7 @@
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/SpriteBuffer.h"
 #include "Core/GraphicsBuffers/TransformBuffer.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+
 namespace Eclipse
 {
     class Sprite;

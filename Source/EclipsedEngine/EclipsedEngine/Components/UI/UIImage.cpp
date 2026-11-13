@@ -3,7 +3,7 @@
 #include "Renderer/Sprite.h"
 
 #include "Assets/AssetManager.h"
-#include "Core/Settings/GraphicsSettings.h"
+#include "Renderer/GraphicsSettings.h"
 
 #include "EclipsedEngine/Components/UI/RectTransform.h"
 #include "EclipsedEngine/Components/UI/Canvas.h"
@@ -89,7 +89,7 @@ namespace Eclipse
 		Math::Vector2f halfRefRes = referenceResolution * 0.5f;
 
 #ifdef ECL_EDITOR
-		Math::Vector2f resolution = Settings::GraphicsSettings::GetResolution();
+		Math::Vector2f resolution = Settings::GetGraphicsSettings().resolution;
 #endif
 
 		Math::Vector2f resMinRef = resolution - referenceResolution;

@@ -10,7 +10,7 @@
 #include <regex>
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_internal.h"
-#include "Core/Settings/EditorSettings.h"
+#include "EditorSettings.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"

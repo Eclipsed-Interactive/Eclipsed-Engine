@@ -5,7 +5,7 @@
 #include "Core/MainSingleton.h"
 
 #include "SceneSerializer.h"
-#include "Core/Settings/EditorSettings.h"
+#include "Core/PathManager.h"
 
 #include "Physics/PhysicsEngine.h"
 #include "Renderer/RenderCommands/CommandList.h"
@@ -43,6 +43,11 @@ namespace Eclipse
 		PhysicsEngine::CleanUp();
 	}
 
+	void SceneManager::SetOnSceneChangeCallback(std::function<void(Assets::GUID guid)> callBack)
+	{
+		onSceneChangeCallback = callBack;
+	}
+
 	void SceneManager::ReloadActive()
 	{
 		Assets::Scene scene = ActiveScene;
@@ -62,7 +67,7 @@ namespace Eclipse
 		const Assets::AssetMeta& meta = database.GetProcessedFile(ActiveScene.GetAssetID());
 
 		const std::filesystem::path path = meta.fullPath;
-		Settings::EditorSettings::SetLastActiveScene(meta.guid.ToString());
+		onSceneChangeCallback(meta.guid);
 
 		ActiveScene.dataPtr->sourceBlob = serializedString;
 
@@ -76,17 +81,6 @@ namespace Eclipse
 		file.close();
 	}
 
-	void SceneManager::LoadLastActive()
-	{
-		Assets::GUID id;
-		const std::string& idString = Settings::EditorSettings::GetLastActiveScene();
-		if (idString.empty())
-			return;
-
-		id.FromString(idString);
-
-		Load(id);
-	}
 
 	void SceneManager::Load(const char* path)
 	{
@@ -108,7 +102,7 @@ namespace Eclipse
 		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 		const Assets::GUID guid = database.GetGUIDFromFullPath(fullpath);
 		ActiveScene = Assets::AssetManager::Load<Assets::Scene>(guid);
-		Settings::EditorSettings::SetLastActiveScene(guid.ToString());
+		onSceneChangeCallback(guid);
 
 		SceneSerializer::LoadScene(ActiveScene);
 
@@ -122,7 +116,7 @@ namespace Eclipse
 		UnloadActive();
 		SetActiveSceneType(SceneType::World);
 
-		Settings::EditorSettings::SetLastActiveScene(scene.GetAssetID().ToString());
+		onSceneChangeCallback(scene.GetAssetID());
 
 		ActiveScene = scene;
 		SceneSerializer::LoadScene(ActiveScene);
@@ -141,7 +135,7 @@ namespace Eclipse
 			UnloadActive();
 			SetActiveSceneType(SceneType::World);
 
-			Settings::EditorSettings::SetLastActiveScene(guid.ToString());
+			onSceneChangeCallback(guid);
 			ActiveScene = scene;
 
 			SceneSerializer::LoadScene(ActiveScene);

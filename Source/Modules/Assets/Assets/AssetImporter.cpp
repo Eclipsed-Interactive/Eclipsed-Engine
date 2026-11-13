@@ -40,7 +40,7 @@ namespace Eclipse::Assets
 		IAssetType* type = AssetTypeRegistry::GetType(assetType);
 		if (type == nullptr) return; // Type is not supported.
 
-		if (std::filesystem::last_write_time(meta.fullPath) < std::filesystem::last_write_time(meta.exportedPath)) return;
+		if (std::filesystem::exists(meta.exportedPath) && std::filesystem::last_write_time(meta.fullPath) < std::filesystem::last_write_time(meta.exportedPath)) return;
 
 		ImportedData imported = type->Import(meta);
 		BinaryWriter writer(meta.guid);

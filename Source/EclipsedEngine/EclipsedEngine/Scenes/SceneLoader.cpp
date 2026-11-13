@@ -1,6 +1,5 @@
 #include "SceneSerializer.h"
 
-#include "Core/Settings/EditorSettings.h"
 #include "Serialization/Serialization.hpp"
 
 #include "ECS/ComponentManager.h"

@@ -3,6 +3,7 @@
 #include "EclipsedEngine.Core.hpp"
 
 #include "Assets/Assets/SceneAsset.h"
+#include <functional>
 
 namespace Eclipse
 {
@@ -18,9 +19,9 @@ namespace Eclipse
 
 		static void SaveActive();
 
-		static void LoadLastActive();
-
 		static void Clear();
+
+		static void SetOnSceneChangeCallback(std::function<void(Assets::GUID guid)>);
 
 	public:
 		static std::string CaptureSnapshot();
@@ -45,6 +46,8 @@ namespace Eclipse
 		static inline unsigned ActivePrefabEditSceneID;
 
 		static inline SceneType ActiveSceneType = SceneType::World;
+
+		static inline std::function<void(Assets::GUID guid)> onSceneChangeCallback;
 
 	private:
 #ifdef ECL_EDITOR

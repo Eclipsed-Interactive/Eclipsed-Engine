@@ -2,7 +2,7 @@
 
 #include <box2d/box2d.h>
 #include "Core/Timer.h"
-#include "Core/Settings/PhysicsSettings.h"
+#include "PhysicsSettings.h"
 
 #undef min
 namespace Eclipse
@@ -50,7 +50,7 @@ namespace Eclipse
 
     void LoadLayersFromJSON(std::array<uint64_t, MAX_LAYERS>& aCollisionLayers)
     {
-        auto& layers = Settings::PhysicsSettings::GetPhysicsLayers();
+        auto& layers = Settings::GetPhysicsSettings().PhysicsLayers;
 
         int result = memcmp(layers.data(), aCollisionLayers.data(), MAX_LAYERS * sizeof(uint64_t));
 
