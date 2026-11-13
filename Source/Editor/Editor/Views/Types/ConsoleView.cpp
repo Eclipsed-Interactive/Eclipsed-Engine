@@ -23,7 +23,8 @@ namespace Eclipse::Editor
 
 	void ConsoleView::Draw()
 	{
-		if ((selectedIndex != -1 || selectedMessage) && Core::DebugLogger::GetGameBuffer().GetUniqueMessages().size() == 0)
+		const Core::DebugLoggerBuffer& shownBuffer = DrawEngineLogs ? Core::DebugLogger::GetEngineBuffer() : Core::DebugLogger::GetGameBuffer();
+		if ((selectedIndex != -1 || selectedMessage) && shownBuffer.GetUniqueMessages().size() == 0)
 			ResetSelected();
 
 		// Reset selection if pressing middle mouse button
