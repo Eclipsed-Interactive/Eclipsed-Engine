@@ -16,6 +16,7 @@
 
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
+#include "Assets/AssetManager.h"
 
 namespace Eclipse::Editor
 {
@@ -29,6 +30,8 @@ namespace Eclipse::Editor
 		Input::Input::AddGameViewWindow(viewId);
 
 		ActiveImGuiFlag = ImGuiWindowFlags_MenuBar;
+
+		myDrawMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_LIGHT_FULL);
 
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		device->BindFrameBuffer(0);
@@ -77,12 +80,31 @@ namespace Eclipse::Editor
 
 		if (camera)
 		{
-			device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
-
 			Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+			device->BindFrameBuffer(myGameFrameBuffer.frameBufferIndex);
+			device->Clear(Graphics::ClearFlags::Color, camera->ClearColor);
 			commandListManager->GetSpriteCommandList().Execute();
-			commandListManager->GetUICommandList().Execute();
-			commandListManager->GetDebugDrawCommandList().Execute();
+
+			device->BindFrameBuffer(myLightFrameBuffer.frameBufferIndex);
+			device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
+			device->SetBlendMode(Graphics::BlendMode::Additive);
+			commandListManager->GetLightCommandList().Execute();
+			
+			device->BindFrameBuffer(myGameFrameBuffer.frameBufferIndex);
+			device->SetBlendMode(Graphics::BlendMode::Multiply);
+			device->BindMaterial(myDrawMaterial);
+			device->BindTexture(0, myLightFrameBuffer.textureIndex);
+			auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
+			drawer->DrawSprite();
+
+			device->SetBlendMode(Graphics::BlendMode::Alpha);
+
+			//device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
+
+			//Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+			//commandListManager->GetSpriteCommandList().Execute();
+			//commandListManager->GetUICommandList().Execute();
+			//commandListManager->GetDebugDrawCommandList().Execute();
 		}
 		else
 			NoCameraInScene = true;
@@ -171,6 +193,7 @@ namespace Eclipse::Editor
 	{
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
 		myGameFrameBuffer = device->CreateFrameBuffer();
+		myLightFrameBuffer = device->CreateFrameBuffer();
 	}
 
 	void GameView::SetBuffers()
@@ -201,6 +224,10 @@ namespace Eclipse::Editor
 		{
 			device->BindTexture(myGameFrameBuffer.textureIndex);
 			device->ChangeImageDimensions(myWindowSize);
+
+			device->BindTexture(myLightFrameBuffer.textureIndex);
+			device->ChangeImageDimensions(myWindowSize);
+
 			device->BindTexture(0);
 		}
 

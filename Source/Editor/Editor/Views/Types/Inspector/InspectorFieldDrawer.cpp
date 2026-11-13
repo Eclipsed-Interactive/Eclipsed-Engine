@@ -100,6 +100,7 @@ namespace Eclipse::Editor
 				{
 					outGuid = Assets::GUID();
 					picked = true;
+					ImGui::CloseCurrentPopup();
 				}
 
 				for (const Assets::AssetMeta* meta : assets)
@@ -109,6 +110,7 @@ namespace Eclipse::Editor
 					{
 						outGuid = meta->guid;
 						picked = true;
+						ImGui::CloseCurrentPopup();
 					}
 					if (ImGui::IsItemHovered() && !meta->fullPath.empty())
 						ImGui::SetTooltip("%s", meta->fullPath.generic_string().c_str());
@@ -378,7 +380,7 @@ namespace Eclipse::Editor
 		ImGuiWindow* window = ImGui::GetCurrentWindow();
 		const float oldWorkMaxX = window->WorkRect.Max.x;
 		window->WorkRect.Max.x -= controlsWidth + style.ItemSpacing.x;
-		bool open = ImGui::TreeNodeEx(header.c_str(), ImGuiTreeNodeFlags_AllowOverlap);
+		bool open = ImGui::TreeNodeEx("##elementsofthevector", ImGuiTreeNodeFlags_AllowOverlap, header.c_str());
 		window->WorkRect.Max.x = oldWorkMaxX;
 
 

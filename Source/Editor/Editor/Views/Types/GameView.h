@@ -5,6 +5,7 @@
 #include "Core/Math/Vector/Vector2.h"
 
 #include "Renderer/FrameBuffer.h"
+#include <Assets/Assets/MaterialAsset.h>
 
 namespace Eclipse::Editor
 {
@@ -42,10 +43,13 @@ namespace Eclipse::Editor
 		Math::Vector2f myLastWindowResolution = { -1, -1 };
 
 		Graphics::FrameBuffer myGameFrameBuffer;
+		Graphics::FrameBuffer myLightFrameBuffer;
 
 		std::vector<Resolution> myResolutions;
 
 		size_t ActiveResolutionIndex;
 		Math::Vector2f ActiveResolutionRatios;
+
+		Assets::Material myDrawMaterial;
 	};
 }

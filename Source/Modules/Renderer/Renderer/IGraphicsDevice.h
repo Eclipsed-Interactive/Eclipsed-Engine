@@ -15,6 +15,8 @@
 
 namespace Eclipse::Graphics
 {
+	enum class BlendMode { Alpha, Additive, Multiply };
+
 	class RENDERER_API IGraphicsDevice
 	{
 	public:
@@ -24,7 +26,7 @@ namespace Eclipse::Graphics
 			unsigned char stencil = 0) = 0;
 
 		virtual void BindFrameBuffer(unsigned aFrameBuffer) = 0;
-
+		virtual void SetBlendMode(BlendMode mode) = 0;
 		virtual FrameBuffer CreateFrameBuffer() = 0;
 
 		virtual void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = {0, 0}) = 0;

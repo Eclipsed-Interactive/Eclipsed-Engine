@@ -32,6 +32,8 @@ namespace Eclipse::Graphics::OpenGL
 		void CreateComputeShaderProgram(unsigned& SpawningComputeShaderID, unsigned& SpawningParticleProgram, const char* name);
 		void CreateParticleShaderStorageBufferObject(unsigned& ParticleDataSSBO, unsigned& FreeListSSBO);
 
+		void SetBlendMode(BlendMode mode) override;
+
 	public:
 		void BindTexture(unsigned textureIndex) override;
 		void BindTexture(unsigned slot, unsigned textureIndex) override;

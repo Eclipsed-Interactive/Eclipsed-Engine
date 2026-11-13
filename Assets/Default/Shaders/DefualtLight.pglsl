@@ -1,0 +1,22 @@
+#version 460 core
+
+layout(std140, binding=6) uniform LightBuffer 
+{
+   vec4 color;
+   float intensity;
+   float falloff;
+   float innerradius;
+};
+
+// Ins
+in vec2 outTexCoord;
+
+// Outs
+out vec4 frag_colour;
+
+void main() 
+{
+   float dst = length(outTexCoord - vec2(0.5)) * 2.0;
+   float attenuation = pow(clamp((1.0 - dst) / (1.0 - innerradius), 0.0, 1.0), falloff);
+   frag_colour = vec4(color.rgb * intensity * attenuation, 1.0);
+}

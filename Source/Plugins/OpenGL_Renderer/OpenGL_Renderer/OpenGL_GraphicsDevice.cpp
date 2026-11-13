@@ -10,6 +10,17 @@
 
 namespace Eclipse::Graphics::OpenGL
 {
+	void OpenGL_GraphicsDevice::SetBlendMode(BlendMode mode)
+	{
+		switch (mode)
+		{
+		case Eclipse::Graphics::BlendMode::Alpha: glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); break;
+		case Eclipse::Graphics::BlendMode::Additive:glBlendFunc(GL_ONE, GL_ONE); break;
+		case Eclipse::Graphics::BlendMode::Multiply:glBlendFunc(GL_DST_COLOR, GL_ZERO); break;
+		}
+	}
+
+
 	void OpenGL_GraphicsDevice::Clear(ClearFlags flags, const Math::Color& color, float depth, unsigned char stencil)
 	{
 		GLbitfield mask = 0;

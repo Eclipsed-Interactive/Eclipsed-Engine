@@ -103,10 +103,15 @@ namespace Eclipse::Graphics
         { 
             return HappenAtBeginCommandList; 
         }
+        CommandList& GetLightCommandList() 
+        { 
+            return LightCommandList;
+        }
 
         void ExecuteAllCommandLists()
         {
             SpriteCommandList.Execute();
+            LightCommandList.Execute();
             UICommandList.Execute();
             DebugDrawCommandList.Execute();
         }
@@ -119,6 +124,7 @@ namespace Eclipse::Graphics
             UICommandList.Init();
             DebugDrawCommandList.Init();
             HappenAtBeginCommandList.Init();
+            LightCommandList.Init();
         }
 
         void ResetAllCommandLists()
@@ -126,12 +132,14 @@ namespace Eclipse::Graphics
             SpriteCommandList.Reset();
             UICommandList.Reset();
             DebugDrawCommandList.Reset();
+            LightCommandList.Reset();
         }
 
     private:
         CommandList UICommandList;
         CommandList SpriteCommandList;
         CommandList DebugDrawCommandList;
+        CommandList LightCommandList;
 
         CommandList HappenAtBeginCommandList;
     };

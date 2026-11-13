@@ -1,0 +1,18 @@
+#version 460 core
+
+struct Material
+{
+    sampler2D albedo;
+};
+uniform Material material;
+
+// Ins
+in vec2 outTexCoord;
+
+// Outs
+out vec4 frag_colour;
+
+void main() 
+{
+    frag_colour = vec4(texture(material.albedo, outTexCoord).rgb, 1.0);
+}
