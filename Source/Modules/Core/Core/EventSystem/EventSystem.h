@@ -39,7 +39,7 @@ namespace Eclipse
 
     using EventMap = std::vector<BaseEvent*>;
 
-    class CORE_API EventSystem
+    class EventSystem
     {
     public:
         template<typename... Args>
