@@ -5,6 +5,8 @@
 #include <vector>
 #include <utility>
 
+#include "Core.Core.hpp"
+
 namespace Eclipse
 {
     struct BaseEvent {
@@ -37,7 +39,7 @@ namespace Eclipse
 
     using EventMap = std::vector<BaseEvent*>;
 
-    class EventSystem
+    class CORE_API EventSystem
     {
     public:
         template<typename... Args>
