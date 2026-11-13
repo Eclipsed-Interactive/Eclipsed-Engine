@@ -65,12 +65,12 @@ namespace Eclipse::Editor
 		FormatTime(time, node->duration);
 
 
-		if (16666.0 <= node->duration.count())
+		if (FrameBudgetMicroSecond <= node->duration.count())
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
 
-		bool open = ImGui::TreeNodeEx(node->functionName.c_str(), flags, "%s  %s", node->functionName.c_str(), time.c_str());
+		const bool open = ImGui::TreeNodeEx(node->functionName.c_str(), flags, "%s  %s", node->functionName.c_str(), time.c_str());
 
-		if (16666.0 <= node->duration.count())
+		if (FrameBudgetMicroSecond <= node->duration.count())
 			ImGui::PopStyleColor();
 
 		if (open)

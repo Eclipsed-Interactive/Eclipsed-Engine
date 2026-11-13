@@ -16,5 +16,8 @@ namespace Eclipse::Editor
 
 	private:
 		void DrawNode(const Profiler::ProfilerNode* node);
+
+	private:
+		static inline constexpr double FrameBudgetMicroSecond = 16666.0;
 	};
 }
