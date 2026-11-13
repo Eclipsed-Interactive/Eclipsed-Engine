@@ -57,7 +57,7 @@ namespace Eclipse::Editor
 	{
 		int counter = 0;
 
-		static Component* rightClickedComp = nullptr;
+		Component* componentToRemove = nullptr;
 		for (auto comp : ComponentManager::GetComponents(gobjId))
 		{
 			if (!comp)
@@ -69,13 +69,12 @@ namespace Eclipse::Editor
 
 			ImGui_Impl::DrawComponentHeader(compName, comp->myInspectorWasDrawn);
 
-			if (ImGui::IsItemHovered())
+			if (ImGui::BeginPopupContextItem("InspectorRightClickedComponent"))
 			{
-				if (ImGui::IsMouseReleased(1))
-				{
-					ImGui::OpenPopup("InspectorRightClickedComponent");
-					rightClickedComp = comp;
-				}
+				if (ImGui::MenuItem("Remove"))
+					componentToRemove = comp;
+
+				ImGui::EndPopup();
 			}
 
 			if (!comp->myInspectorWasDrawn)
@@ -132,7 +131,7 @@ namespace Eclipse::Editor
 
 			ImGui::Dummy({ 0, 30 });
 			ImGui::Separator();
-		
+
 			ImGui::PopID();
 		}
 
@@ -183,18 +182,9 @@ namespace Eclipse::Editor
 			compSearchIsFocused = false;
 		}
 
-		if (ImGui::BeginPopup("InspectorRightClickedComponent"))
+		if (componentToRemove)
 		{
-			if (ImGui::Button("Remove"))
-			{
-				ComponentManager::DeleteComponent(gobjId,0, rightClickedComp->GetComponentID());
-				//Destroy(rightClickedComp);
-				rightClickedComp = nullptr;
-
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
+			ComponentManager::DeleteComponent(gobjId, 0, componentToRemove->GetComponentID());
 		}
 	}
 
