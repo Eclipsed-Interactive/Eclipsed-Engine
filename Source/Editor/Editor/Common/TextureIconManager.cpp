@@ -70,6 +70,8 @@ namespace Eclipse::Editor
 
 	void TextureIconManager::LoadIconsFile()
 	{
+		PROFILE_SCOPED;
+
 		namespace fs = std::filesystem;
 
 		std::ifstream in(PathManager::GetProjectLocalPath() / IconBundleFilePath, std::ios::binary);
@@ -112,6 +114,7 @@ namespace Eclipse::Editor
 
 	void TextureIconManager::LoadAllTextureIcons()
 	{
+		PROFILE_SCOPED;
 		namespace fs = std::filesystem;
 
 		std::vector<std::string> texturesPathsToLoad;
@@ -127,10 +130,13 @@ namespace Eclipse::Editor
 		{
 			LoadTextureIconFromPath(path);
 		}
+
+		ExportLoadedTextures();
 	}
 
 	bool TextureIconManager::LoadTextureIconFromPath(const std::filesystem::path& path)
 	{
+		PROFILE_SCOPED;
 		namespace fs = std::filesystem;
 
 		std::string relativePath = fs::relative(path, PathManager::GetAssetsPath()).generic_string();

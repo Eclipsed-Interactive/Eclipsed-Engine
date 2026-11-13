@@ -7,6 +7,7 @@
 #include "Views/Types/HierarchyView.h"
 #include "Views/Types/SettingsView.h"
 #include "Views/Types/ConsoleView.h"
+#include "Views/Types/ProfilerView.h"
 
 #include <regex>
 #include "ImGui/imgui.h"
@@ -20,6 +21,7 @@ namespace Eclipse::Editor
 {
 	void EditorLayout::RegisterViewTypes()
 	{
+		PROFILE_SCOPED;
 		registry.RegisterView<AssetBrowserView>();
 		registry.RegisterView<InspectorView>();
 		registry.RegisterView<GameView>();
@@ -27,11 +29,13 @@ namespace Eclipse::Editor
 		registry.RegisterView<HierarchyView>();
 		registry.RegisterView<SettingsView>();
 		registry.RegisterView<ConsoleView>();
+		registry.RegisterView<ProfilerView>();
 	}
 
 
 	void EditorLayout::Init()
 	{
+		PROFILE_SCOPED;
 		EditorLayout::RegisterViewTypes();
 
 		if (std::filesystem::exists("CurrentLayout.layout"))
@@ -56,6 +60,7 @@ namespace Eclipse::Editor
 
 	void EditorLayout::Draw()
 	{
+		PROFILE_SCOPED;
 		for (auto it = activeViews.begin(); it < activeViews.end();)
 		{
 			EditorViewInstance* instance = *it;
@@ -123,6 +128,7 @@ namespace Eclipse::Editor
 
 	bool EditorLayout::LoadLayout(const char* layout)
 	{
+		PROFILE_SCOPED;
 		if (LoadLayoutFromMemory(layout)) return true;
 		else if (LoadLayoutFromDisk(layout)) return true;
 		else if (LoadLayoutFromProject(layout)) return true;
@@ -131,6 +137,7 @@ namespace Eclipse::Editor
 
 	bool EditorLayout::LoadLayoutFromMemory(const char* layout)
 	{
+		PROFILE_SCOPED;
 		rapidjson::Document doc;
 		if (doc.Parse(layout).HasParseError())
 			return false;
@@ -170,6 +177,7 @@ namespace Eclipse::Editor
 
 	bool EditorLayout::LoadLayoutFromDisk(const char* path)
 	{
+		PROFILE_SCOPED;
 		if (!path || !std::filesystem::exists(path))
 			return false;
 
@@ -193,6 +201,7 @@ namespace Eclipse::Editor
 
 	bool EditorLayout::LoadLayoutFromProject(const char* layoutName)
 	{
+		PROFILE_SCOPED;
 		const std::filesystem::path path = PathManager::GetProjectRoot() / "Editor" / "Layouts" / (std::string(layoutName) + ".layout");
 		if (std::filesystem::exists(path))
 			return false;

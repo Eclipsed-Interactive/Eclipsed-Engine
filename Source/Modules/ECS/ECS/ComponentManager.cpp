@@ -605,6 +605,7 @@ namespace Eclipse
 
 	void ComponentManager::Init()
 	{
+		PROFILE_SCOPED;
 		myComponentData = reinterpret_cast<uint8_t*>(malloc(MAX_COMPONENT_MEMORY_BYTES));
 	}
 

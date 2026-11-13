@@ -113,6 +113,8 @@ namespace Eclipse::Graphics
 
         void InitAllCommandLists()
         {
+            PROFILE_SCOPED;
+
             SpriteCommandList.Init();
             UICommandList.Init();
             DebugDrawCommandList.Init();

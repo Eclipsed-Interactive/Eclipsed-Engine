@@ -13,6 +13,7 @@ namespace Eclipse::Assets
 {
 	void AssetTypeRegistry::RegisterTypes()
 	{
+		PROFILE_SCOPED;
 		types[AssetType::AudioClip] = new AudioAssetType;
 
 		types[AssetType::Prefab] = new PrefabAssetType;

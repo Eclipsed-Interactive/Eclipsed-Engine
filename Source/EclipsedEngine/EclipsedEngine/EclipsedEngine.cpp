@@ -33,6 +33,8 @@
 
 #include "Physics/PhysicsEngine.h"
 
+#include <Core/Profiling/ProfilerMacros.hpp>
+
 namespace Eclipse
 {
 	Graphics::IRenderer* Engine::renderer = nullptr;
@@ -42,6 +44,7 @@ namespace Eclipse
 
 	void Engine::Init()
 	{
+		PROFILE_SCOPED;
 		MainSingleton::RegisterInstance<TextManager>();
 
 		EventSystem::Trigger("Engine-Load");
@@ -80,6 +83,7 @@ namespace Eclipse
 
 	void Engine::UpdateGame()
 	{
+		PROFILE_SCOPED;
 		ComponentManager::AwakeStartComponents();
 		ComponentManager::UpdateComponents();
 	}
@@ -87,6 +91,7 @@ namespace Eclipse
 
 	void Engine::LateInit()
 	{
+		PROFILE_SCOPED;
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
 	}
 
@@ -169,6 +174,8 @@ namespace Eclipse
 
 	void Engine::ImGui_Init()
 	{
+		PROFILE_SCOPED;
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();

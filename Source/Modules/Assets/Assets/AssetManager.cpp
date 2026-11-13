@@ -66,6 +66,7 @@ namespace Eclipse::Assets
 
 	void AssetManager::Init()
 	{
+		PROFILE_SCOPED;
 		MainSingleton::RegisterInstance<AssetDatabase>();
 		AssetDatabase& database = MainSingleton::GetInstance<AssetDatabase>();
 		database.ProcessSource(PathManager::GetEngineAssetsPath(), "Engine/");

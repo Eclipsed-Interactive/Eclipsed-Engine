@@ -17,6 +17,7 @@ namespace Eclipse::Editor
 
 	void EditorUI::Init()
 	{
+		PROFILE_SCOPED;
 		TextureIconManager::LoadAllTextureIcons();
 
 		LoadFonts();
@@ -40,6 +41,7 @@ namespace Eclipse::Editor
 
 	void EditorUI::LoadFonts()
 	{
+		PROFILE_SCOPED;
 		ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
 		ImFontConfig icons_config;
@@ -81,6 +83,7 @@ namespace Eclipse::Editor
 
 	void EditorUI::SetupStyle()
 	{
+		PROFILE_SCOPED;
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImVec4* colors = style.Colors;

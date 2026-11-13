@@ -6,22 +6,40 @@
 
 #include "ImGui/imgui.h"
 
+#include <Core/Profiling/ProfilerManager.h>
+#include <Core/Profiling/ProfilerMacros.hpp>
+
+using namespace Eclipse::Profiler;
+
 void Test_ImGui();
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Eclipse::Editor::Editor editor;
-	editor.EarlyInit();
 
-	editor.Init();
+	ProfilerManager::BeginPhase(Phase::Init);
+	{
+		PROFILE_SCOPED;
+		editor.EarlyInit();
+
+		editor.Init();
+	}
+	ProfilerManager::EndPhase();
 
 	while (!editor.ShouldClose())
 	{
-		editor.BeginFrame();
+		ProfilerManager::BeginPhase(Phase::Update);
+		{
+			PROFILE_SCOPED;
+			editor.BeginFrame();
 
-		Test_ImGui();
+			Test_ImGui();
 
-		editor.Update();
-		editor.Render();
+			editor.Update();
+			editor.Render();
+		}
+
+		ProfilerManager::EndPhase();
+
 		editor.EndFrame();
 	}
 
