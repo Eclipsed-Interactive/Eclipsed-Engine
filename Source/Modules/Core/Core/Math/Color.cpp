@@ -18,11 +18,10 @@ namespace Eclipse::Math
 
 	int32_t Color::GetHexValue()
 	{
-		int R = static_cast<int>(r * 255.f);
-		int G = static_cast<int>(g * 255.f);
-		int B = static_cast<int>(b * 255.f);
-		int A = static_cast<int>(a * 255.f);
-
+		uint32_t R = static_cast<uint32_t>(r * 255.f + 0.5f);  // round, not truncate
+		uint32_t G = static_cast<uint32_t>(g * 255.f + 0.5f);
+		uint32_t B = static_cast<uint32_t>(b * 255.f + 0.5f);
+		uint32_t A = static_cast<uint32_t>(a * 255.f + 0.5f);
 		return (R << 24) | (G << 16) | (B << 8) | A;
 	}
 }

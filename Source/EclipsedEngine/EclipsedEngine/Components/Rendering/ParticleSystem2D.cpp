@@ -45,32 +45,38 @@ void Eclipse::ParticleSystem2D::Awake()
 		emitter.StartData.StartSizeMin = 0.02f;
 		emitter.StartData.StartSizeMax = 0.02f;
 
-		emitter.StartData.EndSizeMin = 0.005f;
-		emitter.StartData.EndSizeMax = 0.005f;
+		emitter.StartData.EndSizeMin = 0.02f;
+		emitter.StartData.EndSizeMax = 0.02f;
 
-		emitter.StartData.StartSpeedMin = 0.8f;
-		emitter.StartData.StartSpeedMax = 1.4f;
+		emitter.StartData.StartSpeedMin = 0.1f;
+		emitter.StartData.StartSpeedMax = 0.1f;
+
+		emitter.StartData.StartColor = Math::Color(1.f, 1.f, 1.f, 1).GetHexValue();
+		emitter.StartData.EndColor = Math::Color(0.f, 0.f, 0.f, 0.f).GetHexValue();
 	}
 
-	{
-		Emitter& emitter = myEmmiter.emplace_back();
-		emitter.SpawnPosition = { -1., 0.f };
+	//{
+	//	Emitter& emitter = myEmmiter.emplace_back();
+	//	emitter.SpawnPosition = { -1., 0.f };
 
 
-		emitter.SpawnShape = 0;
+	//	emitter.SpawnShape = 0;
 
-		emitter.StartData.StartLifetimeMin = 2.f;
-		emitter.StartData.StartLifetimeMax = 2.f;
+	//	emitter.StartData.StartLifetimeMin = 2.f;
+	//	emitter.StartData.StartLifetimeMax = 2.f;
 
-		emitter.StartData.StartSizeMin = 0.03f;
-		emitter.StartData.StartSizeMax = 0.03f;
+	//	emitter.StartData.StartSizeMin = 0.03f;
+	//	emitter.StartData.StartSizeMax = 0.03f;
 
-		emitter.StartData.EndSizeMin = 0.03f;
-		emitter.StartData.EndSizeMax = 0.03f;
+	//	emitter.StartData.EndSizeMin = 0.03f;
+	//	emitter.StartData.EndSizeMax = 0.03f;
 
-		emitter.StartData.StartSpeedMin = 1.f;
-		emitter.StartData.StartSpeedMax = 1.4f;
-	}
+	//	emitter.StartData.StartSpeedMin = 1.f;
+	//	emitter.StartData.StartSpeedMax = 1.4f;
+
+	//	emitter.StartData.StartColor = Math::Color(1.f, 1.f, 1.f, 1).GetHexValue();
+	//	emitter.StartData.EndColor = Math::Color(0.f, 0.f, 0.f, 0.f).GetHexValue();
+	//}
 
 	//{
 	//	Emitter& emitter = myEmmiter.emplace_back();
@@ -174,8 +180,6 @@ void Eclipse::Emitter::Update()
 	{
 		ParticleSystem2D::ConeEmitterParticleBuffer->EmitterRotation = 0.f;
 		ParticleSystem2D::ConeEmitterParticleBuffer->EmitterWidthAngle = 30.f;
-		ParticleSystem2D::ConeEmitterParticleBuffer->MinSpeed = 1.f;
-		ParticleSystem2D::ConeEmitterParticleBuffer->MaxSpeed = 1.4f;
 
 
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->Gravity = Math::Vector3f(Gravity.x, Gravity.y, 0.f);
@@ -190,6 +194,12 @@ void Eclipse::Emitter::Update()
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MaxSizeStart = StartData.StartSizeMax;
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MinSizeEnd = StartData.EndSizeMin;
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->MaxSizeEnd = StartData.EndSizeMax;
+
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->StartColor = StartData.StartColor;
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->EndColor = StartData.EndColor;
+
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->StartSpeedMin = StartData.StartSpeedMin;
+		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->StartSpeedMax = StartData.StartSpeedMax;
 
 		GraphicsBuffer->SetOrCreateBuffer<ParticleSpawnBuffer>(0);
 		GraphicsBuffer->SetOrCreateBuffer<ConeEmitterDataBuffer>(2);

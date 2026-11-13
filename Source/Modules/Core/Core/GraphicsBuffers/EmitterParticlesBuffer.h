@@ -6,8 +6,8 @@ namespace Eclipse
 {
     struct ConeEmitterDataBuffer
     {
-        float MinSpeed;
-        float MaxSpeed;
+        float pad0;
+        float pad1;
         
         float EmitterWidthAngle;
         float EmitterRotation;

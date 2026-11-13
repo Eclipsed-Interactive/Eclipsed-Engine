@@ -16,8 +16,13 @@ layout(std140,binding=0) uniform ParticleSpawnBuffer
 
 	float SpawnLifeTimeMin;
 	float SpawnLifeTimeMax;
-	float Padding8129831;
-	float Padding823674;
+	float StartSpeedMin;
+	float StartSpeedMax;
+	
+	int StartColor;
+	int EndColor;
+	int pad3423;
+	int pad97845;
 
 	vec3 Padding12312;
 	uint SpawnShape;
@@ -25,8 +30,8 @@ layout(std140,binding=0) uniform ParticleSpawnBuffer
 
 layout(std140,binding=2) uniform ConeEmitterDataBuffer
 {
-	float MinSpeed;
-	float MaxSpeed;
+	float pad725;
+	float pad432;
 
 	float EmitterWidthAngle;
 	float EmitterRotation;
@@ -36,12 +41,11 @@ struct Particle
 {
 	vec4 Position; // xyz, w = Size
 	vec4 Velocity; // xyz, w = lifetime
-	vec4 Color; // Color
+	ivec4 Color; // x = ActiveColor, y = StartColor, z = EndColor, w = padding
 	vec4 Gravity; // xyz, w = TextureIndex
 	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
-
 
 layout(std430, binding = 0) buffer Data { Particle particle[]; };
 layout(std430, binding = 1) buffer FreeList { uint freeCount; uint freeIdx[]; };
@@ -76,7 +80,7 @@ vec3 ConeEmitterShape(inout uint seed)
         dir.z
     );
 
-    float speed = mix(MinSpeed, MaxSpeed, rS);
+    float speed = mix(StartSpeedMin, StartSpeedMax, rS);
     return rotated * speed;
 }
 
@@ -90,7 +94,7 @@ vec3 SphericalEmitterShape(inout uint seed)
 	float velXRand = cos(piRand);
 	float velYRand = sin(piRand);
 
-	float speed = mix(0.5, 0.8, rS);
+    float speed = mix(StartSpeedMin, StartSpeedMax, rS);
 	return vec3(velXRand, velYRand, 0) * speed;
 }
 
@@ -114,6 +118,11 @@ void main()
 	p.Position.xyz = EmitterPosition;
 	p.ChangeOverTime.x = mix(MinSizeStart, MaxSizeStart, rand(seed));
 	p.ChangeOverTime.y = mix(MinSizeEnd, MaxSizeEnd, rand(seed));
+	
+
+
+	p.Color.y = StartColor;
+	p.Color.z = EndColor;
 
 	if(SpawnShape == 0)
 	{
@@ -126,8 +135,8 @@ void main()
 	
 	p.Velocity.w = mix(SpawnLifeTimeMin, SpawnLifeTimeMax, rand(seed));
 	p.Params.x = p.Velocity.w;
+	p.Params.y = 0;
 	
-	p.Color = vec4(1.0, 1.0, 1.0, 1.0);
 	p.Gravity.xyz = Gravity;
 
 	p.Gravity.w = mix(0, 7, rand(seed));

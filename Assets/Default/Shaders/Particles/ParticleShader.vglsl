@@ -1,7 +1,7 @@
 #version 460 core
 layout(location = 0)in vec4 Position; // xyz, w = size
 layout(location = 1)in vec4 Velocity; // xyz, w = lifetime
-layout(location = 2)in vec4 Color; // Color
+layout(location = 2)in ivec4 Color; // Color
 layout(location = 3)in vec4 Gravity; // xyz, w = TextureIndex
 layout(location = 4)in vec4 ChangeOverTime; // xyzw = padding
 layout(location = 5)in vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
@@ -10,7 +10,7 @@ struct Particle
 {
 	vec4 Position; // xyz, w = Size
 	vec4 Velocity; // xyz, w = lifetime
-	vec4 Color; // Color
+	ivec4 Color; // x = ActiveColor, y = StartColor, z = EndColor, w = padding
 	vec4 Gravity; // xyz, w = TextureIndex
 	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
@@ -39,8 +39,15 @@ void main()
 {
     vLifeTime = Velocity.w;
     vTextureIndex = uint(Gravity.w);
+    
+    uint px = uint(Color.x);
+    uint ColorR = (px >> 24) & 0xFFu;
+    uint ColorG = (px >> 16) & 0xFFu;
+    uint ColorB = (px >>  8) & 0xFFu;
+    uint ColorA =  px        & 0xFFu;
 
-    vColor = Color;
+    vColor = vec4(float(ColorR) / 255.f, float(ColorG) / 255.f, float(ColorB) / 255.f, float(ColorA) / 255.f);
+
     vScale = Position.w;
     vRotation = cameraRotation + Params.y;
     vCameraScale = cameraScale;

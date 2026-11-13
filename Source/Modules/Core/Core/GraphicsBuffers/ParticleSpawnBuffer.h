@@ -20,8 +20,13 @@ namespace Eclipse
 
         float SpawnLifetimeMin;
         float SpawnLifetimeMax;
-        float Padding0;
-        float Padding2;
+        float StartSpeedMin;
+        float StartSpeedMax;
+
+        int StartColor;
+        int EndColor;
+        int pad0;
+        int pad1;
 
         Math::Vector3f Padding;
         unsigned SpawnShape = 0;

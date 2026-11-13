@@ -10,8 +10,8 @@ layout(std140,binding=1) uniform SharedGPUParticlesBuffer
 struct Particle
 {
 	vec4 Position; // xyz, w = Size
-	vec4 Velocity; // xyz, w = lifetime 
-	vec4 Color; // Color
+	vec4 Velocity; // xyz, w = lifetime
+	ivec4 Color; // x = ActiveColor, y = StartColor, z = EndColor, w = padding
 	vec4 Gravity; // xyz, w = TextureIndex
 	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
@@ -30,6 +30,27 @@ void main()
 	float DeltaLife = 1 - (p.Velocity.w / p.Params.x);
 
 	p.Position.w = mix(p.ChangeOverTime.x, p.ChangeOverTime.y, DeltaLife);
+
+uint s = uint(p.Color.y);
+uint e = uint(p.Color.z);
+
+uint StartColorR = (s >> 24) & 0xFFu;
+uint StartColorG = (s >> 16) & 0xFFu;
+uint StartColorB = (s >>  8) & 0xFFu;
+uint StartColorA =  s        & 0xFFu;
+
+uint EndColorR = (e >> 24) & 0xFFu;
+uint EndColorG = (e >> 16) & 0xFFu;
+uint EndColorB = (e >>  8) & 0xFFu;
+uint EndColorA =  e        & 0xFFu;
+
+	int R = int(round(mix(float(StartColorR), float(EndColorR), DeltaLife)));
+	int G = int(round(mix(float(StartColorG), float(EndColorG), DeltaLife)));
+	int B = int(round(mix(float(StartColorB), float(EndColorB), DeltaLife)));
+	int A = int(round(mix(float(StartColorA), float(EndColorA), DeltaLife)));
+
+	p.Color.r = ((R << 24) | (G << 16) | (B << 8) | A);
+
 
 	p.Velocity.xyz += p.Gravity.xyz * DeltaTime;
 	p.Position.xyz += p.Velocity.xyz * DeltaTime;

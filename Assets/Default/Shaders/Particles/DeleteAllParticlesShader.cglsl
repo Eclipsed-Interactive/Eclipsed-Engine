@@ -3,11 +3,11 @@ layout(local_size_x = 64) in;
 
 struct Particle
 {
-	vec4 Position; // xyz, w = size
+	vec4 Position; // xyz, w = Size
 	vec4 Velocity; // xyz, w = lifetime
-	vec4 Color; // Color
+	ivec4 Color; // x = ActiveColor, y = StartColor, z = EndColor, w = padding
 	vec4 Gravity; // xyz, w = TextureIndex
-	vec4 ChangeOverTime; // xyzw = padding
+	vec4 ChangeOverTime; // x = Min Size, y = Max Size, zw = padding
 	vec4 Params; // x = MaxLife, y = Rotation, zw = Padding
 };
 
