@@ -17,6 +17,6 @@ out vec4 frag_colour;
 void main() 
 {
    float dst = length(outTexCoord - vec2(0.5)) * 2.0;
-   float attenuation = pow(clamp((1.0 - dst) / (1.0 - innerradius), 0.0, 1.0), falloff);
+   float attenuation = pow(clamp(1.0 - dst, 0.0, 1.0), falloff);
    frag_colour = vec4(color.rgb * intensity * attenuation, 1.0);
 }
