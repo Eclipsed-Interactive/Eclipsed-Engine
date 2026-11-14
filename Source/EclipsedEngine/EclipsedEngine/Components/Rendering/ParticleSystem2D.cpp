@@ -55,28 +55,28 @@ void Eclipse::ParticleSystem2D::Awake()
 		emitter.StartData.EndColor = Math::Color(0.f, 0.f, 0.f, 0.f).GetHexValue();
 	}
 
-	//{
-	//	Emitter& emitter = myEmmiter.emplace_back();
-	//	emitter.SpawnPosition = { -1., 0.f };
+	{
+		Emitter& emitter = myEmmiter.emplace_back();
+		emitter.SpawnPosition = { -1., 0.f };
 
 
-	//	emitter.SpawnShape = 0;
+		emitter.SpawnShape = 0;
 
-	//	emitter.StartData.StartLifetimeMin = 2.f;
-	//	emitter.StartData.StartLifetimeMax = 2.f;
+		emitter.StartData.StartLifetimeMin = 2.f;
+		emitter.StartData.StartLifetimeMax = 2.f;
 
-	//	emitter.StartData.StartSizeMin = 0.03f;
-	//	emitter.StartData.StartSizeMax = 0.03f;
+		emitter.StartData.StartSizeMin = 0.03f;
+		emitter.StartData.StartSizeMax = 0.03f;
 
-	//	emitter.StartData.EndSizeMin = 0.03f;
-	//	emitter.StartData.EndSizeMax = 0.03f;
+		emitter.StartData.EndSizeMin = 0.03f;
+		emitter.StartData.EndSizeMax = 0.03f;
 
-	//	emitter.StartData.StartSpeedMin = 1.f;
-	//	emitter.StartData.StartSpeedMax = 1.4f;
+		emitter.StartData.StartSpeedMin = 1.f;
+		emitter.StartData.StartSpeedMax = 1.4f;
 
-	//	emitter.StartData.StartColor = Math::Color(1.f, 1.f, 1.f, 1).GetHexValue();
-	//	emitter.StartData.EndColor = Math::Color(0.f, 0.f, 0.f, 0.f).GetHexValue();
-	//}
+		emitter.StartData.StartColor = Math::Color(1.f, 1.f, 1.f, 1).GetHexValue();
+		emitter.StartData.EndColor = Math::Color(0.f, 0.f, 0.f, 0.f).GetHexValue();
+	}
 
 	//{
 	//	Emitter& emitter = myEmmiter.emplace_back();
@@ -105,22 +105,9 @@ void Eclipse::ParticleSystem2D::Render()
 			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 			Graphics::IDrawer* drawer = renderer.GetDrawer();
 
-			if (Texture0.dataPtr)
-				renderer.GetDevice()->BindTexture(0, Texture0);
-			if (Texture1.dataPtr)
-				renderer.GetDevice()->BindTexture(1, Texture1);
-			if (Texture2.dataPtr)
-				renderer.GetDevice()->BindTexture(2, Texture2);
-			if (Texture3.dataPtr)
-				renderer.GetDevice()->BindTexture(3, Texture3);
-			if (Texture4.dataPtr)
-				renderer.GetDevice()->BindTexture(4, Texture4);
-			if (Texture5.dataPtr)
-				renderer.GetDevice()->BindTexture(5, Texture5);
-			if (Texture6.dataPtr)
-				renderer.GetDevice()->BindTexture(6, Texture6);
-			if (Texture7.dataPtr)
-				renderer.GetDevice()->BindTexture(7, Texture7);
+			for (int i = 0; i < Textures.size(); i++)
+				if(Textures[i].IsValid())
+					renderer.GetDevice()->BindTexture(i, Textures[i]);
 
 			drawer->DrawParticles();
 		});

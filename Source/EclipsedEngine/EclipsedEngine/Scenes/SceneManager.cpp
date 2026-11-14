@@ -23,6 +23,8 @@ namespace Eclipse
 	{
 		Clear();
 
+		PhysicsEngine::InitWorld();
+
 		SceneSerializer::LoadScene(snapshot);
 	}
 
@@ -84,6 +86,7 @@ namespace Eclipse
 
 	void SceneManager::Load(const char* path)
 	{
+
 		std::filesystem::path fullpath = "";
 
 		if (std::filesystem::exists(path))
@@ -98,6 +101,7 @@ namespace Eclipse
 
 		UnloadActive();
 		SetActiveSceneType(SceneType::World);
+		PhysicsEngine::InitWorld();
 
 		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 		const Assets::GUID guid = database.GetGUIDFromFullPath(fullpath);
@@ -113,8 +117,10 @@ namespace Eclipse
 
 	void SceneManager::Load(Assets::Scene scene)
 	{
+
 		UnloadActive();
 		SetActiveSceneType(SceneType::World);
+		PhysicsEngine::InitWorld();
 
 		onSceneChangeCallback(scene.GetAssetID());
 
@@ -130,10 +136,12 @@ namespace Eclipse
 	{
 		try
 		{
+
 			Assets::Scene scene = Assets::AssetManager::Load<Assets::Scene>(guid);
 
 			UnloadActive();
 			SetActiveSceneType(SceneType::World);
+			PhysicsEngine::InitWorld();
 
 			onSceneChangeCallback(guid);
 			ActiveScene = scene;

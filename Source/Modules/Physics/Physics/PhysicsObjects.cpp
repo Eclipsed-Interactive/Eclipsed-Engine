@@ -36,6 +36,7 @@ namespace Eclipse
 
         bodyDefine.userData = aUserData;
 
+
         *aBody = b2CreateBody(myWorld, &bodyDefine);
 
         SetBodyMass(aBody, 1.f);

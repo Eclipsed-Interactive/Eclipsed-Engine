@@ -48,7 +48,7 @@ namespace Eclipse
         bool ColliderAttached = false;
 
     private:
-        b2BodyId* myBody;
+        b2BodyId* myBody = nullptr;
 
         RigidBodySettings myRigidBodySettings;
 

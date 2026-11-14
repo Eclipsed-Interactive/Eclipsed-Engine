@@ -59,6 +59,34 @@ namespace Eclipse
 		Assets::AssetManager::Init();
 		Timer::Init();
 
+		{
+			// PHYSICS
+			b2DebugDraw debugDraw = { 0 };
+
+			//PhysicsDebugDrawer::Init(&debugDraw);
+
+			PhysicsEngine::Init(8, { 0.f, -9.82f }, debugDraw);
+			PhysicsEngine::myBeginContactCallback = [](UserData& aUserData, UserData& aUserData1)
+				{
+					ComponentManager::BeginCollisions(aUserData.gameobject, aUserData1.gameobject);
+				};
+			PhysicsEngine::myEndContactCallback = [](UserData& aUserData, UserData& aUserData1)
+				{
+					ComponentManager::EndCollisions(aUserData.gameobject, aUserData1.gameobject);
+				};
+
+
+			PhysicsEngine::myBeginTriggerCallback = [](UserData& aUserData, UserData& aUserData1)
+				{
+					ComponentManager::BeginTrigger(aUserData.gameobject, aUserData1.gameobject);
+				};
+
+			PhysicsEngine::myEndTriggerCallback = [](UserData& aUserData, UserData& aUserData1)
+				{
+					ComponentManager::EndTrigger(aUserData.gameobject, aUserData1.gameobject);
+				};
+		}
+
 		renderer = &Graphics::RendererManager::LoadRenderer(Graphics::RendererAPI::OpenGL);
 
 		auto audioPath = PathManager::GetEngineRoot() / "Plugins" / "Eclipsed.Audio_FMOD.dll";
@@ -89,6 +117,9 @@ namespace Eclipse
 	{
 		PROFILE_SCOPED;
 		ComponentManager::AwakeStartComponents();
+
+		PhysicsEngine::Update();
+
 		ComponentManager::UpdateComponents();
 	}
 

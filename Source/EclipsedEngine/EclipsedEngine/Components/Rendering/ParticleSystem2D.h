@@ -160,21 +160,6 @@ namespace Eclipse
 		static inline class SharedGPUParticlesBuffer* SharedParticleBuffer;
 
 		[[SerializeField]]
-		Assets::Texture Texture0;
-		[[SerializeField]]
-		Assets::Texture Texture1;
-		[[SerializeField]]
-		Assets::Texture Texture2;
-		[[SerializeField]]
-		Assets::Texture Texture3;
-		[[SerializeField]]
-		Assets::Texture Texture4;
-		[[SerializeField]]
-		Assets::Texture Texture5;
-		[[SerializeField]]
-		Assets::Texture Texture6;
-		[[SerializeField]]
-		Assets::Texture Texture7;
-
+		std::vector<Assets::Texture> Textures;
 	};
 }

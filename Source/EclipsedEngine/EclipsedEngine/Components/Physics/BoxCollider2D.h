@@ -7,6 +7,10 @@ namespace Eclipse
 {
     class ECL_API BoxCollider2D : public Collider2D
     {
+        
+        MAKE_REFLECTABLE(BoxCollider2D);
+        REFLECTION_FLAG(COMPONENT);
+
         BASE_SELECTION(BoxCollider2D, 10)
 
     public:

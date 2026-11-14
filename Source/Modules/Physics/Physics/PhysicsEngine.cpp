@@ -23,7 +23,7 @@ namespace Eclipse
     bool PhysicsEngine::myDrawDebugShapes = true;
     bool PhysicsEngine::myDrawQueries = false;
 
-    bool PhysicsEngine::myHasCreatedWorld;
+    bool PhysicsEngine::myHasCreatedWorld = false;
 
     void Eclipse::PhysicsEngine::ProcessContactEvents()
     {
@@ -62,7 +62,6 @@ namespace Eclipse
 
     void PhysicsEngine::InitWorld()
     {
-
         b2WorldDef worldDef;
         worldDef = b2DefaultWorldDef();
         worldDef.gravity = b2Vec2(myGravity.x, myGravity.y);

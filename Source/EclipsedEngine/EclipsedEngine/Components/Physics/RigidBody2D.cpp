@@ -46,7 +46,7 @@ namespace Eclipse
         myTransform = gameObject->GetComponent<Transform2D>();
 
         myTransform->AddFunctionToRunOnDirtyUpdate(this, [&]() {
-            PhysicsEngine::SetTransform(myBody, myTransform->GetPosition(), myTransform->GetRotation());
+            //PhysicsEngine::SetTransform(myBody, myTransform->GetPosition(), myTransform->GetRotation());
             });
     }
 

@@ -18,6 +18,8 @@ namespace Eclipse
 
 	class ECL_API Transform2D : public Component
 	{
+		friend class RigidBody2D;
+
 		MAKE_REFLECTABLE(Transform2D);
 		REFLECTION_FLAG(COMPONENT);
 
