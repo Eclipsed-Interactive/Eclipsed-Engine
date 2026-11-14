@@ -18,6 +18,8 @@
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "Assets/AssetManager.h"
 
+#include <Renderer/GraphicsSettings.h>
+
 namespace Eclipse::Editor
 {
 	void GameView::OnOpen()
@@ -85,26 +87,22 @@ namespace Eclipse::Editor
 			device->Clear(Graphics::ClearFlags::Color, camera->ClearColor);
 			commandListManager->GetSpriteCommandList().Execute();
 
-			device->BindFrameBuffer(myLightFrameBuffer.frameBufferIndex);
-			device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
-			device->SetBlendMode(Graphics::BlendMode::Additive);
-			commandListManager->GetLightCommandList().Execute();
-			
-			device->BindFrameBuffer(myGameFrameBuffer.frameBufferIndex);
-			device->SetBlendMode(Graphics::BlendMode::Multiply);
-			device->BindMaterial(myDrawMaterial);
-			device->BindTexture(0, myLightFrameBuffer.textureIndex);
-			auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
-			drawer->DrawSprite();
+			if (Settings::GetGraphicsSettings().renderLights)
+			{
+				device->BindFrameBuffer(myLightFrameBuffer.frameBufferIndex);
+				device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
+				device->SetBlendMode(Graphics::BlendMode::Additive);
+				commandListManager->GetLightCommandList().Execute();
 
-			device->SetBlendMode(Graphics::BlendMode::Alpha);
+				device->BindFrameBuffer(myGameFrameBuffer.frameBufferIndex);
+				device->SetBlendMode(Graphics::BlendMode::Multiply);
+				device->BindMaterial(myDrawMaterial);
+				device->BindTexture(0, myLightFrameBuffer.textureIndex);
+				auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
+				drawer->DrawSprite();
 
-			//device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
-
-			//Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-			//commandListManager->GetSpriteCommandList().Execute();
-			//commandListManager->GetUICommandList().Execute();
-			//commandListManager->GetDebugDrawCommandList().Execute();
+				device->SetBlendMode(Graphics::BlendMode::Alpha);
+			}
 		}
 		else
 			NoCameraInScene = true;
