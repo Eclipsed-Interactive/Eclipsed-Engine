@@ -35,8 +35,7 @@ namespace Eclipse::Rendering
 		static inline Math::Vector2f WindowSize;
 
 		static inline Graphics::FrameBuffer GameFrameBuffer;
-		static inline Graphics::FrameBuffer PointLightFrameBuffer;
-		static inline Graphics::FrameBuffer SpotLightFrameBuffer;
+		static inline Graphics::FrameBuffer LightsFrameBuffer;
 
 		static inline Assets::Material LightCompositeMat;
 	};

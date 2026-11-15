@@ -39,8 +39,7 @@ namespace Eclipse::Rendering
 		Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 
 		GameFrameBuffer = device->CreateFrameBuffer(true);
-		PointLightFrameBuffer = device->CreateFrameBuffer(true);
-		SpotLightFrameBuffer = device->CreateFrameBuffer(true);
+		LightsFrameBuffer = device->CreateFrameBuffer(true);
 	}
 
 	void SceneRenderer::GetMaterials()
@@ -53,21 +52,16 @@ namespace Eclipse::Rendering
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 
-		device->BindFrameBuffer(PointLightFrameBuffer.frameBufferIndex);
+		device->BindFrameBuffer(LightsFrameBuffer.frameBufferIndex);
 		device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
 		device->SetBlendMode(Graphics::BlendMode::Additive);
 		commandListManager->GetPointLightCommandList().Execute();
-
-		device->BindFrameBuffer(SpotLightFrameBuffer.frameBufferIndex);
-		device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
-		device->SetBlendMode(Graphics::BlendMode::Additive);
 		commandListManager->GetSpotLightCommandList().Execute();
 
 		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
 		device->SetBlendMode(Graphics::BlendMode::Multiply);
 		device->BindMaterial(LightCompositeMat);
-		device->BindTexture(0, PointLightFrameBuffer.textureIndex);
-		device->BindTexture(1, SpotLightFrameBuffer.textureIndex);
+		device->BindTexture(0, LightsFrameBuffer.textureIndex);
 		auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
 		drawer->DrawSprite();
 
@@ -114,10 +108,7 @@ namespace Eclipse::Rendering
 		device->BindTexture(GameFrameBuffer.textureIndex);
 		device->ChangeImageDimensions(WindowSize, true);
 
-		device->BindTexture(PointLightFrameBuffer.textureIndex);
-		device->ChangeImageDimensions(WindowSize, true);
-
-		device->BindTexture(SpotLightFrameBuffer.textureIndex);
+		device->BindTexture(LightsFrameBuffer.textureIndex);
 		device->ChangeImageDimensions(WindowSize, true);
 
 		device->BindTexture(0);

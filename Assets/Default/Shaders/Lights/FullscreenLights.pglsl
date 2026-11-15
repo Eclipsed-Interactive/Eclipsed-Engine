@@ -1,7 +1,6 @@
 #version 460 core
 
-layout(binding = 0) uniform sampler2D pointlight;
-layout(binding = 1) uniform sampler2D spotlight;
+layout(binding = 0) uniform sampler2D lights;
 
 // Ins
 in vec2 outTexCoord;
@@ -12,7 +11,7 @@ out vec4 frag_colour;
 void main() 
 {
     vec3 ambient = vec3(0.05, 0.08, 0.16);
-    vec3 light = ambient + texture(pointlight, outTexCoord).rgb + texture(spotlight, outTexCoord).rgb;
-    light = 1.0 - exp(-light * 1.5);
+    vec3 light = ambient + texture(lights, outTexCoord).rgb;
+    // light = 1.0 - exp(-light * 1.5);
     frag_colour = vec4(light, 1.0);
 }
