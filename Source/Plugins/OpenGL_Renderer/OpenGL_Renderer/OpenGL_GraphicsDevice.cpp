@@ -14,9 +14,10 @@ namespace Eclipse::Graphics::OpenGL
 	{
 		switch (mode)
 		{
-		case Eclipse::Graphics::BlendMode::Alpha: glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); break;
+		case Eclipse::Graphics::BlendMode::Alpha:	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); break;
 		case Eclipse::Graphics::BlendMode::Additive:glBlendFunc(GL_ONE, GL_ONE); break;
 		case Eclipse::Graphics::BlendMode::Multiply:glBlendFunc(GL_DST_COLOR, GL_ZERO); break;
+		case Eclipse::Graphics::BlendMode::Screen:	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE); break;
 		}
 	}
 
@@ -51,7 +52,7 @@ namespace Eclipse::Graphics::OpenGL
 		glBindFramebuffer(GL_FRAMEBUFFER, aFrameBuffer);
 	}
 
-	FrameBuffer OpenGL_GraphicsDevice::CreateFrameBuffer()
+	FrameBuffer OpenGL_GraphicsDevice::CreateFrameBuffer(bool aFloatFormat)
 	{
 		FrameBuffer buf;
 
@@ -68,8 +69,15 @@ namespace Eclipse::Graphics::OpenGL
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+		{
+			if (aFloatFormat)
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 1920, 1080, 0, GL_RGB, GL_FLOAT, NULL);
+			else
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, buf.textureIndex, 0);
 
@@ -81,9 +89,14 @@ namespace Eclipse::Graphics::OpenGL
 		glViewport(pos.x, pos.y, size.x, size.y);
 	}
 
-	void OpenGL_GraphicsDevice::ChangeImageDimensions(Math::Vector2f size)
+	void OpenGL_GraphicsDevice::ChangeImageDimensions(Math::Vector2f size, bool aFloatFormat)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		if (aFloatFormat)
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	}
 
 	Math::Vector4ui OpenGL_GraphicsDevice::ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size)

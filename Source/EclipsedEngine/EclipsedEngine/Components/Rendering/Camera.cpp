@@ -15,6 +15,8 @@ namespace Eclipse
 {
 	void Camera::OnDestroy()
 	{
+		MainCamera = nullptr;
+
 		if (MainSingleton::Exists<Camera>() && MainSingleton::GetPointer<Camera>() == this)
 			MainSingleton::RemoveInstance<Camera>();
 	}
@@ -23,6 +25,7 @@ namespace Eclipse
 	{
 		//MainSingleton::AddInstance(this);
 		MainSingleton::AddInstance<Camera>(this);
+		MainCamera = this;
 
 		OnSceneLoaded();
 	}

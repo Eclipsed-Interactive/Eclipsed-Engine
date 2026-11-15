@@ -70,13 +70,13 @@ namespace Eclipse
 		Math::Matrix3x3f GetTransform() const;
 		
 	private:
-		[[SerializeField, Step(0.01f)]]
+		[[SerializeField, Step(0.1f)]]
 		Math::Vector2f position = Math::Vector2f(0.f, 0.f);
 
-		[[SerializeField, Step(5.f)]]
+		[[SerializeField, Step(1.f)]]
 		float rotation = 0.f;
 
-		[[SerializeField]]
+		[[SerializeField, Step(0.1f)]]
 		Math::Vector2f scale = Math::Vector2f(1.f, 1.f);
 
 		Math::Vector2f lastPosition;

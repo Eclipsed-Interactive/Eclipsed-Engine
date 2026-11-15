@@ -16,11 +16,11 @@ namespace Eclipse::Graphics::OpenGL
 
 		void BindFrameBuffer(unsigned aFrameBuffer) override;
 
-		FrameBuffer CreateFrameBuffer() override;
+		FrameBuffer CreateFrameBuffer(bool aFloatFormat) override;
 
 		void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = { 0, 0 }) override;
 
-		void ChangeImageDimensions(Math::Vector2f size) override;
+		void ChangeImageDimensions(Math::Vector2f size, bool aFloatFormat) override;
 
 		Math::Vector4ui ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size = { 1, 1 }) override;
 

@@ -38,7 +38,7 @@ void main()
 {
    outTexCoord=TexCoord;
    
-   float totalRotation=transform.rotation+cameraRotation;
+   float totalRotation=transform.rotation;
    mat2 rotationMatrix=mat2(cos(totalRotation),-sin(totalRotation),
    sin(totalRotation),cos(totalRotation));
    

@@ -1,10 +1,10 @@
-#include "Light2DCommand.h"
+#include "PointLight2DCommand.h"
 
 #include "EclipsedEngine/Components/Rendering/Lights/PointLight2D.h"
 
 namespace Eclipse
 {
-    void Light2DCommand::Execute()
+    void PointLight2DCommand::Execute()
     {
         myLight->Draw();
     }

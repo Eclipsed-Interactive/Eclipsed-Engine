@@ -4,7 +4,7 @@
 #include "EclipsedEngine/Components/Rendering/Camera.h"
 #include "Core/GraphicsBuffers/EditorBuffer.h"
 
-#include "EclipsedEngine/Components/Rendering/RenderCommands/Light2DCommand.h"
+#include "EclipsedEngine/Components/Rendering/RenderCommands/PointLight2DCommand.h"
 #include "Renderer/Sprite.h"
 #include "Renderer/IRenderer.h"
 #include "Renderer/IDrawer.h"
@@ -18,7 +18,7 @@ namespace Eclipse
 {
 	void PointLight2D::OnComponentAdded()
 	{
-		myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_LIGHT);
+		myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_POINTLIGHT);
 	}
 
 	void PointLight2D::Render()
@@ -27,7 +27,7 @@ namespace Eclipse
 			return;
 
 		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-		commandListManager->GetLightCommandList().Enqueue<Light2DCommand>(this);
+		commandListManager->GetPointLightCommandList().Enqueue<PointLight2DCommand>(this);
 	}
 
 	void PointLight2D::Draw(unsigned aProgramID)
@@ -40,7 +40,7 @@ namespace Eclipse
 		transform.Scale = { myRadius * 100.f, myRadius * 100.f };
 		transform.Rotation = 0.f;
 
-		LightBuffer light;
+		PointLightBuffer light;
 		light.color = myColor;
 		light.intensity = myIntensity;
 		light.falloff = myFalloff;

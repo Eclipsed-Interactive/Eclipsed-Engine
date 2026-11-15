@@ -32,24 +32,13 @@ namespace Eclipse::Editor
 
 		void MenuBar();
 
-		void InitSceneBuffer();
-
-		void SetBuffers();
-
 	private:
-
-
 		Math::Vector2f myWindowSize;
 		Math::Vector2f myLastWindowResolution = { -1, -1 };
-
-		Graphics::FrameBuffer myGameFrameBuffer;
-		Graphics::FrameBuffer myLightFrameBuffer;
 
 		std::vector<Resolution> myResolutions;
 
 		size_t ActiveResolutionIndex;
 		Math::Vector2f ActiveResolutionRatios;
-
-		Assets::Material myDrawMaterial;
 	};
 }

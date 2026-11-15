@@ -15,7 +15,7 @@
 
 namespace Eclipse::Graphics
 {
-	enum class BlendMode { Alpha, Additive, Multiply };
+	enum class BlendMode { Alpha, Additive, Multiply, Screen };
 
 	class RENDERER_API IGraphicsDevice
 	{
@@ -27,11 +27,11 @@ namespace Eclipse::Graphics
 
 		virtual void BindFrameBuffer(unsigned aFrameBuffer) = 0;
 		virtual void SetBlendMode(BlendMode mode) = 0;
-		virtual FrameBuffer CreateFrameBuffer() = 0;
+		virtual FrameBuffer CreateFrameBuffer(bool aFloatFormat = false) = 0;
 
 		virtual void SetViewport(const Math::Vector2ui& size, const Math::Vector2ui& pos = {0, 0}) = 0;
 
-		virtual void ChangeImageDimensions(Math::Vector2f size) = 0;
+		virtual void ChangeImageDimensions(Math::Vector2f size, bool aFloatFormat = false) = 0;
 
 		virtual Math::Vector4ui ReadPixelOnFrameBuffer(int aFrameBuffer, const Math::Vector2ui& Position, const Math::Vector2f& Size = { 1, 1 }) = 0;
 

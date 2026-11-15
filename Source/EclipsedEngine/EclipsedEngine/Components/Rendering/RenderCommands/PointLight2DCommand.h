@@ -4,11 +4,11 @@
 
 namespace Eclipse
 {
-	class Light2DCommand : public Graphics::RenderCommandBase
+	class PointLight2DCommand : public Graphics::RenderCommandBase
 	{
 	public:
-		Light2DCommand(class PointLight2D* aLight) : myLight(aLight) {}
-		~Light2DCommand() = default;
+		PointLight2DCommand(class PointLight2D* aLight) : myLight(aLight) {}
+		~PointLight2DCommand() = default;
 
 		void Execute() override;
 
