@@ -68,6 +68,7 @@ namespace Eclipse
         bool hasMaterial = false;
 
         SpriteBuffer mySpriteBuffer;
+        MaterialBuffer myMaterialBuffer;
         
         Assets::Material PixelPickMaterial;
 
