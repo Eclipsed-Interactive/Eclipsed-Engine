@@ -92,7 +92,7 @@ namespace Eclipse::Graphics::OpenGL
 	void OpenGL_GraphicsDevice::ChangeImageDimensions(Math::Vector2f size, bool aFloatFormat)
 	{
 		if (aFloatFormat)
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		else
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, size.x, size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 

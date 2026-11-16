@@ -11,6 +11,9 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include <Renderer/GraphicsSettings.h>
 
+#include <EclipsedEngine/Components/Rendering/Lights/DirectionalLight2D.h>
+#include <Core/MainSingleton.h>
+
 namespace Eclipse::Rendering
 {
 	void SceneRenderer::Init()
@@ -29,7 +32,16 @@ namespace Eclipse::Rendering
 		RenderSprites();
 
 		if (Settings::GetGraphicsSettings().renderLights)
+		{
 			RenderLights();
+			
+			if (MainSingleton::Exists<DirectionalLight2D>())
+			{
+				RenderShadowSprites();
+			}
+
+			RenderComposite();
+		}
 
 		return true;
 	}
@@ -40,6 +52,7 @@ namespace Eclipse::Rendering
 
 		GameFrameBuffer = device->CreateFrameBuffer(true);
 		LightsFrameBuffer = device->CreateFrameBuffer(true);
+		ShadowsFrameBuffer = device->CreateFrameBuffer(true);
 	}
 
 	void SceneRenderer::GetMaterials()
@@ -58,13 +71,6 @@ namespace Eclipse::Rendering
 		commandListManager->GetPointLightCommandList().Execute();
 		commandListManager->GetSpotLightCommandList().Execute();
 
-		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
-		device->SetBlendMode(Graphics::BlendMode::Multiply);
-		device->BindMaterial(LightCompositeMat);
-		device->BindTexture(0, LightsFrameBuffer.textureIndex);
-		auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
-		drawer->DrawSprite();
-
 		device->SetBlendMode(Graphics::BlendMode::Alpha);
 	}
 
@@ -76,6 +82,32 @@ namespace Eclipse::Rendering
 		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
 		device->Clear(Graphics::ClearFlags::Color, Camera::MainCamera->ClearColor);
 		commandListManager->GetSpriteCommandList().Execute();
+	}
+
+	void SceneRenderer::RenderShadowSprites()
+	{
+		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
+
+		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		device->BindFrameBuffer(ShadowsFrameBuffer.frameBufferIndex);
+		device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 0.f });
+		commandListManager->GetSpriteCommandList().Execute();
+	}
+
+	void SceneRenderer::RenderComposite()
+	{
+		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
+		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+
+		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
+		device->SetBlendMode(Graphics::BlendMode::Multiply);
+		device->BindMaterial(LightCompositeMat);
+		device->BindTexture(0, LightsFrameBuffer.textureIndex);
+		device->BindTexture(1, ShadowsFrameBuffer.textureIndex);
+		auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();
+		drawer->DrawSprite();
+
+		device->SetBlendMode(Graphics::BlendMode::Alpha);
 	}
 
 	void SceneRenderer::UpdateCameraBuffer()
@@ -109,6 +141,9 @@ namespace Eclipse::Rendering
 		device->ChangeImageDimensions(WindowSize, true);
 
 		device->BindTexture(LightsFrameBuffer.textureIndex);
+		device->ChangeImageDimensions(WindowSize, true);
+
+		device->BindTexture(ShadowsFrameBuffer.textureIndex);
 		device->ChangeImageDimensions(WindowSize, true);
 
 		device->BindTexture(0);

@@ -28,6 +28,8 @@ namespace Eclipse::Rendering
 	private:
 		static void RenderLights();
 		static void RenderSprites();
+		static void RenderShadowSprites();
+		static void RenderComposite();
 
 		static void UpdateCameraBuffer();
 
@@ -36,6 +38,8 @@ namespace Eclipse::Rendering
 
 		static inline Graphics::FrameBuffer GameFrameBuffer;
 		static inline Graphics::FrameBuffer LightsFrameBuffer;
+
+		static inline Graphics::FrameBuffer ShadowsFrameBuffer;
 
 		static inline Assets::Material LightCompositeMat;
 	};
