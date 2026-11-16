@@ -103,10 +103,21 @@ namespace Eclipse::Graphics
         { 
             return HappenAtBeginCommandList; 
         }
+        CommandList& GetPointLightCommandList() 
+        { 
+            return PointLightCommandList;
+        }
+
+        CommandList& GetSpotLightCommandList()
+        {
+            return SpotLightCommandList;
+        }
 
         void ExecuteAllCommandLists()
         {
             SpriteCommandList.Execute();
+            SpotLightCommandList.Execute();
+            PointLightCommandList.Execute();
             UICommandList.Execute();
             DebugDrawCommandList.Execute();
         }
@@ -119,6 +130,8 @@ namespace Eclipse::Graphics
             UICommandList.Init();
             DebugDrawCommandList.Init();
             HappenAtBeginCommandList.Init();
+            SpotLightCommandList.Init();
+            PointLightCommandList.Init();
         }
 
         void ResetAllCommandLists()
@@ -126,12 +139,16 @@ namespace Eclipse::Graphics
             SpriteCommandList.Reset();
             UICommandList.Reset();
             DebugDrawCommandList.Reset();
+            SpotLightCommandList.Reset();
+            PointLightCommandList.Reset();
         }
 
     private:
         CommandList UICommandList;
         CommandList SpriteCommandList;
         CommandList DebugDrawCommandList;
+        CommandList SpotLightCommandList;
+        CommandList PointLightCommandList;
 
         CommandList HappenAtBeginCommandList;
     };

@@ -182,7 +182,11 @@ namespace Eclipse
 
 		buffer->SetOrCreateBuffer(1, transformBuffer);
 		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
-		buffer->SetOrCreateBuffer(5, myMaterial.GetBuffer());
+
+		MaterialBuffer materialBuffer;
+		materialBuffer.color = myMaterial.dataPtr->color * myColor;
+		materialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		buffer->SetOrCreateBuffer(5, materialBuffer);
 
 
 		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();

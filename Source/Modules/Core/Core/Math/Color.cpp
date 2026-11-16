@@ -9,6 +9,17 @@ namespace Eclipse::Math
 
 	}
 
+	Math::Color Eclipse::Math::Color::operator*(const Math::Color& other)
+	{
+		Math::Color col;
+		col.r = r * other.r;
+		col.g = g * other.g;
+		col.b = b * other.b;
+		col.a = a * other.a;
+
+		return col;
+	}
+
 	Color::Color(int aHexValue)
 	{
 		r = ((aHexValue >> 16) & 0xFF) / oneOver255;

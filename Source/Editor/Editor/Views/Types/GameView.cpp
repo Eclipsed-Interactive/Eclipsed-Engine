@@ -16,6 +16,11 @@
 
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
+#include "Assets/AssetManager.h"
+
+#include <Renderer/GraphicsSettings.h>
+
+#include <EclipsedEngine/Rendering/SceneRenderer.h>
 
 namespace Eclipse::Editor
 {
@@ -25,7 +30,9 @@ namespace Eclipse::Editor
 		PopulateDefaultResolutions();
 		ActiveResolutionRatios = myResolutions[ActiveResolutionIndex].AspectRatioResolution;
 
-		InitSceneBuffer();
+		Rendering::SceneRenderer::Init();
+		Rendering::SceneRenderer::SetResolution(myWindowSize);
+
 		Input::Input::AddGameViewWindow(viewId);
 
 		ActiveImGuiFlag = ImGuiWindowFlags_MenuBar;
@@ -62,33 +69,18 @@ namespace Eclipse::Editor
 
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 
-		device->BindFrameBuffer(myGameFrameBuffer.frameBufferIndex);
+		device->BindFrameBuffer(Rendering::SceneRenderer::GetFrameBuffer().textureIndex);
 		//device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
 		device->SetViewport(myWindowSize);
-
-		SetBuffers();
-
-		bool NoCameraInScene = false;
 
 		Camera* camera = nullptr;
 		if (MainSingleton::Exists<Camera>())
 			camera = MainSingleton::GetPointer<Camera>();
 
-		if (camera)
-		{
-			device->Clear(Graphics::ClearFlags::Color, camera->GetClearColor());
-
-			Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-			commandListManager->GetSpriteCommandList().Execute();
-			commandListManager->GetUICommandList().Execute();
-			commandListManager->GetDebugDrawCommandList().Execute();
-		}
-		else
-			NoCameraInScene = true;
+		bool NoCameraInScene = !Rendering::SceneRenderer::Render();
 
 		DrawFixedResolution();
-
 
 		if (NoCameraInScene)
 		{
@@ -142,7 +134,7 @@ namespace Eclipse::Editor
 
 		myWindowSize = { ContentRegionAvail.x, ContentRegionAvail.y };
 
-		ImGui::Image(myGameFrameBuffer.frameBufferIndex, ContentRegionAvail, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image(Rendering::SceneRenderer::GetFrameBuffer().textureIndex, ContentRegionAvail, ImVec2(0, 1), ImVec2(1, 0));
 	}
 
 	void GameView::MenuBar()
@@ -167,41 +159,12 @@ namespace Eclipse::Editor
 		}
 	}
 
-	void GameView::InitSceneBuffer()
-	{
-		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-		myGameFrameBuffer = device->CreateFrameBuffer();
-	}
-
-	void GameView::SetBuffers()
-	{
-		if (!MainSingleton::Exists<Camera>())
-			return;
-
-		Camera* camera = MainSingleton::GetPointer<Camera>();
-		if (!camera)
-			return;
-
-		Eclipse::Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
-		float aspectRatio = myWindowSize.y / myWindowSize.x;
-		camera->GetBuffer().resolutionRatio = aspectRatio;
-
-		camera->GetBuffer().cameraPosition = camera->gameObject->transform->GetPosition();
-		camera->GetBuffer().cameraRotation = camera->gameObject->transform->GetRotation();
-		camera->GetBuffer().cameraScale = { camera->CameraZoom, camera->CameraZoom };
-
-		buffer->SetOrCreateBuffer<CameraBuffer>(0, camera->GetBuffer());
-	}
-
 	void GameView::CheckNChangeSceneImageDimension()
 	{
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 		if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
 		{
-			device->BindTexture(myGameFrameBuffer.textureIndex);
-			device->ChangeImageDimensions(myWindowSize);
-			device->BindTexture(0);
+			Rendering::SceneRenderer::SetResolution(myWindowSize);
 		}
 
 		myLastWindowResolution = { myWindowSize.x, myWindowSize.y };

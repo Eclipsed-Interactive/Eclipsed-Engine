@@ -49,42 +49,21 @@ namespace Eclipse::Graphics::OpenGL
 
 		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-		{
-			PROFILE_SCOPED;
-			device = new OpenGL_GraphicsDevice;
-		}
+		device = new OpenGL_GraphicsDevice;
+		graphicsBuffer = new OpenGL_GraphicsBuffer;
+		uniformVariableManager = new OpenGL_UniformVariableManager;
 
-		{
-			PROFILE_SCOPED;
-			graphicsBuffer = new OpenGL_GraphicsBuffer;
-		}
+		drawer = new OpenGL_Drawer;
+		drawer->mySprite = device->CreateSprite();
+		drawer->myParticleDrawer = device->CreateParticleDrawer();
 
-		{
-			PROFILE_SCOPED;
-			uniformVariableManager = new OpenGL_UniformVariableManager;
-		}
-
-		{
-			PROFILE_SCOPED;
-			drawer = new OpenGL_Drawer;
-			drawer->mySprite = device->CreateSprite();
-			drawer->myParticleDrawer = device->CreateParticleDrawer();
-		}
-
-		{
-			PROFILE_SCOPED;
-			debugDrawer = new OpenGL_DebugDrawer;
-		}
-			
-		{
-			PROFILE_SCOPED;
-			debugDrawer->Init();
-		}
+		debugDrawer = new OpenGL_DebugDrawer;
+		debugDrawer->Init();
 
 		computer = new OpenGL_Computer;
 
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		device->SetBlendMode(Graphics::BlendMode::Alpha);
 
 		return ErrorCode{};
 	}

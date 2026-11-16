@@ -82,6 +82,7 @@ namespace Eclipse
 
 	bool GameModuleManager::HasChanged()
 	{
+		PROFILE_SCOPED;
 		namespace fs = std::filesystem;
 
 		fs::path dllPath = "";
@@ -139,6 +140,7 @@ namespace Eclipse
 
 	bool GameModuleManager::BuildDLL()
 	{
+		PROFILE_SCOPED;
 		if (IsLoaded())
 			Unload();
 
@@ -161,6 +163,7 @@ namespace Eclipse
 
 	bool GameModuleManager::RunHeaderTool()
 	{
+		PROFILE_SCOPED;
 		const std::string exePath = (PathManager::GetEngineRoot() / "HeaderTool.exe").generic_string();
 
 		const std::string contentPath = (PathManager::GetProjectRoot() / "Content").generic_string();
@@ -177,12 +180,14 @@ namespace Eclipse
 
 	bool GameModuleManager::GenerateCmake()
 	{
+		PROFILE_SCOPED;
 		const std::filesystem::path toolsPath = PathManager::GetProjectRoot() / "Tools";
 		return RunBuildStep("generate", toolsPath / "generate.bat");
 	}
 
 	bool GameModuleManager::CopyDllFile()
 	{
+		PROFILE_SCOPED;
 		std::filesystem::path oldDllPath = "";
 
 		for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))
@@ -203,6 +208,7 @@ namespace Eclipse
 
 	bool GameModuleManager::Compile()
 	{
+		PROFILE_SCOPED;
 		if (std::filesystem::exists(PathManager::GetProjectRoot() / "Bin"))
 		{
 			for (auto& entry : std::filesystem::recursive_directory_iterator(PathManager::GetProjectRoot() / "Bin"))

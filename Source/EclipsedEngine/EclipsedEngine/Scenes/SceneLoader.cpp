@@ -72,7 +72,9 @@ namespace Eclipse
 		{
 			try
 			{
-				const Reflection::TypeEntry& reflectedType = Reflection::ReflectionRegistry::GetType(typeMember.name.GetString());
+				const Reflection::TypeEntry* reflectedType = Reflection::ReflectionRegistry::TryGetType(typeMember.name.GetString());
+				if (!reflectedType) continue;
+
 				for (const auto& comp : typeMember.value.GetArray())
 				{
 					unsigned int id = 0;
@@ -84,7 +86,7 @@ namespace Eclipse
 					if (comp.HasMember("owner") && comp["owner"].IsUint())
 						owner = comp["owner"].GetUint();
 
-					Component* Comp = ComponentManager::AddComponentWithID(owner, id, reflectedType.createAtAddress, reflectedType.size);
+					Component* Comp = ComponentManager::AddComponentWithID(owner, id, reflectedType->createAtAddress, reflectedType->size);
 
 					Comp->SetComponentID(id);
 

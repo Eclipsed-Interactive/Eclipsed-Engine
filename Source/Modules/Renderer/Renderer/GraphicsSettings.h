@@ -14,6 +14,7 @@ namespace Eclipse::Settings
 		Math::Vector2<int> resolution = { 1280, 720 };
 		bool fullscreen = false;
 		int numberOfRenderBuffers = 0;
+		bool renderLights = false;
 
 		template<class Archive>
 		void serialize(Archive& ar)
@@ -21,7 +22,8 @@ namespace Eclipse::Settings
 			ar(
 				CEREAL_NVP(resolution),
 				CEREAL_NVP(fullscreen),
-				CEREAL_NVP(numberOfRenderBuffers)
+				CEREAL_NVP(numberOfRenderBuffers),
+				CEREAL_NVP(renderLights)
 			);
 		}
 	};
