@@ -57,7 +57,7 @@ namespace Eclipse
 		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
 		Graphics::IGraphicsBuffer* GraphicsBuffer = Renderer->GetGraphicsBuffer();
 		EditorBuffer* editorBuffer;
-		GraphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+		GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 
 #endif
 		myTransformBuffer.Position *= canvasCameraTransform.ScaleMultiplier;
@@ -250,13 +250,14 @@ namespace Eclipse
 			myTextBuffer.offset.y = textOffset.y + (characterFace.bearing.y - characterFace.size.y * 0.5f) * pxY;
 
 			CanvasBuffer* canvasBuffer;
-			GraphicsBuffer->GetBuffer<CanvasBuffer>(canvasBuffer);
+			GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, canvasBuffer);
+
 
 #ifdef ECL_EDITOR
 			EditorBuffer* editorBuffer;
-			GraphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+			GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 			editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-			GraphicsBuffer->SetOrCreateBuffer<EditorBuffer>(35);
+			GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
 			if (editorBuffer->PixelPicking)
 			{
@@ -280,10 +281,10 @@ namespace Eclipse
 
 			graphicsDevice->BindMaterial(material);
 #endif
-			GraphicsBuffer->SetOrCreateBuffer(1, myTransformBuffer);
-			GraphicsBuffer->SetOrCreateBuffer(2, *canvasBuffer);
-			GraphicsBuffer->SetOrCreateBuffer(3, myTextBuffer);
-			GraphicsBuffer->SetOrCreateBuffer(5, material.GetBuffer());
+			GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &myTransformBuffer);
+			GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, 2, canvasBuffer);
+			GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TextBuffer, 3, &myTextBuffer);
+			GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 5, &material.GetBuffer());
 
 			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 			Graphics::IDrawer* drawer = renderer.GetDrawer();

@@ -225,10 +225,10 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 
 
 	EditorBuffer* editorBuffer;
-	buffer->GetBuffer<EditorBuffer>(editorBuffer);
+	buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 	editorBuffer->PixelPicking = 1;
 	editorBuffer->IsSceneView = 1;
-	buffer->SetOrCreateBuffer<EditorBuffer>(35);
+	buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
 	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 	commandListManager->GetSpriteCommandList().Execute();
@@ -439,7 +439,7 @@ void Eclipse::Editor::SceneView::Draw()
 	auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 	CameraBuffer* cameraBuffer = nullptr;
-	buffer->GetBuffer<CameraBuffer>(cameraBuffer);
+	buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, cameraBuffer);
 
 	Math::Vector2f lastInspectorPosition = cameraBuffer->cameraPosition;
 	float lastInspectorRotation = cameraBuffer->cameraRotation;
@@ -452,13 +452,11 @@ void Eclipse::Editor::SceneView::Draw()
 	cameraBuffer->cameraRotation = myInspectorRotation;
 	cameraBuffer->cameraScale = myInspectorScale;
 
+	buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, 0);
 
-
-
-	buffer->SetOrCreateBuffer<CameraBuffer>(0);
 
 	CanvasBuffer* canvasBuffer;
-	buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
+	buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, canvasBuffer);
 	canvasBuffer->canvasPositionOffset = Math::Vector2f(0, 0);
 
 
@@ -466,11 +464,11 @@ void Eclipse::Editor::SceneView::Draw()
 	SpriteSelector();
 
 	EditorBuffer* editorBuffer;
-	buffer->GetBuffer<EditorBuffer>(editorBuffer);
+	buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 	editorBuffer->PixelPicking = 0;
 	editorBuffer->IsSceneView = 1;
-	buffer->SetOrCreateBuffer<EditorBuffer>(35);
 
+	buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 	RenderSceneView();
 
 	editorBuffer->IsSceneView = 0;

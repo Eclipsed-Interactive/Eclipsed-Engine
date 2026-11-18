@@ -104,8 +104,9 @@ namespace Eclipse
 #ifdef ECL_EDITOR
 		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
 		Graphics::IGraphicsBuffer* GraphicsBuffer = Renderer->GetGraphicsBuffer();
+
 		EditorBuffer* editorBuffer;
-		GraphicsBuffer->GetBuffer<EditorBuffer>(editorBuffer);
+		GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 
 		if (editorBuffer->IsSceneView)
 		{
@@ -186,13 +187,13 @@ namespace Eclipse
 		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		CanvasBuffer* canvasBuffer;
-		buffer->GetBuffer<CanvasBuffer>(canvasBuffer);
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, canvasBuffer);
 
 #ifdef ECL_EDITOR
 		EditorBuffer* editorBuffer;
-		buffer->GetBuffer<EditorBuffer>(editorBuffer);
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-		buffer->SetOrCreateBuffer<EditorBuffer>(35);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
 		if (!editorBuffer->IsSceneView)
 		{
@@ -209,9 +210,9 @@ namespace Eclipse
 #endif
 
 
-		buffer->SetOrCreateBuffer(5, material->GetBuffer());
-		buffer->SetOrCreateBuffer(1, myTransformBuffer);
-		buffer->SetOrCreateBuffer(2, *canvasBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &myTransformBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, 2, canvasBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &material->GetBuffer());
 
 		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
 		Graphics::IDrawer* Drawer = Renderer->GetDrawer();

@@ -36,7 +36,6 @@ namespace Eclipse
 		friend class Editor::HierarchyView;
 		friend class Editor::GameObjectInspector;
 		friend class Editor::InspectorWindow;
-		friend class SceneLoader;
 
 	public:
 		template<typename T>

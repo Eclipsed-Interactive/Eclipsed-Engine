@@ -25,9 +25,9 @@ void Eclipse::ParticleSystem2D::Awake()
 	Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
 	Graphics::IGraphicsBuffer* GraphicsBuffer = renderer.GetGraphicsBuffer();
 
-	GraphicsBuffer->GetBuffer<ParticleSpawnBuffer>(ParticleSpawnGpuParticleBuffer);
-	GraphicsBuffer->GetBuffer<ConeEmitterDataBuffer>(ConeEmitterParticleBuffer);
-	GraphicsBuffer->GetBuffer<SharedGPUParticlesBuffer>(SharedParticleBuffer);
+	GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_ParticleSpawnBuffer, ParticleSpawnGpuParticleBuffer);
+	GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_ConeEmitterDataBuffer, ConeEmitterParticleBuffer);
+	GraphicsBuffer->GetBuffer(Graphics::GraphicsBufferEnum::g_SharedGPUParticlesBuffer, SharedParticleBuffer);
 
 	Graphics::IComputer* computer = renderer.GetComputer();
 	computer->ComputeDestroyAllParticles();
@@ -134,7 +134,7 @@ void Eclipse::ParticleSystem2D::Update()
 	// Spawning
 	ParticleSpawnGpuParticleBuffer->FrameSeed++;
 
-	GraphicsBuffer->SetOrCreateBuffer<SharedGPUParticlesBuffer>(1);
+	GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SharedGPUParticlesBuffer, 1);
 
 	computer->ComputeParticleUpdate();
 }
@@ -188,8 +188,8 @@ void Eclipse::Emitter::Update()
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->StartSpeedMin = StartData.StartSpeedMin;
 		ParticleSystem2D::ParticleSpawnGpuParticleBuffer->StartSpeedMax = StartData.StartSpeedMax;
 
-		GraphicsBuffer->SetOrCreateBuffer<ParticleSpawnBuffer>(0);
-		GraphicsBuffer->SetOrCreateBuffer<ConeEmitterDataBuffer>(2);
+		GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_ParticleSpawnBuffer, 0);
+		GraphicsBuffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_ConeEmitterDataBuffer, 2);
 
 		computer->ComputeParticleSpawning(ToSpawn);
 	}

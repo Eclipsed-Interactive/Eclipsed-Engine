@@ -17,7 +17,12 @@ namespace Eclipse::Graphics
 	class RENDERER_API IRenderer
 	{
 	public:
-		virtual ErrorCode Init()  { return ErrorCode{}; };
+		virtual ErrorCode Init()  
+		{
+			graphicsBuffer->Init();
+
+			return ErrorCode{}; 
+		};
 
 		virtual void BeginFrame() {};
 		virtual void EndFrame() {};

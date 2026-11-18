@@ -48,64 +48,64 @@ namespace Eclipse
     {
         // Needs integrating with the new scene saving :|
 
-        //aGameObject = ComponentManager::CreateGameObject();
-        //aGameObject->SetName(gameobject["Name"].GetString());
+       /* aGameObject = ComponentManager::CreateGameObject();
+        aGameObject->SetName(gameobject["Name"].GetString());
 
-        //for (auto& componentJson : gameobject["Components"].GetArray())
-        //{
-        //    auto coIt = componentJson.MemberBegin();
+        for (auto& componentJson : gameobject["Components"].GetArray())
+        {
+            auto coIt = componentJson.MemberBegin();
 
-        //    Component* component;
-        //    component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, Component::GetNextComponentID());
+            Component* component;
+            component = ComponentRegistry::GetAddComponentWithIdByTypeName(coIt->name.GetString())(*aGameObject, Component::GetNextComponentID());
 
-        //    auto& reflectedList = Reflection::ReflectionManager::GetList();
-        //    if (reflectedList.find(component) == reflectedList.end())
-        //        continue;
+            auto& reflectedList = Reflection::ReflectionManager::GetList();
+            if (reflectedList.find(component) == reflectedList.end())
+                continue;
 
-        //    auto& reflectedVars = reflectedList.at(component);
+            auto& reflectedVars = reflectedList.at(component);
 
-        //    int refIndex = 0;
+            int refIndex = 0;
 
-        //    for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
-        //    {
-        //        if (refIndex >= reflectedVars.size())
-        //            continue;
-        //        auto& reflectedVariable = reflectedVars.at(refIndex++);
-        //        SceneLoader::LoadType(reflectedVariable, coIt->value);
-        //    }
+            for (auto varIt = coIt->value.MemberBegin(); varIt != coIt->value.MemberEnd(); varIt++)
+            {
+                if (refIndex >= reflectedVars.size())
+                    continue;
+                auto& reflectedVariable = reflectedVars.at(refIndex++);
+                SceneLoader::LoadType(reflectedVariable, coIt->value);
+            }
 
-        //    if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
-        //    {
-        //        float LocalRotation = transform->GetLocalRotation();
+            if (Transform2D* transform = dynamic_cast<Transform2D*>(component))
+            {
+                float LocalRotation = transform->GetLocalRotation();
 
-        //        transform->SetRotation(LocalRotation * Math::rad2Deg);
-        //    }
+                transform->SetRotation(LocalRotation * Math::rad2Deg);
+            }
 
-        //    if (component && componentJson.HasMember("IsReplicated"))
-        //        component->IsReplicated = componentJson["IsReplicated"].GetBool();
-        //}
+            if (component && componentJson.HasMember("IsReplicated"))
+                component->IsReplicated = componentJson["IsReplicated"].GetBool();
+        }
 
-        //if (gameobject.HasMember("Children"))
-        //{
-        //    auto childArray = gameobject["Children"].GetArray();
-        //    for (auto& child : childArray)
-        //    {
-        //        GameObject* newGameObject;
-        //        PasteGameObject(newGameObject, child, anAllocator);
+        if (gameobject.HasMember("Children"))
+        {
+            auto childArray = gameobject["Children"].GetArray();
+            for (auto& child : childArray)
+            {
+                GameObject* newGameObject;
+                PasteGameObject(newGameObject, child, anAllocator);
 
-        //        aGameObject->AddChild(newGameObject);
+                aGameObject->AddChild(newGameObject);
 
-        //        if (auto* recttransform = newGameObject->GetComponent<RectTransform>())
-        //        {
-        //            if (recttransform->myCanvas = GetParentCanvas(newGameObject))
-        //            {
-        //                recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
-        //                recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
-        //                recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
-        //            }
-        //        }
-        //    }
-        //}
+                if (auto* recttransform = newGameObject->GetComponent<RectTransform>())
+                {
+                    if (recttransform->myCanvas = GetParentCanvas(newGameObject))
+                    {
+                        recttransform->myCanvas->canvasCameraTransform.PositionOffset = { 0.f, 0.f };
+                        recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
+                        recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
+                    }
+                }
+            }
+        }*/
     }
 
 

@@ -43,7 +43,6 @@ namespace Eclipse
 		friend class Reflection::AbstractSerializedVariable;
 
 		friend class ComponentManager;
-		friend class SceneLoader;
 
 	public:
 		Component() = default;

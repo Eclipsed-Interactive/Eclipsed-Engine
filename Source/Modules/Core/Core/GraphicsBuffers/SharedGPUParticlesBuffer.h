@@ -3,6 +3,8 @@
 #include "Core/Math/Vector/Vector3.h"
 #include "Core/Math/Vector/Vector4.h"
 
+// Remember to add the graphics buffer enum when done with graphicsbuffer struct
+
 namespace Eclipse
 {
     struct SharedGPUParticlesBuffer

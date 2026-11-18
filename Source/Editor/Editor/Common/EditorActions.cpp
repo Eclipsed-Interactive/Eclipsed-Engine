@@ -17,7 +17,7 @@
 
 #include "Core/ChatGPT_Dump/Base64.hpp"
 
-//#include "EclipsedEngine/ECS/ObjectManager.h"
+#include "EclipsedEngine/ECS/ObjectManager.h"
 
 #include "Core/BatchScript.h"
 
@@ -216,21 +216,21 @@ namespace Eclipse::Editor
 	{
 		// COmmented this out since i cant find the InternalSpawnObjectClass
 
-		//if (true)
-		//{
-		//	if (!HierarchyView::CurrentGameObjectID)
-		//		return;
-		//	
-		//	char* data = (char*)ClipBoard::GetClipboardData();
-		//	if (!data)
-		//		return;
-		//	GameObject* newGameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
-		//	HierarchyView::CurrentGameObjectID = newGameobject->GetID();
-		//}
-		//else if (false)
-		//{
+		if (true)
+		{
+			if (!HierarchyView::CurrentGameObjectID)
+				return;
+			
+			char* data = (char*)ClipBoard::GetClipboardData();
+			if (!data)
+				return;
+			GameObject* newGameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(data);
+			HierarchyView::CurrentGameObjectID = newGameobject->GetID();
+		}
+		else if (false)
+		{
 
-		//}
+		}
 	}
 
 	void EditorActions::Update()

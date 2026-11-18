@@ -28,8 +28,8 @@ static unsigned GetTypeID() { return typeID; }	\
 
 #define COMPONENT_FRIEND_CLASS						\
 friend class ::Eclipse::Editor::InspectorWindow;	\
-friend class ::Eclipse::ComponentManager;			\
-friend class ::Eclipse::SceneLoader;    
+friend class ::Eclipse::ComponentManager;			
+//friend class ::Eclipse::SceneLoader;    
 
 #define COMPONENT_BASE_1(type)												\
 COMPONENT_FRIEND_CLASS														\

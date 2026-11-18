@@ -127,7 +127,7 @@ namespace Eclipse::Rendering
 		Camera::MainCamera->GetBuffer().cameraRotation = Camera::MainCamera->gameObject->transform->GetRotation();
 		Camera::MainCamera->GetBuffer().cameraScale = { Camera::MainCamera->CameraZoom, Camera::MainCamera->CameraZoom };
 
-		buffer->SetOrCreateBuffer<CameraBuffer>(0, Camera::MainCamera->GetBuffer());
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, 0, &Camera::MainCamera->GetBuffer());
 	}
 
 	void SceneRenderer::SetResolution(Math::Vector2f resolution)

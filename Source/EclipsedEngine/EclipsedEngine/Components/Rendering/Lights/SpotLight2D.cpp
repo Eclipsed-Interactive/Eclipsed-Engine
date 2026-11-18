@@ -49,8 +49,8 @@ namespace Eclipse
 		light.cosOuter = cosf(myOuter * 0.5f * (Math::pi / 180.f));
 
 		renderer.GetDevice()->BindMaterial(myLightMaterial);
-		buffer->SetOrCreateBuffer(1, transform);
-		buffer->SetOrCreateBuffer(6, light);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transform);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpotLightBuffer, 6, &light);
 
 		renderer.GetDrawer()->DrawSprite();
 	}

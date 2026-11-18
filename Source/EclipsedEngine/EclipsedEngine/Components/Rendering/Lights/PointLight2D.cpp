@@ -47,8 +47,8 @@ namespace Eclipse
 		light.innerRadius = myInnerRadius;
 
 		renderer.GetDevice()->BindMaterial(myLightMaterial);
-		buffer->SetOrCreateBuffer(1, transform);
-		buffer->SetOrCreateBuffer(6, light);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transform);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_PointLightBuffer, 6, &light);
 
 		renderer.GetDrawer()->DrawSprite();
 	}

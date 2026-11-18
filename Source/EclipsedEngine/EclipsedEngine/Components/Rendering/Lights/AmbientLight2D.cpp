@@ -21,6 +21,6 @@ namespace Eclipse
 		light.color = myColor;
 		light.intensity = myIntensity;
 
-		buffer->SetOrCreateBuffer(8, light);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_AmbientLightBuffer, 8, &light);
 	}
 }

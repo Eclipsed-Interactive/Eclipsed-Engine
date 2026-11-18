@@ -102,7 +102,8 @@ namespace Eclipse::Graphics::OpenGL
 					indices[i] = i;
 
 				Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-				buffer->SetOrCreateBuffer<CameraBuffer>(0);
+				buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, 0);
+
 
 				glBindBuffer(GL_ARRAY_BUFFER, myVTXbuffer);
 				glBufferData(GL_ARRAY_BUFFER, myLineCollection.size() * sizeof(Line), myLineCollection.data(), GL_DYNAMIC_DRAW);

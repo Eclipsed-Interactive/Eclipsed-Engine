@@ -36,6 +36,7 @@
 #include <Core/Profiling/ProfilerMacros.hpp>
 
 #include <Core/Settings/SettingsRegistry.h>
+#include <Components/Physics/BoxCollider2D.h>
 
 namespace Eclipse
 {
@@ -128,6 +129,27 @@ namespace Eclipse
 	{
 		PROFILE_SCOPED;
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
+
+
+
+
+
+		for (int x = 0; x < 100; x++)
+		{
+			for (int i = 0; i < 100; i++)
+			{
+				GameObject* obj = ComponentManager::CreateGameObject();
+				Transform2D* transform = obj->AddComponent<Transform2D>();
+				transform->SetScale(Math::Vector2f(5, 5));
+				transform->SetPosition(x * 0.1f, i * 0.1f);
+
+				obj->AddComponent<SpriteRenderer2D>();
+				obj->AddComponent<RigidBody2D>();
+				obj->AddComponent<BoxCollider2D>();
+
+				obj->SetName("New Sprite");
+			}
+		}
 	}
 
 
@@ -154,6 +176,8 @@ namespace Eclipse
 
 		myCommandListManager.ResetAllCommandLists();
 
+		ComponentManager::CommitDestroy();
+
 		Assets::AssetManager::EndFrame();
 	}
 
@@ -171,6 +195,7 @@ namespace Eclipse
 		ComponentManager::EditorLateUpdateComponents();
 
 		ComponentManager::EarlyUpdateComponents();
+
 	}
 
 	void Engine::BeginFrame()

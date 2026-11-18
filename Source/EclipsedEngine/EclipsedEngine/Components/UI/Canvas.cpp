@@ -18,12 +18,12 @@ namespace Eclipse
 		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		CameraBuffer* cameraBuffer = nullptr;
-		buffer->GetBuffer(cameraBuffer);
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, cameraBuffer);
 
 
 #ifdef ECL_EDITOR
 		EditorBuffer* editorBuffer = nullptr;
-		buffer->GetBuffer(editorBuffer);
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 
 		if (editorBuffer->IsSceneView)
 			canvasCameraTransform.ScaleMultiplier = Math::Vector2f(cameraBuffer->cameraScale.x * cameraBuffer->resolutionRatio * 1.7777777777f, cameraBuffer->cameraScale.y) * 2.f;
@@ -74,7 +74,7 @@ namespace Eclipse
 		myCanvasBuffer.canvasScaleRelationOneDiv = { 1.f / resolution.x, 1.f / resolution.y };
 
 		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-		buffer->SetOrCreateBuffer(2, myCanvasBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, 2, &myCanvasBuffer);
 	}
 
 	void Canvas::SetCanvasForChildren(std::vector<GameObject*>& Children)

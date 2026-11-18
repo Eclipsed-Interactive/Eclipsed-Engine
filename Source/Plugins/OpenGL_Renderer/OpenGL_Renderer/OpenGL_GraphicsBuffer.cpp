@@ -6,15 +6,15 @@
 
 namespace Eclipse::Graphics
 {
-    void OpenGL_GraphicsBuffer::SetInternal(int aBufferIndex, std::type_index aTypeInfo, void* aBuffer, size_t bufferSize)
+    void OpenGL_GraphicsBuffer::SetInternal(int aBufferIndex, GraphicsBufferEnum aGraphicsBufferEnum, void* aBuffer, size_t bufferSize)
     {
-        glBindBufferBase(GL_UNIFORM_BUFFER, aBufferIndex, myUniformBufferObjects[aTypeInfo]);
+        glBindBufferBase(GL_UNIFORM_BUFFER, aBufferIndex, myUniformBufferObjects[aGraphicsBufferEnum]);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, static_cast<GLsizeiptr>(bufferSize), aBuffer);
     }
 
-    void OpenGL_GraphicsBuffer::AddInternalBuffer(std::type_index aTypeInfo, size_t bufferSize)
+    void OpenGL_GraphicsBuffer::AddInternalBuffer(GraphicsBufferEnum aGraphicsBufferEnum, size_t bufferSize)
     {
-        unsigned& buffer = myUniformBufferObjects[aTypeInfo];
+        unsigned& buffer = myUniformBufferObjects[aGraphicsBufferEnum];
         
         glGenBuffers(1, &buffer);
         glBindBuffer(GL_UNIFORM_BUFFER, buffer);

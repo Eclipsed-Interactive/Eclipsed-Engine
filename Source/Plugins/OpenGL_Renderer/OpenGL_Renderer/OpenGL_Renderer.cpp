@@ -65,6 +65,8 @@ namespace Eclipse::Graphics::OpenGL
 		glEnable(GL_BLEND);
 		device->SetBlendMode(Graphics::BlendMode::Alpha);
 
+		IRenderer::Init();
+
 		return ErrorCode{};
 	}
 

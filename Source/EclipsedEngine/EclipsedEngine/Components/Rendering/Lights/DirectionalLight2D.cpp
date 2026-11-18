@@ -29,6 +29,6 @@ namespace Eclipse
 		const float rad = trans->GetRotation() ;
 		light.rotation = Math::Vector2f(cosf(rad), sinf(rad));
 
-		buffer->SetOrCreateBuffer(7, light);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_DirectionalLightBuffer, 7, &light);
 	}
 }

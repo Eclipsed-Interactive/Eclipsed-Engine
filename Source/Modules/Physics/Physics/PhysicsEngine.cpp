@@ -70,6 +70,8 @@ namespace Eclipse
 
         worldDef.enableContinuous = true;
 
+        worldDef.workerCount = 5;
+
         b2SetLengthUnitsPerMeter(0.01f);
 
         myWorld = b2CreateWorld(&worldDef);

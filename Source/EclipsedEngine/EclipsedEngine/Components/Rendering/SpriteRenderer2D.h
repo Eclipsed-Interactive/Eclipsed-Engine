@@ -16,6 +16,13 @@
 
 namespace Eclipse
 {
+    namespace Graphics
+    {
+        class IRenderer;
+        class IDrawer;
+        class IGraphicsDevice;
+    }
+
     class Sprite;
     class Shader;
 
@@ -68,11 +75,16 @@ namespace Eclipse
         bool hasMaterial = false;
 
         SpriteBuffer mySpriteBuffer;
-        MaterialBuffer myMaterialBuffer;
         
         Assets::Material PixelPickMaterial;
 
         Math::Vector2f Bounds;
+
+        Graphics::IRenderer* renderer;
+        Graphics::IDrawer* drawer;
+
+        class EditorBuffer* editorBuffer;
+        Graphics::IGraphicsDevice* graphicsDevice;
 
     private:
         [[SerializeField, OnChange(OnChangeSprite)]]

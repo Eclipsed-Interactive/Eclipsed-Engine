@@ -23,13 +23,23 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnChangeColor()
 	{
-		// Apply the change to the buffer.
+		myMaterial.GetBuffer().color = myMaterial.dataPtr->color * myColor;
 	}
 
 	void SpriteRenderer2D::OnChangeMaterial()
 	{
 		hasMaterial = myMaterial.IsValid();
 
+		myMaterial.GetBuffer().color = myMaterial.dataPtr->color * myColor;
+
+		Math::Vector2f NewSpriteRectMax = spriteRectMax;
+		Math::Vector2f NewSpriteRectMin = spriteRectMin;
+
+		NewSpriteRectMax.y = 1 - NewSpriteRectMax.y;
+		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
+
+		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
+		myMaterial.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 	}
 
 	void SpriteRenderer2D::OnChangeSprite()
@@ -103,6 +113,14 @@ namespace Eclipse
 			myMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
 			hasMaterial = true;
 		}
+
+		renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
+		drawer = renderer->GetDrawer();
+
+		Eclipse::Graphics::IGraphicsBuffer* buffer = renderer->GetGraphicsBuffer();
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
+
+		graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
 	}
 
 	void SpriteRenderer2D::Render()
@@ -119,10 +137,10 @@ namespace Eclipse
 		if (!hasMaterial || IsDeleted)
 			return;
 
-		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();		
+		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 		CameraBuffer* cameraBuffer = nullptr;
-		buffer->GetBuffer<CameraBuffer>(cameraBuffer);
+		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, cameraBuffer);
 
 		Math::Vector2f ScaleWResolutionRatio = 1.f / cameraBuffer->cameraScale;
 		ScaleWResolutionRatio.x *= 1.f / cameraBuffer->resolutionRatio;
@@ -140,29 +158,14 @@ namespace Eclipse
 		if (!IsInFrustum)
 			return;
 
-		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
+		//DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 
-		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
-
-		Math::Vector2f NewSpriteRectMax = spriteRectMax;
-		Math::Vector2f NewSpriteRectMin = spriteRectMin;
-
-		NewSpriteRectMax.y = 1 - NewSpriteRectMax.y;
-		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
-
-		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		myMaterial.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
-
-		Math::Vector2f scaleMultiplier;
 
 #ifdef ECL_EDITOR
-		EditorBuffer* editorBuffer;
-		buffer->GetBuffer<EditorBuffer>(editorBuffer);
-
 		if (editorBuffer->PixelPicking)
 			editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
 
-		buffer->SetOrCreateBuffer<EditorBuffer>(35);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
 		if (editorBuffer->PixelPicking)
 			graphicsDevice->BindMaterial(PixelPickMaterial);
@@ -172,25 +175,19 @@ namespace Eclipse
 		graphicsDevice->BindMaterial(material);
 #endif
 
+		//Math::Vector2f scaleMultiplier;
 		if (mySprite.IsValid())
 		{
-			scaleMultiplier = mySprite.GetTextureSizeNormilized();
+			//scaleMultiplier = mySprite.GetTextureSizeNormilized();
 			graphicsDevice->BindTexture(0, mySprite);
 		}
-		else
-			scaleMultiplier = myMaterial.GetTexture().GetTextureSizeNormilized();
+		//else
+		//	scaleMultiplier = myMaterial.GetTexture().GetTextureSizeNormilized();
 
-		buffer->SetOrCreateBuffer(1, transformBuffer);
-		buffer->SetOrCreateBuffer(3, mySpriteBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transformBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, &mySpriteBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &myMaterial.GetBuffer());
 
-		MaterialBuffer materialBuffer;
-		materialBuffer.color = myMaterial.dataPtr->color * myColor;
-		materialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
-		buffer->SetOrCreateBuffer(5, materialBuffer);
-
-
-		Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();
-		Graphics::IDrawer* drawer = renderer.GetDrawer();
 		drawer->DrawSprite();
 	}
 }
