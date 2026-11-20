@@ -11,26 +11,25 @@ namespace Eclipse
 	{
 	public:
 		template<typename T>
-		static TypeID GetTypeID();
+		static constexpr TypeID GetTypeID();
 
 	private:
 		template<typename T>
-		static const char* Name();
+		static constexpr const char* Name();
 	};
 }
-
 
 namespace Eclipse
 {
 	template<typename T>
-	inline TypeID Type::GetTypeID()
+	inline constexpr TypeID Type::GetTypeID()
 	{
-		using Type = std::remove_cv_t<std::remove_reference<T>>;
+		using Type = std::remove_cvref_t<T>;
 		return Hash::FNV1A(Name<Type>());
 	}
 
 	template<typename T>
-	inline const char* Type::Name()
+	inline constexpr const char* Type::Name()
 	{
 		return __FUNCSIG__;
 	}
