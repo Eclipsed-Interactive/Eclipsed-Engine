@@ -2,5 +2,5 @@
 
 namespace Eclipse
 {
-    std::unordered_map<std::string, SingletonEntry> MainSingleton::mySingletons;
+    std::unordered_map<TypeID, SingletonEntry> MainSingleton::mySingletons;
 }

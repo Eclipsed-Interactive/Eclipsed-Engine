@@ -6,7 +6,8 @@
 #include <typeindex>
 #include <utility>
 #include <stdexcept>
-#include <string>
+
+#include "Core/Standard/TypeIDGenerator.hpp"
 
 namespace Eclipse
 {
@@ -47,7 +48,6 @@ namespace Eclipse
         template<typename T>
         static T* GetPointer();
 
-
         template<typename T, typename... Args>
         static T& RegisterInstance(Args&&... args);
 
@@ -65,7 +65,7 @@ namespace Eclipse
 
     private:
 
-        static std::unordered_map<std::string, SingletonEntry> mySingletons;
+        static std::unordered_map<TypeID, SingletonEntry> mySingletons;
     };
 
 }

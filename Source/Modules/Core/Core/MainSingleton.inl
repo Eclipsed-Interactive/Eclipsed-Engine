@@ -4,7 +4,7 @@ namespace Eclipse
     template<typename T>
     void MainSingleton::AddInstance(T& ref)
     {
-        auto type = typeid(T).name();
+        constexpr TypeID type = Type::GetTypeID<T>();
 
         if (mySingletons.contains(type))
             return;
@@ -21,7 +21,7 @@ namespace Eclipse
     template<typename T>
     void MainSingleton::AddInstance(T* ptr, bool destroy)
     {
-        auto type = typeid(T).name();
+        constexpr TypeID type = Type::GetTypeID<T>();
 
         if (mySingletons.contains(type))
             return;
@@ -49,8 +49,9 @@ namespace Eclipse
     template<typename T>
     T& MainSingleton::GetInstance()
     {
-        auto it = mySingletons.find(typeid(T).name());
+        constexpr TypeID type = Type::GetTypeID<T>();
 
+        auto it = mySingletons.find(type);
         if (it == mySingletons.end())
             throw std::runtime_error("Singleton not registered.");
 
@@ -61,8 +62,9 @@ namespace Eclipse
     template<typename T>
     T* MainSingleton::GetPointer()
     {
-        auto it = mySingletons.find(typeid(T).name());
+        constexpr TypeID type = Type::GetTypeID<T>();
 
+        auto it = mySingletons.find(type);
         if (it == mySingletons.end())
             throw std::runtime_error("Singleton not registered.");
 
@@ -73,7 +75,7 @@ namespace Eclipse
     template<typename T, typename... Args>
     T& MainSingleton::RegisterInstance(Args&&... args)
     {
-        auto type = typeid(T).name();
+        constexpr TypeID type = Type::GetTypeID<T>();
 
         if (mySingletons.contains(type))
             return GetInstance<T>();
@@ -98,7 +100,8 @@ namespace Eclipse
     template<typename T>
     bool MainSingleton::Exists()
     {
-        return mySingletons.contains(typeid(T).name());
+        constexpr TypeID type = Type::GetTypeID<T>();
+        return mySingletons.contains(type);
     }
 
 
@@ -117,7 +120,8 @@ namespace Eclipse
     template<typename T>
     inline void MainSingleton::RemoveInstance()
     {
-        auto it = mySingletons.find(typeid(T).name());
+        constexpr TypeID type = Type::GetTypeID<T>();
+        auto it = mySingletons.find(type);
 
         if (it == mySingletons.end())
             return;
