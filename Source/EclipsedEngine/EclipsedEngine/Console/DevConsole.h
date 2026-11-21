@@ -22,10 +22,15 @@ namespace Eclipse
 		static void Init();
 		static void Draw();
 
+		static void DrawCommandLog(const ImGuiViewport* Viewport, float HeightPosition);
+		static void DrawCommandLine(const ImGuiViewport* Viewport, float HeightPosition);
+
 		static void ExecuteCommand(const char* Command);
 		static void RegisterCommand(const char* Command, std::function<void()> Function);
 
 		static int InputCallback(void* data);
+
+		static void AddToConsoleLog(const char* Log);
 
 		struct Command
 		{
@@ -34,9 +39,11 @@ namespace Eclipse
 
 		static std::unordered_map<std::string, Command> Commands;
 		static std::vector<std::string> RecentCommands;
+		static std::vector<std::string> ConsoleLog;
 		static int CurrentHistoryIndex;
-		static int MaxRecentCommands;
-		static bool ConsoleOpen;
 		static bool ImguiDemoWindow;
+		static int CurrentOpenState;
+		static bool SetSrollToBottom;
+		static int CommandlogHeight;
 	};
 }

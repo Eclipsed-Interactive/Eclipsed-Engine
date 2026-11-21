@@ -12,10 +12,12 @@ namespace Eclipse
 {
 	std::unordered_map<std::string, DevConsole::Command> DevConsole::Commands;
 	std::vector<std::string> DevConsole::RecentCommands;
-	bool DevConsole::ConsoleOpen = false;
-	int DevConsole::MaxRecentCommands = 20;
+	std::vector<std::string> DevConsole::ConsoleLog;
 	int DevConsole::CurrentHistoryIndex = 0;
 	bool DevConsole::ImguiDemoWindow = false;
+	int DevConsole::CurrentOpenState = 0;
+	bool DevConsole::SetSrollToBottom = false;
+	int DevConsole::CommandlogHeight = 400;
 
 	std::string ToLower(std::string s)
 	{
@@ -30,14 +32,18 @@ namespace Eclipse
 
 		if (ImGui::IsKeyPressed(ImGuiKey_F1, false))
 		{
-			ConsoleOpen = !ConsoleOpen;
+			CurrentOpenState = (CurrentOpenState + 1) % 3;
 		}
 	}
 
 	void DevConsole::Init()
 	{
 		RegisterCommand("show imguidemo", []() {
-				ImguiDemoWindow = true;
+				ImguiDemoWindow = !ImguiDemoWindow;
+			});
+
+		RegisterCommand("help", []() {
+			AddToConsoleLog("Commands that are available are (show imguidemo)");
 			});
 
 	}
@@ -46,34 +52,93 @@ namespace Eclipse
 	{
 		Update();
 
-		if (!ConsoleOpen)
+		if (CurrentOpenState == 0)
 			return;
 
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		const ImGuiViewport* Viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowViewport(Viewport->ID);
 
 		float Height = ImGui::GetFrameHeight();
-
-		ImGui::SetNextWindowViewport(viewport->ID);
-
-		ImVec2 ConsoleSize = ImVec2(viewport->WorkSize.x, Height);
-		ImGui::SetNextWindowSize(ConsoleSize);
-
-		float ExtraHeight = Height + ImGui::GetStyle().WindowPadding.y;
-		ImVec2 ConsolePosition = ImVec2(viewport->WorkPos.x, viewport->WorkPos.y + viewport->WorkSize.y - ExtraHeight);
-		ImGui::SetNextWindowPos(ConsolePosition, ImGuiCond_Always);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
 
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.f, 0.f, 0.f, 0.85f));
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.f, 0.f, 0.f, 0.9f));
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0, 0, 0, 0));
 
+		if (CurrentOpenState == 1)
+		{
+			float ExtraHeight = Height + ImGui::GetStyle().WindowPadding.y;
+
+			float HeightPosition = Viewport->WorkPos.y + Viewport->WorkSize.y - ExtraHeight;
+			DrawCommandLine(Viewport, HeightPosition);
+		}
+		else if(CurrentOpenState == 2)
+		{
+			DrawCommandLog(Viewport, Viewport->Pos.y);
+			DrawCommandLine(Viewport, Viewport->Pos.y + CommandlogHeight);
+		}
+
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(4);
+	}
+
+	void DevConsole::DrawCommandLog(const ImGuiViewport* Viewport, float HeightPosition)
+	{
+		float Height = ImGui::GetFrameHeight();
+
+		ImVec2 ConsoleSize = ImVec2(Viewport->WorkSize.x, CommandlogHeight);
+		ImGui::SetNextWindowSize(ConsoleSize);
+
+		ImVec2 ConsolePosition = ImVec2(Viewport->WorkPos.x, HeightPosition);
+		ImGui::SetNextWindowPos(ConsolePosition, ImGuiCond_Always);
+
+		int ImGuiFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings |
+			ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+
+		if (ConsoleLog.empty())
+			ImGuiFlags |= ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+
+		ImGui::Begin("##DevConsoleLog", nullptr, ImGuiFlags);
+
+		if (SetSrollToBottom)
+		{
+			SetSrollToBottom = false;
+			ImGui::SetScrollY(ImGui::GetScrollMaxY() + 16);
+		}
+
+		std::stringstream LogStream;
+		for (auto& LogEntry : ConsoleLog)
+			LogStream << LogEntry.c_str() << "\n";
+
+		ImVec2 TextSize = ImGui::CalcTextSize("Test");
+		float DummySize = ConsoleLog.size() * TextSize.y;
+
+		ImGui::Dummy(ImVec2(0, CommandlogHeight - DummySize - TextSize.y - 8));
+
+		ImGui::TextUnformatted(LogStream.str().c_str());
+
+		ImGui::Separator();
+
+		ImGui::End();
+	}
+
+	void DevConsole::DrawCommandLine(const ImGuiViewport* Viewport, float HeightPosition)
+	{
+		float Height = ImGui::GetFrameHeight();
+
+		ImVec2 ConsoleSize = ImVec2(Viewport->WorkSize.x, Height);
+		ImGui::SetNextWindowSize(ConsoleSize);
+
+		ImVec2 ConsolePosition = ImVec2(Viewport->WorkPos.x, HeightPosition);
+		ImGui::SetNextWindowPos(ConsolePosition, ImGuiCond_Always);
+
 		ImGui::Begin("##DevConsole", nullptr, ImGuiWindowFlags_NoDecoration |
 			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings |
-			ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoScrollWithMouse);
+			ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoScrollWithMouse);
 
 		ImGui::SetKeyboardFocusHere();
 
@@ -88,7 +153,7 @@ namespace Eclipse
 		char CommandBuffer[512];
 		memset(CommandBuffer, 0, 511);
 		memset(CommandBuffer + 511, (int)"\0", 1);
-		bool EnteredCommand = ImGui::InputText("##CommandConsole", CommandBuffer, 512, 
+		bool EnteredCommand = ImGui::InputText("##CommandConsole", CommandBuffer, 512,
 			ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory |
 			ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackCharFilter,
 			[](ImGuiInputTextCallbackData* d) { return DevConsole::InputCallback(d); });
@@ -97,14 +162,15 @@ namespace Eclipse
 			ExecuteCommand(CommandBuffer);
 
 		ImGui::End();
-
-		ImGui::PopStyleVar(2);
-		ImGui::PopStyleColor(4);
 	}
 
 	void DevConsole::ExecuteCommand(const char* Command)
 	{
+		SetSrollToBottom = true;
+
 		std::string CommandString = std::string(Command);
+
+		AddToConsoleLog(CommandString.c_str());
 
 		CommandString = ToLower(CommandString);
 
@@ -176,5 +242,10 @@ namespace Eclipse
 		}
 
 		return 0;
+	}
+
+	void DevConsole::AddToConsoleLog(const char* Log)
+	{
+		ConsoleLog.emplace_back(Log);
 	}
 }
