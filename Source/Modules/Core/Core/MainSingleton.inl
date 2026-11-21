@@ -1,6 +1,5 @@
 namespace Eclipse
 {
-
     template<typename T>
     void MainSingleton::AddInstance(T& ref)
     {

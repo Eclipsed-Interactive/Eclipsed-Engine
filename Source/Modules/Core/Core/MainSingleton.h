@@ -3,7 +3,6 @@
 #include "Core.Core.hpp"
 
 #include <unordered_map>
-#include <typeindex>
 #include <utility>
 #include <stdexcept>
 
@@ -11,15 +10,6 @@
 
 namespace Eclipse
 {
-
-#ifdef ECL_EDITOR
-    struct CORE_API EditorEntry
-    {
-        bool* IsPlaying;
-        bool* IsPaused;
-    };
-#endif
-
     struct CORE_API SingletonEntry
     {
         void* instance = nullptr;

@@ -151,14 +151,26 @@ namespace Eclipse
 
 		TransformBuffer& transformBuffer = gameObject->transform->myTransformBuffer;
 
-		Math::Vector2f MinBounds = transformBuffer.Position - transformBuffer.Scale * 0.5f * 0.01f;
-		Math::Vector2f MaxBounds = transformBuffer.Position + transformBuffer.Scale * 0.5f * 0.01f;
+		Math::Vector2f AbsScale(std::abs(transformBuffer.Scale.x), std::abs(transformBuffer.Scale.y));
+
+		Math::Vector2f HalfExtents = AbsScale * 0.5f * 0.01f;
+
+		float Radians = transformBuffer.Rotation;
+		float C = std::abs(std::cos(Radians));
+		float S = std::abs(std::sin(Radians));
+
+		Math::Vector2f RotatedExtents;
+		RotatedExtents.x = HalfExtents.x * C + HalfExtents.y * S;
+		RotatedExtents.y = HalfExtents.x * S + HalfExtents.y * C;
+
+		Math::Vector2f MinBounds = transformBuffer.Position - RotatedExtents;
+		Math::Vector2f MaxBounds = transformBuffer.Position + RotatedExtents;
 
 		bool IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
 		if (!IsInFrustum)
 			return;
 
-		//DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
+		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 
 
 #ifdef ECL_EDITOR

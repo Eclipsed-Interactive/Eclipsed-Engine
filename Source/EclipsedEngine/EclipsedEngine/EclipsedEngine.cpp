@@ -38,6 +38,8 @@
 #include <Core/Settings/SettingsRegistry.h>
 #include <Components/Physics/BoxCollider2D.h>
 
+#include "EclipsedEngine/Console/DevConsole.h"
+
 namespace Eclipse
 {
 	Graphics::IRenderer* Engine::renderer = nullptr;
@@ -107,6 +109,10 @@ namespace Eclipse
 
 		ImGui_Init();
 
+#if ECL_DEV_CONSOLE_ENABLED
+		DevConsole::Init();
+#endif
+
 #ifdef ECL_EDITOR
 		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
 #else
@@ -134,22 +140,22 @@ namespace Eclipse
 
 
 
-		//for (int x = 0; x < 100; x++)
-		//{
-		//	for (int i = 0; i < 100; i++)
-		//	{
-		//		GameObject* obj = ComponentManager::CreateGameObject();
-		//		Transform2D* transform = obj->AddComponent<Transform2D>();
-		//		transform->SetScale(Math::Vector2f(5, 5));
-		//		transform->SetPosition(x * 0.1f, i * 0.1f);
+		/*for (int x = 0; x < 100; x++)
+		{
+			for (int i = 0; i < 100; i++)
+			{
+				GameObject* obj = ComponentManager::CreateGameObject();
+				Transform2D* transform = obj->AddComponent<Transform2D>();
+				transform->SetScale(Math::Vector2f(5, 5));
+				transform->SetPosition(x * 0.1f, i * 0.1f);
 
-		//		obj->AddComponent<SpriteRenderer2D>();
-		//		obj->AddComponent<RigidBody2D>();
-		//		obj->AddComponent<BoxCollider2D>();
+				obj->AddComponent<SpriteRenderer2D>();
+				obj->AddComponent<RigidBody2D>();
+				obj->AddComponent<BoxCollider2D>();
 
-		//		obj->SetName("New Sprite");
-		//	}
-		//}
+				obj->SetName("New Sprite");
+			}
+		}*/
 	}
 
 
@@ -230,6 +236,9 @@ namespace Eclipse
 
 	void Engine::LateRender()
 	{
+#if ECL_DEV_CONSOLE_ENABLED
+		DevConsole::Draw();
+#endif
 		ImGui_Render();
 	}
 
