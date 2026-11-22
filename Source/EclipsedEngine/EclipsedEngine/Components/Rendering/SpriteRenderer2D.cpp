@@ -15,6 +15,8 @@
 
 namespace Eclipse
 {
+	bool SpriteRenderer2D::RenderingFrozen = false;
+
 	void SpriteRenderer2D::SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax)
 	{
 		spriteRectMin = aMin * mySprite.GetDimDivOne();
@@ -166,11 +168,10 @@ namespace Eclipse
 		Math::Vector2f MinBounds = transformBuffer.Position - RotatedExtents;
 		Math::Vector2f MaxBounds = transformBuffer.Position + RotatedExtents;
 
-		bool IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
+		if(!RenderingFrozen)
+			IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
 		if (!IsInFrustum)
 			return;
-
-		DebugDrawer::DrawSquareMinMax(MinBounds, MaxBounds, Math::Color(0.f, 1.f, 0.f, 1.f));
 
 
 #ifdef ECL_EDITOR

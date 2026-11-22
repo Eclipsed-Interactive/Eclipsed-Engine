@@ -7,6 +7,8 @@
 #include <sstream>
 #include <cctype>
 
+#include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
+
 
 namespace Eclipse
 {
@@ -41,9 +43,13 @@ namespace Eclipse
 		RegisterCommand("show imguidemo", []() {
 				ImguiDemoWindow = !ImguiDemoWindow;
 			});
-
+		 
 		RegisterCommand("help", []() {
 			AddToConsoleLog("Commands that are available are (show imguidemo)");
+			});
+
+		RegisterCommand("freezerendering", []() {
+			SpriteRenderer2D::RenderingFrozen = !SpriteRenderer2D::RenderingFrozen;
 			});
 
 	}
@@ -158,8 +164,10 @@ namespace Eclipse
 			ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackCharFilter,
 			[](ImGuiInputTextCallbackData* d) { return DevConsole::InputCallback(d); });
 
-		if (EnteredCommand)
+		if (EnteredCommand && !std::string(CommandBuffer).empty())
+		{
 			ExecuteCommand(CommandBuffer);
+		}
 
 		ImGui::End();
 	}

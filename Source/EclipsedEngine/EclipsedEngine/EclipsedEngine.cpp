@@ -140,9 +140,9 @@ namespace Eclipse
 
 
 
-		/*for (int x = 0; x < 100; x++)
+		for (int x = 0; x < 10; x++)
 		{
-			for (int i = 0; i < 100; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				GameObject* obj = ComponentManager::CreateGameObject();
 				Transform2D* transform = obj->AddComponent<Transform2D>();
@@ -155,7 +155,7 @@ namespace Eclipse
 
 				obj->SetName("New Sprite");
 			}
-		}*/
+		}
 	}
 
 

@@ -36,6 +36,8 @@ namespace Eclipse
         COMPONENT_BASE_2(SpriteRenderer2D, 20)
 
     public:
+        static bool RenderingFrozen;
+
         void OnComponentAdded() override;
 
         void Render() override;
@@ -85,6 +87,8 @@ namespace Eclipse
 
         class EditorBuffer* editorBuffer;
         Graphics::IGraphicsDevice* graphicsDevice;
+
+        bool IsInFrustum;
 
     private:
         [[SerializeField, OnChange(OnChangeSprite)]]
