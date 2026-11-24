@@ -14,11 +14,11 @@ namespace Eclipse
     
     class GameObject;
     class Component;
+    struct GUID;
 
     namespace Assets
     {
         class Prefab;
-        class GUID;
     }
 }
 
@@ -83,7 +83,7 @@ namespace Eclipse::Replication
         static void CreateGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void DeleteGOMessage(int aGameobjectID, NetMessage& outMessage);
         static void CreateComponentMessage(Eclipse::Component* aComponent, NetMessage& outMessage, bool aStartLater = false);
-        static void CreatePrefabMessage(unsigned aGOID, const Assets::GUID& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
+        static void CreatePrefabMessage(unsigned aGOID, const GUID& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
 
     public:
         // Direct send functions

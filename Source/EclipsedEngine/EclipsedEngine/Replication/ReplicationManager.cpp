@@ -7,8 +7,6 @@
 
 #include "ECS/Component.h"
 
-#include "Assets/Assets/PrefabAsset.h"
-
 #include "Networking/Client/SteamP2PNetworkingClient.h"
 #include "Networking/Server/SteamP2PNetworkingServer.h"
 
@@ -193,7 +191,7 @@ namespace Eclipse::Replication
         outMessage = NetMessage::BuildGameObjectMessage(aComponent->gameObject->GetID(), MessageType::Msg_AddComponent, Data, DataAmount, true, aStartLater);
     }
 
-    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const Assets::GUID& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
+    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const GUID& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
     {
         char Data[512];
 
@@ -229,17 +227,17 @@ namespace Eclipse::Replication
 
     void ReplicationManager::SendPrefabObject(GameObject* gameobject, Assets::Prefab& aPrefab)
     {
-        std::vector<unsigned> componentIDs;
-        BuildComponentVector(gameobject, componentIDs);
+        //std::vector<unsigned> componentIDs;
+        //BuildComponentVector(gameobject, componentIDs);
 
-        NetMessage message;
-        CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID(), componentIDs, message);
+        //NetMessage message;
+        //CreatePrefabMessage(gameobject->GetID(), aPrefab.GetAssetID(), componentIDs, message);
 
-        
-        if (server)
-            server->Send(message);
-        else if (client)
-            client->Send(message);
+        //
+        //if (server)
+        //    server->Send(message);
+        //else if (client)
+        //    client->Send(message);
     }
 
     void ReplicationManager::SetBeforeReplicatedList()
