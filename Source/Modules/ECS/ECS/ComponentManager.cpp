@@ -579,7 +579,7 @@ namespace Eclipse
 	std::function<void()> ComponentManager::BeforeComponentConstruction;
 	std::function<void()> ComponentManager::AfterComponentConstruction;
 
-	std::function<void(unsigned)> ComponentManager::DestroyGameObjectReplicated;
+	std::function<void(GameObjectID)> ComponentManager::DestroyGameObjectReplicated;
 	std::function<void(unsigned)> ComponentManager::DeleteReplicatedComponent;
 
 
@@ -594,10 +594,10 @@ namespace Eclipse
 	std::vector<Component*> ComponentManager::myComponentsToStart;
 
 	// Gameobject to components
-	std::unordered_map<unsigned, GameObject*> ComponentManager::myEntityIdToEntity;
-	std::unordered_map<unsigned, std::vector<Component*>> ComponentManager::myEntityIDToVectorOfComponentIDs;
+	std::unordered_map<GameObjectID, GameObject*, GUIDHash> ComponentManager::myEntityIdToEntity;
+	std::unordered_map<GameObjectID, std::vector<Component*>, GUIDHash> ComponentManager::myEntityIDToVectorOfComponentIDs;
 
-	std::vector<unsigned> ComponentManager::gameobjectsToRemove;
+	std::vector<GameObjectID> ComponentManager::gameobjectsToRemove;
 
 	std::vector<ComponentManager::Graveyard> ComponentManager::graveyard;
 
@@ -696,7 +696,7 @@ namespace Eclipse
 		/*WHY? -> */ Init(); // <- Made by Simon.
 	}
 
-	const std::unordered_map<unsigned, GameObject*>& ComponentManager::GetGameObjects()
+	const std::unordered_map<GameObjectID, GameObject*, GUIDHash>& ComponentManager::GetGameObjects()
 	{
 		return myEntityIdToEntity;
 	}
@@ -926,7 +926,7 @@ namespace Eclipse
 		ComponentsToStartBuffer.resize(ComponentsToStartBuffer.size() - componentToStartSize);
 	}
 
-	void ComponentManager::DeleteComponent(unsigned aGOID, unsigned aUniqueComponentID, unsigned aComponentID)
+	void ComponentManager::DeleteComponent(GameObjectID aGOID, unsigned aUniqueComponentID, unsigned aComponentID)
 	{
 		if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
 			return;
@@ -1016,7 +1016,7 @@ namespace Eclipse
 		return nullptr;
 	}
 
-	Component* ComponentManager::AddComponent(unsigned aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
+	Component* ComponentManager::AddComponent(GameObjectID aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
 	{
 		Component* component = AddComponentWithID(aGOID, Component::GetNextComponentID(), createFunc, size);
 		component->OnComponentAdded();
@@ -1024,7 +1024,7 @@ namespace Eclipse
 		return component;
 	}
 
-	Component* ComponentManager::AddComponentWithID(unsigned aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
+	Component* ComponentManager::AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size)
 	{
 		uint8_t* base = static_cast<uint8_t*>(myComponentData);
 
@@ -1132,7 +1132,7 @@ namespace Eclipse
 		return myEntityIdToEntity.find(aGOID) != myEntityIdToEntity.end();
 	}
 
-	GameObject* ComponentManager::GetGameObject(unsigned aGOID)
+	GameObject* ComponentManager::GetGameObject(GameObjectID aGOID)
 	{
 		if (myEntityIdToEntity.find(aGOID) == myEntityIdToEntity.end())
 			return nullptr;
@@ -1146,7 +1146,7 @@ namespace Eclipse
 			return;
 
 		unsigned componentsDeleted = 0;
-		for (int goID : gameobjectsToRemove)
+		for (const GameObjectID& goID : gameobjectsToRemove)
 		{
 			// This has tyo be checked only because Gameobjects can exist without components
 			if (myEntityIDToVectorOfComponentIDs.find(goID) == myEntityIDToVectorOfComponentIDs.end())
@@ -1200,7 +1200,7 @@ namespace Eclipse
 		for (auto& components : componentListsToSort)
 			SortZIndexComponents(*components);
 
-		for (int goID : gameobjectsToRemove)
+		for (const GameObjectID& goID : gameobjectsToRemove)
 		{
 			if (!myEntityIdToEntity.contains(goID))
 				continue;
@@ -1226,7 +1226,6 @@ namespace Eclipse
 	GameObject* ComponentManager::CreateGameObject(GameObjectID aId)
 	{
 		GameObject* obj = new GameObject(aId);
-		obj->SetGUID(GUID::GenerateGUID());
 
 		myEntityIdToEntity[aId] = obj;
 
@@ -1235,12 +1234,11 @@ namespace Eclipse
 
 	GameObject* ComponentManager::CreateGameObject()
 	{
-		unsigned randomID = GetNewGOID();
-		GameObject* obj = new GameObject(randomID);
-		obj->SetGUID(GUID::GenerateGUID());
-		myEntityIdToEntity[randomID] = obj;
+		GameObjectID id = GUID::GenerateGUID();
+		while (id.IsEmpty() || myEntityIdToEntity.contains(id))
+			id = GUID::GenerateGUID();
 
-		return obj;
+		return CreateGameObject(id);
 	}
 
 
@@ -1264,7 +1262,7 @@ namespace Eclipse
 			allComponents[i]->OnCollisionExit(Other);
 	}
 
-	void ComponentManager::BeginTrigger(unsigned aGOID, unsigned aGOID1)
+	void ComponentManager::BeginTrigger(GameObjectID aGOID, GameObjectID aGOID1)
 	{
 		auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 
@@ -1274,7 +1272,7 @@ namespace Eclipse
 			allComponents[i]->OnTriggerEnter(Other);
 	}
 
-	void ComponentManager::EndTrigger(unsigned aGOID, unsigned aGOID1)
+	void ComponentManager::EndTrigger(GameObjectID aGOID, GameObjectID aGOID1)
 	{
 		auto& allComponents = myEntityIDToVectorOfComponentIDs[aGOID];
 

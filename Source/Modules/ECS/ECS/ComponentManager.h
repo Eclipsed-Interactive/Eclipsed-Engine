@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "ECS.Core.hpp"
+#include "ECS/Types.h"
 
 #define GetComp(Type, GOID)\
 ComponentManager::GetComponent<Type>(GOID)
@@ -51,7 +52,7 @@ namespace Eclipse
 		static void SetCreateComponentReplicated(std::function<void(Component*)> aCreateComponentReplicated) { CreateComponentReplicated = aCreateComponentReplicated; }
 
 		static void SetDeleteReplicationComponent(std::function<void(unsigned)> aDeleteReplicatedComponent) { DeleteReplicatedComponent = aDeleteReplicatedComponent; }
-		static void SetDestroyGameObjectReplicated(std::function<void(unsigned)> aDestroyGameObjectReplicated) { DestroyGameObjectReplicated = aDestroyGameObjectReplicated; }
+		static void SetDestroyGameObjectReplicated(std::function<void(GameObjectID)> aDestroyGameObjectReplicated) { DestroyGameObjectReplicated = aDestroyGameObjectReplicated; }
 
 		static void SetBeforeAfterComponentConstruction(std::function<void()> aBeforeComponentConstruction, std::function<void()> aAfterComponentConstruction)
 		{
@@ -86,36 +87,36 @@ namespace Eclipse
 		
 		//void SortRenderComponents();
 
-		static void BeginCollisions(unsigned aGOID, unsigned aGOID1);
-		static void EndCollisions(unsigned aGOID, unsigned aGOID1);
+		static void BeginCollisions(GameObjectID aGOID, GameObjectID aGOID1);
+		static void EndCollisions(GameObjectID aGOID, GameObjectID aGOID1);
 
-		static void BeginTrigger(unsigned aGOID, unsigned aGOID1);
-		static void EndTrigger(unsigned aGOID, unsigned aGOID1);
+		static void BeginTrigger(GameObjectID aGOID, GameObjectID aGOID1);
+		static void EndTrigger(GameObjectID aGOID, GameObjectID aGOID1);
 
 		template <typename T>
 		static void GetAllComponentsOfTypePtr(std::vector<int>& aComponents);
 		
 		template <typename T>
-		static void GetAllComponentsOfType(unsigned aGOID, std::vector<T*>& aComponents);
+		static void GetAllComponentsOfType(GameObjectID aGOID, std::vector<T*>& aComponents);
 
 		template <typename T>
-		static T* GetComponent(unsigned aGOID);
+		static T* GetComponent(GameObjectID aGOID);
 
 		template <typename T>
-		static T* AddComponent(unsigned aGOID, bool IsReplicated = false);
+		static T* AddComponent(GameObjectID aGOID, bool IsReplicated = false);
 		template <typename T>
-		static T* AddComponentWithID(unsigned aGOID, unsigned aComponentID, bool IsReplicated = false);
+		static T* AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, bool IsReplicated = false);
 
-		static void DeleteComponent(unsigned aGOID, unsigned aUniqueComponentID, unsigned aComponentID);
+		static void DeleteComponent(GameObjectID aGOID, unsigned aUniqueComponentID, unsigned aComponentID);
 
 		static GameObject* FindObjectByName(const char* aName);
 
-		static Component* AddComponent(unsigned aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
-		static Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponent(GameObjectID aGOID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, void* (__cdecl* createFunc)(unsigned char* address), size_t size);
 
 
-		static Component* AddComponent(unsigned aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
-		static Component* AddComponentWithID(unsigned aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponent(GameObjectID aGOID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
+		static Component* AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, Eclipse::Component* (__cdecl* createFunc)(unsigned char* address), size_t size);
 
 
 		template <typename T>
@@ -123,28 +124,24 @@ namespace Eclipse
 
 		static const Eclipse::ComponentManager::FlabbergastingBabbaBoya& GetAllComponents();
 
-		static std::vector<Component*> GetComponents(unsigned aGOID);
+		static std::vector<Component*> GetComponents(GameObjectID aGOID);
 
 
-		static bool HasGameObject(unsigned aGOID);
-		static GameObject* GetGameObject(unsigned aGOID);
+		static bool HasGameObject(GameObjectID aGOID);
+		static GameObject* GetGameObject(GameObjectID aGOID);
 
 		static void CommitDestroy();
 
-		static void Destroy(unsigned aGOID);
+		static void Destroy(GameObjectID aGOID);
 
-		static unsigned GetNewGOID()
-		{
-			return Math::Random::RandRange<unsigned>(0, 0x00FFFFFF);
-		}
-
+		// Creates a gameobject with the given GUID as its id.
 		static GameObject* CreateGameObject(GameObjectID aId);
-		static GameObject* CreateGameObject(GUID aId);
+		// Creates a gameobject with a newly generated GUID as its id.
 		static GameObject* CreateGameObject();
 
 		static void Clear();
 
-		static const std::unordered_map<unsigned, GameObject*>& GetGameObjects();
+		static const std::unordered_map<GameObjectID, GameObject*, GUIDHash>& GetGameObjects();
 
 	private:
 		static std::function<void(Component*)> CreateComponentReplicated;
@@ -152,7 +149,7 @@ namespace Eclipse
 		static std::function<void()> BeforeComponentConstruction;
 		static std::function<void()> AfterComponentConstruction;
 
-		static std::function<void(unsigned)> DestroyGameObjectReplicated;
+		static std::function<void(GameObjectID)> DestroyGameObjectReplicated;
 		static std::function<void(unsigned)> DeleteReplicatedComponent;
 
 
@@ -167,10 +164,10 @@ namespace Eclipse
 		static std::vector<Component*> myComponentsToStart;
 
 		// Gameobject to components
-		static std::unordered_map<unsigned, GameObject*> myEntityIdToEntity;
-		static std::unordered_map<unsigned, std::vector<Component*>> myEntityIDToVectorOfComponentIDs;
+		static std::unordered_map<GameObjectID, GameObject*, GUIDHash> myEntityIdToEntity;
+		static std::unordered_map<GameObjectID, std::vector<Component*>, GUIDHash> myEntityIDToVectorOfComponentIDs;
 
-		static std::vector<unsigned> gameobjectsToRemove;
+		static std::vector<GameObjectID> gameobjectsToRemove;
 
 		struct Graveyard
 		{

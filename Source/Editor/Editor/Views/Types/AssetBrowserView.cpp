@@ -336,8 +336,8 @@ namespace Eclipse::Editor
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_Childing_Reordering"))
 			{
-				IM_ASSERT(payload->DataSize == sizeof(unsigned));
-				unsigned draggedEntityID = *reinterpret_cast<unsigned*>(payload->Data);
+				IM_ASSERT(payload->DataSize == sizeof(GameObjectID));
+				GameObjectID draggedEntityID = *reinterpret_cast<const GameObjectID*>(payload->Data);
 
 				std::filesystem::path pathToPlacePrefab;
 				if (node->isDirectory)
@@ -345,6 +345,9 @@ namespace Eclipse::Editor
 				else
 					pathToPlacePrefab = PathManager::GetAssetsPath();
 
+				int i = 0;
+				i++;
+				i--;
 				//HierarchyView::CreatePrefab(draggedEntityID, pathToPlacePrefab);
 			}
 			ImGui::EndDragDropTarget();

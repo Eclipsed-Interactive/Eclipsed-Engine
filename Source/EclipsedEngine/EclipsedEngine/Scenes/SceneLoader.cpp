@@ -74,20 +74,46 @@ namespace Eclipse
 				rapidjson::Document d;
 				d.Parse(json.c_str());
 
-				GameObject* obj = ComponentManager::CreateGameObject();;
-
-				GUID guid; std::string name; bool isStatic = false;
+				GUID guid;  std::string name; bool isStatic = false;
 				if (d.HasMember("id") && d["id"].IsString()) guid.FromString(d["id"].GetString());
 				if (d.HasMember("name") && d["name"].IsString()) name = d["name"].GetString();
 				if (d.HasMember("static") && d["static"].IsBool()) isStatic = d["static"].GetBool();
+				GameObject* obj = guid.IsEmpty() ? ComponentManager::CreateGameObject() : ComponentManager::CreateGameObject(guid);
 
-				obj->SetGUID(guid);
 				obj->SetIsStatic(isStatic);
 				obj->SetName(name);
+			}
+
+
+			for (auto& go : gameobjects.GetArray())
+			{
+				const std::string guidStr = go.GetString();
+
+				const std::filesystem::path path = PathManager::GetAssetsPath() / "__external__" / "Scenes" / aName / guidStr;
+
+				std::ifstream file(path, std::ios::binary);
+				std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+				rapidjson::Document d;
+				d.Parse(json.c_str());
+
+				GUID guid;
+				guid.FromString(guidStr);
+				GameObject* obj = ComponentManager::GetGameObject(guid);
+
+				if (d.HasMember("parent") && d["parent"].IsString())
+				{
+					GUID parentId;
+					parentId.FromString(d["parent"].GetString());
+					GameObject* parent = ComponentManager::GetGameObject(parentId);
+					obj->SetParent(parent);
+				}
 
 				if (d.HasMember("components") && d["components"].IsArray())
 					LoadComponents(obj, d["components"]);
 			}
+
+				
 		}
 	}
 

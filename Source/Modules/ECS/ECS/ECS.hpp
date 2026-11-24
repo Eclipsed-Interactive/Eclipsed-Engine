@@ -5,13 +5,13 @@
 namespace Eclipse
 {
 	template <typename T>
-	inline T* GetComponent(unsigned aGOID)
+	inline T* GetComponent(GameObjectID aGOID)
 	{
 		return ComponentManager::Get().GetComponent<T>(aGOID);
 	}
 
 	template <typename T>
-	inline T* AddComponent(unsigned aGOID)
+	inline T* AddComponent(GameObjectID aGOID)
 	{
 		return ComponentManager::Get().AddComponent<T>(aGOID);
 	}

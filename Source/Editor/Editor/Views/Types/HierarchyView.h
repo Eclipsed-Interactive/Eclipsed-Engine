@@ -3,10 +3,12 @@
 #include "Editor/Views/IEditorView.h"
 
 #include <vector>
-#include <set>
+#include <unordered_set>
 #include <filesystem>
 
 #include <rapidjson/document.h>
+
+#include "ECS/Types.h"
 
 namespace Eclipse
 {
@@ -23,22 +25,22 @@ namespace Eclipse::Editor
 	public:
 		void Draw() override;
 
-		static void OpenParents(unsigned aParentID);
+		static void OpenParents(GameObjectID aParentID);
 		void HierarchyButton(GameObject* aGameObject, float totalIndent);
 		void AssignParentChildren(GameObject* targetGO, GameObject* aGameObject);
 
-		static void CreatePrefab(unsigned aGameobjectID, std::filesystem::path aPath);
+		static void CreatePrefab(GameObjectID aGameobjectID, std::filesystem::path aPath);
 
 	public:
-		static inline unsigned CurrentGameObjectID;
+		static inline GameObjectID CurrentGameObjectID;
 
 		Canvas* GetParentCanvas(GameObject* BaseObject);
 
 		bool CheckCopomentType(GameObject* aGameobject, GameObject* aParent);
 
-		static inline std::set<unsigned> gameobjectIdsThatAreOpen;
+		static inline std::unordered_set<GameObjectID, GUIDHash> gameobjectIdsThatAreOpen;
 
-		unsigned SelectedGameobjectID;
+		GameObjectID SelectedGameobjectID;
 
 		bool gameobjectrightclicked;
 	};

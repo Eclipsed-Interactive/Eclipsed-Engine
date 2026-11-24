@@ -162,7 +162,7 @@ namespace Eclipse::Replication
 		(component->*ReppedFunction)();
 	}
 
-	void InstatiateNetworkSentPrefab(Assets::Prefab& aPrefab, int gameobjectID, std::vector<unsigned> aComponents, bool Replicated = false)
+	void InstatiateNetworkSentPrefab(Assets::Prefab& aPrefab, GameObjectID gameobjectID, std::vector<unsigned> aComponents, bool Replicated = false)
 	{
 		//GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(aPrefab.dataPtr->data, gameobjectID, aComponents, true);
 		//gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
@@ -294,7 +294,7 @@ namespace Eclipse::Replication
 
 	void ReplicationHelper::ServerHelp::SendComponentsScene()
 	{
-		std::unordered_set<unsigned> ReplicatedGameObjects;
+		std::unordered_set<GameObjectID, GUIDHash> ReplicatedGameObjects;
 
 		const auto& variableManager = *Replication::ReplicationManager::CurrentReplicatedVariabpePtr;
 		for (auto& Variable : variableManager)
@@ -303,7 +303,7 @@ namespace Eclipse::Replication
 			if (!currentComponent->IsReplicated)
 				continue;
 
-			unsigned gameobjectID = currentComponent->gameObject->GetID();
+			GameObjectID gameobjectID = currentComponent->gameObject->GetID();
 			ReplicatedGameObjects.emplace(gameobjectID);
 		}
 

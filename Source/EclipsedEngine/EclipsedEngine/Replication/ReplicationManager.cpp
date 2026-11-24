@@ -53,7 +53,7 @@ namespace Eclipse::Replication
 
     void ReplicationManager::ClientConnected()
     {
-        NetMessage message = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestSceneInfo, nullptr, 0, true);
+        NetMessage message = NetMessage::BuildGameObjectMessage(GameObjectID{}, MessageType::Msg_RequestSceneInfo, nullptr, 0, true);
         client->Send(message);
     }
 
@@ -81,7 +81,7 @@ namespace Eclipse::Replication
             MainSingleton::GetInstance<SteamP2PNetworkingClient>().Send(message);
         });
 
-        ComponentManager::SetDestroyGameObjectReplicated([](unsigned aGameObject)
+        ComponentManager::SetDestroyGameObjectReplicated([](GameObjectID aGameObject)
         {
             if (!MainSingleton::Exists<SteamP2PNetworkingClient>())
                 return;
@@ -164,12 +164,12 @@ namespace Eclipse::Replication
     }
 
     // This might be stupid if one thinks about it but if you only want the object then do that
-    void ReplicationManager::CreateGOMessage(int aGameobjectID, NetMessage& outMessage)
+    void ReplicationManager::CreateGOMessage(GameObjectID aGameobjectID, NetMessage& outMessage)
     {
         outMessage = NetMessage::BuildGameObjectMessage(aGameobjectID, MessageType::Msg_CreateObject, &aGameobjectID, 0, true);
     }
 
-    void ReplicationManager::DeleteGOMessage(int aGameobjectID, NetMessage& outMessage)
+    void ReplicationManager::DeleteGOMessage(GameObjectID aGameobjectID, NetMessage& outMessage)
     {
         outMessage = NetMessage::BuildGameObjectMessage(aGameobjectID, MessageType::Msg_DeleteObject, &aGameobjectID, 0, true);
     }
@@ -191,7 +191,7 @@ namespace Eclipse::Replication
         outMessage = NetMessage::BuildGameObjectMessage(aComponent->gameObject->GetID(), MessageType::Msg_AddComponent, Data, DataAmount, true, aStartLater);
     }
 
-    void ReplicationManager::CreatePrefabMessage(unsigned aGOID, const GUID& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
+    void ReplicationManager::CreatePrefabMessage(GameObjectID aGOID, const GUID& PrefabAssetID, std::vector<unsigned> aComponentIDs, NetMessage& outMessage)
     {
         char Data[512];
 

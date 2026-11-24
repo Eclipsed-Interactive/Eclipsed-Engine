@@ -47,7 +47,7 @@ namespace Eclipse
 		if (IsRegistered(typeName))
 			return compNameToCompData[typeName].addComp;
 
-		return [](unsigned) { return nullptr; };
+		return [](GameObjectID) { return nullptr; };
 	}
 
 	AddCompFunc ComponentRegistry::GetAddComponentByRttiTypeName(const std::string& rttiTypeName)
@@ -55,7 +55,7 @@ namespace Eclipse
 		if (IsRegistered(rttiTypeName))
 			return rttiNameToCompData[rttiTypeName].addComp;
 
-		return [](unsigned) { return nullptr; };
+		return [](GameObjectID) { return nullptr; };
 	}
 
 	AddCompWithIdFunc ComponentRegistry::GetAddComponentWithIdByTypeName(const std::string& typeName)
@@ -63,7 +63,7 @@ namespace Eclipse
 		if (IsRegistered(typeName))
 			return compNameToCompData[typeName].addCompWithId;
 
-		return [](unsigned, unsigned) { return nullptr; };
+		return [](GameObjectID, unsigned) { return nullptr; };
 	}
 
 	AddCompWithIdFunc ComponentRegistry::GetAddComponentWithIdByRttiTypeName(const std::string& rttiTypeName)
@@ -71,7 +71,7 @@ namespace Eclipse
 		if (IsRegistered(rttiTypeName))
 			return rttiNameToCompData[rttiTypeName].addCompWithId;
 
-		return [](unsigned, unsigned) { return nullptr; };
+		return [](GameObjectID, unsigned) { return nullptr; };
 	}
 	std::unordered_map<std::string, RegisteredComp>& ComponentRegistry::GetComponentRttiMap()
 	{

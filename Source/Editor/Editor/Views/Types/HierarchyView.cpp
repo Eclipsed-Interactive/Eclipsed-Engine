@@ -29,7 +29,7 @@
 
 namespace Eclipse::Editor
 {
-	void HierarchyView::OpenParents(unsigned aParentID)
+	void HierarchyView::OpenParents(GameObjectID aParentID)
 	{
 		GameObject* gameobject = ComponentManager::GetGameObject(aParentID);
 		if (!gameobject)
@@ -45,7 +45,8 @@ namespace Eclipse::Editor
 
 	void HierarchyView::HierarchyButton(GameObject* aGameObject, float totalIndent)
 	{
-		unsigned id = aGameObject->GetID();
+		GameObjectID id = aGameObject->GetID();
+		const std::string idStr = id.ToString();
 		bool goIsOpen = gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end();
 
 		ImGui::PushFont(EditorUI::FontExtraSmall);
@@ -69,7 +70,7 @@ namespace Eclipse::Editor
 			}
 
 			ImGui::SetCursorPosX(cursorXpos - 6);
-			if (ImGui::InvisibleButton(std::string("##InvisibleButtonForChilding" + std::to_string(id)).c_str(), ImVec2(20, 20)))
+			if (ImGui::InvisibleButton(std::string("##InvisibleButtonForChilding" + idStr).c_str(), ImVec2(20, 20)))
 			{
 				if (gameobjectIdsThatAreOpen.find(id) != gameobjectIdsThatAreOpen.end())
 					gameobjectIdsThatAreOpen.erase(id);
@@ -88,7 +89,7 @@ namespace Eclipse::Editor
 			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
 
 		ImGui::SetCursorPosX(totalIndent + 24);
-		std::string buttonName = std::string(aGameObject->GetName() + "##" + std::to_string(id));
+		std::string buttonName = std::string(aGameObject->GetName() + "##" + idStr);
 		const char* itemName = aGameObject->GetName().c_str();
 		ImVec2 textSize = ImGui::CalcTextSize(itemName);
 		bool clickedButton = ImGui::Button(buttonName.c_str(), ImVec2(textSize.x + 10, 20));
@@ -118,7 +119,7 @@ namespace Eclipse::Editor
 
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("DND_Childing_Reordering", &id, sizeof(unsigned));
+			ImGui::SetDragDropPayload("DND_Childing_Reordering", &id, sizeof(GameObjectID));
 
 			ImGui::Text(aGameObject->GetName().c_str());
 			ImGui::EndDragDropSource();
@@ -128,8 +129,8 @@ namespace Eclipse::Editor
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_Childing_Reordering"))
 			{
-				IM_ASSERT(payload->DataSize == sizeof(unsigned));
-				unsigned draggedEntityID = *(const unsigned*)payload->Data;
+				IM_ASSERT(payload->DataSize == sizeof(GameObjectID));
+				GameObjectID draggedEntityID = *(const GameObjectID*)payload->Data;
 
 				auto it = ComponentManager::myEntityIdToEntity.find(draggedEntityID);
 				if (it != ComponentManager::myEntityIdToEntity.end())
@@ -224,7 +225,7 @@ namespace Eclipse::Editor
 				gameobjectIdsThatAreOpen.erase(parent->GetID());
 		}
 
-		/*if (aChild->transform && aParent->transform)
+		if (aChild->transform && aParent->transform)
 		{
 			Math::Vector2f worldPosition = aChild->transform->GetPosition();
 			float worldRotation = aChild->transform->GetRotation() * Math::rad2Deg;
@@ -266,12 +267,12 @@ namespace Eclipse::Editor
 				recttransform->myCanvas->canvasCameraTransform.Rotation = 0.f;
 				recttransform->myCanvas->canvasCameraTransform.ScaleMultiplier = { 1.f, 1.f };
 			}
-		}*/
+		}
 
 		gameobjectIdsThatAreOpen.emplace(aParent->GetID());
 	}
 
-	void HierarchyView::CreatePrefab(unsigned aGameobjectID, std::filesystem::path aPath)
+	void HierarchyView::CreatePrefab(GameObjectID aGameobjectID, std::filesystem::path aPath)
 	{
 		std::string GameObjectName = ComponentManager::GetGameObject(aGameobjectID)->GetName();
 
@@ -403,8 +404,8 @@ namespace Eclipse::Editor
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
 		{
-			unsigned currentObject = HierarchyView::CurrentGameObjectID;
-			if (currentObject > 0)
+			GameObjectID currentObject = HierarchyView::CurrentGameObjectID;
+			if (!currentObject.IsEmpty())
 			{
 				if (ComponentManager::myEntityIdToEntity.find(currentObject) != ComponentManager::myEntityIdToEntity.end())
 				{
@@ -413,7 +414,7 @@ namespace Eclipse::Editor
 
 					gameobject->Delete();
 					gameobjectIdsThatAreOpen.erase(currentObject);
-					HierarchyView::CurrentGameObjectID = 0;
+					HierarchyView::CurrentGameObjectID = GameObjectID{};
 
 					SelectionContext::SetActiveContext(GameObjectTarget{ CurrentGameObjectID });
 				}

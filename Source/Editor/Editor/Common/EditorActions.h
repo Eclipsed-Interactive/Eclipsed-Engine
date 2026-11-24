@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "ECS/Types.h"
+
 namespace Eclipse
 {
     class GameObject;
@@ -39,8 +41,8 @@ namespace Eclipse
             static void SaveScene();
             static void Save();
 
-            static void CopyGameObject(unsigned activeGO, rapidjson::Value& gameobjectJson, rapidjson::Document::AllocatorType& anAllocator);
-            static rapidjson::StringBuffer CopyObject(int aObjectID, bool aCopyToClipboard);
+            static void CopyGameObject(GameObjectID activeGO, rapidjson::Value& gameobjectJson, rapidjson::Document::AllocatorType& anAllocator);
+            static rapidjson::StringBuffer CopyObject(GameObjectID aObjectID, bool aCopyToClipboard);
             static void Copy();
 
             static void Paste();

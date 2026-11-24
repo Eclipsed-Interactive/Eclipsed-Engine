@@ -26,7 +26,8 @@ namespace Eclipse
 		{
 			rapidjson::Value gameobject(rapidjson::kObjectType);
 
-			gameobject.AddMember("id", obj->GetID(), alloc);
+			const std::string idStr = obj->GetID().ToString();
+			gameobject.AddMember("id", rapidjson::Value(idStr.c_str(), static_cast<rapidjson::SizeType>(idStr.size()), alloc), alloc);
 
 			const std::string& name = obj->GetName();
 			gameobject.AddMember("name",
@@ -49,7 +50,8 @@ namespace Eclipse
 			{
 				rapidjson::Value component(rapidjson::kObjectType);
 				component.AddMember("id", comp->myInstanceComponentID, alloc);
-				component.AddMember("owner", comp->gameObject->GetID(), alloc);
+				const std::string ownerStr = comp->gameObject->GetID().ToString();
+				component.AddMember("owner", rapidjson::Value(ownerStr.c_str(), static_cast<rapidjson::SizeType>(ownerStr.size()), alloc), alloc);
 
 				const std::string& name = comp->GetComponentName();
 

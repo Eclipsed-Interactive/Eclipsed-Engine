@@ -1,6 +1,7 @@
 #pragma once
 
 #include "steamsdk/steamnetworkingtypes.h"
+#include "Core/GUID.h"
 
 #include <string>
 
@@ -57,14 +58,14 @@ namespace Eclipse
 			int messageID;
 
 			MessageType Type;
-			unsigned GameObjectID;
+			GUID GameObjectID;
 			int dataSize;
 		} MetaData;
 
 		char data[512 - sizeof(MetaData)];
 
 	public:
-		static inline NetMessage BuildGameObjectMessage(unsigned aGameObjectID, MessageType messageType, const void* data, int aByteSize, bool IsGarantied, bool aStartLater = false)
+		static inline NetMessage BuildGameObjectMessage(const GUID& aGameObjectID, MessageType messageType, const void* data, int aByteSize, bool IsGarantied, bool aStartLater = false)
 		{
 			NetMessage message;
 

@@ -24,7 +24,7 @@ namespace Eclipse::Editor
 
 	void GameObjectInspector::Draw(const GameObjectTarget& target)
 	{
-		if (target == 0)
+		if (target.IsEmpty())
 			return;
 
 		if (ComponentManager::myEntityIdToEntity.find(target) == ComponentManager::myEntityIdToEntity.end())
@@ -53,7 +53,7 @@ namespace Eclipse::Editor
 		DrawComponents(gameObject->GetID());
 	}
 
-	void GameObjectInspector::DrawComponents(unsigned int gobjId)
+	void GameObjectInspector::DrawComponents(GameObjectID gobjId)
 	{
 		int counter = 0;
 
@@ -188,7 +188,7 @@ namespace Eclipse::Editor
 		}
 	}
 
-	char* GameObjectInspector::GetNameBuffer(unsigned int id, const std::string& initialName)
+	char* GameObjectInspector::GetNameBuffer(GameObjectID id, const std::string& initialName)
 	{
 		auto& nameBuffers = GetNameBuffers();
 		auto [it, inserted] = nameBuffers.try_emplace(id);
@@ -202,9 +202,9 @@ namespace Eclipse::Editor
 		return it->second.data();
 	}
 
-	std::unordered_map<unsigned int, std::array<char, NAME_BUFFER_LENGTH>>& GameObjectInspector::GetNameBuffers()
+	std::unordered_map<GameObjectID, std::array<char, NAME_BUFFER_LENGTH>, GUIDHash>& GameObjectInspector::GetNameBuffers()
 	{
-		static std::unordered_map<unsigned int, std::array<char, NAME_BUFFER_LENGTH>> nameBuffers;
+		static std::unordered_map<GameObjectID, std::array<char, NAME_BUFFER_LENGTH>, GUIDHash> nameBuffers;
 		return nameBuffers;
 	}
 }

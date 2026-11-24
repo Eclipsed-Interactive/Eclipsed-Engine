@@ -68,7 +68,7 @@ namespace Eclipse::Editor
 
 	}
 
-	void EditorActions::CopyGameObject(unsigned activeGO, rapidjson::Value& gameobjectJson, rapidjson::Document::AllocatorType& anAllocator)
+	void EditorActions::CopyGameObject(GameObjectID activeGO, rapidjson::Value& gameobjectJson, rapidjson::Document::AllocatorType& anAllocator)
 	{
 		/*rapidjson::Value componentArray(rapidjson::kArrayType);
 		componentArray.SetArray();
@@ -130,9 +130,9 @@ namespace Eclipse::Editor
 			gameobjectJson.AddMember("Children", childArray, anAllocator);
 		}*/
 	}
-	rapidjson::StringBuffer EditorActions::CopyObject(int aObjectID, bool aCopyToClipboard)
+	rapidjson::StringBuffer EditorActions::CopyObject(GameObjectID aObjectID, bool aCopyToClipboard)
 	{
-		if (aObjectID <= 0)
+		if (aObjectID.IsEmpty())
 			return nullptr;
 
 		rapidjson::Document d;
@@ -217,7 +217,7 @@ namespace Eclipse::Editor
 
 		if (true)
 		{
-			if (!HierarchyView::CurrentGameObjectID)
+			if (HierarchyView::CurrentGameObjectID.IsEmpty())
 				return;
 			
 			char* data = (char*)ClipBoard::GetClipboardData();

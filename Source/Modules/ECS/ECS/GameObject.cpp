@@ -25,14 +25,19 @@ namespace Eclipse
 
 
 	GameObject::GameObject(GameObjectID aId)
-		: myID(aId)
+		: id(aId)
 	{
 #ifdef ECL_EDITOR
+		// 24-bit pick id (0 means "nothing picked"), wraps around after 0xFFFFFF objects.
+		static unsigned nextPickID = 0;
+		nextPickID = (nextPickID % 0x00FFFFFF) + 1;
+		myPickID = nextPickID;
+
 		Math::Vector4ui colorInt;
 
-		colorInt.x = (myID & 0x000000FF) >> 0;
-		colorInt.y = (myID & 0x0000FF00) >> 8;
-		colorInt.z = (myID & 0x00FF0000) >> 16;
+		colorInt.x = (myPickID & 0x000000FF) >> 0;
+		colorInt.y = (myPickID & 0x0000FF00) >> 8;
+		colorInt.z = (myPickID & 0x00FF0000) >> 16;
 
 		myPixelPickColor = Math::Vector4f((float)colorInt.x / 255.f, (float)colorInt.y / 255.f, (float)colorInt.z / 255.f, 1);
 #endif
@@ -56,6 +61,12 @@ namespace Eclipse
 	{
 		return parent;
 	}
+
+	const GameObject* GameObject::GetParent() const
+	{
+		return parent;
+	}
+
 	void GameObject::SetParent(GameObject* aGO)
 	{
 		if (!aGO)
@@ -136,18 +147,18 @@ namespace Eclipse
 		return myName;
 	}
 
-	std::vector<Component*> GameObject::GetAllComponents()
+	std::vector<Component*> GameObject::GetAllComponents() const
 	{
-		return ComponentManager::GetComponents(myID);
+		return ComponentManager::GetComponents(id);
 	}
 
 	GameObjectID GameObject::GetID() const
 	{
-		return myID;
+		return id;
 	}
 
 	GameObject::operator Eclipse::GameObjectID() const
 	{
-		return myID;
+		return id;
 	}
 }

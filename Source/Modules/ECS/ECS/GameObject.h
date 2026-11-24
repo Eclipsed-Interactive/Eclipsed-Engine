@@ -32,7 +32,7 @@ namespace Eclipse
 		template<typename T>
 		T* GetComponent();
 
-		std::vector<Component*> GetAllComponents();
+		std::vector<Component*> GetAllComponents() const;
 
 		template <typename T>
 		void GetComponents(std::vector<T*>& aVector);
@@ -40,6 +40,7 @@ namespace Eclipse
 		GameObject* GetTopParent();
 
 		GameObject*& GetParent();
+		const GameObject* GetParent() const;
 
 		void SetParent(GameObject* aGO);
 
@@ -60,7 +61,7 @@ namespace Eclipse
 		void SetName(const std::string& aName);
 		const std::string& GetName() const;
 
-		unsigned GetID() const;
+		GameObjectID GetID() const;
 
 		operator Eclipse::GameObjectID() const;
 
@@ -70,7 +71,12 @@ namespace Eclipse
 		std::string prefabAssetIDStr;
 
 #ifdef ECL_EDITOR
+		// Small editor-only id encoded into the pixel-picking color (a GUID does not fit in RGB8).
+		unsigned GetPickID() const { return myPickID; }
+
 		Math::Vector4f myPixelPickColor;
+	private:
+		unsigned myPickID = 0;
 #endif
 	private:
 		GameObject* GetTopParentInternal(GameObject* aGameobject);
@@ -79,7 +85,6 @@ namespace Eclipse
 		std::vector<GameObject*> children;
 		size_t myChildIndex = 0;
 
-		unsigned myID;
 		std::string myName = "Gameobject";
 
 		bool myIsOwner = true;
@@ -93,28 +98,28 @@ namespace Eclipse
 
 	public:
 		[[nodiscard]] GUID GetGUID() const { return id; }
-		void SetGUID(const std::string& aStrGuid) { id.FromString(aStrGuid); }
-		void SetGUID(GUID aGuid) { id = aGuid; }
 
 	private:
+		// The GUID is the gameobject's id and the key it is registered under in ComponentManager.
+		// It is set once on construction; use ComponentManager::CreateGameObject(GUID) to create with a specific id.
 		GUID id;
 	};
 
 	template<typename T>
 	inline T* GameObject::AddComponent(bool IsReplicated)
 	{
-		return ComponentManager::template AddComponent<T>(myID, IsReplicated);
+		return ComponentManager::template AddComponent<T>(id, IsReplicated);
 	}
 
 	template<typename T>
 	inline T* GameObject::GetComponent()
 	{
-		return ComponentManager::template GetComponent<T>(myID);
+		return ComponentManager::template GetComponent<T>(id);
 	}
 
 	template <typename T>
 	void GameObject::GetComponents(std::vector<T*>& aVector)
 	{
-		ComponentManager::template GetAllComponentsOfType<T>(myID, aVector);
+		ComponentManager::template GetAllComponentsOfType<T>(id, aVector);
 	}
 }

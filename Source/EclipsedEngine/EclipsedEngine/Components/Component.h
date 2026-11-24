@@ -40,8 +40,8 @@ virtual ~type() = default;													\
 private:
 
 
-#define REGISTER_COMPONENT_CALLBACK(type) [](unsigned gameObjId, unsigned compID){ return Eclipse::ComponentManager::AddComponentWithID<type>(gameObjId, compID); }
-#define REGISTER_COMPONENT_CALLBACK_NORMAL(type) [](unsigned gameObjId){ return Eclipse::ComponentManager::AddComponent<type>(gameObjId); }
+#define REGISTER_COMPONENT_CALLBACK(type) [](::Eclipse::GameObjectID gameObjId, unsigned compID){ return Eclipse::ComponentManager::AddComponentWithID<type>(gameObjId, compID); }
+#define REGISTER_COMPONENT_CALLBACK_NORMAL(type) [](::Eclipse::GameObjectID gameObjId){ return Eclipse::ComponentManager::AddComponent<type>(gameObjId); }
 
 
 
@@ -52,7 +52,7 @@ public:																								\
 virtual unsigned GetUpdatePriority() const override {return updatePriority;}						\
 inline type() = default;																			\
 virtual ~type() = default;																			\
-virtual const char* GetComponentName() override { return #type; }							\
+virtual const char* GetComponentName() const override { return #type; }							\
 protected:
 
 
@@ -65,7 +65,7 @@ public:																		\
     inline type() = default;										\
 virtual ~type() = default;													\
 protected:																	\
-virtual const char* GetComponentName() override { return #type; }	\
+virtual const char* GetComponentName() const override { return #type; }	\
 private:
 
 

@@ -18,62 +18,6 @@
 
 namespace Eclipse
 {
-	namespace {
-		std::string SaveObject(GameObject* aObject, bool pretty = true)
-		{
-			using namespace rapidjson;
-			constexpr int VERSION = 0;
-
-			StringBuffer buffer;
-			PrettyWriter<StringBuffer> writer(buffer);
-
-			writer.StartObject();
-			const std::string guidStr = aObject->GetGUID().ToString();
-
-			{ // Write all generic gameobject data
-				writer.Key("id");	writer.String(guidStr.c_str());
-				writer.Key("name"); writer.String(aObject->GetName().c_str());
-				writer.Key("static"); writer.Bool(aObject->GetIsStatic());
-				writer.Key("version"); writer.Int(VERSION);
-			}
-
-			writer.Key("components");
-			writer.StartArray();
-			{
-				rapidjson::MemoryPoolAllocator<> alloc;
-
-				for (Component* comp : aObject->GetAllComponents())
-				{
-					const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(comp->GetComponentName());
-
-					writer.StartObject();
-					writer.Key("component_type_str");
-					writer.String(type.name.c_str());
-
-					writer.Key("fields");
-					writer.StartObject();
-					for (auto& [name, field] : type.fields)
-					{
-						const void* fieldPtr = reinterpret_cast<const unsigned char*>(comp) + field.offset;
-						rapidjson::Value val = Serialization::ToJson(field.type, fieldPtr, alloc);
-
-						writer.Key(name.c_str());
-						val.Accept(writer);
-					}
-					writer.EndObject();
-					writer.EndObject();
-
-					alloc.Clear();
-				}
-			}
-			writer.EndArray();
-
-			writer.EndObject();
-
-			return buffer.GetString();
-		}
-	}
-
 	SerializedScene SceneSerializer::Serialize(GUID guid, bool pretty)
 	{
 		using namespace rapidjson;
@@ -98,7 +42,7 @@ namespace Eclipse
 		for (auto& [falseid, gameobject] : ComponentManager::GetGameObjects())
 		{
 			writer.String(gameobject->GetGUID().ToString().c_str());
-			scene.objects.push_back(SerializedObject{ .guid = gameobject->GetGUID(), .json = SaveObject(gameobject)});
+			scene.objects.push_back(SerializedObject{ .guid = gameobject->GetGUID(), .json = SerializeObject(gameobject)});
 		}
 		writer.EndArray();
 		writer.EndObject();
@@ -106,5 +50,64 @@ namespace Eclipse
 		scene.manifest = buffer.GetString();
 
 		return scene;
+	}
+
+	std::string SceneSerializer::SerializeObject(const GameObject* anObj, bool aIsPretty)
+	{
+		using namespace rapidjson;
+		constexpr int VERSION = 0;
+
+		StringBuffer buffer;
+		PrettyWriter<StringBuffer> writer(buffer);
+
+		writer.StartObject();
+		const std::string guidStr = anObj->GetGUID().ToString();
+
+		{ // Write all generic gameobject data
+			writer.Key("id");	writer.String(guidStr.c_str());
+			writer.Key("name"); writer.String(anObj->GetName().c_str());
+			writer.Key("static"); writer.Bool(anObj->GetIsStatic());
+			writer.Key("version"); writer.Int(VERSION);
+
+			if (const GameObject* parent = anObj->GetParent())
+			{
+				writer.Key("parent"); writer.String(parent->GetGUID().ToString().c_str());
+			}
+		}
+
+		writer.Key("components");
+		writer.StartArray();
+		{
+			rapidjson::MemoryPoolAllocator<> alloc;
+
+			for (const Component* comp : anObj->GetAllComponents())
+			{
+				const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(comp->GetComponentName());
+
+				writer.StartObject();
+				writer.Key("component_type_str");
+				writer.String(type.name.c_str());
+
+				writer.Key("fields");
+				writer.StartObject();
+				for (auto& [name, field] : type.fields)
+				{
+					const void* fieldPtr = reinterpret_cast<const unsigned char*>(comp) + field.offset;
+					rapidjson::Value val = Serialization::ToJson(field.type, fieldPtr, alloc);
+
+					writer.Key(name.c_str());
+					val.Accept(writer);
+				}
+				writer.EndObject();
+				writer.EndObject();
+
+				alloc.Clear();
+			}
+		}
+		writer.EndArray();
+
+		writer.EndObject();
+
+		return buffer.GetString();
 	}
 }

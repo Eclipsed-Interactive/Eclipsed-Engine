@@ -6,6 +6,7 @@
 #include "asio/asio.hpp"
 
 #include "Networking/Shared/Message.h"
+#include "ECS/Types.h"
 
 namespace Eclipse
 {
@@ -80,10 +81,10 @@ namespace Eclipse::Replication
 
     public:
         // Create replication messages
-        static void CreateGOMessage(int aGameobjectID, NetMessage& outMessage);
-        static void DeleteGOMessage(int aGameobjectID, NetMessage& outMessage);
+        static void CreateGOMessage(GameObjectID aGameobjectID, NetMessage& outMessage);
+        static void DeleteGOMessage(GameObjectID aGameobjectID, NetMessage& outMessage);
         static void CreateComponentMessage(Eclipse::Component* aComponent, NetMessage& outMessage, bool aStartLater = false);
-        static void CreatePrefabMessage(unsigned aGOID, const GUID& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
+        static void CreatePrefabMessage(GameObjectID aGOID, const GUID& PrefabAssetID, std::vector<unsigned>, NetMessage& outMessage);
 
     public:
         // Direct send functions

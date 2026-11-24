@@ -5,13 +5,14 @@
 #include <string>
 
 #include "EclipsedEngine.Core.hpp"
+#include "ECS/Types.h"
 
 namespace Eclipse
 {
     class Component;
 
-    using AddCompWithIdFunc = std::function<Component* (unsigned, unsigned)>;
-    using AddCompFunc = std::function<Component* (unsigned)>;
+    using AddCompWithIdFunc = std::function<Component* (GameObjectID, unsigned)>;
+    using AddCompFunc = std::function<Component* (GameObjectID)>;
 
     struct RegisteredComp
     {

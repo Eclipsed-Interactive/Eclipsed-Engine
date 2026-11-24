@@ -31,7 +31,7 @@ namespace Eclipse
 	}
 
 	template <typename T>
-	inline void ComponentManager::GetAllComponentsOfType(unsigned aGOID, std::vector<T*>& aComponents)
+	inline void ComponentManager::GetAllComponentsOfType(GameObjectID aGOID, std::vector<T*>& aComponents)
 	{
 		if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
 			return;
@@ -47,7 +47,7 @@ namespace Eclipse
 	}
 
 	template <typename T>
-	inline T* ComponentManager::GetComponent(unsigned aGOID)
+	inline T* ComponentManager::GetComponent(GameObjectID aGOID)
 	{
 		if (myEntityIDToVectorOfComponentIDs.find(aGOID) == myEntityIDToVectorOfComponentIDs.end())
 			return nullptr;
@@ -83,7 +83,7 @@ namespace Eclipse
 	// }
 
 	template <typename T>
-	inline T* ComponentManager::AddComponent(unsigned aGOID, bool IsReplicated)
+	inline T* ComponentManager::AddComponent(GameObjectID aGOID, bool IsReplicated)
 	{
 		T* component = AddComponentWithID<T>(aGOID, Component::GetNextComponentID(), IsReplicated);
 
@@ -96,7 +96,7 @@ namespace Eclipse
 	}
 
 	template <typename T>
-	inline T* ComponentManager::AddComponentWithID(unsigned aGOID, unsigned aComponentID, bool IsReplicated)
+	inline T* ComponentManager::AddComponentWithID(GameObjectID aGOID, unsigned aComponentID, bool IsReplicated)
 	{
 		uint8_t* base = static_cast<uint8_t*>(myComponentData);
 		size_t sizeOfNewComponent = sizeof(T);

@@ -112,7 +112,7 @@ namespace Eclipse
 
 		virtual void OnDrawGizmos() {}
 
-		virtual const char* GetComponentName() { return "Component"; }
+		virtual const char* GetComponentName() const { return "Component"; }
 
 		bool IsOwner() { return myIsOwner; }
 		void SetIsOwner(bool anIsOwner) { myIsOwner = anIsOwner; }

@@ -156,7 +156,7 @@ namespace Eclipse
         return nullptr;
     }
 
-    GameObject* InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(const char* aData, int aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated)
+    GameObject* InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(const char* aData, GameObjectID aGameobjectID, const std::vector<unsigned>& aComponentsID, bool fromReplicated)
     {
         rapidjson::Document d;
         d.SetObject();
@@ -203,7 +203,7 @@ namespace Eclipse
     }
 
     void InternalSpawnObjectClass::PasteGameObjectSpecifiedIds(GameObject*& aGameObject, rapidjson::Value& gameobject, rapidjson::Document::AllocatorType& anAllocator,
-                                                               int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated)
+                                                               GameObjectID aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated)
     {
         // Needs integrating with the new scene saving :|
 

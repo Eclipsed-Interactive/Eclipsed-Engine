@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Core/Math/Vector/Vector2.h"
+#include "Core/GUID.h"
 
 #include <string>
 
@@ -84,7 +85,7 @@ namespace Eclipse
 
 	struct UserData
 	{
-		unsigned gameobject = 0;
+		GUID gameobject;
 	};
 
 	struct HitResult
@@ -92,7 +93,7 @@ namespace Eclipse
 		Math::Vector2f point;
 		Math::Vector2f normal;
 		float fraction;
-		unsigned gameobject;
+		GUID gameobject;
 	};
 
 	struct HitResults

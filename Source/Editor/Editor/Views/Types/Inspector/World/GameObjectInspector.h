@@ -5,6 +5,7 @@
 #include <array>
 
 #include "ImGui/imgui.h"
+#include "ECS/Types.h"
 
 #define NAME_BUFFER_LENGTH 256
 
@@ -16,10 +17,10 @@ namespace Eclipse::Editor
 		static void Draw(const GameObjectTarget& target);
 
 	private:
-		static void DrawComponents(unsigned int gobjId);
+		static void DrawComponents(GameObjectID gobjId);
 
-		static char* GetNameBuffer(unsigned int id, const std::string& initialName = "Gameobject");
-		static std::unordered_map<unsigned int, std::array<char, NAME_BUFFER_LENGTH>>& GetNameBuffers();
+		static char* GetNameBuffer(GameObjectID id, const std::string& initialName = "Gameobject");
+		static std::unordered_map<GameObjectID, std::array<char, NAME_BUFFER_LENGTH>, GUIDHash>& GetNameBuffers();
 
 	private:
 		static ImGuiTextFilter filter;

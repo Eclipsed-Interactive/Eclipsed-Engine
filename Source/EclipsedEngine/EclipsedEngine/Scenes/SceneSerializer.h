@@ -27,6 +27,8 @@ namespace Eclipse
 	public:
 		static SerializedScene Serialize(GUID guid, bool pretty = false);
 
+		static std::string SerializeObject(const GameObject* anObj, bool aIsPretty = false);
+
 		static std::string SaveScene(bool pretty = false);
 		static void LoadScene(Scene scene);
 		static void LoadScene(const std::string& scene);

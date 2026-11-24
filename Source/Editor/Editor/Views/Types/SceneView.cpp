@@ -42,9 +42,9 @@
 
 void Eclipse::Editor::SceneView::TryZoomToObject()
 {
-	unsigned currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
+	GameObjectID currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
 
-	if (!currentGO) return;
+	if (currentGO.IsEmpty()) return;
 
 	if (ImGui::IsAnyItemActive()) return;
 
@@ -149,7 +149,7 @@ void Eclipse::Editor::SceneView::SpriteDragging()
 	Math::Vector2f mouseDragdelta = { mouseDelta.x, mouseDelta.y };
 	Math::Vector2f mouseDeltaECL = Math::Vector2f(mouseDragdelta.x / Dividend.y, -mouseDragdelta.y / (Dividend.x / ResolutionRatio)) * (1.f / myInspectorScale);
 
-	unsigned currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
+	GameObjectID currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
 
 	mySpriteMoveVector += mouseDeltaECL;
 
@@ -241,10 +241,24 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	MousePosition.y = myWindowSize.y - MousePosition.y;
 
 	Math::Vector4ui colorValue = device->ReadPixelOnFrameBuffer(0, MousePosition);
-	unsigned pickedID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
+	// The pick buffer holds the gameobject's small editor pick id, map it back to the gameobject GUID.
+	const unsigned pickedPickID = colorValue.x + colorValue.y * 256 + colorValue.z * 256 * 256;
 
-	unsigned currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
-	if (currentGO == pickedID && currentGO)
+	GameObjectID pickedID{};
+	if (pickedPickID)
+	{
+		for (const auto& [id, gameobject] : ComponentManager::GetGameObjects())
+		{
+			if (gameobject && gameobject->GetPickID() == pickedPickID)
+			{
+				pickedID = id;
+				break;
+			}
+		}
+	}
+
+	GameObjectID currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
+	if (currentGO == pickedID && !currentGO.IsEmpty())
 	{
 		if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt))
 		{
@@ -293,7 +307,7 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 		SelectionContext::SetActiveContext(GameObjectTarget{ pickedID });
 		HierarchyView::CurrentGameObjectID = pickedID;
 
-		if (pickedID)
+		if (!pickedID.IsEmpty())
 			HierarchyView::OpenParents(pickedID);
 	}
 }
@@ -376,7 +390,7 @@ void Eclipse::Editor::SceneView::CheckDragNDrop()
 
 void Eclipse::Editor::SceneView::TryDrawSpriteEdges()
 {
-	if (SelectionContext::GetCurrentData<GameObjectTarget>())
+	if (!SelectionContext::GetCurrentData<GameObjectTarget>().IsEmpty())
 	{
 		mySelectedObject = GetComp(::Eclipse::SpriteRenderer2D, SelectionContext::GetCurrentData<GameObjectTarget>());
 

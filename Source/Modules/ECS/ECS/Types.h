@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Core/GUID.h"
+
 namespace Eclipse
 {
 	typedef unsigned ComponentIndex;
-	typedef unsigned GameObjectID;
+	using GameObjectID = GUID;
 	typedef unsigned RegisteredTypeIndex;
 }
