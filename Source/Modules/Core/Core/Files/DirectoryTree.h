@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "FileInfo.h"
+#include "Core/GUID.h"
+
 #include "Core.Core.hpp"
 
 namespace Eclipse::Utilities

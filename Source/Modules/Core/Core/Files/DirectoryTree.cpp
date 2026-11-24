@@ -126,9 +126,7 @@ namespace Eclipse::Utilities
 			});
 	}
 
-	const FileNode* DirectoryTree::Internal_GetNode(
-		const std::filesystem::path& path,
-		const FileNode* node)
+	const FileNode* DirectoryTree::Internal_GetNode(const std::filesystem::path& path, const FileNode* node)
 	{
 		if (!node)
 			return nullptr;

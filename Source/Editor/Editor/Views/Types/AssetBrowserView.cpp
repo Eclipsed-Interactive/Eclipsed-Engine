@@ -24,13 +24,12 @@
 #include "FontAwesome/7/IconsFontAwesome7.h"
 
 #include "Editor/EditorUI.h"
+#include "AssetSystem/Assets.h"
 
 namespace Eclipse::Editor
 {
 	void AssetBrowserView::OnOpen()
 	{
-		auto c = PathManager::GetAssetsPath();
-
 		dirTree = Utilities::DirectoryTree(PathManager::GetAssetsPath());
 		Active_View_Node = dirTree.GetRoot();
 
@@ -118,6 +117,11 @@ namespace Eclipse::Editor
 
 		for (Utilities::FileNode* child : node->children)
 		{
+			if (child->info.guid.IsEmpty())
+			{
+				Assets::TryGetGuid(child->info.filePath, child->info.guid);
+			}
+
 			std::string name = child->info.filePath.filename().string();
 			std::string icon = child->info.GetIcon();
 
@@ -437,12 +441,9 @@ namespace Eclipse::Editor
 		{
 		case Utilities::FileInfo::FileType_Scene:
 		{
-			//Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-			//GUID guid = database.GetGUIDFromFullPath(fifo.filePath);
+			SceneManager::Load(fifo.guid);
 
-			//SceneManager::Load(guid);
-
-			//SceneView::ResetCamera();
+			SceneView::ResetCamera();
 		}
 		break;
 		case Utilities::FileInfo::FileType_Prefab:

@@ -5,8 +5,8 @@
 
 namespace Eclipse
 {
-	Material::Material(AssetSystem::AssetData* aData)
-		: myGuid(aData->guid), myData(reinterpret_cast<AssetSystem::MaterialData*>(aData))
+	Material::Material(AssetSystem::AssetData* aData, GUID aGuid)
+		: myGuid(aGuid), myData(reinterpret_cast<AssetSystem::MaterialData*>(aData))
 	{
 		unsigned int vsId = UINT_MAX;
 		if (Shader vs = GetVertexShader(); vs.IsReady())

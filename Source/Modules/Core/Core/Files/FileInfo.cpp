@@ -85,7 +85,7 @@ namespace Eclipse::Utilities
 
 		FileInfo info;
 		info.filePath = aPath;
-
+		
 		std::filesystem::file_status status = std::filesystem::status(aPath);
 		switch (status.type())
 		{

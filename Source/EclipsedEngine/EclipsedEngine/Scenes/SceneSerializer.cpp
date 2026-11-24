@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <vector>
+#include <AssetSystem/Assets.h>
 
 namespace Eclipse
 {
@@ -37,34 +38,35 @@ namespace Eclipse
 			}
 
 			writer.Key("components");
+			writer.StartArray();
 			{
-				writer.StartArray();
-
 				rapidjson::MemoryPoolAllocator<> alloc;
 
 				for (Component* comp : aObject->GetAllComponents())
 				{
-					const std::string compName = comp->GetComponentName();
-					const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(compName);
+					const Reflection::TypeEntry& type = Reflection::ReflectionRegistry::GetType(comp->GetComponentName());
 
 					writer.StartObject();
-					{
-						writer.Key("name"); writer.String(type.name.c_str());
-						for (auto& [name, field] : type.fields)
-						{
-							const void* fieldPtr = reinterpret_cast<const unsigned char*>(comp) + field.offset;
-							rapidjson::Value val = Serialization::ToJson(field.type, fieldPtr, alloc);
+					writer.Key("component_type_str");
+					writer.String(type.name.c_str());
 
-							writer.Key(name.c_str());
-							val.Accept(writer);
-						}
+					writer.Key("fields");
+					writer.StartObject();
+					for (auto& [name, field] : type.fields)
+					{
+						const void* fieldPtr = reinterpret_cast<const unsigned char*>(comp) + field.offset;
+						rapidjson::Value val = Serialization::ToJson(field.type, fieldPtr, alloc);
+
+						writer.Key(name.c_str());
+						val.Accept(writer);
 					}
 					writer.EndObject();
+					writer.EndObject();
+
 					alloc.Clear();
 				}
-
-				writer.EndArray();
 			}
+			writer.EndArray();
 
 			writer.EndObject();
 
@@ -84,6 +86,11 @@ namespace Eclipse
 		PrettyWriter<StringBuffer> writer(buffer);
 
 		writer.StartObject();
+		std::filesystem::path fullpath;
+		Assets::TryGetFull(guid, fullpath);
+		const std::string filename = fullpath.filename().stem().string();
+
+		writer.Key("name"); writer.String(filename.c_str());
 		writer.Key("id"); writer.String(guid.ToString().c_str());
 
 		writer.Key("objects");

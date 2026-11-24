@@ -33,6 +33,39 @@ namespace Eclipse::AssetSystem
 		return nullptr;
 	}
 
+	bool SourceRegistry::TryGetGuid(const std::filesystem::path& aFullPath, GUID& outGuid)
+	{
+		for (SourceMount& mount : sources)
+		{
+			auto rel = std::filesystem::relative(aFullPath, mount.sourceLocation);
+			if (rel.empty() || *rel.begin() == "..") 
+				continue;
+
+			auto it = mount.pathToGuid.find(VirtualPath(mount, aFullPath));
+			if (it == mount.pathToGuid.end()) 
+				return false;
+			
+			outGuid = it->second;
+
+			return true;
+		}
+		return false;
+	}
+
+	bool SourceRegistry::TryGetFullPath(GUID aGuid, std::filesystem::path& outPath)
+	{
+		for (const auto& mount : sources)
+		{
+			auto it = mount.metas.find(aGuid);
+			if (it == mount.metas.end() ) continue;
+
+			outPath = std::filesystem::absolute(it->second->SourcePath());
+			return true;
+		}
+
+		return false;
+	}
+
 	void SourceRegistry::RefreshAll()
 	{
 		for (SourceMount& mount : sources)

@@ -18,17 +18,17 @@ namespace Eclipse
 	{
 	public:
 		Scene() = default;
-		Scene(AssetSystem::AssetData* data);
+		Scene(AssetSystem::AssetData* aData, GUID aGuid);
 
 	public:
 		constexpr static unsigned int Magic = 'ESCE';
 
 	public:
 		[[nodiscard]] std::string_view GetJson() const;
-		[[nodiscard]] GUID GetGUID() const;
 
 	public:
 		[[nodiscard]] bool IsReady() const;
+		[[nodiscard]] GUID GetGUID() const { return myGuid; }
 
 	private:
 		GUID myGuid;

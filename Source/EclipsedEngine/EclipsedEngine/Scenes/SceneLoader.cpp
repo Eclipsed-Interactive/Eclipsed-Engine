@@ -11,6 +11,8 @@
 #include "rapidjson/prettywriter.h"
 
 #include "Reflection/Runtime/ReflectionRegistry.h"
+#include <fstream>
+#include <sstream>
 
 // Windows.h (included by other files in the unity batch) defines GetObject as a macro
 #ifdef GetObject
@@ -20,66 +22,71 @@
 namespace Eclipse
 {
 	namespace {
-		void LoadComponents(const rapidjson::Value& components)
+		void LoadComponents(GameObject* obj, const rapidjson::Value& components)
 		{
-			for (const auto& typeMember : components.GetObject())
+			for (const auto& type : components.GetArray())
 			{
-				try
+				const Reflection::TypeEntry* reflectedType = nullptr;
+				std::string typeStr = "";
+				if (type.HasMember("component_type_str") && type["component_type_str"].IsString())
 				{
-					const Reflection::TypeEntry* reflectedType = Reflection::ReflectionRegistry::TryGetType(typeMember.name.GetString());
-					if (!reflectedType) continue;
-
-					for (const auto& comp : typeMember.value.GetArray())
-					{
-						unsigned int id = 0;
-						unsigned int owner = 0;
-
-						if (comp.HasMember("id") && comp["id"].IsUint())
-							id = comp["id"].GetUint();
-
-						if (comp.HasMember("owner") && comp["owner"].IsUint())
-							owner = comp["owner"].GetUint();
-
-						Component* Comp = ComponentManager::AddComponentWithID(owner, id, reflectedType->createAtAddress, reflectedType->size);
-
-						Comp->SetComponentID(id);
-
-						for (auto& member : comp["data"].GetObject())
-						{
-							const char* key = member.name.GetString();
-							const rapidjson::Value& value = member.value;
-							const Reflection::FieldEntry& field = Reflection::ReflectionRegistry::GetField(typeMember.name.GetString(), key);
-
-							unsigned char* data = reinterpret_cast<unsigned char*>(Comp) + field.offset;
-
-							Serialization::FromJson(field.type, reinterpret_cast<void*>(data), value);
-						}
-					}
+					typeStr = type["component_type_str"].GetString();
+					reflectedType = Reflection::ReflectionRegistry::TryGetType(typeStr);
 				}
-				catch (...)
+
+				if (!reflectedType) continue;
+
+				unsigned int id = 0;
+				unsigned int owner = 0;
+
+				if (type.HasMember("id") && type["id"].IsUint())
+					id = type["id"].GetUint();
+
+				if (type.HasMember("owner") && type["owner"].IsUint())
+					owner = type["owner"].GetUint();
+
+				Component* Comp = ComponentManager::AddComponent(obj->GetID(), reflectedType->createAtAddress, reflectedType->size);
+
+				for (auto& member : type["fields"].GetObject())
 				{
-					// Component is not reflected. Cant be loaded.
+					const char* key = member.name.GetString();
+					const rapidjson::Value& value = member.value;
+					const Reflection::FieldEntry& field = Reflection::ReflectionRegistry::GetField(typeStr, key);
+
+					unsigned char* data = reinterpret_cast<unsigned char*>(Comp) + field.offset;
+
+					Serialization::FromJson(field.type, reinterpret_cast<void*>(data), value);
 				}
 			}
 		}
 
-		void LoadGameObjects(const rapidjson::Value& gameobjects)
+		void LoadGameObjects(const std::string& aName, const rapidjson::Value& gameobjects)
 		{
 			for (auto& go : gameobjects.GetArray())
 			{
 				const std::string guidStr = go.GetString();
 
-				//unsigned int id = 0;
-				//std::string name = "";
+				const std::filesystem::path path = PathManager::GetAssetsPath() / "__external__" / "Scenes" / aName / guidStr;
 
-				//if (go.HasMember("name") && go["name"].IsString())
-				//	name = go["name"].GetString();
+				std::ifstream file(path, std::ios::binary);
+				std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-				//if (go.HasMember("id") && go["id"].IsUint())
-				//	id = go["id"].GetUint();
+				rapidjson::Document d;
+				d.Parse(json.c_str());
 
-				//GameObject* obj = ComponentManager::CreateGameObject(id);
-				//obj->SetName(name);
+				GameObject* obj = ComponentManager::CreateGameObject();;
+
+				GUID guid; std::string name; bool isStatic = false;
+				if (d.HasMember("id") && d["id"].IsString()) guid.FromString(d["id"].GetString());
+				if (d.HasMember("name") && d["name"].IsString()) name = d["name"].GetString();
+				if (d.HasMember("static") && d["static"].IsBool()) isStatic = d["static"].GetBool();
+
+				obj->SetGUID(guid);
+				obj->SetIsStatic(isStatic);
+				obj->SetName(name);
+
+				if (d.HasMember("components") && d["components"].IsArray())
+					LoadComponents(obj, d["components"]);
 			}
 		}
 	}
@@ -97,8 +104,13 @@ namespace Eclipse
 			throw std::runtime_error("Document couldnt be opened.");
 		}
 
+		std::string name = "Unknown Name";
+		if (d.HasMember("name") && d["name"].IsString())
+			name = d["name"].GetString();
+
+
 		if (d.HasMember("objects") && d["objects"].IsArray())
-			LoadGameObjects(d["objects"]);
+			LoadGameObjects(name, d["objects"]);
 	}
 
 	void SceneSerializer::LoadScene(Scene scene)

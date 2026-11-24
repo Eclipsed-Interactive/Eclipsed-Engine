@@ -19,6 +19,9 @@ namespace Eclipse::AssetSystem
 		static void Mount(const char* aScheme, const std::filesystem::path& aSourceLocation, const std::filesystem::path& aArtifactLocation);
 
 		static SourceMount* TryGetMount(const char* aScheme);
+		static bool TryGetGuid(const std::filesystem::path& aFullPath, GUID& outGuid);
+
+		static bool TryGetFullPath(GUID aGuid, std::filesystem::path& outPath);
 
 		static void RefreshAll();
 

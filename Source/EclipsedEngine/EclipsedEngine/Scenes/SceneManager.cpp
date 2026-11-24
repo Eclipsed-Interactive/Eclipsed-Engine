@@ -17,6 +17,9 @@
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/prettywriter.h"
 
+#include <AssetSystem/Assets.h>
+#include <fstream>
+
 namespace Eclipse
 {
 	std::string SceneManager::CaptureSnapshot()
@@ -65,37 +68,43 @@ namespace Eclipse
 
 	void SceneManager::SaveActive()
 	{
-		//using namespace rapidjson;
+		using namespace rapidjson;
 
-		//if (!ActiveScene.IsReady())
-		//	return;
+		if (!ActiveScene.IsReady())
+			return;
 
-		//const SerializedScene scene = SceneSerializer::Serialize(ActiveScene.GetGUID(), true);
+		const SerializedScene scene = SceneSerializer::Serialize(ActiveScene.GetGUID(), true);
 	
-		//const std::filesystem::path path = meta.fullPath;
-		//onSceneChangeCallback(meta.guid);
+		std::filesystem::path path;
+		if (!Assets::TryGetFull(ActiveScene.GetGUID(), path))
+		{
+			return;
+		}
+
+		onSceneChangeCallback(ActiveScene.GetGUID());
 
 
 
 		//ActiveScene.dataPtr->sourceBlob = scene.manifest;
 
-		//std::filesystem::create_directories(PathManager::GetAssetsPath() / "__external__" / "Scenes" / meta.fileName);
+		const std::string filename = path.filename().stem().string();
+		std::filesystem::create_directories(PathManager::GetAssetsPath() / "__external__" / "Scenes" / filename);
 
-		//for (auto& obj : scene.objects)
-		//{
-		//	std::ofstream sceneObj(PathManager::GetAssetsPath() / "__external__" / "Scenes" / meta.fileName / obj.guid.ToString(), std::ios::binary);
-		//	sceneObj << obj.json;
-		//}
+		for (auto& obj : scene.objects)
+		{
+			std::ofstream sceneObj(PathManager::GetAssetsPath() / "__external__" / "Scenes" / filename / obj.guid.ToString(), std::ios::binary);
+			sceneObj << obj.json;
+		}
 
 
-		//std::ofstream file(path, std::ios::binary);
-		//if (!file)
-		//{
-		//	throw std::runtime_error("The file failed to open.");
-		//}
+		std::ofstream file(path, std::ios::binary);
+		if (!file)
+		{
+			throw std::runtime_error("The file failed to open.");
+		}
 
-		//file << scene.manifest;
-		//file.close();
+		file << scene.manifest;
+		file.close();
 	}
 
 
@@ -148,27 +157,27 @@ namespace Eclipse
 
 	void SceneManager::Load(GUID guid)
 	{
-//		try
-//		{
-//			Assets::Scene scene = Assets::AssetManager::Load<Assets::Scene>(guid);
-//
-//			UnloadActive();
-//			SetActiveSceneType(SceneType::World);
-//			PhysicsEngine::InitWorld();
-//
-//			onSceneChangeCallback(guid);
-//			ActiveScene = scene;
-//
-//			SceneSerializer::LoadScene(ActiveScene);
-//
-//#ifdef ECL_EDITOR
-//			MarkClean();
-//#endif
-//		}
-//		catch(...)
-//		{
-//			// Scene dont exist.
-//		}
+		try
+		{
+			Scene scene = Assets::Load<Scene>(guid);
+
+			UnloadActive();
+			SetActiveSceneType(SceneType::World);
+			PhysicsEngine::InitWorld();
+
+			onSceneChangeCallback(guid);
+			ActiveScene = scene;
+
+			SceneSerializer::LoadScene(ActiveScene);
+
+#ifdef ECL_EDITOR
+			MarkClean();
+#endif
+		}
+		catch(...)
+		{
+			// Scene dont exist.
+		}
 	}
 
 	void SceneManager::SetActiveSceneType(SceneType type)

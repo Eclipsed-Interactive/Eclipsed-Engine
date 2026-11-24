@@ -5,8 +5,8 @@
 
 namespace Eclipse
 {
-	Texture::Texture(AssetSystem::AssetData* aData)
-		: myGuid(aData->guid), myData(reinterpret_cast<AssetSystem::TextureData*>(aData))
+	Texture::Texture(AssetSystem::AssetData* aData, GUID aGuid)
+		: myGuid(aGuid), myData(reinterpret_cast<AssetSystem::TextureData*>(aData))
 	{
 	}
 

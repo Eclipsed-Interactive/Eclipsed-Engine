@@ -28,7 +28,7 @@ namespace Eclipse::AssetSystem
 	inline T AssetLoader::Load(GUID aGuid)
 	{
 		if (AssetData* cached = AssetCache::Get(aGuid))
-			return T(cached);
+			return T(cached, aGuid);
 
 		std::vector<Byte> bytes;
 		if (!ArtifactRegistry::Read(aGuid, bytes) || bytes.empty())
@@ -47,7 +47,7 @@ namespace Eclipse::AssetSystem
 
 		loader->Load(reader, data);
 
-		return T(data);
+		return T(data, aGuid);
 	}
 
 	template<typename T>

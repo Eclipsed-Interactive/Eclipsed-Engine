@@ -18,7 +18,7 @@ namespace Eclipse
 	{
 	public:
 		Texture() = default;
-		Texture(AssetSystem::AssetData* data);
+		Texture(AssetSystem::AssetData* aData, GUID aGuid);
 
 	public:
 		constexpr static unsigned int Magic = 'ETEX';
@@ -38,6 +38,7 @@ namespace Eclipse
 
 	public:
 		[[nodiscard]] bool IsReady() const;
+		[[nodiscard]] GUID GetGUID() const { return myGuid; }
 		void Bind(unsigned int slot = 0) const;
 
 	private:

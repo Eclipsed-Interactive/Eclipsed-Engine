@@ -3,6 +3,8 @@
 #include <filesystem>
 #include "Core.Core.hpp"
 
+#include <Core/GUID.h>
+
 namespace Eclipse::Utilities
 {
 	struct CORE_API FileInfo
@@ -44,7 +46,7 @@ namespace Eclipse::Utilities
 		std::filesystem::path filePath;
 		std::filesystem::path relativeFilePath;
 		
-		std::string assetID;
+		GUID guid;
 
 	public:
 		const char* GetIcon() const;

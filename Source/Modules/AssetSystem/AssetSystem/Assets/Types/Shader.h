@@ -17,7 +17,7 @@ namespace Eclipse
 	{
 	public:
 		Shader() = default;
-		Shader(AssetSystem::AssetData* data);
+		Shader(AssetSystem::AssetData* aData, GUID aGuid);
 
 	public:
 		constexpr static unsigned int Magic = 'ESHA';
@@ -28,6 +28,7 @@ namespace Eclipse
 
 	public:
 		bool IsReady() const;
+		[[nodiscard]] GUID GetGUID() const { return myGuid; }
 
 	private:
 		GUID myGuid;

@@ -20,7 +20,7 @@ namespace Eclipse
 	{
 	public:
 		Material() = default;
-		Material(AssetSystem::AssetData* data);
+		Material(AssetSystem::AssetData* aData, GUID aGuid);
 
 	public:
 		constexpr static unsigned int Magic = 'EMAT';
@@ -33,6 +33,7 @@ namespace Eclipse
 
 	public:
 		bool IsReady() const;
+		[[nodiscard]] GUID GetGUID() const { return myGuid; }
 
 		void Bind();
 

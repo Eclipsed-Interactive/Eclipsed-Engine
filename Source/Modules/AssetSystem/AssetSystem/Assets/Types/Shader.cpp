@@ -4,8 +4,8 @@
 
 namespace Eclipse
 {
-	Shader::Shader(AssetSystem::AssetData* aData)
-		: myGuid(aData->guid), myData(reinterpret_cast<AssetSystem::ShaderData*>(aData))
+	Shader::Shader(AssetSystem::AssetData* aData, GUID aGuid)
+		: myGuid(aGuid), myData(reinterpret_cast<AssetSystem::ShaderData*>(aData))
 	{
 	}
 	
