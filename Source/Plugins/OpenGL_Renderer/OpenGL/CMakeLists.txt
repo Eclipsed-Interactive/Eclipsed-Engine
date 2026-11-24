@@ -23,10 +23,17 @@ target_include_directories(OpenGL
 file(GLOB LIB_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/Libs/*.lib"
 )
+# glslang ships separate Debug (/MDd, "d" suffix) and Release (/MD) libs; link per configuration
+list(FILTER LIB_FILES EXCLUDE REGEX "/glslang[^/]*\\.lib$")
+set(GLSLANG_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Libs")
 
 target_link_libraries(OpenGL INTERFACE
     ${LIB_FILES}
-    
+    debug     "${GLSLANG_LIB_DIR}/glslangd.lib"
+    optimized "${GLSLANG_LIB_DIR}/glslang.lib"
+    debug     "${GLSLANG_LIB_DIR}/glslang-default-resource-limitsd.lib"
+    optimized "${GLSLANG_LIB_DIR}/glslang-default-resource-limits.lib"
+
     PRIVATE
         ImGui
         cereal
