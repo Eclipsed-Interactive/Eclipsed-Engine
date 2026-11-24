@@ -5,7 +5,7 @@
 #include <filesystem>
 
 #include "Core/EventSystem/EventSystem.h"
-#include "Assets/MetaData/AssetMeta.h"
+//#include "Assets/MetaData/AssetMeta.h"
 #include "Core/Files/FileInfo.h"
 
 
@@ -45,7 +45,7 @@ namespace Eclipse::Editor
 		static const IconData& GetIcon(const Utilities::FileInfo& fileInfo);
 
 	private:
-		static void ImportAsset(const Assets::AssetMeta& meta);
+		static void ImportAsset(/*const Assets::AssetMeta& meta*/);
 
 	private:
 		static inline std::vector<std::string> filesToLoad;

@@ -24,13 +24,13 @@ target_link_libraries(EclipsedEngine
         Core
         Input
         Audio
-        Assets
         ECS
         Renderer
         Physics
         Networking
         Reflection
         Serialization
+        AssetSystem
 
     PRIVATE
         ImGui

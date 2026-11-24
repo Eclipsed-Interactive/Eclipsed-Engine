@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "012d5dce865138785b9afeee3000e3f6",
-        "type": 6,
-        "metaComponents": []
-    }
+    "guid": "db4288c09f5d7cddefec8394fd303c99",
+    "filename": "",
+    "path": "engine://Fonts/ArialMdm.ttf",
+    "type": 0,
+    "data": {}
 }

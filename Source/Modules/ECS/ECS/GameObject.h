@@ -8,6 +8,8 @@
 
 #include "Types.h"
 
+#include "Core/GUID.h"
+
 #include "ECS.Core.hpp"
 
 namespace Eclipse
@@ -82,7 +84,20 @@ namespace Eclipse
 
 		bool myIsOwner = true;
 
-		bool IsStatic;
+	public:
+		[[nodiscard]] bool GetIsStatic() const { return IsStatic; }
+		void SetIsStatic(const bool& aIsStatic) { IsStatic = aIsStatic; }
+
+	private:
+		bool IsStatic = false;
+
+	public:
+		[[nodiscard]] GUID GetGUID() const { return id; }
+		void SetGUID(const std::string& aStrGuid) { id.FromString(aStrGuid); }
+		void SetGUID(GUID aGuid) { id = aGuid; }
+
+	private:
+		GUID id;
 	};
 
 	template<typename T>

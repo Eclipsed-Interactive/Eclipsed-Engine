@@ -8,7 +8,7 @@
 
 #include <array>
 
-#include "Assets/Assets/TextureAsset.h"
+#include "AssetSystem/Assets/Types/Texture.h"
 
 namespace Eclipse
 {
@@ -160,6 +160,6 @@ namespace Eclipse
 		static inline class SharedGPUParticlesBuffer* SharedParticleBuffer;
 
 		[[SerializeField]]
-		std::vector<Assets::Texture> Textures;
+		std::vector<Texture> Textures;
 	};
 }

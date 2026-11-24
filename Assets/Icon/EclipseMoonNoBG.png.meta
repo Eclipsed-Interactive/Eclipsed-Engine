@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "dd4f9d27ce1d2435ea5c7de9101f4a0c",
-        "type": 1,
-        "metaComponents": []
+    "guid": "99080d91127cc591c864f53ff6054d08",
+    "filename": "",
+    "path": "engine://Icon/EclipseMoonNoBG.png",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

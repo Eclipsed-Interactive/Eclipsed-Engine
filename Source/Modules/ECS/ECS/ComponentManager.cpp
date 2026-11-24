@@ -1226,6 +1226,8 @@ namespace Eclipse
 	GameObject* ComponentManager::CreateGameObject(GameObjectID aId)
 	{
 		GameObject* obj = new GameObject(aId);
+		obj->SetGUID(GUID::GenerateGUID());
+
 		myEntityIdToEntity[aId] = obj;
 
 		return obj;
@@ -1235,6 +1237,7 @@ namespace Eclipse
 	{
 		unsigned randomID = GetNewGOID();
 		GameObject* obj = new GameObject(randomID);
+		obj->SetGUID(GUID::GenerateGUID());
 		myEntityIdToEntity[randomID] = obj;
 
 		return obj;

@@ -22,7 +22,7 @@ namespace Eclipse::Math
 
 		Vector4f ToVector() { return Vector4f(r, g, b, a); }
 
-		Math::Color operator*(const Math::Color& other);
+		Math::Color operator*(const Math::Color& other) const;
 
 		template <class Archive>
 		void serialize(Archive& ar)

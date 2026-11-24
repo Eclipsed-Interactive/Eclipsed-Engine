@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "fb73aacbceca0495da6a4d38e65885da",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "529379301b59ac7dbefff346d4d0073d",
+    "filename": "",
+    "path": "engine://Default/Shaders/Lights/PointLight2D.pglsl",
+    "type": 0,
+    "data": {}
 }

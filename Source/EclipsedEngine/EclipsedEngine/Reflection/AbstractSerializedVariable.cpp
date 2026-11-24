@@ -3,18 +3,17 @@
 #include "Reflection.h"
 
 //#include "Editor/Common/DragAndDrop.h"
-#include "Assets/Assets/MaterialAsset.h"
-#include "Assets/Assets/AudioAsset.h"
-#include "Assets/Assets/TextureAsset.h"
-#include "Assets/Assets/FontAsset.h"
-#include "Assets/Assets/PrefabAsset.h"
-#include "Assets/AssetManager.h"
+//#include "Assets/Assets/MaterialAsset.h"
+//#include "Assets/Assets/AudioAsset.h"
+//#include "Assets/Assets/TextureAsset.h"
+//#include "Assets/Assets/FontAsset.h"
+//#include "Assets/Assets/PrefabAsset.h"
+//#include "Assets/AssetManager.h"
 
 #include "ReflectionTypeChecks.h"
 #include "ECS/Component.h"
 
 #include "Core/MainSingleton.h"
-#include "Assets/Core/AssetDatabase.h"
 
 //#include "Editor/Windows/EditorField.h"
 
@@ -145,7 +144,7 @@ namespace Eclipse::Reflection
 
 		//		if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Audio))
 		//		{
-		//			Assets::GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
+		//			GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
 		//			Assets::AudioClip clips = Assets::AssetManager::Load<Assets::AudioClip>(guid);
 		//			
 		//			*clip = clips;
@@ -166,7 +165,7 @@ namespace Eclipse::Reflection
 
 		//		if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Texture))
 		//		{
-		//			Assets::GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
+		//			GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
 		//			Assets::Texture _texture = Assets::AssetManager::Load<Assets::Texture>(guid);
 		//			*texture= _texture;
 		//		}
@@ -186,7 +185,7 @@ namespace Eclipse::Reflection
 
 		//		if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Prefab))
 		//		{
-		//			Assets::GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
+		//			GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
 		//			Assets::Prefab _texture = Assets::AssetManager::Load<Assets::Prefab>(guid);
 		//			*prefab = _texture;
 		//		}
@@ -206,7 +205,7 @@ namespace Eclipse::Reflection
 
 		//			if (Editor::DragAndDrop::BeginTarget(name.c_str(), Utilities::FileInfo::FileType_Font))
 		//			{
-		//				Assets::GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
+		//				GUID guid = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(Editor::DragAndDrop::payloadBuffer).guid;
 		//				Assets::Font _texture = Assets::AssetManager::Load<Assets::Font>(guid);
 		//				*font = _texture;
 		//			}

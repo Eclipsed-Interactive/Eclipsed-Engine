@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "105d9bf76cd65cf56968682a5be2c25b",
-        "type": 2,
-        "metaComponents": []
-    }
+    "guid": "6fda4183161e7d64ce5b1aa5d7e78a8c",
+    "filename": "",
+    "path": "engine://Default/Materials/Default_2D_Light_Fullscreen_Material.mat",
+    "type": 0,
+    "data": {}
 }

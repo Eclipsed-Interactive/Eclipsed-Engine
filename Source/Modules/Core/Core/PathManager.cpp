@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <Windows.h>
 
 #include <Core/Logger/DebugLogger.h>
 
@@ -11,7 +12,12 @@ namespace Eclipse
 	{
 		namespace fs = std::filesystem;
 
-		engineSourceRoot = fs::current_path();
+		wchar_t exePath[MAX_PATH];
+		const DWORD len = GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+		if (len > 0 && len < MAX_PATH)
+			engineSourceRoot = fs::path(exePath).parent_path();
+		else
+			engineSourceRoot = fs::current_path();
 
 		std::string path = engineSourceRoot.parent_path().generic_string();
 		_putenv_s("ecl_path", path.c_str());

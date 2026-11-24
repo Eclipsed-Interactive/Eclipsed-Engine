@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "4f8a113813d720223c2e27803605bdd1",
-        "type": 1,
-        "metaComponents": []
+    "guid": "f99075e4ac2e0938250a2fe2b557496d",
+    "filename": "",
+    "path": "engine://Editor/RotationGizmo.psd",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

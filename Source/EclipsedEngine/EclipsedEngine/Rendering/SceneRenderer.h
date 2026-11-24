@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Renderer/FrameBuffer.h"
-#include <Assets/Assets/MaterialAsset.h>
+#include <AssetSystem/Assets/Types/Material.h>
 
 #include "EclipsedEngine.Core.hpp"
 
@@ -41,6 +41,6 @@ namespace Eclipse::Rendering
 
 		static inline Graphics::FrameBuffer ShadowsFrameBuffer;
 
-		static inline Assets::Material LightCompositeMat;
+		static inline Material LightCompositeMat;
 	};
 }

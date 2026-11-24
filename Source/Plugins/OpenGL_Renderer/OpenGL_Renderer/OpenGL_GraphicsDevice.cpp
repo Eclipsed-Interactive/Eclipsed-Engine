@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <Core/PathManager.h>
 #include <fstream>
+#include <stdexcept>
+#include <string>
 
 #include "Renderer/ParticleCommon.h"
 
@@ -19,6 +21,73 @@ namespace Eclipse::Graphics::OpenGL
 		case Eclipse::Graphics::BlendMode::Multiply:glBlendFunc(GL_DST_COLOR, GL_ZERO); break;
 		case Eclipse::Graphics::BlendMode::Screen:	glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE); break;
 		}
+	}
+
+	unsigned int OpenGL_GraphicsDevice::CreateTexture(const std::span<const Byte> somePixels, TextureDescription& aTextureDescription)
+	{
+		unsigned int id = 0;
+		glGenTextures(1, &id);
+		glBindTexture(GL_TEXTURE_2D, id);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		GLenum format = GL_RGB;
+
+		switch (aTextureDescription.channels)
+		{
+		case 1: format = GL_RED;  break;
+		case 2: format = GL_RG;   break;
+		case 3: format = GL_RGB;  break;
+		case 4: format = GL_RGBA; break;
+
+		default:
+			throw std::runtime_error("Unsupported channel count.");
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, aTextureDescription.width, aTextureDescription.height, 0, format, GL_UNSIGNED_BYTE, somePixels.data());
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return id;
+	}
+
+	unsigned int OpenGL_GraphicsDevice::CreateShader(const std::span<const Eclipse::Byte> someSpirvs, ShaderStage aStage)
+	{
+		GLenum glType = 0;
+		switch (aStage)
+		{
+		case ShaderStage::Vertex:   glType = GL_VERTEX_SHADER;   break;
+		case ShaderStage::Pixel:    glType = GL_FRAGMENT_SHADER; break;
+		case ShaderStage::Geometry: glType = GL_GEOMETRY_SHADER; break;
+		case ShaderStage::Compute:  glType = GL_COMPUTE_SHADER;  break;
+		}
+
+		unsigned int id = glCreateShader(glType);
+		glShaderBinary(1, &id, GL_SHADER_BINARY_FORMAT_SPIR_V, someSpirvs.data(), (int)someSpirvs.size());
+		glSpecializeShader(id, "main", 0, nullptr, nullptr);
+
+		return id;
+	}
+
+	unsigned int OpenGL_GraphicsDevice::CreateShaderProgram(unsigned int* ps, unsigned int* vs)
+	{
+		unsigned int program = glCreateProgram();
+
+		if(vs) glAttachShader(program, *vs);
+		if(ps) glAttachShader(program, *ps);
+		glLinkProgram(program);
+
+		if (vs) glDetachShader(program, *vs);
+		if (ps) glDetachShader(program, *ps);
+
+		return program;
 	}
 
 
@@ -199,7 +268,7 @@ namespace Eclipse::Graphics::OpenGL
 			glGetShaderInfoLog(id, len, NULL, log.data());
 			fprintf(stderr, "%s shader compile failed:\n%s\n", name, log.c_str());
 
-			throw;
+			throw std::runtime_error(std::string(name) + " shader compile failed:\n" + log);
 		}
 	};
 
@@ -214,7 +283,7 @@ namespace Eclipse::Graphics::OpenGL
 			std::string log(len > 1 ? len : 1, '\0');
 			glGetProgramInfoLog(id, len, NULL, log.data());
 			fprintf(stderr, "Program link failed:\n%s\n", log.c_str());
-			throw;
+			throw std::runtime_error("Program link failed:\n" + log);
 		}
 	};
 
@@ -377,26 +446,26 @@ namespace Eclipse::Graphics::OpenGL
 		glBindTexture(GL_TEXTURE_2D, textureIndex);
 	}
 
-	void OpenGL_GraphicsDevice::BindTexture(unsigned slot, Assets::Texture& texture)
-	{
-		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, texture.GetTextureID());
-	}
+	//void OpenGL_GraphicsDevice::BindTexture(unsigned slot, Assets::Texture& texture)
+	//{
+	//	glActiveTexture(GL_TEXTURE0 + slot);
+	//	glBindTexture(GL_TEXTURE_2D, texture.GetTextureID());
+	//}
 
 	void OpenGL_GraphicsDevice::BindShader(unsigned id)
 	{
 		glUseProgram(id);
 	}
 
-	void OpenGL_GraphicsDevice::BindMaterial(Assets::Material& material)
-	{
-		//materialBuffer.color = dataPtr->color
-		material.GetBuffer().color = material.dataPtr->color;
-		BindShader(material.GetProgramID());
+	//void OpenGL_GraphicsDevice::BindMaterial(Assets::Material& material)
+	//{
+	//	//materialBuffer.color = dataPtr->color
+	//	material.GetBuffer().color = material.dataPtr->color;
+	//	BindShader(material.GetProgramID());
 
-		Assets::Texture& texture = material.GetTexture();
-		if (texture.dataPtr)
-			BindTexture(0, texture); // Change to albedo slot
-	}
+	//	Assets::Texture& texture = material.GetTexture();
+	//	if (texture.dataPtr)
+	//		BindTexture(0, texture); // Change to albedo slot
+	//}
 }
 

@@ -16,7 +16,6 @@
 
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
-#include "Assets/AssetManager.h"
 
 #include <Renderer/GraphicsSettings.h>
 
@@ -69,7 +68,7 @@ namespace Eclipse::Editor
 
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 
-		device->BindFrameBuffer(Rendering::SceneRenderer::GetFrameBuffer().textureIndex);
+		device->BindFrameBuffer(Rendering::SceneRenderer::GetFrameBuffer().frameBufferIndex);
 		//device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
 		device->SetViewport(myWindowSize);
@@ -162,7 +161,7 @@ namespace Eclipse::Editor
 	void GameView::CheckNChangeSceneImageDimension()
 	{
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
-		if (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y)
+		if (myWindowSize.x >= 1 && myWindowSize.y >= 1 && (myWindowSize.x != myLastWindowResolution.x || myWindowSize.y != myLastWindowResolution.y))
 		{
 			Rendering::SceneRenderer::SetResolution(myWindowSize);
 		}

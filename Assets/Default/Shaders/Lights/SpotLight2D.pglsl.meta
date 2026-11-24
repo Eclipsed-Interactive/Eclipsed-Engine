@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "4c5be978b84928a01ee47c343399fb6f",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "52b4d23e9b3790aed328bc26b56f08fd",
+    "filename": "",
+    "path": "engine://Default/Shaders/Lights/SpotLight2D.pglsl",
+    "type": 0,
+    "data": {}
 }

@@ -3,7 +3,6 @@
 #include "ImGui/imgui.h"
 
 #include "Core/MainSingleton.h"
-#include "Assets/Core/AssetDatabase.h"
 
 #include "Editor/Common/TextureIconManager.h"
 
@@ -20,8 +19,6 @@
 
 #include "Editor/SelectionContext.h"
 
-#include "Assets/Core/AssetDatabase.h"
-#include "Assets/MetaData/Data/TextureMeta.h"
 #include "Core/MainSingleton.h"
 
 #include "FontAwesome/7/IconsFontAwesome7.h"
@@ -60,16 +57,7 @@ namespace Eclipse::Editor
 
 		if (shouldReloadAssets)
 		{
-			//std::filesystem::path LastPath = ctxMenu.GetActivePath();
-			const std::filesystem::path lastPath = Active_View_Node->info.filePath;
 
-			shouldReloadAssets = false;
-			dirTree.Reload();
-			Active_View_Node = dirTree.GetNode(lastPath);
-
-			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-			database.Reload();
-			//ctxMenu.SetActivePath(LastPath);
 		}
 	}
 
@@ -303,10 +291,10 @@ namespace Eclipse::Editor
 			ImVec2 imageMin(center.x - drawWidth * 0.5f, center.y - drawHeight * 0.5f);
 			ImVec2 imageMax(center.x + drawWidth * 0.5f, center.y + drawHeight * 0.5f);
 
-			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-			Assets::GUID guid = database.GetGUIDFromFullPath(node->info.filePath);
-			Assets::AssetMeta& meta = database.GetProcessedFile(guid);
-			Assets::TextureMeta* textureMeta = meta.GetMetaComponent<Assets::TextureMeta>();
+			//Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+			//GUID guid = database.GetGUIDFromFullPath(node->info.filePath);
+			//Assets::AssetMeta& meta = database.GetProcessedFile(guid);
+			//Assets::TextureMeta* textureMeta = meta.GetMetaComponent<Assets::TextureMeta>();
 
 			// Write full image
 			ImGui::GetWindowDrawList()->AddImage(
@@ -449,12 +437,12 @@ namespace Eclipse::Editor
 		{
 		case Utilities::FileInfo::FileType_Scene:
 		{
-			Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-			Assets::GUID guid = database.GetGUIDFromFullPath(fifo.filePath);
+			//Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+			//GUID guid = database.GetGUIDFromFullPath(fifo.filePath);
 
-			SceneManager::Load(guid);
+			//SceneManager::Load(guid);
 
-			SceneView::ResetCamera();
+			//SceneView::ResetCamera();
 		}
 		break;
 		case Utilities::FileInfo::FileType_Prefab:

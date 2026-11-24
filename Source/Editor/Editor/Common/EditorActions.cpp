@@ -26,7 +26,6 @@
 
 #include "Core/MainSingleton.h"
 #include "Core/PathManager.h"
-#include "Assets/Core/AssetDatabase.h"
 
 #include <Editor/PlayModeController.h>
 #include <Editor/Game/GameModuleManager.h>
@@ -44,12 +43,12 @@ namespace Eclipse::Editor
 
 			break;
 		case SceneManager::Prefab:
-			Assets::Scene scene = SceneManager::GetActive();
-			const Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+			//Scene scene = SceneManager::GetActive();
+			//const Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
 
-			std::filesystem::path filePath = database.GetProcessedFile(scene.GetAssetID()).fullPath;
-			filePath.replace_filename("");
-			HierarchyView::CreatePrefab(SceneManager::GetActivePrefab(), filePath);
+			//std::filesystem::path filePath = database.GetProcessedFile(scene.GetAssetID()).fullPath;
+			//filePath.replace_filename("");
+			//HierarchyView::CreatePrefab(SceneManager::GetActivePrefab(), filePath);
 			break;
 		}
 	}

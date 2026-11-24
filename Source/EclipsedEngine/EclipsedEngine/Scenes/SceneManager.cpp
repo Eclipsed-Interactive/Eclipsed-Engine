@@ -1,7 +1,6 @@
 #include "SceneManager.h"
 
-#include "Assets/Core/AssetDatabase.h"
-#include "Assets/AssetManager.h"
+#include "AssetSystem/Assets/Types/Scene.h"
 #include "Core/MainSingleton.h"
 
 #include "SceneSerializer.h"
@@ -11,6 +10,12 @@
 #include "Renderer/RenderCommands/CommandList.h"
 
 #include "ECS/ComponentManager.h"
+
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/prettywriter.h"
 
 namespace Eclipse
 {
@@ -45,14 +50,14 @@ namespace Eclipse
 		PhysicsEngine::CleanUp();
 	}
 
-	void SceneManager::SetOnSceneChangeCallback(std::function<void(Assets::GUID guid)> callBack)
+	void SceneManager::SetOnSceneChangeCallback(std::function<void(GUID guid)> callBack)
 	{
 		onSceneChangeCallback = callBack;
 	}
 
 	void SceneManager::ReloadActive()
 	{
-		Assets::Scene scene = ActiveScene;
+		Scene scene = ActiveScene;
 
 		UnloadActive();
 		Load(scene);
@@ -60,102 +65,110 @@ namespace Eclipse
 
 	void SceneManager::SaveActive()
 	{
-		if (!ActiveScene.IsValid())
-			return;
+		//using namespace rapidjson;
 
-		const std::string serializedString = SceneSerializer::SaveScene(true);
+		//if (!ActiveScene.IsReady())
+		//	return;
 
-		Assets::AssetDatabase& database = MainSingleton::GetInstance< Assets::AssetDatabase>();
-		const Assets::AssetMeta& meta = database.GetProcessedFile(ActiveScene.GetAssetID());
+		//const SerializedScene scene = SceneSerializer::Serialize(ActiveScene.GetGUID(), true);
+	
+		//const std::filesystem::path path = meta.fullPath;
+		//onSceneChangeCallback(meta.guid);
 
-		const std::filesystem::path path = meta.fullPath;
-		onSceneChangeCallback(meta.guid);
 
-		ActiveScene.dataPtr->sourceBlob = serializedString;
 
-		std::ofstream file(path, std::ios::binary);
-		if (!file)
-		{
-			throw std::runtime_error("The file failed to open.");
-		}
+		//ActiveScene.dataPtr->sourceBlob = scene.manifest;
 
-		file << serializedString;
-		file.close();
+		//std::filesystem::create_directories(PathManager::GetAssetsPath() / "__external__" / "Scenes" / meta.fileName);
+
+		//for (auto& obj : scene.objects)
+		//{
+		//	std::ofstream sceneObj(PathManager::GetAssetsPath() / "__external__" / "Scenes" / meta.fileName / obj.guid.ToString(), std::ios::binary);
+		//	sceneObj << obj.json;
+		//}
+
+
+		//std::ofstream file(path, std::ios::binary);
+		//if (!file)
+		//{
+		//	throw std::runtime_error("The file failed to open.");
+		//}
+
+		//file << scene.manifest;
+		//file.close();
 	}
 
 
 	void SceneManager::Load(const char* path)
 	{
-
-		std::filesystem::path fullpath = "";
-
-		if (std::filesystem::exists(path))
-		{
-			fullpath = path;
-		}
-		else
-		{
-			fullpath = PathManager::GetAssetsPath() / path;
-			fullpath.replace_extension(".scene");
-		}
-
-		UnloadActive();
-		SetActiveSceneType(SceneType::World);
-		PhysicsEngine::InitWorld();
-
-		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-		const Assets::GUID guid = database.GetGUIDFromFullPath(fullpath);
-		ActiveScene = Assets::AssetManager::Load<Assets::Scene>(guid);
-		onSceneChangeCallback(guid);
-
-		SceneSerializer::LoadScene(ActiveScene);
-
-#ifdef ECL_EDITOR
-		MarkClean();
-#endif
+//		std::filesystem::path fullpath = "";
+//
+//		if (std::filesystem::exists(path))
+//		{
+//			fullpath = path;
+//		}
+//		else
+//		{
+//			fullpath = PathManager::GetAssetsPath() / path;
+//			fullpath.replace_extension(".scene");
+//		}
+//
+//		UnloadActive();
+//		SetActiveSceneType(SceneType::World);
+//		PhysicsEngine::InitWorld();
+//
+//		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+//		const GUID guid = database.GetGUIDFromFullPath(fullpath);
+//		ActiveScene = Assets::AssetManager::Load<Assets::Scene>(guid);
+//		onSceneChangeCallback(guid);
+//
+//		SceneSerializer::LoadScene(ActiveScene);
+//
+//#ifdef ECL_EDITOR
+//		MarkClean();
+//#endif
 	}
 
-	void SceneManager::Load(Assets::Scene scene)
+	void SceneManager::Load(Scene scene)
 	{
 
-		UnloadActive();
-		SetActiveSceneType(SceneType::World);
-		PhysicsEngine::InitWorld();
-
-		onSceneChangeCallback(scene.GetAssetID());
-
-		ActiveScene = scene;
-		SceneSerializer::LoadScene(ActiveScene);
-
-#ifdef ECL_EDITOR
-		MarkClean();
-#endif
+//		UnloadActive();
+//		SetActiveSceneType(SceneType::World);
+//		PhysicsEngine::InitWorld();
+//
+//		onSceneChangeCallback(scene.GetAssetID());
+//
+//		ActiveScene = scene;
+//		SceneSerializer::LoadScene(ActiveScene);
+//
+//#ifdef ECL_EDITOR
+//		MarkClean();
+//#endif
 	}
 
-	void SceneManager::Load(Assets::GUID guid)
+	void SceneManager::Load(GUID guid)
 	{
-		try
-		{
-
-			Assets::Scene scene = Assets::AssetManager::Load<Assets::Scene>(guid);
-
-			UnloadActive();
-			SetActiveSceneType(SceneType::World);
-			PhysicsEngine::InitWorld();
-
-			onSceneChangeCallback(guid);
-			ActiveScene = scene;
-
-			SceneSerializer::LoadScene(ActiveScene);
-
-#ifdef ECL_EDITOR
-			MarkClean();
-#endif
-		}
-		catch(...)
-		{
-			// Scene dont exist.
-		}
+//		try
+//		{
+//			Assets::Scene scene = Assets::AssetManager::Load<Assets::Scene>(guid);
+//
+//			UnloadActive();
+//			SetActiveSceneType(SceneType::World);
+//			PhysicsEngine::InitWorld();
+//
+//			onSceneChangeCallback(guid);
+//			ActiveScene = scene;
+//
+//			SceneSerializer::LoadScene(ActiveScene);
+//
+//#ifdef ECL_EDITOR
+//			MarkClean();
+//#endif
+//		}
+//		catch(...)
+//		{
+//			// Scene dont exist.
+//		}
 	}
 
 	void SceneManager::SetActiveSceneType(SceneType type)
@@ -173,7 +186,7 @@ namespace Eclipse
 		return ActivePrefabEditSceneID;
 	}
 
-	Assets::Scene SceneManager::GetActive()
+	Scene SceneManager::GetActive()
 	{
 		return ActiveScene;
 	}

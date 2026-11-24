@@ -14,11 +14,13 @@
 #include "Physics/PhysicsEngine.h"
 #include <Core/GraphicsBuffers/LightBuffer.h>
 
+#include <Core/MainSingleton.h>
+
 namespace Eclipse
 {
 	void SpotLight2D::OnComponentAdded()
 	{
-		myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPOTLIGHT);
+		//myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPOTLIGHT);
 	}
 
 	void SpotLight2D::Render()
@@ -48,7 +50,7 @@ namespace Eclipse
 		light.cosInner = cosf(myInner * 0.5f * (Math::pi / 180.f));
 		light.cosOuter = cosf(myOuter * 0.5f * (Math::pi / 180.f));
 
-		renderer.GetDevice()->BindMaterial(myLightMaterial);
+		myLightMaterial.Bind();
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transform);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpotLightBuffer, 6, &light);
 

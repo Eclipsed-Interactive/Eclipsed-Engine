@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "2a0b288eb4009503a4ec2e7285334eea",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "2604d579fc57fc282220e31207349aa6",
+    "filename": "",
+    "path": "engine://Default/Shaders/Editor/PixelPick.pglsl",
+    "type": 0,
+    "data": {}
 }

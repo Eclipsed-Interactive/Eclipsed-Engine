@@ -9,10 +9,12 @@
 #include "Core/Math/Vector/Vector2.h"
 #include "Core/Math/Color.h"
 
-#include "Assets/AssetManager.h"
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/SpriteBuffer.h"
 #include "Core/GraphicsBuffers/TransformBuffer.h"
+#include "Core/GraphicsBuffers/MaterialBuffer.h"
+#include <AssetSystem/Assets/Types/Material.h>
+#include <AssetSystem/Assets/Types/Texture.h>
 
 namespace Eclipse
 {
@@ -44,13 +46,13 @@ namespace Eclipse
         void Draw(unsigned aProgramID = 0);
 
 
-        void SetSprite(const Assets::GUID& aGuid);
-        void SetSprite(const Assets::Texture& aSprite);
-        [[nodiscard]] Assets::Texture GetSprite() const { return mySprite; }
+        void SetSprite(const GUID& aGuid);
+        void SetSprite(const Texture& aSprite);
+        [[nodiscard]] Texture GetSprite() const { return mySprite; }
 
-        void SetMaterial(const Assets::GUID& aGuid);
-        void SetMaterial(const Assets::Material& aMaterial);
-        [[nodiscard]] Assets::Material GetMaterial() const { return myMaterial; }
+        void SetMaterial(const GUID& aGuid);
+        void SetMaterial(const Material& aMaterial);
+        [[nodiscard]] Material GetMaterial() const { return myMaterial; }
 
         void SetColor(const Math::Color& aColor);
         [[nodiscard]] Math::Color GetColor() const { return myColor; }
@@ -73,12 +75,15 @@ namespace Eclipse
         Math::Vector2f spriteRectMax = { 1.f, 1.f };
 
     private:
+        static Material PixelPickMaterial;
+
+    private:
         bool hasSprite = false;
         bool hasMaterial = false;
 
         SpriteBuffer mySpriteBuffer;
-        
-        Assets::Material PixelPickMaterial;
+        MaterialBuffer materialBuffer;
+                
 
         Math::Vector2f Bounds;
 
@@ -92,10 +97,10 @@ namespace Eclipse
 
     private:
         [[SerializeField, OnChange(OnChangeSprite)]]
-        Assets::Texture mySprite;
+        Texture mySprite;
 
         [[SerializeField, OnChange(OnChangeMaterial)]]
-        Assets::Material myMaterial;
+        Material myMaterial;
 
         [[SerializeField, OnChange(OnChangeColor)]]
         Math::Color myColor;

@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "8d759cf451c92e0d95509e18cc339dae",
-        "type": 2,
-        "metaComponents": []
-    }
+    "guid": "af6cdb8e6c25f092f84b5069974d0ef3",
+    "filename": "",
+    "path": "engine://Default/Materials/Editor/PixelPick_Material.mat",
+    "type": 0,
+    "data": {}
 }

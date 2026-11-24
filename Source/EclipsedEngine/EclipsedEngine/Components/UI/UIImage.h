@@ -3,8 +3,8 @@
 #include "EclipsedEngine/Components/Rendering/BaseRenderComponent.h"
 #include "EclipsedEngine/Components/Component.h"
 
-#include "Assets/Assets/MaterialAsset.h"
-#include "Assets/Assets/TextureAsset.h"
+#include "AssetSystem/Assets/Types/Material.h"
+#include "AssetSystem/Assets/Types/Texture.h"
 #include <Core/GraphicsBuffers/TransformBuffer.h>
 #include "EclipsedEngine/Reflection/Reflection_Macros.h"
 #include "EclipsedEngine/Replication/Replication_Macros.h"
@@ -30,8 +30,8 @@ namespace Eclipse
         Math::Vector2f spriteRectMin = { 0.f, 0.f };
         Math::Vector2f spriteRectMax = { 1.f, 1.f };
 
-        MANUAL_REPLICATED_SERIALIZED_FIELD(Assets::Texture, sprite, UIImage);
-        SERIALIZED_FIELD(Assets::Material, material);
+        MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
+        SERIALIZED_FIELD(Material, material);
 
         TransformBuffer myTransformBuffer;
     };

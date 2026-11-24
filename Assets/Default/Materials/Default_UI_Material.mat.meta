@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "a4b24408a489129276bd23242d2946a8",
-        "type": 2,
-        "metaComponents": []
-    }
+    "guid": "557775cb3af869ec59fc69b2f840c5fd",
+    "filename": "",
+    "path": "engine://Default/Materials/Default_UI_Material.mat",
+    "type": 0,
+    "data": {}
 }

@@ -9,7 +9,7 @@
 #include "Core/Math/Vector/Vector2.h"
 #include "Core/Math/Color.h"
 
-#include "Assets/AssetManager.h"
+#include "AssetSystem/Assets/Types/Material.h"
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/SpriteBuffer.h"
 #include "Core/GraphicsBuffers/TransformBuffer.h"
@@ -30,7 +30,7 @@ namespace Eclipse
         void Draw(unsigned aProgramID = 0);
 
     private:
-        Assets::Material myLightMaterial;
+        Material myLightMaterial;
 
         [[SerializeField]]
         Math::Color myColor = { 1.f, 1.f, 1.f, 1.f };

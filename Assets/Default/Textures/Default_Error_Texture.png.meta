@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "cf50f44ea7fb40ed07c66d1190024581",
-        "type": 1,
-        "metaComponents": []
+    "guid": "dfa85b3a69557c4838aa8cd9dd0771b2",
+    "filename": "",
+    "path": "engine://Default/Textures/Default_Error_Texture.png",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

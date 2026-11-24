@@ -15,17 +15,6 @@
 
 #include "EclipsedEngine/ECS/ObjectManager.h"
 
-#include "Assets/AssetManager.h"
-
-#include "Assets/Assets/PrefabAsset.h"
-#include "Assets/Assets/SceneAsset.h"
-#include "Assets/Assets/TextureAsset.h"
-#include "Assets/Assets/MaterialAsset.h"
-#include "Assets/Assets/Shader/VertexShaderAsset.h"
-#include "Assets/Assets/Shader/PixelShaderAsset.h"
-#include "Assets/Assets/FontAsset.h"
-#include "Assets/Assets/AudioAsset.h"
-
 namespace Eclipse::Replication
 {
 	void ReplicationHelper::ClientHelp::RecieveAddComponentMessage(const NetMessage& message)
@@ -79,24 +68,24 @@ namespace Eclipse::Replication
 
 	void ReplicationHelper::ClientHelp::StartReplicatedComponents()
 	{
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		//Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 
-		commandListManager->GetHappenAtBeginCommandList().Enqueue([]()
-			{
-				std::sort(ComponentsToStartOnDemand.begin(), ComponentsToStartOnDemand.end(), [&](Component* aComp0, Component* aComp1)
-					{
-						return aComp0->GetUpdatePriority() > aComp1->GetUpdatePriority();
-					});
-				for (Component* component : ComponentsToStartOnDemand)
-				{
-					component->OnComponentAddedNoCreations();
-					component->OnComponentAdded();
+		//commandListManager->GetHappenAtBeginCommandList().Enqueue([]()
+		//	{
+		//		std::sort(ComponentsToStartOnDemand.begin(), ComponentsToStartOnDemand.end(), [&](Component* aComp0, Component* aComp1)
+		//			{
+		//				return aComp0->GetUpdatePriority() > aComp1->GetUpdatePriority();
+		//			});
+		//		for (Component* component : ComponentsToStartOnDemand)
+		//		{
+		//			component->OnComponentAddedNoCreations();
+		//			component->OnComponentAdded();
 
-					component->Awake();
-					component->Start();
-				}
-				ComponentsToStartOnDemand.clear();
-			});
+		//			component->Awake();
+		//			component->Start();
+		//		}
+		//		ComponentsToStartOnDemand.clear();
+		//	});
 	}
 
 	void ReplicationHelper::ClientHelp::RecieveCreateObjectMessage(const NetMessage& message)
@@ -158,8 +147,8 @@ namespace Eclipse::Replication
 
 		//if (Variable->IsAsset)
 		//{
-		//	Assets::GUID AssetID;
-		//	memcpy(&AssetID, message.data + offset, sizeof(Assets::GUID));
+		//	GUID AssetID;
+		//	memcpy(&AssetID, message.data + offset, sizeof(GUID));
 		//	RefreshAsset(Variable->myReflectVariable, AssetID);
 		//}
 		//else
@@ -175,17 +164,17 @@ namespace Eclipse::Replication
 
 	void InstatiateNetworkSentPrefab(Assets::Prefab& aPrefab, int gameobjectID, std::vector<unsigned> aComponents, bool Replicated = false)
 	{
-		GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(aPrefab.dataPtr->data, gameobjectID, aComponents, true);
-		gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
+		//GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonStringSpecifiedIds(aPrefab.dataPtr->data, gameobjectID, aComponents, true);
+		//gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
 
-		gameobject->IsPrefab = true;
+		//gameobject->IsPrefab = true;
 
-		aPrefab.dataPtr->gameobject = gameobject;
+		//aPrefab.dataPtr->gameobject = gameobject;
 	}
 
 	void ReplicationHelper::ClientHelp::RecieveInstantiatePrefabMessage(const NetMessage& message)
 	{
-		if (ComponentManager::HasGameObject(message.MetaData.GameObjectID))
+		/*if (ComponentManager::HasGameObject(message.MetaData.GameObjectID))
 			return;
 
 		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
@@ -205,13 +194,13 @@ namespace Eclipse::Replication
 				componentsIDs.resize(componentCount);
 				memcpy(componentsIDs.data(), message.data + offset, sizeof(unsigned) * componentCount);
 
-				Eclipse::Assets::GUID guid;
+				Eclipse::GUID guid;
 				guid.FromString(prefabID);
 
 				Eclipse::Assets::Prefab prefab = Assets::AssetManager::Load<Eclipse::Assets::Prefab>(guid);
 
 				InstatiateNetworkSentPrefab(prefab, message.MetaData.GameObjectID, componentsIDs);
-			});
+			});*/
 	}
 
 	void ReplicationHelper::ClientHelp::HandleRecieve(const NetMessage& message)
@@ -257,9 +246,9 @@ namespace Eclipse::Replication
 	}
 
 
-	void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, Assets::GUID aAssetID)
+	void ReplicationHelper::ClientHelp::RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, GUID aAssetID)
 	{
-		aVariable->ResolveTypeInfo();
+		/*aVariable->ResolveTypeInfo();
 
 		switch (aVariable->GetType())
 		{
@@ -293,14 +282,14 @@ namespace Eclipse::Replication
 			assset = Assets::AssetManager::Load<Assets::Font>(aAssetID);
 		}
 		break;
-		}
+		}*/
 	}
 
 	void ReplicationHelper::ServerHelp::RequestVariablesFromClient()
 	{
-		SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
-		NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestVariables, nullptr, 0, true);
-		server.Send(msg);
+		//SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
+		//NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_RequestVariables, nullptr, 0, true);
+		//server.Send(msg);
 	}
 
 	void ReplicationHelper::ServerHelp::SendComponentsScene()
@@ -336,36 +325,36 @@ namespace Eclipse::Replication
 			}
 		}
 
-		SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
+		//SteamP2PNetworkingServer& server = Eclipse::MainSingleton::GetInstance<SteamP2PNetworkingServer>();
 
-		if (componentsToReplicate.size())
-		{
-			NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_SendMultipleComponents, &ComponentCount, sizeof(unsigned), true);
-			server.Send(msg);
-		}
+		//if (componentsToReplicate.size())
+		//{
+		//	NetMessage msg = NetMessage::BuildGameObjectMessage(0, MessageType::Msg_SendMultipleComponents, &ComponentCount, sizeof(unsigned), true);
+		//	server.Send(msg);
+		//}
 
-		for (const auto& gameobject : ReplicatedGameObjects)
-		{
-			GameObject* object = ComponentManager::GetGameObject(gameobject);
-			if (object->IsPrefab)
-			{
-				Assets::GUID guid;
-				guid.FromString(object->prefabAssetIDStr);
+		//for (const auto& gameobject : ReplicatedGameObjects)
+		//{
+		//	GameObject* object = ComponentManager::GetGameObject(gameobject);
+		//	if (object->IsPrefab)
+		//	{
+		//		GUID guid;
+		//		guid.FromString(object->prefabAssetIDStr);
 
-				Assets::Prefab prefab = Assets::AssetManager::Load<Assets::Prefab>(guid);
-				ReplicationManager::SendPrefabObject(object, prefab);
-			}
-		}
+		//		Assets::Prefab prefab = Assets::AssetManager::Load<Assets::Prefab>(guid);
+		//		ReplicationManager::SendPrefabObject(object, prefab);
+		//	}
+		//}
 
-		if (componentsToReplicate.size())
-		{
-			for (const auto& component : componentsToReplicate)
-			{
-				NetMessage message;
-				ReplicationManager::CreateComponentMessage(component, message, true);
-				server.Send(message);
-			}
-		}
+		//if (componentsToReplicate.size())
+		//{
+		//	for (const auto& component : componentsToReplicate)
+		//	{
+		//		NetMessage message;
+		//		ReplicationManager::CreateComponentMessage(component, message, true);
+		//		server.Send(message);
+		//	}
+		//}
 	}
 
 	void ReplicationHelper::ServerHelp::HandleRequestedScene()

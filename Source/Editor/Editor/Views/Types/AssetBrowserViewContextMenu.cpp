@@ -18,12 +18,9 @@
 
 #include "Editor/Game/GameCompiler.h"
 
-#include "Assets/BinaryFormats/MaterialData.h"
-
 #include "cereal/cereal.hpp"
 #include "cereal/archives/json.hpp"
 
-#include <Assets/Core/AssetDatabase.h>
 #include <Core/MainSingleton.h>
 
 #include <Windows.h>
@@ -61,17 +58,17 @@ namespace Eclipse::Editor
 
 			if (ImGui::Button("OK") || Input::Input::GetKeyDown(Keycode::ENTER))
 			{
-				std::string renamePathExt = activePathAtRenaming.extension().string();
+				//std::string renamePathExt = activePathAtRenaming.extension().string();
 
-				memcpy(tempName + strlen(tempName), renamePathExt.c_str(), renamePathExt.size() + 1);
+				//memcpy(tempName + strlen(tempName), renamePathExt.c_str(), renamePathExt.size() + 1);
 
-				std::filesystem::path newName = activePathAtRenaming.parent_path() / tempName;
+				//std::filesystem::path newName = activePathAtRenaming.parent_path() / tempName;
 
-				ImGui::CloseCurrentPopup();
-				renameModal = false;
+				//ImGui::CloseCurrentPopup();
+				//renameModal = false;
 
-				Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-				database.RenameFile(activePathAtRenaming.generic_string(), newName.generic_string());
+				//Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
+				//database.RenameFile(activePathAtRenaming.generic_string(), newName.generic_string());
 			}
 
 			ImGui::SameLine();
@@ -163,24 +160,24 @@ namespace Eclipse::Editor
 
 		if (ImGui::MenuItem("Material"))
 		{
-			std::filesystem::path savedPath;
-			if (activePath.has_extension())
-			{
-				activePath.remove_filename();
-				savedPath = activePath;
-			}
-			else
-				savedPath = activePath;
+			//std::filesystem::path savedPath;
+			//if (activePath.has_extension())
+			//{
+			//	activePath.remove_filename();
+			//	savedPath = activePath;
+			//}
+			//else
+			//	savedPath = activePath;
 
-			std::string path = (activePath / "Test.mat").generic_string();
+			//std::string path = (activePath / "Test.mat").generic_string();
 
-			Assets::SerializableMaterialData matData;
-			std::ofstream of(path, std::ios::binary);
+			//Assets::SerializableMaterialData matData;
+			//std::ofstream of(path, std::ios::binary);
 
-			cereal::JSONOutputArchive ar(of);
-			ar(matData);
+			//cereal::JSONOutputArchive ar(of);
+			//ar(matData);
 
-			activePath = savedPath;
+			//activePath = savedPath;
 		}
 
 		if (ImGui::MenuItem("Component"))

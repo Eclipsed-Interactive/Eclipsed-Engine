@@ -2,6 +2,7 @@
 
 #include "Renderer.Core.hpp"
 #include <unordered_map>
+#include "IRenderer.h"
 
 namespace Eclipse::Graphics
 {
@@ -10,7 +11,6 @@ namespace Eclipse::Graphics
 		OpenGL
 	};
 
-	class IRenderer;
 	class RENDERER_API RendererManager final
 	{
 	public:

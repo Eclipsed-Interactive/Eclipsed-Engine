@@ -8,158 +8,158 @@
 
 namespace Eclipse
 {
-	void AudioEmitter::Awake()
-	{
-		Audio::IAudioBackend* backend = Audio::AudioManager::GetBackend();
+	//void AudioEmitter::Awake()
+	//{
+	//	Audio::IAudioBackend* backend = Audio::AudioManager::GetBackend();
 
-		if (!backend)
-			return;
+	//	if (!backend)
+	//		return;
 
-		channel = backend->CreateAudioChannel();
+	//	channel = backend->CreateAudioChannel();
 
-		if (!channel)
-			return;
+	//	if (!channel)
+	//		return;
 
-		ApplyAudioClip();
-		ApplyVolume();
-		ApplyPan();
+	//	ApplyAudioClip();
+	//	ApplyVolume();
+	//	ApplyPan();
 
-		if (playOnAwake && AudioClip.IsValid())
-			Play();
-	}
+	//	if (playOnAwake && AudioClip.IsValid())
+	//		Play();
+	//}
 
-	void AudioEmitter::OnDestroy()
-	{
-		if (!AudioClip.IsValid() || !channel) 
-			return;
+	//void AudioEmitter::OnDestroy()
+	//{
+	//	if (!AudioClip.IsValid() || !channel) 
+	//		return;
 
-		myIsPlaying = false;
-		channel->Stop();
+	//	myIsPlaying = false;
+	//	channel->Stop();
 
-		delete channel;
-		channel = nullptr;
-	}
+	//	delete channel;
+	//	channel = nullptr;
+	//}
 
-	void AudioEmitter::Update()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::Update()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		//ApplyVolume();
-	}
+	//	//ApplyVolume();
+	//}
 
-	void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
-	{
-		AudioClip = clip;
-		channel->SetSound(AudioClip.dataPtr->sound);
+	//void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
+	//{
+	//	AudioClip = clip;
+	//	channel->SetSound(AudioClip.dataPtr->sound);
 
-		ApplyAudioClip();
-	}
+	//	ApplyAudioClip();
+	//}
 
-	void AudioEmitter::SetVolume(float aVolume)
-	{
-		volume = aVolume;
-		
-		if (!channel)
-			return;
+	//void AudioEmitter::SetVolume(float aVolume)
+	//{
+	//	volume = aVolume;
+	//	
+	//	if (!channel)
+	//		return;
 
-		channel->SetVolume(volume);
-	}
+	//	channel->SetVolume(volume);
+	//}
 
-	void AudioEmitter::Play()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::Play()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		myIsPlaying = true;
-		channel->Play();
-	}
+	//	myIsPlaying = true;
+	//	channel->Play();
+	//}
 
-	void AudioEmitter::Pause()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::Pause()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		myIsPlaying = false;
-		channel->Pause();
-	}
+	//	myIsPlaying = false;
+	//	channel->Pause();
+	//}
 
-	void AudioEmitter::Stop()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::Stop()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		myIsPlaying = false;
-		channel->Stop();
-	}
+	//	myIsPlaying = false;
+	//	channel->Stop();
+	//}
 
-	float AudioEmitter::GetVolume() const
-	{
-		return volume;
-	}
+	//float AudioEmitter::GetVolume() const
+	//{
+	//	return volume;
+	//}
 
-	void AudioEmitter::SetPan(float aPan)
-	{
-		pan = aPan;
+	//void AudioEmitter::SetPan(float aPan)
+	//{
+	//	pan = aPan;
 
-		if (!channel)
-			return;
+	//	if (!channel)
+	//		return;
 
-		channel->SetPan(pan);
-	}
+	//	channel->SetPan(pan);
+	//}
 
-	float AudioEmitter::GetPan() const
-	{
-		return pan;
-	}
+	//float AudioEmitter::GetPan() const
+	//{
+	//	return pan;
+	//}
 
-	void AudioEmitter::ApplyVolume()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::ApplyVolume()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		//channel->Volume = volume; // Linear
-		//channel->Volume = volume * volume * volume; // Cubic
-		//channel->Volume = std::powf(10, ((-60 * (1 - volume)) / 20)); // Decibel
-		channel->Volume = (std::exp(6.9f * volume) - 1.f) / (std::exp(6.9f) - 1.f); // Exponential
-	}
+	//	//channel->Volume = volume; // Linear
+	//	//channel->Volume = volume * volume * volume; // Cubic
+	//	//channel->Volume = std::powf(10, ((-60 * (1 - volume)) / 20)); // Decibel
+	//	channel->Volume = (std::exp(6.9f * volume) - 1.f) / (std::exp(6.9f) - 1.f); // Exponential
+	//}
 
-	void AudioEmitter::ApplyAudioClip()
-	{
-		if (!channel)
-			return;
+	//void AudioEmitter::ApplyAudioClip()
+	//{
+	//	if (!channel)
+	//		return;
 
-		channel->Stop();
+	//	channel->Stop();
 
-		if (!AudioClip.IsValid())
-			return;
+	//	if (!AudioClip.IsValid())
+	//		return;
 
-		channel->SetSound(AudioClip.dataPtr->sound);
+	//	channel->SetSound(AudioClip.dataPtr->sound);
 
-		if (playOnAwake)
-			channel->Play();
-	}
+	//	if (playOnAwake)
+	//		channel->Play();
+	//}
 
-	void AudioEmitter::ApplyPan()
-	{
-		if (!AudioClip.IsValid() || !channel)
-			return;
+	//void AudioEmitter::ApplyPan()
+	//{
+	//	if (!AudioClip.IsValid() || !channel)
+	//		return;
 
-		channel->Pan = pan;
-	}
+	//	channel->Pan = pan;
+	//}
 
-	void AudioEmitter::OnUnpause()
-	{
-		if (myIsPlaying)
-			channel->Play();
-	}
+	//void AudioEmitter::OnUnpause()
+	//{
+	//	if (myIsPlaying)
+	//		channel->Play();
+	//}
 
 
-	void AudioEmitter::OnPause()
-	{
-		if (myIsPlaying)
-			channel->Pause();
-	}
+	//void AudioEmitter::OnPause()
+	//{
+	//	if (myIsPlaying)
+	//		channel->Pause();
+	//}
 
 	//void AudioEmitter::OnDestroy()
 	//{

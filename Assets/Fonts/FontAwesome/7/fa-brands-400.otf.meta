@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "4162f39e42be38e53afac49ab7f8d869",
-        "type": 6,
-        "metaComponents": []
-    }
+    "guid": "1df170c9035ef6fd4b017909b704bb86",
+    "filename": "",
+    "path": "engine://Fonts/FontAwesome/7/fa-brands-400.otf",
+    "type": 0,
+    "data": {}
 }

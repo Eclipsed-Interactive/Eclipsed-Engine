@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "7c399081a3d29145ade85e4254e6a381",
-        "type": 3,
-        "metaComponents": []
-    }
+    "guid": "287d6831819ca74e4797f90455663b76",
+    "filename": "",
+    "path": "engine://Default/Shaders/Text.vglsl",
+    "type": 0,
+    "data": {}
 }

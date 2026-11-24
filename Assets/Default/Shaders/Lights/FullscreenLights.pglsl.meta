@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "0e38593ac27dfb3c135f8f857d190341",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "b2d9c36c4e1ab2f2d11ad05611bb5c83",
+    "filename": "",
+    "path": "engine://Default/Shaders/Lights/FullscreenLights.pglsl",
+    "type": 0,
+    "data": {}
 }

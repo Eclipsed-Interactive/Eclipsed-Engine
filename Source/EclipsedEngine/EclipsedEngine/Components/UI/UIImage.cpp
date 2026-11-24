@@ -2,7 +2,6 @@
 
 #include "Renderer/Sprite.h"
 
-#include "Assets/AssetManager.h"
 #include "Renderer/GraphicsSettings.h"
 
 #include "EclipsedEngine/Components/UI/RectTransform.h"
@@ -22,6 +21,7 @@
 #include "Renderer/RendererManager.h"
 
 #include "Renderer/RenderCommands/CommandList.h"
+#include "Core/MainSingleton.h"
 
 namespace Eclipse
 {
@@ -53,14 +53,14 @@ namespace Eclipse
 #endif // ECL_EDITOR
 	void UIImage::OnComponentAdded()
 	{
-		if (material->IsValid()) hasMaterial = true;
-		if (sprite->IsValid()) hasSprite = true;
+		if (material->IsReady()) hasMaterial = true;
+		if (sprite->IsReady()) hasSprite = true;
 
-		if (!hasMaterial)
-		{
-			material = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_UI);
-			hasMaterial = true;
-		}
+		//if (!hasMaterial)
+		//{
+		//	material = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_UI);
+		//	hasMaterial = true;
+		//}
 	}
 
 	void UIImage::Render()
@@ -153,70 +153,70 @@ namespace Eclipse
 	void UIImage::Draw()
 	{
 
-		if (!hasMaterial)
-			return;
-
-
-		auto transform = gameObject->GetComponent<RectTransform>();
-		if (!transform)
-			return;
-		if (!transform->myCanvas)
-			return;
-
-		transform->myCanvas->SetCanvasTransformProperties();
-
-
-		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
-
-		resolution.x = 1.f / resolution.x;
-		resolution.y = 1.f / resolution.y;
-
-		// float aspectRatio = resolution.y / resolution.x;
-		// Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
-
-		Math::Vector2f size = spriteRectMax - spriteRectMin;
-		material->GetBuffer().spriteRect = {spriteRectMin.x, spriteRectMin.y, size.x, size.y};
-
-		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
-		graphicsDevice->BindMaterial(material);
-		if (sprite->IsValid())
-			graphicsDevice->BindTexture(0, sprite);
-
-		TransformUpdate();
-
-		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
-		CanvasBuffer* canvasBuffer;
-		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, canvasBuffer);
-
-#ifdef ECL_EDITOR
-		EditorBuffer* editorBuffer;
-		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
-		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
-
-		if (!editorBuffer->IsSceneView)
-		{
-			if (!transform->myCanvas->WorldSpace)
-				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
-			else
-				canvasBuffer->canvasPositionOffset = { 0, 0 };
-		}
-#else
-		if (!transform->myCanvas->WorldSpace)
-			canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
-		else
-			canvasBuffer->canvasPositionOffset = { 0, 0 };
-#endif
-
-
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &myTransformBuffer);
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, 2, canvasBuffer);
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &material->GetBuffer());
-
-		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
-		Graphics::IDrawer* Drawer = Renderer->GetDrawer();
-
-		Drawer->DrawSprite();
+//		if (!hasMaterial)
+//			return;
+//
+//
+//		auto transform = gameObject->GetComponent<RectTransform>();
+//		if (!transform)
+//			return;
+//		if (!transform->myCanvas)
+//			return;
+//
+//		transform->myCanvas->SetCanvasTransformProperties();
+//
+//
+//		Math::Vector2f resolution = transform->myCanvas->ReferenceResolution;
+//
+//		resolution.x = 1.f / resolution.x;
+//		resolution.y = 1.f / resolution.y;
+//
+//		// float aspectRatio = resolution.y / resolution.x;
+//		// Math::Vector2f canvasScaleRelationOneDiv = {resolution.x, resolution.y};
+//
+//		Math::Vector2f size = spriteRectMax - spriteRectMin;
+//		material->GetBuffer().spriteRect = {spriteRectMin.x, spriteRectMin.y, size.x, size.y};
+//
+//		Graphics::IGraphicsDevice* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+//		graphicsDevice->BindMaterial(material);
+//		if (sprite->IsValid())
+//			graphicsDevice->BindTexture(0, sprite);
+//
+//		TransformUpdate();
+//
+//		Graphics::IGraphicsBuffer* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
+//
+//		CanvasBuffer* canvasBuffer;
+//		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, canvasBuffer);
+//
+//#ifdef ECL_EDITOR
+//		EditorBuffer* editorBuffer;
+//		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
+//		editorBuffer->PixelPickColor = gameObject->myPixelPickColor;
+//		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
+//
+//		if (!editorBuffer->IsSceneView)
+//		{
+//			if (!transform->myCanvas->WorldSpace)
+//				canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+//			else
+//				canvasBuffer->canvasPositionOffset = { 0, 0 };
+//		}
+//#else
+//		if (!transform->myCanvas->WorldSpace)
+//			canvasBuffer->canvasPositionOffset = transform->myCanvas->canvasCameraTransform.PositionOffset;
+//		else
+//			canvasBuffer->canvasPositionOffset = { 0, 0 };
+//#endif
+//
+//
+//		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &myTransformBuffer);
+//		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_CanvasBuffer, 2, canvasBuffer);
+//		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &material->GetBuffer());
+//
+//		Graphics::IRenderer* Renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
+//		Graphics::IDrawer* Drawer = Renderer->GetDrawer();
+//
+//		Drawer->DrawSprite();
 	}
 }

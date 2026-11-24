@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "18b061422895041271d41a97d50f1763",
-        "type": 6,
-        "metaComponents": []
-    }
+    "guid": "5ba5fb4a74f600a82ef3b4ecc8ce8b40",
+    "filename": "",
+    "path": "engine://Fonts/FontAwesome/7/fa-solid-900.otf",
+    "type": 0,
+    "data": {}
 }

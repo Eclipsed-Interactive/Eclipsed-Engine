@@ -31,6 +31,9 @@ namespace Eclipse
 		static std::filesystem::path GetSettingsPath() { return GetProjectRoot() / "Settings"; }
 		static std::filesystem::path GetLocalSettingsPath() { return GetProjectLocalPath() / "Settings"; }
 
+		static std::filesystem::path GetEngineTempPath() { return GetEngineRoot().parent_path() / "Temp"; }
+		static std::filesystem::path GetEngineArtifactsPath() { return GetEngineTempPath() / "Artifacts"; }
+
 	private:
 		static inline std::filesystem::path engineSourceRoot;
 

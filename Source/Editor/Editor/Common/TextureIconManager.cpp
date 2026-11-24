@@ -12,7 +12,6 @@
 //#include "Core/AssetManagement/Resources.h"
 
 #include "Core/Helpers/STB_Helper.h"
-#include "Assets/MetaData/AssetMeta.h"
 
 namespace Eclipse::Editor
 {
@@ -21,9 +20,9 @@ namespace Eclipse::Editor
 		EventSystem::Subscribe("Texture_Imported", TextureIconManager::ImportAsset);
 	}
 
-	void TextureIconManager::ImportAsset(const Assets::AssetMeta& meta)
+	void TextureIconManager::ImportAsset(/*const Assets::AssetMeta& meta*/)
 	{
-		LoadTextureIconFromPath(meta.fullPath);
+		//LoadTextureIconFromPath(meta.fullPath);
 	}
 
 	void TextureIconManager::CheckForChanges()

@@ -6,16 +6,30 @@
 #include "TextSprite.h"
 #include "ParticleDrawer.h"
 
-#include "Assets/Assets/TextureAsset.h"
-#include "Assets/Assets/MaterialAsset.h"
-
 #include "ClearFlags.hpp"
 
 #include "FrameBuffer.h"
+#include <span>
+#include <Core/Standard/Core/Types.hpp>
 
 namespace Eclipse::Graphics
 {
+#pragma region MOVE THIS TO SEPARATE FILES. TOFFLA
 	enum class BlendMode { Alpha, Additive, Multiply, Screen };
+	struct TextureDescription {
+		int channels = 0;
+		int width = 0;
+		int height = 0;
+	};
+
+	enum ShaderStage : unsigned char
+	{
+		Compute,
+		Pixel,
+		Vertex,
+		Geometry
+	};
+#pragma endregion
 
 	class RENDERER_API IGraphicsDevice
 	{
@@ -40,11 +54,15 @@ namespace Eclipse::Graphics
 		virtual TextSprite* CreateTextSprite() = 0;
 		virtual ParticleDrawer* CreateParticleDrawer() = 0;
 
+		virtual unsigned int CreateTexture(const std::span<const Byte> somePixels, TextureDescription& aTextureDescription) = 0;
+		virtual unsigned int CreateShader(const std::span<const Eclipse::Byte> someSpirvs, ShaderStage stage) = 0;
+		virtual unsigned int CreateShaderProgram(unsigned int* ps, unsigned int* vs) = 0;
+
 	public:
 		virtual void BindTexture(unsigned textureIndex) = 0;
 		virtual void BindTexture(unsigned slot, unsigned textureIndex) = 0;
-		virtual void BindTexture(unsigned slot, Assets::Texture& texture) = 0;
+		//virtual void BindTexture(unsigned slot, Assets::Texture& texture) = 0;
 		virtual void BindShader(unsigned id) = 0;
-		virtual void BindMaterial(Assets::Material& material) = 0;
+		//virtual void BindMaterial(Assets::Material& material) = 0;
 	};
 }

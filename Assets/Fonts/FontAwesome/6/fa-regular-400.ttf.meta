@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "adc77696adaa0243df28c3c99e499ef5",
-        "type": 6,
-        "metaComponents": []
-    }
+    "guid": "86032f4ce2259072275fe506161380da",
+    "filename": "",
+    "path": "engine://Fonts/FontAwesome/6/fa-regular-400.ttf",
+    "type": 0,
+    "data": {}
 }

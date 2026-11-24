@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "c4a684b9f966de9700c00a9955176906",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "6e25085ab69c9dc95b675e3df5490196",
+    "filename": "",
+    "path": "engine://Default/Shaders/ScreenSpaceSprite.pglsl",
+    "type": 0,
+    "data": {}
 }

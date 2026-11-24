@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "ccffd4b62adcd6e9f3fc8acf815af6f0",
-        "type": 1,
-        "metaComponents": []
+    "guid": "d0e8c9da39c7a9f2ce44e6df366360cc",
+    "filename": "",
+    "path": "engine:///GrabbyHand.png",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

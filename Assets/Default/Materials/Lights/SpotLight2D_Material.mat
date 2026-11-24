@@ -1,5 +1,4 @@
 {
-    "value0": {
         "cereal_class_version": 0,
         "vertex_shader": "8f3974aadc06d30a743b3176250e4961",
         "pixel_shader": "4c5be978b84928a01ee47c343399fb6f",
@@ -11,4 +10,3 @@
             "a": 1.0
         }
     }
-}

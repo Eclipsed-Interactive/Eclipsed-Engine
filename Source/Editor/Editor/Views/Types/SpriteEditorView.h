@@ -23,11 +23,11 @@
 //		void OnOpen() override;
 //		void Draw() override;
 //
-//		static void SetActiveTexture(const Assets::GUID& guid);
+//		static void SetActiveTexture(const GUID& guid);
 //
 //	private:
-//		static void SaveMeta(const Assets::GUID& guid);
-//		static void LoadMeta(const Assets::GUID& guid);
+//		static void SaveMeta(const GUID& guid);
+//		static void LoadMeta(const GUID& guid);
 //
 //		void EdgeScaling();
 //
@@ -98,7 +98,7 @@
 //	private:
 //		static inline Assets::Texture myTexture;
 //		static inline bool textureSet;
-//		static inline Assets::GUID myActiveAsset;
+//		static inline GUID myActiveAsset;
 //
 //
 //		struct Rect

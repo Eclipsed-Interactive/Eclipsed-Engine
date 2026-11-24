@@ -3,7 +3,6 @@
 #include "Renderer/RendererManager.h"
 #include "Renderer/IRenderer.h"
 
-#include "Assets/AssetManager.h"
 #include "Renderer/RenderCommands/CommandList.h"
 #include "Core/MainSingleton.h"
 
@@ -18,7 +17,7 @@ namespace Eclipse::Rendering
 {
 	void SceneRenderer::Init()
 	{
-		GetMaterials();
+		//GetMaterials();
 		CreateBuffers();
 	}
 
@@ -57,7 +56,7 @@ namespace Eclipse::Rendering
 
 	void SceneRenderer::GetMaterials()
 	{
-		LightCompositeMat = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_LIGHTS_COMPOSITE);
+		//LightCompositeMat = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_LIGHTS_COMPOSITE);
 	}
 
 	void SceneRenderer::RenderLights()
@@ -101,7 +100,7 @@ namespace Eclipse::Rendering
 
 		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
 		device->SetBlendMode(Graphics::BlendMode::Multiply);
-		device->BindMaterial(LightCompositeMat);
+		LightCompositeMat.Bind();
 		device->BindTexture(0, LightsFrameBuffer.textureIndex);
 		device->BindTexture(1, ShadowsFrameBuffer.textureIndex);
 		auto* drawer = Graphics::RendererManager::GetRenderer().GetDrawer();

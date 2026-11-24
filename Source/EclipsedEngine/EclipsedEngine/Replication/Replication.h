@@ -5,7 +5,7 @@
 #include "Networking/Shared/Message.h"
 
 #include <vector>
-#include "Assets/Core/GUID.h"
+#include "Core/GUID.h"
 
 #include "EclipsedEngine.Core.hpp"
 
@@ -41,7 +41,7 @@ namespace Eclipse::Replication
             static inline unsigned myComponentsToRecieved = 9999;
 
             // Placing here cause other is bad.
-            static void RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, Assets::GUID aAssetID);
+            static void RefreshAsset(Reflection::AbstractSerializedVariable* aVariable, GUID aAssetID);
         };
 
 

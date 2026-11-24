@@ -19,6 +19,71 @@
 
 namespace Eclipse
 {
+	namespace {
+		void LoadComponents(const rapidjson::Value& components)
+		{
+			for (const auto& typeMember : components.GetObject())
+			{
+				try
+				{
+					const Reflection::TypeEntry* reflectedType = Reflection::ReflectionRegistry::TryGetType(typeMember.name.GetString());
+					if (!reflectedType) continue;
+
+					for (const auto& comp : typeMember.value.GetArray())
+					{
+						unsigned int id = 0;
+						unsigned int owner = 0;
+
+						if (comp.HasMember("id") && comp["id"].IsUint())
+							id = comp["id"].GetUint();
+
+						if (comp.HasMember("owner") && comp["owner"].IsUint())
+							owner = comp["owner"].GetUint();
+
+						Component* Comp = ComponentManager::AddComponentWithID(owner, id, reflectedType->createAtAddress, reflectedType->size);
+
+						Comp->SetComponentID(id);
+
+						for (auto& member : comp["data"].GetObject())
+						{
+							const char* key = member.name.GetString();
+							const rapidjson::Value& value = member.value;
+							const Reflection::FieldEntry& field = Reflection::ReflectionRegistry::GetField(typeMember.name.GetString(), key);
+
+							unsigned char* data = reinterpret_cast<unsigned char*>(Comp) + field.offset;
+
+							Serialization::FromJson(field.type, reinterpret_cast<void*>(data), value);
+						}
+					}
+				}
+				catch (...)
+				{
+					// Component is not reflected. Cant be loaded.
+				}
+			}
+		}
+
+		void LoadGameObjects(const rapidjson::Value& gameobjects)
+		{
+			for (auto& go : gameobjects.GetArray())
+			{
+				const std::string guidStr = go.GetString();
+
+				//unsigned int id = 0;
+				//std::string name = "";
+
+				//if (go.HasMember("name") && go["name"].IsString())
+				//	name = go["name"].GetString();
+
+				//if (go.HasMember("id") && go["id"].IsUint())
+				//	id = go["id"].GetUint();
+
+				//GameObject* obj = ComponentManager::CreateGameObject(id);
+				//obj->SetName(name);
+			}
+		}
+	}
+
 	void SceneSerializer::LoadScene(const std::string& scene)
 	{
 		if (scene.empty())
@@ -32,80 +97,16 @@ namespace Eclipse
 			throw std::runtime_error("Document couldnt be opened.");
 		}
 
-		if (d.HasMember("gameobjects") && d["gameobjects"].IsArray())
-			LoadGameObjects(d["gameobjects"]);
-		else return;
-
-		if (d.HasMember("components") && d["components"].IsObject())
-			LoadComponents(d["components"]);
+		if (d.HasMember("objects") && d["objects"].IsArray())
+			LoadGameObjects(d["objects"]);
 	}
 
-	void SceneSerializer::LoadScene(Assets::Scene scene)
+	void SceneSerializer::LoadScene(Scene scene)
 	{
-		if (scene.dataPtr->sourceBlob.empty())
+		if (scene.GetJson().empty())
 			return;
 
-		LoadScene(scene.dataPtr->sourceBlob);
-	}
-
-	void SceneSerializer::LoadGameObjects(const rapidjson::Value& gameobjects)
-	{
-		for (auto& go : gameobjects.GetArray())
-		{
-			unsigned int id = 0;
-			std::string name = "";
-
-			if (go.HasMember("name") && go["name"].IsString())
-				name = go["name"].GetString();
-
-			if (go.HasMember("id") && go["id"].IsUint())
-				id = go["id"].GetUint();
-
-			GameObject* obj = ComponentManager::CreateGameObject(id);
-			obj->SetName(name);
-		}
-	}
-
-	void SceneSerializer::LoadComponents(const rapidjson::Value& components)
-	{
-		for (const auto& typeMember : components.GetObject())
-		{
-			try
-			{
-				const Reflection::TypeEntry* reflectedType = Reflection::ReflectionRegistry::TryGetType(typeMember.name.GetString());
-				if (!reflectedType) continue;
-
-				for (const auto& comp : typeMember.value.GetArray())
-				{
-					unsigned int id = 0;
-					unsigned int owner = 0;
-
-					if (comp.HasMember("id") && comp["id"].IsUint())
-						id = comp["id"].GetUint();
-
-					if (comp.HasMember("owner") && comp["owner"].IsUint())
-						owner = comp["owner"].GetUint();
-
-					Component* Comp = ComponentManager::AddComponentWithID(owner, id, reflectedType->createAtAddress, reflectedType->size);
-
-					Comp->SetComponentID(id);
-
-					for (auto& member : comp["data"].GetObject())
-					{
-						const char* key = member.name.GetString();
-						const rapidjson::Value& value = member.value;
-						const Reflection::FieldEntry& field = Reflection::ReflectionRegistry::GetField(typeMember.name.GetString(), key);
-
-						unsigned char* data = reinterpret_cast<unsigned char*>(Comp) + field.offset;
-
-						Serialization::FromJson(field.type, reinterpret_cast<void*>(data), value);
-					}
-				}
-			}
-			catch (...)
-			{
-				// Component is not reflected. Cant be loaded.
-			}
-		}
+		std::string str = std::string(scene.GetJson());
+		LoadScene(str.c_str());
 	}
 }

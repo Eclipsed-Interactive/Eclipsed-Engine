@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "67c44be8e9b1629dd469013b320d99b0",
-        "type": 3,
-        "metaComponents": []
-    }
+    "guid": "e6960f2b6bd50bf40becaad72f04ebee",
+    "filename": "",
+    "path": "engine://Default/Shaders/Particles/ParticleShader.vglsl",
+    "type": 0,
+    "data": {}
 }

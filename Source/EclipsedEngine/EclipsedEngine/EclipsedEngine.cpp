@@ -12,9 +12,6 @@
 #include "Core/PathManager.h"
 #include "Core/Timer.h"
 
-#include "Assets/AssetManager.h"
-#include "Assets/AssetImporter.h"
-
 #include "EclipsedEngine/Plugin/PluginManager.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
@@ -29,7 +26,6 @@
 #include "Input/Input.h"
 
 #include "Audio/AudioPluginLoader.h"
-#include "Assets/Helper/TextManager.h"
 
 #include "Physics/PhysicsEngine.h"
 
@@ -39,16 +35,30 @@
 #include <Components/Physics/BoxCollider2D.h>
 
 #include "EclipsedEngine/Console/DevConsole.h"
+#include <AssetSystem/Import/AssetImporter.h>
+#include <AssetSystem/Import/BuiltinImporters.h>
+#include <AssetSystem/Loading/BuiltinLoaders.h>
+#include <AssetSystem/SourceRegistry.h>
+#include <AssetSystem/Artifacts/LooseProvider.h>
+#include <AssetSystem/Artifacts/ArtifactRegistry.h>
+#include <AssetSystem/Loading/AssetLoader.h>
+#include <AssetSystem/Assets/Types/Shader.h>
+#include <AssetSystem/Assets/Types/Texture.h>
+#include <AssetSystem/Assets/Types/Material.h>
+#include <AssetSystem/Helper/TextManager.h>
 
 namespace Eclipse
 {
 	Graphics::IRenderer* Engine::renderer = nullptr;
 	Audio::IAudioBackend* Engine::audio = nullptr;
 
-	Graphics::CommandListManager Engine::myCommandListManager ;
+	Graphics::CommandListManager Engine::myCommandListManager;
 
 	void Engine::Init()
 	{
+		Eclipse::AssetSystem::RegisterBuiltinImporters();
+		Eclipse::AssetSystem::RegisterBuiltinLoaders();
+
 		PROFILE_SCOPED;
 		Settings::SettingsRegistry::LoadAll();
 
@@ -59,8 +69,13 @@ namespace Eclipse
 		PathManager::Init();
 
 		ComponentManager::Init();
-		Assets::AssetManager::Init();
+		//Assets::AssetManager::Init();
 		Timer::Init();
+
+		Eclipse::AssetSystem::SourceRegistry::Mount("game", PathManager::GetAssetsPath(), PathManager::GetArtifactsPath() / "NewContent");
+		Eclipse::AssetSystem::SourceRegistry::Mount("engine", PathManager::GetEngineAssetsPath(), PathManager::GetEngineArtifactsPath());
+
+
 
 		{
 			// PHYSICS
@@ -92,6 +107,8 @@ namespace Eclipse
 
 		renderer = &Graphics::RendererManager::LoadRenderer(Graphics::RendererAPI::OpenGL);
 
+
+
 		auto audioPath = PathManager::GetEngineRoot() / "Plugins" / "Eclipsed.Audio_FMOD.dll";
 		Audio::AudioError error = Audio::AudioManager::LoadBackend(audioPath);
 		if (error == Audio::AudioError::Succeded)
@@ -112,12 +129,6 @@ namespace Eclipse
 #if ECL_DEV_CONSOLE_ENABLED
 		DevConsole::Init();
 #endif
-
-#ifdef ECL_EDITOR
-		Assets::AssetImporter::ImportAssets(PathManager::GetAssetsPath(), "Assets");
-#else
-		// IMPORT BUNDLE
-#endif
 	}
 
 	void Engine::UpdateGame()
@@ -135,27 +146,6 @@ namespace Eclipse
 	{
 		PROFILE_SCOPED;
 		Input::Input::Init(renderer->CreateInput(), GetImGuiContext());
-
-
-
-
-
-		for (int x = 0; x < 10; x++)
-		{
-			for (int i = 0; i < 10; i++)
-			{
-				GameObject* obj = ComponentManager::CreateGameObject();
-				Transform2D* transform = obj->AddComponent<Transform2D>();
-				transform->SetScale(Math::Vector2f(5, 5));
-				transform->SetPosition(x * 0.1f, i * 0.1f);
-
-				obj->AddComponent<SpriteRenderer2D>();
-				obj->AddComponent<RigidBody2D>();
-				obj->AddComponent<BoxCollider2D>();
-
-				obj->SetName("New Sprite");
-			}
-		}
 	}
 
 
@@ -183,8 +173,6 @@ namespace Eclipse
 		myCommandListManager.ResetAllCommandLists();
 
 		ComponentManager::CommitDestroy();
-
-		Assets::AssetManager::EndFrame();
 	}
 
 	void Engine::Update()

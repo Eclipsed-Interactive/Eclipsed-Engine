@@ -1,7 +1,6 @@
 #include "OpenGL_Drawer.h"
 
 #include "Renderer/Sprite.h"
-#include "Assets/Assets/MaterialAsset.h"
 
 #include "OpenGL/glad/glad.h"
 #include "OpenGL_GraphicsDevice.h"

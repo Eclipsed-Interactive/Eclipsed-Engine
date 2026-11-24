@@ -386,7 +386,7 @@ namespace Eclipse::Editor
 						GameObject* textObj = ComponentManager::CreateGameObject();
 						textObj->AddComponent<RectTransform>();
 						TextRenderer* rend = textObj->AddComponent<TextRenderer>();
-						rend->SetText("Button");
+						//rend->SetText("Button");
 
 						obj->AddChild(textObj);
 					}
@@ -423,13 +423,13 @@ namespace Eclipse::Editor
 		ImGui::Dummy(ImVec2(5, 0));
 		ImGui::SameLine();
 
-		if (!SceneManager::GetActive().IsValid())
+		if (!SceneManager::GetActive().IsReady())
 		{
 			ImGui::Text("No active scene");
 			return;
 		}
 
-		ImGui::Text(SceneManager::GetActive().dataPtr->name.c_str());
+		ImGui::Text("This should be the scenes name.");
 
 		if (SceneManager::IsDirty())
 		{

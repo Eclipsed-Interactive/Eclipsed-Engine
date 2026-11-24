@@ -8,7 +8,6 @@ CreateSharedProject()
 target_link_libraries(Renderer PUBLIC 
     Core
     stb_image
-    Assets
     Input
 )
 

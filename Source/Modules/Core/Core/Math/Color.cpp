@@ -9,7 +9,7 @@ namespace Eclipse::Math
 
 	}
 
-	Math::Color Eclipse::Math::Color::operator*(const Math::Color& other)
+	Math::Color Eclipse::Math::Color::operator*(const Math::Color& other) const
 	{
 		Math::Color col;
 		col.r = r * other.r;

@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "22ca651928d37d62bf99154610bca002",
-        "type": 6,
-        "metaComponents": []
-    }
+    "guid": "acfdbd6bb7a1d525d704ebd32e003eba",
+    "filename": "",
+    "path": "engine://Fonts/Quicksand-VariableFont_wght.ttf",
+    "type": 0,
+    "data": {}
 }

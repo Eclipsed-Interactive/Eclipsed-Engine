@@ -12,7 +12,6 @@ target_link_libraries(Audio_FMOD
 
     PRIVATE
         fmod
-        Assets
         Core
 )
 

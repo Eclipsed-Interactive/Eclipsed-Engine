@@ -139,6 +139,7 @@ namespace Eclipse
 		}
 
 		static GameObject* CreateGameObject(GameObjectID aId);
+		static GameObject* CreateGameObject(GUID aId);
 		static GameObject* CreateGameObject();
 
 		static void Clear();

@@ -54,6 +54,8 @@ namespace {
 
 		RegisterVector<MathContainer<long long>, long long>((p + "ll").c_str(), axes);
 		RegisterVector<MathContainer<unsigned long long>, unsigned long long>((p + "ull").c_str(), axes);
+
+		RegisterVector<MathContainer<bool>, bool>((p + "b").c_str(), axes);
 	}
 
 	struct MathTypesRegistrar {

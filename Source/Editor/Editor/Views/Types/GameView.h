@@ -5,7 +5,6 @@
 #include "Core/Math/Vector/Vector2.h"
 
 #include "Renderer/FrameBuffer.h"
-#include <Assets/Assets/MaterialAsset.h>
 
 namespace Eclipse::Editor
 {

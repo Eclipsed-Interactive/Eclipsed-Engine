@@ -1,26 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "c81e75f8476de732d48ea757ae22cf48",
-        "type": 1,
-        "metaComponents": [
-            {
-                "key": "struct Eclipse::Assets::TextureMeta",
-                "value": {
-                    "polymorphic_id": 2147483649,
-                    "polymorphic_name": "Eclipse::Assets::TextureMeta",
-                    "ptr_wrapper": {
-                        "valid": 1,
-                        "data": {
-                            "cereal_class_version": 2,
-                            "value0": {
-                                "cereal_class_version": 0
-                            },
-                            "spriteRects": []
-                        }
-                    }
-                }
-            }
-        ]
+    "guid": "8be383b4fcc1eabd1db49b898f36450d",
+    "filename": "",
+    "path": "engine://Icons/Light-Bulb.png",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

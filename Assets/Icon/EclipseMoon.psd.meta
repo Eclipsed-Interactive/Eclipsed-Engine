@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "f28902698074db2eafe6c66c4d6985e3",
-        "type": 1,
-        "metaComponents": []
+    "guid": "2f6ff607c73d065302942299d243402f",
+    "filename": "",
+    "path": "engine://Icon/EclipseMoon.psd",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

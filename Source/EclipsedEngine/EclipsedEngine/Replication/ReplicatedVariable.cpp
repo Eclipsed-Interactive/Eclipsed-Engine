@@ -1,9 +1,6 @@
 #ifdef ECLIPSED_NETWORKING
 
 #include "ReplicatedVariable.h"
-
-#include "Assets/BinaryFormats/AssetData.h"
-
 #include "Networking/Client/SteamP2PNetworkingClient.h"
 #include "Networking/Server/SteamP2PNetworkingServer.h"
 #include <Core/MainSingleton.h>

@@ -106,8 +106,8 @@ void Eclipse::ParticleSystem2D::Render()
 			Graphics::IDrawer* drawer = renderer.GetDrawer();
 
 			for (int i = 0; i < Textures.size(); i++)
-				if(Textures[i].IsValid())
-					renderer.GetDevice()->BindTexture(i, Textures[i]);
+				if (Textures[i].IsReady())
+					Textures[i].Bind(i);
 
 			drawer->DrawParticles();
 		});

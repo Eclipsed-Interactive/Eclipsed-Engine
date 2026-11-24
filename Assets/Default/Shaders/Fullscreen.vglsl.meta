@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "5904ad4180eac1e28b69f16e5b6c8dc9",
-        "type": 3,
-        "metaComponents": []
-    }
+    "guid": "c9e846824ce5f406724f128a10bae17b",
+    "filename": "",
+    "path": "engine://Default/Shaders/Fullscreen.vglsl",
+    "type": 0,
+    "data": {}
 }

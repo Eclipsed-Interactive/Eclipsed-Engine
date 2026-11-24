@@ -35,10 +35,16 @@ namespace Eclipse::Graphics::OpenGL
 		void SetBlendMode(BlendMode mode) override;
 
 	public:
+		unsigned int CreateTexture(const std::span<const Byte> somePixels, TextureDescription& aTextureDescription) override;
+		unsigned int CreateShader(const std::span<const Eclipse::Byte> someSpirvs, ShaderStage aStage) override;
+		unsigned int CreateShaderProgram(unsigned int* ps, unsigned int* vs) override;
+
+
+	public:
 		void BindTexture(unsigned textureIndex) override;
 		void BindTexture(unsigned slot, unsigned textureIndex) override;
-		void BindTexture(unsigned slot, Assets::Texture& texture) override;
+		//void BindTexture(unsigned slot, Assets::Texture& texture) override;
 		void BindShader(unsigned id) override;
-		void BindMaterial(Assets::Material& material) override;
+		//void BindMaterial(Assets::Material& material) override;
 	};
 }

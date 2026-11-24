@@ -9,7 +9,6 @@
 #include "Core/Math/Vector/Vector2.h"
 #include "Core/Math/Color.h"
 
-#include "Assets/AssetManager.h"
 #include "EclipsedEngine.Core.hpp"
 #include "Core/GraphicsBuffers/SpriteBuffer.h"
 #include "Core/GraphicsBuffers/TransformBuffer.h"

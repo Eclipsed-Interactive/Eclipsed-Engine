@@ -13,12 +13,13 @@
 
 #include "Physics/PhysicsEngine.h"
 #include <Core/GraphicsBuffers/LightBuffer.h>
+#include <Core/MainSingleton.h>
 
 namespace Eclipse
 {
 	void PointLight2D::OnComponentAdded()
 	{
-		myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_POINTLIGHT);
+		//myLightMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_POINTLIGHT);
 	}
 
 	void PointLight2D::Render()
@@ -46,7 +47,7 @@ namespace Eclipse
 		light.falloff = myFalloff;
 		light.innerRadius = myInnerRadius;
 
-		renderer.GetDevice()->BindMaterial(myLightMaterial);
+		myLightMaterial.Bind();
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transform);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_PointLightBuffer, 6, &light);
 

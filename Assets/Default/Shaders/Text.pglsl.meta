@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "161a2a842ae030c8ab8160c084637d41",
-        "type": 4,
-        "metaComponents": []
-    }
+    "guid": "bf5fc9e7dd43980bffee66d365fbc496",
+    "filename": "",
+    "path": "engine://Default/Shaders/Text.pglsl",
+    "type": 0,
+    "data": {}
 }

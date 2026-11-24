@@ -8,12 +8,6 @@
 
 #include <typeindex>
 
-#include "Assets/Assets/MaterialAsset.h"
-#include "Assets/Assets/AudioAsset.h"
-#include "Assets/Assets/FontAsset.h"
-#include "Assets/Assets/PrefabAsset.h"
-#include "Assets/Assets/TextureAsset.h"
-
 #include "Core/Math/Random.h"
 
 namespace Eclipse::Reflection
@@ -149,31 +143,31 @@ namespace Eclipse::Reflection
 			sizePerElement = sizeof(T);
 		}
 
-		else if constexpr (std::is_same<T, Assets::Material>::value)
-		{
-			type = SerializedType_Material;
-			sizePerElement = sizeof(Assets::Material);
-		}
-		else if constexpr (std::is_same<T, Assets::AudioClip>::value)
-		{
-			type = SerializedType_AudioClip;
-			sizePerElement = sizeof(Assets::AudioClip);
-		}
-		else if constexpr (std::is_same<T, Assets::Texture>::value)
-		{
-			type = SerializedType_Texture;
-			sizePerElement = sizeof(Assets::Texture);
-		}
-		else if constexpr (std::is_same<T, Assets::Prefab>::value)
-		{
-			type = SerializedType_Prefab;
-			sizePerElement = sizeof(Assets::Prefab);
-		}
-		else if constexpr (std::is_same<T, Assets::Font>::value)
-		{
-			type = SerializedType_Font;
-			sizePerElement = sizeof(Assets::Font);
-		}
+		//else if constexpr (std::is_same<T, Assets::Material>::value)
+		//{
+		//	type = SerializedType_Material;
+		//	sizePerElement = sizeof(Assets::Material);
+		//}
+		//else if constexpr (std::is_same<T, Assets::AudioClip>::value)
+		//{
+		//	type = SerializedType_AudioClip;
+		//	sizePerElement = sizeof(Assets::AudioClip);
+		//}
+		//else if constexpr (std::is_same<T, Assets::Texture>::value)
+		//{
+		//	type = SerializedType_Texture;
+		//	sizePerElement = sizeof(Assets::Texture);
+		//}
+		//else if constexpr (std::is_same<T, Assets::Prefab>::value)
+		//{
+		//	type = SerializedType_Prefab;
+		//	sizePerElement = sizeof(Assets::Prefab);
+		//}
+		//else if constexpr (std::is_same<T, Assets::Font>::value)
+		//{
+		//	type = SerializedType_Font;
+		//	sizePerElement = sizeof(Assets::Font);
+		//}
 
 		else if constexpr (std::is_same<T, Math::Color>::value)
 		{

@@ -15,6 +15,9 @@ target_link_libraries(OpenGL_Renderer
         ImGui
 )
 
+# glfw3.h must not pull in <GL/gl.h>; glad provides the GL headers (breaks unity builds otherwise)
+target_compile_definitions(OpenGL_Renderer PRIVATE GLFW_INCLUDE_NONE)
+
 SetFolder("Plugins")
 
 

@@ -2,7 +2,7 @@
 
 #include "EclipsedEngine.Core.hpp"
 
-#include "Assets/Assets/SceneAsset.h"
+#include <AssetSystem/Assets/Types/Scene.h>
 #include <functional>
 
 namespace Eclipse
@@ -14,14 +14,14 @@ namespace Eclipse
 		static void ReloadActive();
 
 		static void Load(const char* path);
-		static void Load(Assets::Scene scene);
-		static void Load(Assets::GUID guid);
+		static void Load(Scene scene);
+		static void Load(GUID guid);
 
 		static void SaveActive();
 
 		static void Clear();
 
-		static void SetOnSceneChangeCallback(std::function<void(Assets::GUID guid)>);
+		static void SetOnSceneChangeCallback(std::function<void(GUID guid)>);
 
 	public:
 		static std::string CaptureSnapshot();
@@ -38,16 +38,16 @@ namespace Eclipse
 		static SceneType GetActiveSceneType();
 
 		static unsigned GetActivePrefab();
-		static Assets::Scene GetActive();
+		static Scene GetActive();
 
 	private:
-		static inline Assets::Scene ActiveScene;
+		static inline Scene ActiveScene;
 
 		static inline unsigned ActivePrefabEditSceneID;
 
 		static inline SceneType ActiveSceneType = SceneType::World;
 
-		static inline std::function<void(Assets::GUID guid)> onSceneChangeCallback;
+		static inline std::function<void(GUID guid)> onSceneChangeCallback;
 
 	private:
 #ifdef ECL_EDITOR

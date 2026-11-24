@@ -8,7 +8,6 @@
 #include "MainMenuBar.h"
 #include "ProjectManager.h"
 
-#include "Assets/AssetImporter.h"
 #include "Core/PathManager.h"
 
 #include "EditorLayout.h"
@@ -42,20 +41,20 @@ namespace Eclipse::Editor
 
 		ImGui::SetCurrentContext((ImGuiContext*)Engine::GetImGuiContext());
 
-		Assets::AssetImporter::ImportAssets(PathManager::GetEngineAssetsPath(), "Engine Assets");
+		//Assets::AssetImporter::ImportAssets(PathManager::GetEngineAssetsPath(), "Engine Assets");
 
 		EditorUI::Init();
 		EditorLayout::Init();
 
 		GameModuleManager::TryCompileAndLoad();
 		
-		SceneManager::SetOnSceneChangeCallback([](Assets::GUID guid) {
+		SceneManager::SetOnSceneChangeCallback([](GUID guid) {
 			Settings::GetEditorSettings().lastActiveScene = guid.ToString();
 			});
 
 		if (Settings::GetEditorSettings().openLastActiveSceneOnStartup && !GameModuleManager::HasBuildErrors())
 		{
-			Assets::GUID guid;
+			GUID guid;
 			guid.FromString(Settings::GetEditorSettings().lastActiveScene);
 			SceneManager::Load(guid);
 		}

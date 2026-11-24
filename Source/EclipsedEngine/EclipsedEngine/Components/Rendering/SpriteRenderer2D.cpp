@@ -13,8 +13,13 @@
 
 #include "Physics/PhysicsEngine.h"
 
+#include <AssetSystem/Loading/AssetLoader.h>
+
+#include <Core/MainSingleton.h>
+
 namespace Eclipse
 {
+	Material SpriteRenderer2D::PixelPickMaterial;
 	bool SpriteRenderer2D::RenderingFrozen = false;
 
 	void SpriteRenderer2D::SetSpriteRect(const Math::Vector2f& aMin, const Math::Vector2f& aMax)
@@ -25,14 +30,14 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnChangeColor()
 	{
-		myMaterial.GetBuffer().color = myMaterial.dataPtr->color * myColor;
+		materialBuffer.color = myMaterial.Color() * myColor;
 	}
 
 	void SpriteRenderer2D::OnChangeMaterial()
 	{
-		hasMaterial = myMaterial.IsValid();
+		hasMaterial = myMaterial.IsReady();
 
-		myMaterial.GetBuffer().color = myMaterial.dataPtr->color * myColor;
+		materialBuffer.color = myMaterial.Color() * myColor;
 
 		Math::Vector2f NewSpriteRectMax = spriteRectMax;
 		Math::Vector2f NewSpriteRectMin = spriteRectMin;
@@ -41,12 +46,12 @@ namespace Eclipse
 		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
 
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		myMaterial.GetBuffer().spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		materialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 	}
 
 	void SpriteRenderer2D::OnChangeSprite()
 	{
-		hasSprite = mySprite.IsValid();
+		hasSprite = mySprite.IsReady();
 
 	}
 
@@ -60,7 +65,7 @@ namespace Eclipse
 		
 	}
 
-	void SpriteRenderer2D::SetSprite(const Assets::GUID& aGuid)
+	void SpriteRenderer2D::SetSprite(const GUID& aGuid)
 	{
 		if (!aGuid.IsEmpty())
 		{
@@ -68,18 +73,19 @@ namespace Eclipse
 			return;
 		}
 
-		SetSprite(Assets::AssetManager::Load<Assets::Texture>(aGuid));
+		
+		SetSprite(Eclipse::AssetSystem::AssetLoader::Load<Texture>(aGuid));
 	}
 
-	void SpriteRenderer2D::SetSprite(const Assets::Texture& aSprite)
+	void SpriteRenderer2D::SetSprite(const Texture& aSprite)
 	{
 		mySprite = aSprite;
 		
-		if (mySprite.IsValid()) OnChangeSprite();
+		if (mySprite.IsReady()) OnChangeSprite();
 	}
 
 
-	void SpriteRenderer2D::SetMaterial(const Assets::GUID& aGuid)
+	void SpriteRenderer2D::SetMaterial(const GUID& aGuid)
 	{
 		if (!aGuid.IsEmpty())
 		{
@@ -87,14 +93,14 @@ namespace Eclipse
 			return;
 		}
 
-		SetSprite(Assets::AssetManager::Load<Assets::Texture>(aGuid));
+		SetSprite(Eclipse::AssetSystem::AssetLoader::Load<Texture>(aGuid));
 	}
 
-	void SpriteRenderer2D::SetMaterial(const Assets::Material& aMaterial)
+	void SpriteRenderer2D::SetMaterial(const Material& aMaterial)
 	{
 		myMaterial = aMaterial;
 
-		if (myMaterial.IsValid()) OnChangeMaterial();
+		if (myMaterial.IsReady()) OnChangeMaterial();
 	}
 
 	void SpriteRenderer2D::SetColor(const Math::Color& aColor)
@@ -105,18 +111,18 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnComponentAdded()
 	{
-		PixelPickMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::PIXELPICK_MATERIAL);
+		PixelPickMaterial = Eclipse::AssetSystem::AssetLoader::Load<Material>("engine://Default/Materials/Editor/PixelPick_Material.mat");
 
-		if (myMaterial.IsValid()) hasMaterial = true;
-		if (mySprite.IsValid()) hasSprite = true;
+		if (myMaterial.IsReady()) hasMaterial = true;
+		if (mySprite.IsReady()) hasSprite = true;
 
 		if (!hasMaterial)
 		{
-			myMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_SPRITE);
+			myMaterial = Eclipse::AssetSystem::AssetLoader::Load<Material>("engine://Default/Materials/Default_2D_Material.mat");
 			hasMaterial = true;
 		}
 
-		renderer = MainSingleton::GetPointer<Graphics::IRenderer>();
+		renderer = &Graphics::RendererManager::GetRenderer();
 		drawer = renderer->GetDrawer();
 
 		Eclipse::Graphics::IGraphicsBuffer* buffer = renderer->GetGraphicsBuffer();
@@ -181,25 +187,25 @@ namespace Eclipse
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
 		if (editorBuffer->PixelPicking)
-			graphicsDevice->BindMaterial(PixelPickMaterial);
+			PixelPickMaterial.Bind();
 		else
-			graphicsDevice->BindMaterial(myMaterial);
+			myMaterial.Bind();
 #else
 		graphicsDevice->BindMaterial(material);
 #endif
 
 		//Math::Vector2f scaleMultiplier;
-		if (mySprite.IsValid())
-		{
-			//scaleMultiplier = mySprite.GetTextureSizeNormilized();
-			graphicsDevice->BindTexture(0, mySprite);
-		}
+		//if (mySprite.IsValid())
+		//{
+		//	//scaleMultiplier = mySprite.GetTextureSizeNormilized();
+		//	graphicsDevice->BindTexture(0, mySprite);
+		//}
 		//else
 		//	scaleMultiplier = myMaterial.GetTexture().GetTextureSizeNormilized();
 
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transformBuffer);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, &mySpriteBuffer);
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &myMaterial.GetBuffer());
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &materialBuffer);
 
 		drawer->DrawSprite();
 	}

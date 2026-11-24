@@ -1,8 +1,9 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "921d5a925a097588553c695abb9d90c2",
-        "type": 1,
-        "metaComponents": []
+    "guid": "8dd47eb2c0a064f6bf8cba96b863bc87",
+    "filename": "",
+    "path": "engine://Editor/MoveGizmo.psd",
+    "type": 0,
+    "data": {
+        "spriteRects": []
     }
 }

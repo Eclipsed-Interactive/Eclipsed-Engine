@@ -532,7 +532,7 @@
 //		}
 //	}
 //
-//	void SpriteEditor::LoadMeta(const Assets::GUID& guid)
+//	void SpriteEditor::LoadMeta(const GUID& guid)
 //	{
 //		myRects.clear();
 //
@@ -593,11 +593,11 @@
 //		//}
 //	}
 //
-//	void SpriteEditor::SetActiveTexture(const Assets::GUID& guid)
+//	void SpriteEditor::SetActiveTexture(const GUID& guid)
 //	{
 //	}
 //
-//	void SpriteEditor::SaveMeta(const Assets::GUID& guid)
+//	void SpriteEditor::SaveMeta(const GUID& guid)
 //	{
 //		Assets::AssetMeta& meta = MainSingleton::GetInstance<Assets::AssetDatabase>().GetProcessedFile(guid);
 //
@@ -770,7 +770,7 @@
 //		flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
 //	}
 //
-//	void SpriteEditor::SetTexture(const Assets::GUID& guid)
+//	void SpriteEditor::SetTexture(const GUID& guid)
 //	{
 //		myActiveAsset = guid;
 //		//myActivePath = aPath;

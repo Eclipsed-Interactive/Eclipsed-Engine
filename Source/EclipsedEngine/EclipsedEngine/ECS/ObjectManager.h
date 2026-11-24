@@ -9,11 +9,7 @@
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "ECS/GameObject.h"
 
-#include "Assets/AssetManager.h"
-
 #include "EclipsedEngine.Core.hpp"
-#include <Assets/Assets/PrefabAsset.h>
-
 
 namespace Eclipse
 {
@@ -32,23 +28,23 @@ namespace Eclipse
             int aGameobjectID, const std::vector<unsigned>& aComponentsID, int currentIndex, bool fromReplicated);
     };
 
-    ECL_API inline GameObject*& Instantiate(Assets::Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
-    {
-        GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(aPrefab.dataPtr->data);
-        gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
-        gameobject->IsPrefab = true;
-
-        if (instagator)
-            gameobject->transform->SetPosition(instagator->transform->GetPosition());
-        
-#ifdef ECLIPSED_NETWORKING
-        if (Replicated)
-            Replication::ReplicationManager::SendPrefabObject(gameobject, aPrefab);
-#endif
-
-        aPrefab.dataPtr->gameobject = gameobject;
-        return aPrefab.dataPtr->gameobject;
-    }
+//    ECL_API inline GameObject*& Instantiate(Assets::Prefab& aPrefab, GameObject* instagator = nullptr, bool Replicated = false)
+//    {
+//        GameObject* gameobject = InternalSpawnObjectClass::CreateObjectFromJsonString(aPrefab.dataPtr->data);
+//        gameobject->prefabAssetIDStr = aPrefab.GetAssetID().ToString();
+//        gameobject->IsPrefab = true;
+//
+//        if (instagator)
+//            gameobject->transform->SetPosition(instagator->transform->GetPosition());
+//        
+//#ifdef ECLIPSED_NETWORKING
+//        if (Replicated)
+//            Replication::ReplicationManager::SendPrefabObject(gameobject, aPrefab);
+//#endif
+//
+//        aPrefab.dataPtr->gameobject = gameobject;
+//        return aPrefab.dataPtr->gameobject;
+//    }
 
     ECL_API inline void Destroy(GameObject* aGameobject)
     {
