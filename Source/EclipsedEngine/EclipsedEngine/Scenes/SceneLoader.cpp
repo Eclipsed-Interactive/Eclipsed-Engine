@@ -11,6 +11,7 @@
 #include "rapidjson/prettywriter.h"
 
 #include "Reflection/Runtime/ReflectionRegistry.h"
+#include "Reflection/Attributes/Attributes.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -56,6 +57,8 @@ namespace Eclipse
 					unsigned char* data = reinterpret_cast<unsigned char*>(Comp) + field.offset;
 
 					Serialization::FromJson(field.type, reinterpret_cast<void*>(data), value);
+					if (const Reflection::OnChange* onChange = field.attributeContainer.TryGet<Reflection::OnChange>())
+						onChange->event(Comp);
 				}
 			}
 		}
@@ -218,6 +221,9 @@ namespace Eclipse
 						const Reflection::FieldEntry& entry = Reflection::ReflectionRegistry::GetField(typeStr, field.name.GetString());
 						unsigned char* data = reinterpret_cast<unsigned char*>(component) + entry.offset;
 						Serialization::FromJson(entry.type, data, field.value);
+
+						if (const Reflection::OnChange* onChange = entry.attributeContainer.TryGet<Reflection::OnChange>())
+							onChange->event(component);
 					}
 					catch (...)
 					{

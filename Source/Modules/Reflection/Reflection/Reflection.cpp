@@ -50,6 +50,9 @@ namespace Eclipse::Reflection
 		{
 			const FieldEntry& field = ReflectionRegistry::GetField(typeName, fieldName);
 			::memcpy(reinterpret_cast<char*>(obj) + field.offset, data, field.size);
+
+			if (const OnChange* onChange = field.attributeContainer.TryGet<OnChange>())
+				onChange->event(obj);
 		}
 		catch (const std::exception&)
 		{
