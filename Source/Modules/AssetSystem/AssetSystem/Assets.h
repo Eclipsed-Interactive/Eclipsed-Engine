@@ -22,4 +22,10 @@ namespace Eclipse::Assets
 	{
 		return AssetSystem::AssetLoader::Load<T>(aGuid);
 	}
+
+	template<typename T>
+	T Load(const char* aVirtualPath)
+	{
+		return AssetSystem::AssetLoader::Load<T>(aVirtualPath);
+	}
 }
