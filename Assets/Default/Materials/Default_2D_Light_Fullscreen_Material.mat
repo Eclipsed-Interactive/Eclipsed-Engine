@@ -1,8 +1,8 @@
 {
     "cereal_class_version": 0,
-    "vertex_shader": "5904ad4180eac1e28b69f16e5b6c8dc9",
-    "pixel_shader": "0e38593ac27dfb3c135f8f857d190341",
-    "texture": "77cbf21c126e6ab274908f75c436065b",
+    "vertex_shader": "c9e846824ce5f406724f128a10bae17b",
+    "pixel_shader": "b2d9c36c4e1ab2f2d11ad05611bb5c83",
+    "texture": "4af3e1079a42f02742ca2742cded45c6",
     "color": {
         "r": 1.0,
         "g": 1.0,

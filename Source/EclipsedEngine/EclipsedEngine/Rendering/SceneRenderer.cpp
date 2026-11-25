@@ -17,7 +17,7 @@ namespace Eclipse::Rendering
 {
 	void SceneRenderer::Init()
 	{
-		//GetMaterials();
+		GetMaterials();
 		CreateBuffers();
 	}
 
