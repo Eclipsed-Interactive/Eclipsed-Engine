@@ -45,6 +45,8 @@ namespace Eclipse
         void Render() override;
         void Draw(unsigned aProgramID = 0);
 
+        void CheckInFrustum();
+
 
         void SetSprite(const GUID& aGuid);
         void SetSprite(const Texture& aSprite);
@@ -61,8 +63,6 @@ namespace Eclipse
 
         void SetXMirror(bool aMirror) { myMirror.x = aMirror; }
         void SetYMirror(bool aMirror) { myMirror.y = aMirror; }
-
-        float GetZIndex() override { return zIndex; }
 
 
         void OnChangeColor();
@@ -93,7 +93,7 @@ namespace Eclipse
         class EditorBuffer* editorBuffer;
         Graphics::IGraphicsDevice* graphicsDevice;
 
-        bool IsInFrustum;
+        bool IsInFrustum = true;
 
     private:
         [[SerializeField, OnChange(OnChangeSprite)]]

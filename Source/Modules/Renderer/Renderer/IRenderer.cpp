@@ -31,4 +31,16 @@ namespace Eclipse::Graphics
 	{
 		return debugDrawer;
 	}
+
+	IInstancedRenderer* IRenderer::GetInstancedRendering()
+	{
+		return InstancedRendering;
+	}
+
+	CommandListManager* IRenderer::GetCommandListManager()
+	{
+		return &myCommandListManager;
+	}
+
+	
 }

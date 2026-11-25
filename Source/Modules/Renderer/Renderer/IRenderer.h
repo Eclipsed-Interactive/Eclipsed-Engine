@@ -7,6 +7,8 @@
 #include "IGraphicsDevice.h"
 #include "IComputer.h"
 #include "IDebugDrawer.h"
+#include "IInstancedRenderer.h"
+#include "Renderer/RenderCommands/CommandList.h"
 
 #include "Renderer.Core.hpp"
 
@@ -20,8 +22,9 @@ namespace Eclipse::Graphics
 		virtual ErrorCode Init()  
 		{
 			graphicsBuffer->Init();
+			myCommandListManager.InitAllCommandLists();
 
-			return ErrorCode{}; 
+			return ErrorCode{};
 		};
 
 		virtual void BeginFrame() {};
@@ -43,6 +46,8 @@ namespace Eclipse::Graphics
 		IGraphicsDevice* GetDevice();
 		IComputer* GetComputer();
 		IDebugDrawer* GetDebugDrawer();
+		IInstancedRenderer* GetInstancedRendering();
+		CommandListManager* GetCommandListManager();
 
 	protected:
 		IGraphicsBuffer* graphicsBuffer;
@@ -51,5 +56,7 @@ namespace Eclipse::Graphics
 		IGraphicsDevice* device;
 		IComputer* computer;
 		IDebugDrawer* debugDrawer;
+		IInstancedRenderer* InstancedRendering;
+		CommandListManager myCommandListManager;
 	};
 }

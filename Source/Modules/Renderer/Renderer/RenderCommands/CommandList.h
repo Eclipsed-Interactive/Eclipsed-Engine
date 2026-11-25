@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAXCOMMANDALLOCATION 1'000'000
+#define MAXCOMMANDALLOCATION 1'000'000'000
 
 #include "RenderCommand.h"
 

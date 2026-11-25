@@ -16,7 +16,7 @@
 #define GetComp(Type, GOID)\
 ComponentManager::GetComponent<Type>(GOID)
 
-#define MAX_COMPONENT_MEMORY_BYTES 20'000'000
+#define MAX_COMPONENT_MEMORY_BYTES 2'000'000'000
 
 namespace Eclipse
 {
@@ -144,6 +144,8 @@ namespace Eclipse
 		static const std::unordered_map<GameObjectID, GameObject*, GUIDHash>& GetGameObjects();
 
 	private:
+		static bool SortComponentsThisFrame;
+
 		static std::function<void(Component*)> CreateComponentReplicated;
 
 		static std::function<void()> BeforeComponentConstruction;

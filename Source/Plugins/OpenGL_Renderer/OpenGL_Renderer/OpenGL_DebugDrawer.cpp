@@ -93,7 +93,8 @@ namespace Eclipse::Graphics::OpenGL
 
 	void OpenGL_DebugDrawer::Render()
 	{
-		MainSingleton::GetPointer<CommandListManager>()->GetDebugDrawCommandList().Enqueue([&]()
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
+		commandListManager->GetDebugDrawCommandList().Enqueue([&]()
 			{
 				glUseProgram(programID);
 

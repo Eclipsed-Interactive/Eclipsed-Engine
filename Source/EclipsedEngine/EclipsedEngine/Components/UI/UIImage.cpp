@@ -60,8 +60,7 @@ namespace Eclipse
 
 	void UIImage::Render()
 	{
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetUICommandList().Enqueue([&]()
 			{
 				Draw();

@@ -7,28 +7,28 @@ struct Transform
    float rotation;
 };
 
-layout(std140,binding=1) uniform TransformBuffer
+layout(std140, binding = 1) uniform TransformBuffer
 {
    Transform transform;
 };
 
 // Layout Ins
-layout(location=0)in vec2 VertexPosition;
-layout(location=1)in vec2 TexCoord;
+layout(location = 0) in vec2 VertexPosition;
+layout(location = 1) in vec2 TexCoord;
 
 // Outs
 layout(location = 0)out vec2 outTexCoord;
 
-layout(std140,binding=0) uniform CameraBuffer
+layout(std140, binding = 0) uniform CameraBuffer
 {
    vec2 cameraPosition;
    vec2 cameraScale;
    float cameraRotation;
-   
+
    float resolutionRatio;
 };
 
-layout(std140, binding=3) uniform SpriteBuffer
+layout(std140, binding = 3) uniform SpriteBuffer
 {
    vec2 spriteScaleMultiplier;
    vec2 mirrored;
@@ -36,27 +36,25 @@ layout(std140, binding=3) uniform SpriteBuffer
 
 void main()
 {
-   outTexCoord=TexCoord;
-   
-   float totalRotation=transform.rotation;
-   mat2 rotationMatrix=mat2(cos(totalRotation),-sin(totalRotation),
-   sin(totalRotation),cos(totalRotation));
-   
+   outTexCoord = TexCoord;
+
+   float totalRotation = transform.rotation;
+   mat2 rotationMatrix = mat2(cos(totalRotation), -sin(totalRotation), sin(totalRotation), cos(totalRotation));
+
    // ORIGINAL TRANSFORMATION (for collision compatibility)
-   vec2 scaledVertex=VertexPosition*(transform.size*.01*mirrored);
-   vec2 rotatedVertex=scaledVertex*rotationMatrix;
-   
-   vec2 worldPosition=transform.position+rotatedVertex;
-   vec2 cameraRelative=worldPosition-cameraPosition;
-   
-   mat2 camRot=mat2(cos(cameraRotation),-sin(cameraRotation),
-   sin(cameraRotation),cos(cameraRotation));
-   vec2 logicalPosition=cameraRelative*camRot;
-   
-   logicalPosition*=cameraScale;
-   
+   vec2 scaledVertex = VertexPosition * (transform.size * .01 * mirrored);
+   vec2 rotatedVertex = scaledVertex * rotationMatrix;
+
+   vec2 worldPosition = transform.position + rotatedVertex;
+   vec2 cameraRelative = worldPosition - cameraPosition;
+
+   mat2 camRot = mat2(cos(cameraRotation), -sin(cameraRotation), sin(cameraRotation), cos(cameraRotation));
+   vec2 logicalPosition = cameraRelative * camRot;
+
+   logicalPosition *= cameraScale;
+
    // Apply aspect ratio correction only for display
-   logicalPosition.x*=resolutionRatio;
-   
-   gl_Position=vec4(logicalPosition,0.0,1.0);
+   logicalPosition.x *= resolutionRatio;
+
+   gl_Position = vec4(logicalPosition, 0.0, 1.0);
 }

@@ -52,7 +52,6 @@ namespace Eclipse
 	void SpriteRenderer2D::OnChangeSprite()
 	{
 		hasSprite = mySprite.IsReady();
-
 	}
 
 	void SpriteRenderer2D::OnChangeMirror()
@@ -62,7 +61,7 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnChangeZIndex()
 	{
-		
+		InternalzIndex = zIndex;
 	}
 
 	void SpriteRenderer2D::SetSprite(const GUID& aGuid)
@@ -131,22 +130,9 @@ namespace Eclipse
 		graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
 	}
 
-	void SpriteRenderer2D::Render()
+	void SpriteRenderer2D::CheckInFrustum()
 	{
-		if (!gameObject->transform)
-			return;
-
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-		commandListManager->GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
-	}
-
-	void SpriteRenderer2D::Draw(unsigned aProgramID)
-	{
-		if (!hasMaterial || IsDeleted)
-			return;
-
 		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
 		CameraBuffer* cameraBuffer = nullptr;
 		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_CameraBuffer, cameraBuffer);
 
@@ -155,7 +141,6 @@ namespace Eclipse
 
 		Math::Vector2f Min = cameraBuffer->cameraPosition - ScaleWResolutionRatio;
 		Math::Vector2f Max = cameraBuffer->cameraPosition + ScaleWResolutionRatio;
-
 
 		TransformBuffer& transformBuffer = gameObject->transform->myTransformBuffer;
 
@@ -174,11 +159,39 @@ namespace Eclipse
 		Math::Vector2f MinBounds = transformBuffer.Position - RotatedExtents;
 		Math::Vector2f MaxBounds = transformBuffer.Position + RotatedExtents;
 
-		if(!RenderingFrozen)
-			IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
+		IsInFrustum = Eclipse::PhysicsEngine::InclusiveCollisionCheck(MinBounds, MaxBounds, Min, Max);
+	}
+
+	void SpriteRenderer2D::Render()
+	{
+		if (!gameObject->transform)
+			return;
+
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
+		commandListManager->GetSpriteCommandList().Enqueue<RenderSprite2DCommand>(this);
+	}
+
+	void SpriteRenderer2D::Draw(unsigned aProgramID)
+	{
+		if (!hasMaterial || IsDeleted)
+			return;
+
+		if (!RenderingFrozen)
+			CheckInFrustum();
+
 		if (!IsInFrustum)
 			return;
 
+		if (gameObject->GetIsStatic())
+		{
+			Graphics::IInstancedRenderer* InstancedRenderer = Graphics::RendererManager::GetRenderer().GetInstancedRendering();
+			InstancedRenderer->AddRenderObject(&gameObject->transform->myTransformBuffer, &mySpriteBuffer, &myMaterial, &mySprite);
+
+			return;
+		}
+		
+
+		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 
 #ifdef ECL_EDITOR
 		if (editorBuffer->PixelPicking)
@@ -203,7 +216,7 @@ namespace Eclipse
 		//else
 		//	scaleMultiplier = myMaterial.GetTexture().GetTextureSizeNormilized();
 
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &transformBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &gameObject->transform->myTransformBuffer);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, &mySpriteBuffer);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &materialBuffer);
 

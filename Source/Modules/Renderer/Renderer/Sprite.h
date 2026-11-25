@@ -2,6 +2,8 @@
 
 #include "Renderer.Core.hpp"
 
+#include "Core/Math/Vector/Vector2.h"
+
 namespace Eclipse::Graphics
 {
 	class RENDERER_API Sprite
@@ -16,10 +18,15 @@ namespace Eclipse::Graphics
 		unsigned& GetSpriteBufferID();
 		unsigned GetSpriteBufferID() const;
 
+		unsigned& GetInstanceVBOID();
+		unsigned GetInstanceVBOID() const;
+
 	private:
 		unsigned myVTXbuffer;
 		unsigned myIDXbuffer;
 		unsigned mySpriteBuffer;
+
+		unsigned mySpriteInstanceVBO;
 
 	public:
 		struct Vertex
@@ -29,6 +36,13 @@ namespace Eclipse::Graphics
 
 			float texCoordX;
 			float texCoordY;
+		};
+
+		struct InstanceTransform
+		{
+			Math::Vector2f Position;
+			Math::Vector2f Scale;
+			float Rotation;
 		};
 
 	public:

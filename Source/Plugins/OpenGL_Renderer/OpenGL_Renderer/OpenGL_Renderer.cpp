@@ -17,6 +17,7 @@
 #include "OpenGL_DebugDrawer.h"
 #include "OpenGL_Computer.h"
 #include "OpenGL_GraphicsDevice.h"
+#include "OpenGL_InstancedRenderer.h"
 
 namespace Eclipse::Graphics::OpenGL
 {
@@ -52,6 +53,9 @@ namespace Eclipse::Graphics::OpenGL
 		device = new OpenGL_GraphicsDevice;
 		graphicsBuffer = new OpenGL_GraphicsBuffer;
 		uniformVariableManager = new OpenGL_UniformVariableManager;
+
+		InstancedRendering = new OpenGL_InstancedRenderer;
+
 
 		drawer = new OpenGL_Drawer;
 		drawer->mySprite = device->CreateSprite();

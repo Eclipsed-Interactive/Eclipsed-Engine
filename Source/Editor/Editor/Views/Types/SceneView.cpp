@@ -34,6 +34,7 @@
 #include "Renderer/RendererManager.h"
 #include "Renderer/IRenderer.h"
 #include "Renderer/IGraphicsBuffer.h"
+#include "Renderer/IInstancedRenderer.h"
 
 #include "Core/PathManager.h"
 
@@ -229,11 +230,9 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	editorBuffer->IsSceneView = 1;
 	buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
-
-
 
 
 	Math::Vector2i MousePosition = GetSceneViewMousePosition();
@@ -418,12 +417,15 @@ void Eclipse::Editor::SceneView::RenderSceneView()
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear(Graphics::ClearFlags::Color, ClearColor);
 
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
 
 	Graphics::RendererManager::GetRenderer().GetDebugDrawer()->Render();
 	commandListManager->GetDebugDrawCommandList().Execute();
+
+	Graphics::IInstancedRenderer* InstancedRenderer = Graphics::RendererManager::GetRenderer().GetInstancedRendering();
+	InstancedRenderer->ExecuteStaticRendering();
 }
 
 void Eclipse::Editor::SceneView::Draw()
