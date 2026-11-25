@@ -19,6 +19,8 @@
 
 #include <AssetSystem/Assets.h>
 #include <fstream>
+#include "Renderer/RendererManager.h"
+#include "Renderer/IRenderer.h"
 
 namespace Eclipse
 {
@@ -45,7 +47,7 @@ namespace Eclipse
 
 	void SceneManager::Clear()
 	{
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->ResetAllCommandLists();
 
 		ComponentManager::Clear();

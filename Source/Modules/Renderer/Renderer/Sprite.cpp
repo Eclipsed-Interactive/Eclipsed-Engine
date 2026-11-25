@@ -44,4 +44,13 @@ namespace Eclipse::Graphics
 	{
 		return mySpriteBuffer;
 	}
+
+	unsigned& Sprite::GetInstanceVBOID()
+	{
+		return mySpriteInstanceVBO;
+	}
+	unsigned Sprite::GetInstanceVBOID() const
+	{
+		return mySpriteInstanceVBO;
+	}
 }

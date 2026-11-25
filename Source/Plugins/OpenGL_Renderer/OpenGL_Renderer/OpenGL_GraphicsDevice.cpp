@@ -200,17 +200,32 @@ namespace Eclipse::Graphics::OpenGL
 			// glVertexAttribPointer(shader layout index, total number of floats/ints/bools etc, GL_[your type], GL_FALSE, vertex stride, offset from last layout position start)
 			// Matrix4x4 would be index 0, 1, 2 and 3 set as in setting 4 float4's
 
-			size_t offset = 0;
-			// Position
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offset);
-			offset += 2 * sizeof(float);
-
-			// TexCoord
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offset);
-			offset += 2 * sizeof(float);
-
-			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offsetof(Sprite::Vertex, posX));
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::Vertex), (void*)offsetof(Sprite::Vertex, texCoordX));
+		}
+		{
+			glGenBuffers(1, &sprite->GetInstanceVBOID());
+			glBindBuffer(GL_ARRAY_BUFFER, sprite->GetInstanceVBOID());
+			Sprite::InstanceTransform transform;
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Sprite::InstanceTransform), &transform, GL_DYNAMIC_DRAW);
+
+			glEnableVertexAttribArray(2);
+			glEnableVertexAttribArray(3);
+			glEnableVertexAttribArray(4);
+
+			//Instancing
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Position));
+			glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Scale));
+			glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Rotation));
+
+			glVertexAttribDivisor(2, 1);
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
 		glBindVertexArray(0);

@@ -1,9 +1,9 @@
 #version 460 core
 out vec4 frag_colour;
 
-struct Material 
+struct Material
 {
-   sampler2D albedo;
+    sampler2D albedo;
 };
 uniform Material material[8];
 

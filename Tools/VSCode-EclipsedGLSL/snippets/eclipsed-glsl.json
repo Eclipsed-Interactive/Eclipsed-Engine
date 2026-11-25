@@ -1,0 +1,184 @@
+{
+  "main": {
+    "prefix": "main",
+    "body": [
+      "void main()",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "Entry point"
+  },
+  "Vertex shader": {
+    "prefix": "vert",
+    "body": [
+      "#version 460 core",
+      "",
+      "layout(location=0) in vec2 VertexPosition;",
+      "layout(location=1) in vec2 TexCoord;",
+      "",
+      "out vec2 outTexCoord;",
+      "",
+      "void main()",
+      "{",
+      "\toutTexCoord = TexCoord;",
+      "\tgl_Position = vec4(VertexPosition, 0.0, 1.0);$0",
+      "}"
+    ],
+    "description": "Vertex shader template"
+  },
+  "Pixel shader": {
+    "prefix": "pixel",
+    "body": [
+      "#version 460 core",
+      "",
+      "in vec2 outTexCoord;",
+      "",
+      "out vec4 frag_colour;",
+      "",
+      "void main()",
+      "{",
+      "\tfrag_colour = vec4(1.0);$0",
+      "}"
+    ],
+    "description": "Pixel (fragment) shader template"
+  },
+  "Geometry shader": {
+    "prefix": "geom",
+    "body": [
+      "#version 460 core",
+      "layout(${1|points,lines,triangles|}) in;",
+      "layout(${2|triangle_strip,line_strip,points|}, max_vertices = ${3:4}) out;",
+      "",
+      "void main()",
+      "{",
+      "\tfor (int i = 0; i < ${4:4}; ++i)",
+      "\t{",
+      "\t\tgl_Position = gl_in[0].gl_Position;$0",
+      "\t\tEmitVertex();",
+      "\t}",
+      "\tEndPrimitive();",
+      "}"
+    ],
+    "description": "Geometry shader template"
+  },
+  "Compute shader": {
+    "prefix": "compute",
+    "body": [
+      "#version 460 core",
+      "layout(local_size_x = ${1:64}) in;",
+      "",
+      "void main()",
+      "{",
+      "\tuint id = gl_GlobalInvocationID.x;",
+      "\t$0",
+      "}"
+    ],
+    "description": "Compute shader template"
+  },
+  "Uniform block (std140)": {
+    "prefix": "ubo",
+    "body": [
+      "layout(std140, binding=${1:0}) uniform ${2:Name}Buffer",
+      "{",
+      "\t$0",
+      "};"
+    ],
+    "description": "Uniform buffer block"
+  },
+  "Storage block (std430)": {
+    "prefix": "ssbo",
+    "body": [
+      "layout(std430, binding = ${1:0}) buffer ${2:Data}",
+      "{",
+      "\t${3:vec4} ${4:items}[];",
+      "};"
+    ],
+    "description": "Shader storage buffer block"
+  },
+  "Camera buffer": {
+    "prefix": "camerabuffer",
+    "body": [
+      "layout(std140,binding=0) uniform CameraBuffer",
+      "{",
+      "\tvec2 cameraPosition;",
+      "\tvec2 cameraScale;",
+      "\tfloat cameraRotation;",
+      "\t",
+      "\tfloat resolutionRatio;",
+      "};"
+    ],
+    "description": "Eclipsed engine camera uniform block (binding 0)"
+  },
+  "Material sampler": {
+    "prefix": "material",
+    "body": [
+      "struct Material",
+      "{",
+      "\tsampler2D albedo;",
+      "};",
+      "uniform Material material;"
+    ],
+    "description": "Eclipsed engine material struct"
+  },
+  "struct": {
+    "prefix": "struct",
+    "body": [
+      "struct ${1:Name}",
+      "{",
+      "\t$0",
+      "};"
+    ],
+    "description": "Struct"
+  },
+  "layout in": {
+    "prefix": "lin",
+    "body": [
+      "layout(location=${1:0}) in ${2:vec2} ${3:name};"
+    ],
+    "description": "Vertex attribute input"
+  },
+  "layout out": {
+    "prefix": "lout",
+    "body": [
+      "layout(location=${1:0}) out ${2:vec4} ${3:name};"
+    ],
+    "description": "Output with location"
+  },
+  "for": {
+    "prefix": "for",
+    "body": [
+      "for (int ${1:i} = 0; ${1:i} < ${2:count}; ++${1:i})",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "for loop"
+  },
+  "if": {
+    "prefix": "if",
+    "body": [
+      "if (${1:condition})",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "if statement"
+  },
+  "rotate2d": {
+    "prefix": "rot2",
+    "body": [
+      "mat2 ${1:rot} = mat2(cos(${2:angle}), -sin(${2:angle}), sin(${2:angle}), cos(${2:angle}));"
+    ],
+    "description": "2D rotation matrix"
+  },
+  "region": {
+    "prefix": "region",
+    "body": [
+      "// region ${1:name}",
+      "$0",
+      "// endregion"
+    ],
+    "description": "Foldable region"
+  }
+}

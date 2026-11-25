@@ -53,7 +53,7 @@ namespace Eclipse
 			return Math::Random::Rand<unsigned>();
 		}
 
-		virtual float GetZIndex() { return -1; }
+		float GetZIndex() { return InternalzIndex; }
 
 		void SetComponentID()
 		{
@@ -161,5 +161,7 @@ namespace Eclipse
 		bool myIsOwner = true;
 		// Used with replication macros
 		int ReplicationIndex = 0;
+
+		int InternalzIndex = 0;
 	};
 }

@@ -40,7 +40,5 @@ namespace Eclipse
 	private:
 		static Graphics::IRenderer* renderer;
 		static Audio::IAudioBackend* audio;
-
-		static Graphics::CommandListManager myCommandListManager;
 	};
 }

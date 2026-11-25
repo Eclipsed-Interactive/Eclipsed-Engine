@@ -1,0 +1,302 @@
+{
+  "name": "eclipsed-glsl",
+  "displayName": "Eclipsed GLSL",
+  "version": "0.3.0",
+  "publisher": "eclipsed-engine",
+  "private": true,
+  "description": "GLSL support for Eclipsed Engine shaders (.vglsl, .pglsl, .gglsl, .cglsl, ...): highlighting, completion, hover, go to definition, rename, cross-stage checks and glslang validation.",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Linters"
+  ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:eclipsed-glsl"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "eclipsed-glsl",
+        "aliases": [
+          "GLSL (Eclipsed)",
+          "glsl"
+        ],
+        "extensions": [
+          ".glsl",
+          ".vglsl",
+          ".pglsl",
+          ".fglsl",
+          ".gglsl",
+          ".cglsl",
+          ".tglsl",
+          ".hglsl",
+          ".eglsl",
+          ".dglsl",
+          ".vert",
+          ".frag",
+          ".geom",
+          ".comp",
+          ".tesc",
+          ".tese"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/shader.svg",
+          "dark": "./icons/shader.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "eclipsed-glsl",
+        "scopeName": "source.eclipsed-glsl",
+        "path": "./syntaxes/eclipsed-glsl.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "eclipsed-glsl",
+        "path": "./snippets/eclipsed-glsl.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "eclipsedGlsl.openPairedShader",
+        "title": "Open Paired Shader Stage",
+        "category": "Eclipsed GLSL"
+      },
+      {
+        "command": "eclipsedGlsl.newShaderPair",
+        "title": "New Vertex/Pixel Shader Pair",
+        "category": "Eclipsed GLSL"
+      },
+      {
+        "command": "eclipsedGlsl.revalidate",
+        "title": "Re-run Validation",
+        "category": "Eclipsed GLSL"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "eclipsedGlsl.openPairedShader",
+        "key": "alt+o",
+        "when": "editorLangId == 'eclipsed-glsl'"
+      },
+      {
+        "command": "editor.action.formatDocument",
+        "key": "ctrl+k ctrl+d",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == 'eclipsed-glsl'"
+      },
+      {
+        "command": "editor.action.formatSelection",
+        "key": "ctrl+k ctrl+f",
+        "when": "editorHasSelection && editorTextFocus && !editorReadonly && editorLangId == 'eclipsed-glsl'"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "eclipsedGlsl.newShaderPair",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation@99"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Eclipsed GLSL",
+      "properties": {
+        "eclipsedGlsl.validator.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate shaders with glslangValidator (Khronos reference compiler) when it is available."
+        },
+        "eclipsedGlsl.validator.path": {
+          "type": "string",
+          "default": "",
+          "description": "Path to glslangValidator. Empty: use %VULKAN_SDK%/Bin, then PATH."
+        },
+        "eclipsedGlsl.validator.runOnChange": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate while typing (otherwise only on open/save)."
+        },
+        "eclipsedGlsl.linkage.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check in/out variables and uniform blocks against sibling stage files (Name.vglsl <-> Name.pglsl ...)."
+        },
+        "eclipsedGlsl.defaultStage": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "vertex",
+            "fragment",
+            "geometry",
+            "compute",
+            "tesscontrol",
+            "tesseval"
+          ],
+          "default": "auto",
+          "description": "Stage for plain .glsl files. auto = guess from content."
+        },
+        "eclipsedGlsl.format.spacing": {
+          "type": "boolean",
+          "default": true,
+          "description": "Normalize spaces: around binary/assignment operators, after commas and keywords (if/for/while), none inside parentheses or before semicolons."
+        },
+        "eclipsedGlsl.format.braceStyle": {
+          "type": "string",
+          "enum": [
+            "newLine",
+            "sameLine",
+            "keep"
+          ],
+          "enumDescriptions": [
+            "Opening brace on its own line (Visual Studio / Allman).",
+            "Opening brace at the end of the line (K&R).",
+            "Leave braces where they are."
+          ],
+          "default": "newLine",
+          "description": "Where to put opening braces when formatting a whole document."
+        },
+        "eclipsedGlsl.format.maxBlankLines": {
+          "type": "number",
+          "default": 2,
+          "description": "Collapse runs of blank lines to at most this many. -1 keeps them."
+        }
+      }
+    },
+    "semanticTokenScopes": [
+      {
+        "language": "eclipsed-glsl",
+        "scopes": {
+          "struct": [
+            "entity.name.type.struct.glsl"
+          ],
+          "interface": [
+            "entity.name.type.block.glsl"
+          ],
+          "macro": [
+            "entity.name.function.preprocessor.glsl"
+          ],
+          "property": [
+            "variable.other.member.glsl"
+          ],
+          "parameter": [
+            "variable.parameter.glsl"
+          ]
+        }
+      }
+    ],
+    "configurationDefaults": {
+      "[eclipsed-glsl]": {
+        "editor.semanticHighlighting.enabled": true,
+        "editor.defaultFormatter": "eclipsed-engine.eclipsed-glsl"
+      },
+      "editor.semanticTokenColorCustomizations": {
+        "rules": {
+          "struct:eclipsed-glsl": "#4EC9B0",
+          "interface:eclipsed-glsl": "#4EC9B0",
+          "function:eclipsed-glsl": "#DCDCAA",
+          "macro:eclipsed-glsl": "#BEB7FF",
+          "parameter:eclipsed-glsl": "#9CDCFE",
+          "variable:eclipsed-glsl": "#9CDCFE",
+          "variable.readonly:eclipsed-glsl": "#4FC1FF",
+          "property:eclipsed-glsl": "#DADADA",
+          "property.readonly:eclipsed-glsl": "#4FC1FF"
+        }
+      },
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": [
+              "entity.name.type.struct.glsl",
+              "entity.name.type.block.glsl"
+            ],
+            "settings": {
+              "foreground": "#4EC9B0"
+            }
+          },
+          {
+            "scope": [
+              "entity.name.function.glsl",
+              "support.function.glsl"
+            ],
+            "settings": {
+              "foreground": "#DCDCAA"
+            }
+          },
+          {
+            "scope": [
+              "entity.name.function.preprocessor.glsl"
+            ],
+            "settings": {
+              "foreground": "#BEB7FF"
+            }
+          },
+          {
+            "scope": [
+              "variable.other.glsl",
+              "variable.parameter.glsl",
+              "entity.other.attribute-name.layout.glsl"
+            ],
+            "settings": {
+              "foreground": "#9CDCFE"
+            }
+          },
+          {
+            "scope": [
+              "variable.other.member.glsl",
+              "variable.other.property.swizzle.glsl"
+            ],
+            "settings": {
+              "foreground": "#DADADA"
+            }
+          },
+          {
+            "scope": [
+              "variable.language.glsl",
+              "support.constant.glsl"
+            ],
+            "settings": {
+              "foreground": "#C586C0"
+            }
+          },
+          {
+            "scope": [
+              "keyword.control.glsl"
+            ],
+            "settings": {
+              "foreground": "#D8A0DF"
+            }
+          },
+          {
+            "scope": [
+              "storage.type.glsl",
+              "storage.modifier.glsl",
+              "storage.modifier.layout.glsl",
+              "storage.type.struct.glsl"
+            ],
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": [
+              "constant.numeric.hex.glsl",
+              "constant.numeric.float.glsl",
+              "constant.numeric.integer.glsl"
+            ],
+            "settings": {
+              "foreground": "#B5CEA8"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

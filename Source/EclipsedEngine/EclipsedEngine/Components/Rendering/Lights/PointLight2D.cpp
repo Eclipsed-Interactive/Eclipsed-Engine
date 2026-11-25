@@ -27,7 +27,7 @@ namespace Eclipse
 		if (!gameObject->transform)
 			return;
 
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetPointLightCommandList().Enqueue<PointLight2DCommand>(this);
 	}
 

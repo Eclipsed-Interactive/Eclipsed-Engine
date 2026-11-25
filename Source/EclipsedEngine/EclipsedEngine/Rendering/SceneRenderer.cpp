@@ -62,7 +62,7 @@ namespace Eclipse::Rendering
 	void SceneRenderer::RenderLights()
 	{
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 
 		device->BindFrameBuffer(LightsFrameBuffer.frameBufferIndex);
 		device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 1.f });
@@ -77,7 +77,7 @@ namespace Eclipse::Rendering
 	{
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
 		device->Clear(Graphics::ClearFlags::Color, Camera::MainCamera->ClearColor);
 		commandListManager->GetSpriteCommandList().Execute();
@@ -86,18 +86,18 @@ namespace Eclipse::Rendering
 	void SceneRenderer::RenderShadowSprites()
 	{
 		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
-
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
 		device->BindFrameBuffer(ShadowsFrameBuffer.frameBufferIndex);
 		device->Clear(Graphics::ClearFlags::Color, { 0.f, 0.f, 0.f, 0.f });
+
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetSpriteCommandList().Execute();
 	}
 
 	void SceneRenderer::RenderComposite()
 	{
-		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 
+		Eclipse::Graphics::IGraphicsDevice* device = Graphics::RendererManager::GetRenderer().GetDevice();
 		device->BindFrameBuffer(GameFrameBuffer.frameBufferIndex);
 		device->SetBlendMode(Graphics::BlendMode::Multiply);
 		LightCompositeMat.Bind();

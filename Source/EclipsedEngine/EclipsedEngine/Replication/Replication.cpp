@@ -8,6 +8,9 @@
 #include "Networking/Client/SteamP2PNetworkingClient.h"
 
 #include "Renderer/RenderCommands/CommandList.h"
+#include "Renderer/RendererManager.h"
+#include "Renderer/IRenderer.h"
+
 #include "ECS/ComponentManager.h"
 #include "EclipsedEngine/Replication/ReplicationManager.h"
 #include "EclipsedEngine/Replication/ReplicatedVariable.h"
@@ -67,7 +70,7 @@ namespace Eclipse::Replication
 
 	void ReplicationHelper::ClientHelp::StartReplicatedComponents()
 	{
-		//Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		//Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 
 		//commandListManager->GetHappenAtBeginCommandList().Enqueue([]()
 		//	{
@@ -176,8 +179,7 @@ namespace Eclipse::Replication
 		/*if (ComponentManager::HasGameObject(message.MetaData.GameObjectID))
 			return;
 
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
-
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetHappenAtBeginCommandList().Enqueue([message]()
 			{
 				char* prefabID = (char*)malloc(32);

@@ -29,7 +29,7 @@ namespace Eclipse
 		if (!gameObject->transform)
 			return;
 
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetSpotLightCommandList().Enqueue<SpotLight2DCommand>(this);
 	}
 

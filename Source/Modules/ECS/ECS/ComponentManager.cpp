@@ -574,6 +574,8 @@
 
 namespace Eclipse
 {
+	bool ComponentManager::SortComponentsThisFrame = false;
+
 	std::function<void(Component*)> ComponentManager::CreateComponentReplicated;
 
 	std::function<void()> ComponentManager::BeforeComponentConstruction;
@@ -806,6 +808,9 @@ namespace Eclipse
 
 	void ComponentManager::SortZIndexComponents(UpdatePriority& aVec)
 	{
+		if (!SortComponentsThisFrame)
+			return;
+
 		std::sort(aVec.vector.begin(), aVec.vector.end(), [](Component* aComp0, Component* aComp1)
 			{
 				float zIndex0 = aComp0->GetZIndex();

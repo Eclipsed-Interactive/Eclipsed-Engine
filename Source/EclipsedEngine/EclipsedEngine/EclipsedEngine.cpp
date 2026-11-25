@@ -116,8 +116,6 @@ namespace Eclipse
 
 		renderer->Init();
 
-		myCommandListManager.InitAllCommandLists();
-		MainSingleton::AddInstance(myCommandListManager);
 
 		AssetSystem::SourceRegistry::Mount("game", PathManager::GetAssetsPath(), PathManager::GetArtifactsPath() / "NewContent");
 		AssetSystem::SourceRegistry::Mount("engine", PathManager::GetEngineAssetsPath(), PathManager::GetEngineArtifactsPath());
@@ -166,9 +164,16 @@ namespace Eclipse
 
 	void Engine::EndFrame()
 	{
+		Graphics::IRenderer& Renderer = Graphics::RendererManager::GetRenderer();
+
+		Graphics::IInstancedRenderer* InstancedRenderer = Renderer.GetInstancedRendering();
+		InstancedRenderer->ClearList();
+
 		renderer->EndFrame();
 
-		myCommandListManager.ResetAllCommandLists();
+		Graphics::CommandListManager* commandListManager = Renderer.GetCommandListManager();
+		commandListManager->ResetAllCommandLists();
+
 
 		ComponentManager::CommitDestroy();
 	}
@@ -200,7 +205,7 @@ namespace Eclipse
 
 		ImGui_NewFrame();
 
-		Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+		Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 		commandListManager->GetHappenAtBeginCommandList().Execute();
 	}
 
@@ -209,10 +214,6 @@ namespace Eclipse
 		ComponentManager::RenderComponents();
 
 		auto device = Graphics::RendererManager::GetRenderer().GetDevice();
-		//device->SetViewport({ 1280, 720 });
-
-		//device->BindFrameBuffer(1);
-		//Graphics::CommandListManager::ExecuteAllCommandLists();
 
 		device->BindFrameBuffer(0);
 		device->Clear();

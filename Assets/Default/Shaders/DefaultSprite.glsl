@@ -3,7 +3,7 @@
 
 layout(binding=0) uniform sampler2D albedo;
 
-layout(std140, binding=5) uniform MaterialBuffer
+layout(std140, binding = 5) uniform MaterialBuffer
 {
    vec4 color;
    vec4 spriteRect; // x, y, width, height
@@ -15,7 +15,7 @@ layout(location = 0) in vec2 outTexCoord;
 // Outs
 layout(location = 0) out vec4 frag_colour;
 
-void main() 
+void main()
 {
    vec2 modifiedUV = vec2(
       spriteRect.x + outTexCoord.x * spriteRect.z,

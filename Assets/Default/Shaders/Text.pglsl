@@ -1,12 +1,12 @@
 #version 460 core
 
-struct Material 
+struct Material
 {
    sampler2D albedo;
 };
 uniform Material material;
 
-layout(std140, binding=5) uniform MaterialBuffer
+layout(std140, binding = 5) uniform MaterialBuffer
 {
    vec4 color;
    vec4 spriteRect; // x, y, width, height
@@ -18,11 +18,9 @@ in vec2 outTexCoord;
 // Outs
 out vec4 frag_colour;
 
-void main() 
+void main()
 {
    vec4 textureAlbedo = texture(material.albedo, outTexCoord);
-
-   
 
    frag_colour = vec4(textureAlbedo.r, textureAlbedo.r, textureAlbedo.r, textureAlbedo.r) * color;
 }

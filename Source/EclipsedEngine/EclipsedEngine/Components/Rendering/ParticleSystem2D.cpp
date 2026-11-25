@@ -6,6 +6,7 @@
 #include "Renderer/IRenderer.h"
 #include "Renderer/IDrawer.h"
 #include "Renderer/RenderCommands/CommandList.h"
+#include "Renderer/RendererManager.h"
 
 #include "ECS/GameObject.h"
 #include "EclipsedEngine/Components/Transform2D.h"
@@ -99,7 +100,7 @@ void Eclipse::ParticleSystem2D::Awake()
 
 void Eclipse::ParticleSystem2D::Render()
 {
-	Graphics::CommandListManager* commandListManager = MainSingleton::GetPointer<Graphics::CommandListManager>();
+	Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
 	commandListManager->GetSpriteCommandList().Enqueue([&]()
 		{
 			Graphics::IRenderer& renderer = MainSingleton::GetInstance<Graphics::IRenderer>();

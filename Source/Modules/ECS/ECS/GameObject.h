@@ -57,6 +57,16 @@ namespace Eclipse
 		bool IsOwner() { return myIsOwner; }
 		void SetIsOwner(bool anIsOwner) { myIsOwner = anIsOwner; }
 
+		bool GetIsStatic()
+		{
+			return IsStatic;
+		}
+
+		void SetIsStatic(bool aIsStatic)
+		{
+			IsStatic = aIsStatic;
+		}
+
 	public:
 		void SetName(const std::string& aName);
 		const std::string& GetName() const;
