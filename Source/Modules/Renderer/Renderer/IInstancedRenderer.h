@@ -3,9 +3,11 @@
 #include <vector>
 #include <unordered_map>
 
-#include "Assets/Core/GUID.h"
+#include "Core/GUID.h"
 
 #include "Core/Math/Vector/Vector2.h"
+
+
 
 namespace Eclipse
 {
@@ -14,11 +16,8 @@ namespace Eclipse
 	class TransformBuffer;
 	class SpriteBuffer;
 
-	namespace Assets
-	{
-		class Material;
-		class Texture;
-	}
+	class MaterialBuffer;
+	class Texture;
 }
 
 namespace Eclipse::Graphics
@@ -27,8 +26,8 @@ namespace Eclipse::Graphics
 	{
 		TransformBuffer* TransformBuffer;
 		SpriteBuffer* SpriteBuffer;
-		Assets::Material* Material;
-		Assets::Texture* Sprite;
+		MaterialBuffer* MaterialBuffer;
+		Texture* Sprite;
 
 		struct InternalInstanceTransform
 		{
@@ -42,13 +41,13 @@ namespace Eclipse::Graphics
 	{
 	public:
 		virtual void Init() = 0;
-		virtual void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, Assets::Material* aMaterial, Assets::Texture* aSprite) = 0;
+		virtual void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite) = 0;
 		virtual void ExecuteStaticRendering() = 0;
 		void ClearList()
 		{
 			RenderComponents.clear();
 		}
 
-		std::unordered_map<Assets::GUID, std::vector<InstancedRenderObject>, Assets::GUIDHash> RenderComponents;
+		std::unordered_map<GUID, std::vector<InstancedRenderObject>, GUIDHash> RenderComponents;
 	};
 }

@@ -30,14 +30,14 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnChangeColor()
 	{
-		materialBuffer.color = myMaterial.Color() * myColor;
+		myMaterialBuffer.color = myMaterial.Color() * myColor;
 	}
 
 	void SpriteRenderer2D::OnChangeMaterial()
 	{
 		hasMaterial = myMaterial.IsReady();
 
-		materialBuffer.color = myMaterial.Color() * myColor;
+		myMaterialBuffer.color = myMaterial.Color() * myColor;
 
 		Math::Vector2f NewSpriteRectMax = spriteRectMax;
 		Math::Vector2f NewSpriteRectMin = spriteRectMin;
@@ -46,7 +46,7 @@ namespace Eclipse
 		NewSpriteRectMin.y = 1 - NewSpriteRectMin.y;
 
 		Math::Vector2f size = NewSpriteRectMax - NewSpriteRectMin;
-		materialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
+		myMaterialBuffer.spriteRect = { NewSpriteRectMin.x, NewSpriteRectMin.y, size.x, size.y };
 	}
 
 	void SpriteRenderer2D::OnChangeSprite()
@@ -185,7 +185,7 @@ namespace Eclipse
 		if (gameObject->GetIsStatic())
 		{
 			Graphics::IInstancedRenderer* InstancedRenderer = Graphics::RendererManager::GetRenderer().GetInstancedRendering();
-			InstancedRenderer->AddRenderObject(&gameObject->transform->myTransformBuffer, &mySpriteBuffer, &myMaterial, &mySprite);
+			InstancedRenderer->AddRenderObject(&gameObject->transform->myTransformBuffer, &mySpriteBuffer, &myMaterialBuffer, &mySprite);
 
 			return;
 		}
@@ -218,7 +218,7 @@ namespace Eclipse
 
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_TransformBuffer, 1, &gameObject->transform->myTransformBuffer);
 		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, &mySpriteBuffer);
-		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &materialBuffer);
+		buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &myMaterialBuffer);
 
 		drawer->DrawSprite();
 	}

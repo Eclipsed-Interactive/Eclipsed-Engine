@@ -158,7 +158,7 @@ namespace Eclipse
 		ImGui::SetCursorPosY(4);
 		char CommandBuffer[512];
 		memset(CommandBuffer, 0, 511);
-		memset(CommandBuffer + 511, (int)"\0", 1);
+		memset(CommandBuffer + 511, 0, 1);
 		bool EnteredCommand = ImGui::InputText("##CommandConsole", CommandBuffer, 512,
 			ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackHistory |
 			ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackCharFilter,

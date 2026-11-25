@@ -6,6 +6,8 @@
 #include "Renderer/IDrawer.h"
 #include "Renderer/RendererManager.h"
 
+#include "AssetSystem/Assets.h"
+
 #include <OpenGL/glad/glad.h>
 
 namespace Eclipse::Graphics::OpenGL
@@ -15,29 +17,30 @@ namespace Eclipse::Graphics::OpenGL
 		//myInstanceMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_INSTANCE_SPRITE);
 	}
 
-	void OpenGL_InstancedRenderer::AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, Assets::Material* aMaterial, Assets::Texture* aSprite)
+	void OpenGL_InstancedRenderer::AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterialBuffer, Texture* aSprite)
 	{
 		InstancedRenderObject::InternalInstanceTransform transform;
 		transform.Position = aTransformBuffer->Position;
 		transform.Scale = aTransformBuffer->Scale;
 		transform.Rotation = aTransformBuffer->Rotation;
 
-		Assets::GUID AssetID = {0};
+		GUID AssetID = {0};
 
-		if (aSprite->IsValid())
-			AssetID = aSprite->GetAssetID();
+		if (aSprite->IsReady())
+			AssetID = aSprite->GetGUID();
 		
 		InstancedRenderObject& object = RenderComponents[AssetID].emplace_back();
 		object.TransformBuffer = aTransformBuffer;
 		object.SpriteBuffer = aSpriteBuffer;
-		object.Material = aMaterial;
+		object.MaterialBuffer = aMaterialBuffer;
 		object.Sprite = aSprite;
 		object.InstanceTransform = transform;
 	}
 
 	void OpenGL_InstancedRenderer::ExecuteStaticRendering()
 	{
-		static Assets::Material myInstanceMaterial = Assets::AssetManager::LoadDefault<Assets::Material>(Assets::DefaultAssetType::MATERIAL_2D_INSTANCE_SPRITE);
+		// Ugla
+		static Material myInstanceMaterial = Assets::Load<Material>("engine://Default/Materials/Default_2D_Instance_Material.mat");
 
 		auto* buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
 		auto* graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
@@ -49,13 +52,12 @@ namespace Eclipse::Graphics::OpenGL
 
 			InstancedRenderObject& FirstRenderObject = RenderVector.back();
 
-			graphicsDevice->BindMaterial(*FirstRenderObject.Material);
-			graphicsDevice->BindShader(myInstanceMaterial.GetProgramID());
-			if (FirstRenderObject.Sprite->IsValid())
-				graphicsDevice->BindTexture(0, *FirstRenderObject.Sprite);
+			myInstanceMaterial.Bind();
+			if (FirstRenderObject.Sprite->IsReady())
+				FirstRenderObject.Sprite->Bind();
 
 			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, FirstRenderObject.SpriteBuffer);
-			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &FirstRenderObject.Material->GetBuffer());
+			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &FirstRenderObject.MaterialBuffer);
 
 			std::vector<InstancedRenderObject::InternalInstanceTransform> instanceTransform;
 			for (auto& RenderComponent : RenderVector)

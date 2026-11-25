@@ -1,18 +1,15 @@
 #pragma once
 
 #include "Renderer/IInstancedRenderer.h"
-#include <Assets/Assets/MaterialAsset.h>
+
 
 namespace Eclipse
 {
 	class TransformBuffer;
 	class SpriteBuffer;
 
-	namespace Assets
-	{
-		class Material;
-		class Texture;
-	}
+	class MaterialBuffer;
+	class Texture;
 }
 
 namespace Eclipse::Graphics::OpenGL
@@ -21,7 +18,7 @@ namespace Eclipse::Graphics::OpenGL
 	{
 	public:
 		void Init() override;
-		void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, Assets::Material* aMaterial, Assets::Texture* aSprite) override;
+		void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite) override;
 		void ExecuteStaticRendering() override;
 
 		//Assets::Material myInstanceMaterial = {0};

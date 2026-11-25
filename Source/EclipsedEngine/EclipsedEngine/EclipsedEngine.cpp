@@ -52,8 +52,6 @@ namespace Eclipse
 	Graphics::IRenderer* Engine::renderer = nullptr;
 	Audio::IAudioBackend* Engine::audio = nullptr;
 
-	Graphics::CommandListManager Engine::myCommandListManager;
-
 	void Engine::Init()
 	{
 		Eclipse::AssetSystem::RegisterBuiltinImporters();

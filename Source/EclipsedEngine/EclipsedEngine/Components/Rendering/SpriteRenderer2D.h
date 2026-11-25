@@ -82,7 +82,7 @@ namespace Eclipse
         bool hasMaterial = false;
 
         SpriteBuffer mySpriteBuffer;
-        MaterialBuffer materialBuffer;
+        MaterialBuffer myMaterialBuffer;
                 
 
         Math::Vector2f Bounds;

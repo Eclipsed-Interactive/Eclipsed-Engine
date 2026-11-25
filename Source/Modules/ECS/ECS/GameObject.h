@@ -57,16 +57,6 @@ namespace Eclipse
 		bool IsOwner() { return myIsOwner; }
 		void SetIsOwner(bool anIsOwner) { myIsOwner = anIsOwner; }
 
-		bool GetIsStatic()
-		{
-			return IsStatic;
-		}
-
-		void SetIsStatic(bool aIsStatic)
-		{
-			IsStatic = aIsStatic;
-		}
-
 	public:
 		void SetName(const std::string& aName);
 		const std::string& GetName() const;
@@ -101,7 +91,7 @@ namespace Eclipse
 
 	public:
 		[[nodiscard]] bool GetIsStatic() const { return IsStatic; }
-		void SetIsStatic(const bool& aIsStatic) { IsStatic = aIsStatic; }
+		void SetIsStatic(bool aIsStatic) { IsStatic = aIsStatic; }
 
 	private:
 		bool IsStatic = false;
