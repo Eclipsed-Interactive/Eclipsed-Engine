@@ -4,6 +4,7 @@
 #include "fmod/fmod.hpp"
 #include "fmod/fmod_studio.h"
 #include "fmod/fmod_studio.hpp"
+#include <fmod/fmod_errors.h>
 
 #include "FMOD_AudioChannel.h"
 #include "FMOD_Sound.h"
@@ -121,9 +122,64 @@ namespace Eclipse::Audio
 		return new FMOD_AudioChannel;
 	}
 
-	ISound* FMOD_Backend::CreateSound()
+	void* FMOD_Backend::CreateSound(const void* someByteData, Size aSize, SoundInfo* outInfo) const
 	{
-		return new FMOD_Sound;
+		if (!system || !someByteData || aSize == 0) return nullptr;
+
+		FMOD_CREATESOUNDEXINFO exinfo{};
+		exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+		exinfo.length = static_cast<unsigned int>(aSize);
+
+		FMOD::Sound* sound = nullptr;
+
+		if (system->createSound(static_cast<const char*>(someByteData), FMOD_OPENMEMORY | FMOD_CREATESAMPLE, &exinfo, &sound) != FMOD_OK)
+			return nullptr;
+
+		if (outInfo)
+		{
+			float freq = 0.f; int priority = 0;
+			sound->getDefaults(&freq, &priority);
+			outInfo->sampleRate = static_cast<int>(freq);
+
+			FMOD_SOUND_TYPE type; FMOD_SOUND_FORMAT format; int bits = 0;
+			sound->getFormat(&type, &format, &outInfo->channels, &bits);
+
+			unsigned int lengthMs = 0;
+			sound->getLength(&lengthMs, FMOD_TIMEUNIT_MS);
+			outInfo->lengthSeconds = lengthMs / 1000.f;
+		}
+
+		return sound;
+	}
+
+	void FMOD_Backend::GetSoundInfo(const std::filesystem::path& aPath, SoundInfo* outInfo) const
+	{
+		if (!system || !std::filesystem::exists(aPath) ) return;
+
+		FMOD::Sound* sound = nullptr;
+
+		FMOD_RESULT r = system->createSound(aPath.generic_string().c_str(), FMOD_OPENONLY, nullptr, &sound);
+		if (r != FMOD_OK)
+		{
+			printf("FMOD createSound failed (%d): %s  path=%s\n", r, FMOD_ErrorString(r), aPath.generic_u8string().c_str());
+			return;
+		}
+
+		if (outInfo)
+		{
+			float freq = 0.f; int priority = 0;
+			sound->getDefaults(&freq, &priority);
+			outInfo->sampleRate = static_cast<int>(freq);
+
+			FMOD_SOUND_TYPE type; FMOD_SOUND_FORMAT format; int bits = 0;
+			sound->getFormat(&type, &format, &outInfo->channels, &bits);
+
+			unsigned int lengthMs = 0;
+			sound->getLength(&lengthMs, FMOD_TIMEUNIT_MS);
+			outInfo->lengthSeconds = lengthMs / 1000.f;
+		}
+
+		sound->release();
 	}
 
 	bool FMOD_Backend::IsInitialized() const

@@ -26,8 +26,9 @@ namespace Eclipse::Audio
 
 	public:
 		IAudioChannel* CreateAudioChannel() override;
-		ISound* CreateSound() override;
-
+		void* CreateSound(const void* someByteData, Size aSize, SoundInfo* outInfo) const override;
+		void GetSoundInfo(const std::filesystem::path& aPath, SoundInfo* outInfo) const override;
+	
 	private:
 		void ReleaseStudioSystem();
 		void ResetBackend();

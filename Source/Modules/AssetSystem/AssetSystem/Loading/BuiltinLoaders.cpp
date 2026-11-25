@@ -5,6 +5,7 @@
 #include "Types/ShaderLoader.h"
 #include "Types/MaterialLoader.h"
 #include "Types/SceneLoader.h"
+#include "Types/AudioLoader.h"
 
 namespace Eclipse::AssetSystem
 {
@@ -14,5 +15,6 @@ namespace Eclipse::AssetSystem
 		AssetLoaderRegistry::Register<ShaderLoader>();
 		AssetLoaderRegistry::Register<MaterialLoader>();
 		AssetLoaderRegistry::Register<SceneLoader>();
+		AssetLoaderRegistry::Register<AudioLoader>();
 	}
 }

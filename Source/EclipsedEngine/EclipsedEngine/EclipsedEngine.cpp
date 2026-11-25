@@ -72,11 +72,6 @@ namespace Eclipse
 		//Assets::AssetManager::Init();
 		Timer::Init();
 
-		Eclipse::AssetSystem::SourceRegistry::Mount("game", PathManager::GetAssetsPath(), PathManager::GetArtifactsPath() / "NewContent");
-		Eclipse::AssetSystem::SourceRegistry::Mount("engine", PathManager::GetEngineAssetsPath(), PathManager::GetEngineArtifactsPath());
-
-
-
 		{
 			// PHYSICS
 			b2DebugDraw debugDraw = { 0 };
@@ -123,6 +118,9 @@ namespace Eclipse
 
 		myCommandListManager.InitAllCommandLists();
 		MainSingleton::AddInstance(myCommandListManager);
+
+		AssetSystem::SourceRegistry::Mount("game", PathManager::GetAssetsPath(), PathManager::GetArtifactsPath() / "NewContent");
+		AssetSystem::SourceRegistry::Mount("engine", PathManager::GetEngineAssetsPath(), PathManager::GetEngineArtifactsPath());
 
 		ImGui_Init();
 

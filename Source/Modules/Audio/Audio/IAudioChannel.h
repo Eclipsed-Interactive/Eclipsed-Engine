@@ -33,7 +33,7 @@ namespace Eclipse::Audio
 		IAudioChannel() = default;
 		virtual ~IAudioChannel() = default;
 
-		virtual void SetSound(ISound* aSound) = 0;
+		virtual void SetSound(void* aSound) = 0;
 
 		// Playback
 		virtual void Play() = 0;

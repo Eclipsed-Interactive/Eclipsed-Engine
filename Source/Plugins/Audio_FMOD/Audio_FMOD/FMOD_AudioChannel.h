@@ -20,7 +20,7 @@ namespace Eclipse::Audio
 
 		void SetPlaying(Audio::PlayMode aMode);
 
-		void SetSound(ISound* aSound) override;
+		void SetSound(void* aSound) override;
 
 	private:
 		void ApplyVolume() override;

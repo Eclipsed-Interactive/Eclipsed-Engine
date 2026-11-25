@@ -5,6 +5,7 @@
 #include "Types/TextureImporter.h"
 #include "Types/MaterialImporter.h"
 #include "Types/SceneImporter.h"
+#include "Types/AudioImporter.h"
 
 namespace Eclipse::AssetSystem
 {
@@ -24,6 +25,10 @@ namespace Eclipse::AssetSystem
 
 		ImporterRegistry::Register<SceneImporter>(AssetType::Scene,
 			{ ".scene" }
+		);
+
+		ImporterRegistry::Register<AudioImporter>(AssetType::Audio,
+			{ ".wav", ".mp3" }
 		);
 	}
 }

@@ -30,7 +30,7 @@ namespace Eclipse::AssetSystem
 		Texture,
 		Material,
 		Shader,
-		AudioClip,
+		Audio,
 		Font,
 		Prefab,
 		Scene

@@ -25,8 +25,8 @@ namespace Eclipse::AssetSystem
 		//{".vglsl",  AssetType::VertexShader},
 		//{".pglsl",  AssetType::PixelShader},
 
-		{".mp3",  AssetType::AudioClip},
-		{".wav",  AssetType::AudioClip},
+		{".mp3",  AssetType::Audio},
+		{".wav",  AssetType::Audio},
 
 		{".ttf",  AssetType::Font},
 		{".otf",  AssetType::Font},

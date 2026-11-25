@@ -1,337 +1,163 @@
 #include "AudioEmitter.h"
 
-//#include "Audio/AudioManager.h"
+#include "Audio/AudioPluginLoader.h"
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Audio/AudioListener.h"
 
-#include <Audio/AudioPluginLoader.h>
+#include <AssetSystem/Assets.h>
 
 namespace Eclipse
 {
-	//void AudioEmitter::Awake()
-	//{
-	//	Audio::IAudioBackend* backend = Audio::AudioManager::GetBackend();
-
-	//	if (!backend)
-	//		return;
-
-	//	channel = backend->CreateAudioChannel();
-
-	//	if (!channel)
-	//		return;
-
-	//	ApplyAudioClip();
-	//	ApplyVolume();
-	//	ApplyPan();
-
-	//	if (playOnAwake && AudioClip.IsValid())
-	//		Play();
-	//}
-
-	//void AudioEmitter::OnDestroy()
-	//{
-	//	if (!AudioClip.IsValid() || !channel) 
-	//		return;
-
-	//	myIsPlaying = false;
-	//	channel->Stop();
-
-	//	delete channel;
-	//	channel = nullptr;
-	//}
-
-	//void AudioEmitter::Update()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	//ApplyVolume();
-	//}
-
-	//void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
-	//{
-	//	AudioClip = clip;
-	//	channel->SetSound(AudioClip.dataPtr->sound);
-
-	//	ApplyAudioClip();
-	//}
+	void AudioEmitter::Awake()
+	{
+		Audio::IAudioBackend* backend = Audio::AudioManager::GetBackend();
+
+		if (!backend)
+			return;
+
+		channel = backend->CreateAudioChannel();
+
+		if (!channel)
+			return;
+
+		ApplyAudioClip();
+		ApplyVolume();
+		ApplyPan();
+
+		if (playOnAwake && audioClip.IsReady())
+			Play();
+	}
+
+	void AudioEmitter::OnDestroy()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		myIsPlaying = false;
+		channel->Stop();
+
+		delete channel;
+		channel = nullptr;
+	}
+
+	void AudioEmitter::Update()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		//ApplyVolume();
+	}
+
+	void AudioEmitter::SetAudioClip(AudioClip aClip)
+	{
+		audioClip = aClip;
+		channel->SetSound(audioClip.GetAudio());
+
+		ApplyAudioClip();
+	}
 
-	//void AudioEmitter::SetVolume(float aVolume)
-	//{
-	//	volume = aVolume;
-	//	
-	//	if (!channel)
-	//		return;
-
-	//	channel->SetVolume(volume);
-	//}
-
-	//void AudioEmitter::Play()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	myIsPlaying = true;
-	//	channel->Play();
-	//}
-
-	//void AudioEmitter::Pause()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	myIsPlaying = false;
-	//	channel->Pause();
-	//}
-
-	//void AudioEmitter::Stop()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	myIsPlaying = false;
-	//	channel->Stop();
-	//}
-
-	//float AudioEmitter::GetVolume() const
-	//{
-	//	return volume;
-	//}
-
-	//void AudioEmitter::SetPan(float aPan)
-	//{
-	//	pan = aPan;
-
-	//	if (!channel)
-	//		return;
-
-	//	channel->SetPan(pan);
-	//}
-
-	//float AudioEmitter::GetPan() const
-	//{
-	//	return pan;
-	//}
-
-	//void AudioEmitter::ApplyVolume()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	//channel->Volume = volume; // Linear
-	//	//channel->Volume = volume * volume * volume; // Cubic
-	//	//channel->Volume = std::powf(10, ((-60 * (1 - volume)) / 20)); // Decibel
-	//	channel->Volume = (std::exp(6.9f * volume) - 1.f) / (std::exp(6.9f) - 1.f); // Exponential
-	//}
-
-	//void AudioEmitter::ApplyAudioClip()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	channel->Stop();
-
-	//	if (!AudioClip.IsValid())
-	//		return;
-
-	//	channel->SetSound(AudioClip.dataPtr->sound);
-
-	//	if (playOnAwake)
-	//		channel->Play();
-	//}
-
-	//void AudioEmitter::ApplyPan()
-	//{
-	//	if (!AudioClip.IsValid() || !channel)
-	//		return;
-
-	//	channel->Pan = pan;
-	//}
-
-	//void AudioEmitter::OnUnpause()
-	//{
-	//	if (myIsPlaying)
-	//		channel->Play();
-	//}
-
-
-	//void AudioEmitter::OnPause()
-	//{
-	//	if (myIsPlaying)
-	//		channel->Pause();
-	//}
-
-	//void AudioEmitter::OnDestroy()
-	//{
-	//	if (channel)
-	//	{
-	//		channel->stop();
-	//		channel = nullptr;
-	//	}
-	//}
-
-	//void AudioEmitter::Update()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	SetVolume(volume);
-	//}
-
-	//void AudioEmitter::SetSpatialMode(bool is3D)
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	if (is3D)
-	//	{
-	//		channel->setMode(
-	//			FMOD_3D |
-	//			FMOD_3D_WORLDRELATIVE |
-	//			FMOD_3D_INVERSEROLLOFF
-	//		);
-	//	}
-	//	else
-	//	{
-	//		channel->setMode(FMOD_2D);
-	//	}
-	//}
-
-	//void AudioEmitter::Play()
-	//{
-	//	if (!audioClip.IsValid())
-	//		return;
-
-	//	AudioManager::PlayAudio(
-	//		audioClip->dataPtr->sound,
-	//		&channel
-	//	);
-
-	//	if (!channel)
-	//		return;
-
-	//	InitAudio();
-
-	//	channel->setPosition(0, FMOD_TIMEUNIT_MS);
-
-	//	isPlaying = true;
-
-	//	UpdateAudioPosition();
-	//	SetSpatialMode(EnableSpatial);
-	//	SetVolume(volume);
-
-	//	channel->setPaused(false);
-	//}
-
-	//void AudioEmitter::Resume()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	isPlaying = true;
-	//	channel->setPaused(false);
-	//}
-
-	//void AudioEmitter::Pause()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	isPlaying = false;
-	//	channel->setPaused(true);
-	//}
-
-	//void AudioEmitter::SetAudioClip(Assets::AudioClip clip)
-	//{
-	//	audioClip = clip;
-	//}
-
-	//void AudioEmitter::Stop()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	channel->stop();
-	//	channel = nullptr;
-
-	//	isPlaying = false;
-	//}
-
-	//void AudioEmitter::SetVolume(float aVolume)
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	AudioListener* listener = AudioListener::GetListener();
-
-	//	float audioAttenuation = 1.f;
-
-	//	if (EnableSpatial && listener)
-	//	{
-	//		Math::Vector2f p =
-	//			gameObject->transform->GetPosition();
-
-	//		Math::Vector2f l =
-	//			listener->gameObject->transform->GetPosition();
-
-	//		float dx = p.x - l.x;
-	//		float dy = p.y - l.y;
-
-	//		float dist = sqrt(dx * dx + dy * dy);
-
-	//		float t = dist / 20.f;
-	//		t = std::clamp(t, 0.0f, 1.0f);
-
-	//		audioAttenuation =
-	//			1.0f - (t * t * (3.0f - 2.0f * t));
-	//	}
-
-	//	volume = aVolume;
-	//	channel->setVolume(audioAttenuation * volume);
-	//}
-
-	//float AudioEmitter::GetVolume() const
-	//{
-	//	return volume;
-	//}
-
-	//void AudioEmitter::InitAudio()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	channel->setChannelGroup(
-	//		AudioManager::GetBus(AudioBus::Master)
-	//	);
-
-	//	SetSpatialMode(EnableSpatial);
-
-	//	channel->set3DMinMaxDistance(2.0f, 20.0f);
-	//}
-
-	//void AudioEmitter::UpdateAudioPosition()
-	//{
-	//	if (!channel)
-	//		return;
-
-	//	Transform2D* trans = gameObject->transform;
-
-	//	Math::Vector2f ePos = trans->GetPosition();
-
-	//	FMOD_VECTOR pos =
-	//	{
-	//		ePos.x,
-	//		ePos.y,
-	//		1.f
-	//	};
-
-	//	FMOD_VECTOR vel =
-	//	{
-	//		0.f,
-	//		0.f,
-	//		0.f
-	//	};
-
-	//	channel->set3DAttributes(&pos, &vel);
-	//}
+	void AudioEmitter::SetVolume(float aVolume)
+	{
+		volume = aVolume;
+		
+		if (!channel)
+			return;
+
+		channel->SetVolume(volume);
+	}
+
+	void AudioEmitter::Play()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		myIsPlaying = true;
+		channel->Play();
+	}
+
+	void AudioEmitter::Pause()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		myIsPlaying = false;
+		channel->Pause();
+	}
+
+	void AudioEmitter::Stop()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		myIsPlaying = false;
+		channel->Stop();
+	}
+
+	float AudioEmitter::GetVolume() const
+	{
+		return volume;
+	}
+
+	void AudioEmitter::SetPan(float aPan)
+	{
+		pan = aPan;
+
+		if (!channel)
+			return;
+
+		channel->SetPan(pan);
+	}
+
+	float AudioEmitter::GetPan() const
+	{
+		return pan;
+	}
+
+	void AudioEmitter::ApplyVolume()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		//channel->Volume = volume; // Linear
+		//channel->Volume = volume * volume * volume; // Cubic
+		//channel->Volume = std::powf(10, ((-60 * (1 - volume)) / 20)); // Decibel
+		channel->Volume = (std::exp(6.9f * volume) - 1.f) / (std::exp(6.9f) - 1.f); // Exponential
+	}
+
+	void AudioEmitter::ApplyAudioClip()
+	{
+		if (!channel)
+			return;
+
+		channel->Stop();
+
+		if (!audioClip.IsReady())
+			return;
+
+		channel->SetSound(audioClip.GetAudio());
+
+		if (playOnAwake)
+			channel->Play();
+	}
+
+	void AudioEmitter::ApplyPan()
+	{
+		if (!audioClip.IsReady() || !channel)
+			return;
+
+		channel->Pan = pan;
+	}
+
+	void AudioEmitter::OnUnpause()
+	{
+		if (myIsPlaying)
+			channel->Play();
+	}
+
+
+	void AudioEmitter::OnPause()
+	{
+		if (myIsPlaying)
+			channel->Pause();
+	}
 }

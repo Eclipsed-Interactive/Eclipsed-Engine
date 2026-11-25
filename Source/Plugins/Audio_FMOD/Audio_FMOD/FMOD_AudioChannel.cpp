@@ -34,9 +34,9 @@ namespace Eclipse::Audio
 		myChannel->stop();
 	}
 
-	void FMOD_AudioChannel::SetSound(ISound* aSound)
+	void FMOD_AudioChannel::SetSound(void* aSound)
 	{
-		FMOD::Sound* fSound = static_cast<FMOD::Sound*>(aSound->GetSound());
+		FMOD::Sound* fSound = static_cast<FMOD::Sound*>(aSound);
 		if (!fSound) return;
 
 		FMOD_Backend::system->playSound(fSound, nullptr, false, &myChannel);
