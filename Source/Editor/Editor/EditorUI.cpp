@@ -18,8 +18,6 @@ namespace Eclipse::Editor
 	void EditorUI::Init()
 	{
 		PROFILE_SCOPED;
-		PreviewManager::Init();
-
 		LoadFonts();
 		SetupStyle();
 	}

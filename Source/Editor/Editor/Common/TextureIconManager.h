@@ -18,8 +18,6 @@ namespace Eclipse::Editor
 	class PreviewManager final
 	{
 	public:
-		static void Init();
-
 		static void Update();
 
 	public:

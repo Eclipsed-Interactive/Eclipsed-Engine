@@ -5,32 +5,6 @@
 
 namespace Eclipse::Editor
 {
-	void PreviewManager::Init()
-	{
-		Graphics::IRenderer& rend = Graphics::RendererManager::GetRenderer();
-		Graphics::IGraphicsDevice* device = rend.GetDevice();
-
-		const std::filesystem::path path = PathManager::GetArtifactsPath() / "Previews";
-		for (auto d : std::filesystem::recursive_directory_iterator(path))
-		{
-			Graphics::TextureDescription desc{};
-
-			std::ifstream file(d.path(), std::ios::binary);
-			file.read(reinterpret_cast<char*>(&desc.width), sizeof(int));
-			file.read(reinterpret_cast<char*>(&desc.height), sizeof(int));
-			file.read(reinterpret_cast<char*>(&desc.channels), sizeof(int));
-
-			const int size = desc.width * desc.height * desc.channels;
-			std::vector<Byte> bytes(size);
-			file.read(reinterpret_cast<char*>(bytes.data()), size);
-
-			Preview prev;
-			prev.textureId = device->CreateTexture(bytes, desc);
-			prev.height = desc.height;
-			prev.width = desc.width;
-		}
-	}
-
 	void PreviewManager::Update()
 	{
 		for (auto it = ActivePreviews.begin(); it != ActivePreviews.end(); it++ )
