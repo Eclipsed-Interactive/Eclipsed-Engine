@@ -115,9 +115,7 @@ namespace Eclipse
 
 				if (d.HasMember("components") && d["components"].IsArray())
 					LoadComponents(obj, d["components"]);
-			}
-
-				
+			}	
 		}
 	}
 
