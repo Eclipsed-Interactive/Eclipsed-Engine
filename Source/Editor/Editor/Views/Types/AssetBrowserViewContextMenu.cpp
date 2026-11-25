@@ -58,17 +58,22 @@ namespace Eclipse::Editor
 
 			if (ImGui::Button("OK") || Input::Input::GetKeyDown(Keycode::ENTER))
 			{
-				//std::string renamePathExt = activePathAtRenaming.extension().string();
+				const std::filesystem::path old_file = activePathAtRenaming;
+				const std::filesystem::path old_meta = activePathAtRenaming.generic_string() + ".meta";
 
-				//memcpy(tempName + strlen(tempName), renamePathExt.c_str(), renamePathExt.size() + 1);
+				const std::string extension = old_file.extension().generic_string();
+				const std::string newName = tempName;
 
-				//std::filesystem::path newName = activePathAtRenaming.parent_path() / tempName;
+				const std::filesystem::path dir = activePathAtRenaming.parent_path();
 
-				//ImGui::CloseCurrentPopup();
-				//renameModal = false;
+				const std::filesystem::path new_file = dir / (newName + extension);
+				const std::filesystem::path new_meta = dir / (newName + extension + ".meta");
 
-				//Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-				//database.RenameFile(activePathAtRenaming.generic_string(), newName.generic_string());
+				std::filesystem::rename(old_file, new_file);
+				std::filesystem::rename(old_meta, new_meta);
+
+				ImGui::CloseCurrentPopup();
+				renameModal = false;
 			}
 
 			ImGui::SameLine();
