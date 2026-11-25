@@ -28,17 +28,41 @@ namespace Eclipse::AssetSystem
 			writer.Write(&size, sizeof(int));
 			for (const Rect& rect : meta->spriteRects)
 			{
-				//const std::string& name = rect.name;
-				//const int nameSize = (int)name.size();
 				const Math::RectSizePos& sizePos = rect.rect;
-
-				//writer.Write(&nameSize, sizeof(int));
-				//writer.Write(name.c_str(), nameSize);
 				writer.Write(&sizePos, sizeof(Math::RectSizePos));
 			}
 		}
 
-		STB_Helper::FreeData_STB(pixels);
+		{ // write a pre view of the texture
+			int newWidth = 0, newHeight = 0;
+			if (width >= height)
+			{
+				newWidth = 128.f;
+				newHeight = (float)height / (float)width * 128.f;
+			}
+			else
+			{
+				newHeight = 128.f;
+				newWidth = (float)width / (float)height * 128.f;
+			}
+
+			unsigned char* resizedPixels = STB_Helper::Resize_STB(pixels, width, height, newWidth, newHeight, channels);
+
+			const std::string guid = ctx.Meta()->GUID().ToString();
+
+			const std::filesystem::path previewPath = PathManager::GetArtifactsPath() / "Previews" / (guid + ".preview");
+			std::filesystem::create_directories(previewPath.parent_path());
+
+			std::ofstream file(previewPath, std::ios::binary);
+
+			file.write(reinterpret_cast<const char*>(&newWidth), sizeof(int));
+			file.write(reinterpret_cast<const char*>(&newHeight), sizeof(int));
+			file.write(reinterpret_cast<const char*>(&channels), sizeof(int));
+			file.write(reinterpret_cast<const char*>(resizedPixels), newHeight * newWidth * channels);
+
+			STB_Helper::FreeData_STB(resizedPixels);
+		}
+
 
 		return true;
 	}

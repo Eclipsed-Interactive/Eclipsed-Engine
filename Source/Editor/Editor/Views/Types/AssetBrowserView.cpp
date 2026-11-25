@@ -56,7 +56,11 @@ namespace Eclipse::Editor
 
 		if (shouldReloadAssets)
 		{
+			const std::filesystem::path lastPath = Active_View_Node->info.filePath;
 
+			shouldReloadAssets = false;
+			dirTree.Reload();
+			Active_View_Node = dirTree.GetNode(lastPath);
 		}
 	}
 
@@ -261,7 +265,7 @@ namespace Eclipse::Editor
 
 		if (node->info.type == Utilities::FileInfo::FileType_Texture)
 		{
-			const IconData& data = TextureIconManager::GetIcon(node->info);
+			const Preview& data = PreviewManager::GetPreviewData(node->info.guid);
 
 			ImGui::InvisibleButton("##icon", buttonSizeVec);
 
@@ -302,7 +306,7 @@ namespace Eclipse::Editor
 
 			// Write full image
 			ImGui::GetWindowDrawList()->AddImage(
-				(ImTextureID)data.textureID,
+				(ImTextureID)data.textureId,
 				imageMin,
 				imageMax,
 				ImVec2(0, 1),

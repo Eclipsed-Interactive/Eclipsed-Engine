@@ -4,12 +4,21 @@
 #include "Artifacts/LooseProvider.h"
 #include "Artifacts/ArtifactRegistry.h"
 
+#include <Core/Files/FileWatcher.h>
+
 namespace Eclipse::AssetSystem
 {
 	std::vector<SourceMount> SourceRegistry::sources;
 
 	void SourceRegistry::Mount(const char* aScheme, const std::filesystem::path& aSourceLocation, const std::filesystem::path& aArtifactLocation)
 	{
+		Editor::FileWatcher::SubscribeToPath(aSourceLocation,
+			[scheme = std::string(aScheme)](const Editor::FileWatcherEvent& e)
+			{
+				SourceRegistry::Refresh(scheme.c_str());
+			}
+		);
+
 		SourceMount mount;
 		mount.scheme = aScheme;
 		mount.sourceLocation = aSourceLocation;

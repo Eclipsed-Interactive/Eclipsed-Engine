@@ -88,11 +88,11 @@ namespace Eclipse
 		//ActiveScene.dataPtr->sourceBlob = scene.manifest;
 
 		const std::string filename = path.filename().stem().string();
-		std::filesystem::create_directories(PathManager::GetAssetsPath() / "__external__" / "Scenes" / filename);
+		std::filesystem::create_directories(PathManager::GetExternalAssetsPath() / "Scenes" / filename);
 
 		for (auto& obj : scene.objects)
 		{
-			std::ofstream sceneObj(PathManager::GetAssetsPath() / "__external__" / "Scenes" / filename / obj.guid.ToString(), std::ios::binary);
+			std::ofstream sceneObj(PathManager::GetExternalAssetsPath() / "Scenes" / filename / obj.guid.ToString(), std::ios::binary);
 			sceneObj << obj.json;
 		}
 

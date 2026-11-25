@@ -1,267 +1,117 @@
-#ifdef ECL_EDITOR
 #include "TextureIconManager.h"
 
-#include <filesystem>
 #include <fstream>
-
-#include "Core/Files/FileWatcher.h"
-
-#include "Core/PathManager.h"
-#include "Core/Files/FileInfo.h"
-#include "Core/Files/File.h"
-//#include "Core/AssetManagement/Resources.h"
-
-#include "Core/Helpers/STB_Helper.h"
+#include <Renderer/RendererManager.h>
 
 namespace Eclipse::Editor
 {
-	void TextureIconManager::Init()
+	void PreviewManager::Init()
 	{
-		EventSystem::Subscribe("Texture_Imported", TextureIconManager::ImportAsset);
-	}
+		Graphics::IRenderer& rend = Graphics::RendererManager::GetRenderer();
+		Graphics::IGraphicsDevice* device = rend.GetDevice();
 
-	void TextureIconManager::ImportAsset(/*const Assets::AssetMeta& meta*/)
-	{
-		//LoadTextureIconFromPath(meta.fullPath);
-	}
-
-	void TextureIconManager::CheckForChanges()
-	{
-
-	}
-
-	void TextureIconManager::Update()
-	{
-		namespace fs = std::filesystem;
-
-		for (auto it = filesToLoad.begin(); it != filesToLoad.end();)
+		const std::filesystem::path path = PathManager::GetArtifactsPath() / "Previews";
+		for (auto d : std::filesystem::recursive_directory_iterator(path))
 		{
-			const std::string path(it->c_str());
-			if (IsFileReady(path))
+			Graphics::TextureDescription desc{};
+
+			std::ifstream file(d.path(), std::ios::binary);
+			file.read(reinterpret_cast<char*>(&desc.width), sizeof(int));
+			file.read(reinterpret_cast<char*>(&desc.height), sizeof(int));
+			file.read(reinterpret_cast<char*>(&desc.channels), sizeof(int));
+
+			const int size = desc.width * desc.height * desc.channels;
+			std::vector<Byte> bytes(size);
+			file.read(reinterpret_cast<char*>(bytes.data()), size);
+
+			Preview prev;
+			prev.textureId = device->CreateTexture(bytes, desc);
+			prev.height = desc.height;
+			prev.width = desc.width;
+		}
+	}
+
+	void PreviewManager::Update()
+	{
+		for (auto it = ActivePreviews.begin(); it != ActivePreviews.end(); it++ )
+		{
+			Preview& prev = *it;
+			prev.lastFrameUsed++;
+
+			if (prev.lastFrameUsed >= FramesToLive)
 			{
-				std::string relativePath = fs::relative(path, PathManager::GetProjectRoot()).generic_string();
-
-				size_t id = std::hash<std::string>{}(relativePath);
-
-				if (loadedIcons.find(id) == loadedIcons.end())
-				{
-					if (!LoadTextureIconFromPath(path))
-					{
-						it++;
-						continue;
-					}
-					ExportLoadedTextures();
-
-					it = filesToLoad.erase(it);
-				}
-				else
-				{
-					it++;
-				}
-			}
-			else
-			{
-				it++;
+				it = ActivePreviews.erase(it);
 			}
 		}
-
 	}
 
-	void TextureIconManager::LoadIconsFile()
+	unsigned int PreviewManager::GetPreview(GUID aGuid)
 	{
-		PROFILE_SCOPED;
+		if (const Preview* prev = TryGetPreviewData(aGuid))
+			return prev->textureId;
 
-		namespace fs = std::filesystem;
 
-		std::ifstream in(PathManager::GetProjectLocalPath() / IconBundleFilePath, std::ios::binary);
+		const Preview& preview = LoadPreview(aGuid);
 
-		int count = 0;
-		in.read(reinterpret_cast<char*>(&count), sizeof(int));
-
-		if (count == 0)
-		{
-			in.close();
-
-			LoadAllTextureIcons();
-			ExportLoadedTextures();
-			return;
-		}
-
-		for (int i = 0; i < count; ++i)
-		{
-			size_t id;
-			in.read(reinterpret_cast<char*>(&id), sizeof(size_t));
-
-			IconData& data = loadedIcons[id];
-
-			in.read(reinterpret_cast<char*>(&data.channels), sizeof(unsigned));
-			in.read(reinterpret_cast<char*>(&data.width), sizeof(int));
-			in.read(reinterpret_cast<char*>(&data.height), sizeof(int));
-			in.read(reinterpret_cast<char*>(&data.fullWidth), sizeof(int));
-			in.read(reinterpret_cast<char*>(&data.fullHeight), sizeof(int));
-			in.read(reinterpret_cast<char*>(&data.lastWriteTime), sizeof(long long));
-
-			const int size = data.width * data.height * data.channels;
-			data.data.resize(size);
-			in.read(reinterpret_cast<char*>(data.data.data()), size);
-
-			CreateOpenGLTextureFromData(data);
-		}
-
-		in.close();
+		return preview.textureId;
 	}
 
-	void TextureIconManager::LoadAllTextureIcons()
+	const Preview& PreviewManager::GetPreviewData(GUID aGuid)
 	{
-		PROFILE_SCOPED;
-		namespace fs = std::filesystem;
-
-		std::vector<std::string> texturesPathsToLoad;
-		for (const fs::directory_entry& entry : fs::recursive_directory_iterator(PathManager::GetAssetsPath()))
+		for (Preview& prev : ActivePreviews)
 		{
-			Utilities::FileInfo info = Utilities::FileInfo::GetFileInfo(entry);
-			if (info.type != Utilities::FileInfo::FileType_Texture) continue;
-
-			texturesPathsToLoad.push_back(entry.path().string());
-		}
-
-		for (const std::string& path : texturesPathsToLoad)
-		{
-			LoadTextureIconFromPath(path);
-		}
-
-		ExportLoadedTextures();
-	}
-
-	bool TextureIconManager::LoadTextureIconFromPath(const std::filesystem::path& path)
-	{
-		PROFILE_SCOPED;
-		namespace fs = std::filesystem;
-
-		std::string relativePath = fs::relative(path, PathManager::GetAssetsPath()).generic_string();
-
-		size_t id = std::hash<std::string>{}(relativePath);
-
-		IconData& data = loadedIcons[id];
-
-		{ // Get last write time.
-			fs::file_time_type ftime = fs::last_write_time(path);
-
-			std::chrono::system_clock::time_point sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-				ftime - fs::file_time_type::clock::now()
-				+ std::chrono::system_clock::now()
-			);
-
-			data.lastWriteTime = std::chrono::system_clock::to_time_t(sctp);
-		}
-
-		{ // Load texture
-			unsigned char* pixels = STB_Helper::Load_Texture_STB(path.string().c_str(), data.fullWidth, data.fullHeight, data.channels, false);
-			if (!pixels)
+			if (prev.guid == aGuid)
 			{
-				loadedIcons.erase(id);
-				return false;
+				prev.lastFrameUsed = 0;
+				return prev;
 			}
-
-			if (data.fullWidth >= data.fullHeight)
-			{
-				data.width = 128.f;
-				data.height = (float)data.fullHeight / (float)data.fullWidth * 128.f;
-			}
-			else
-			{
-				data.height = 128.f;
-				data.width = (float)data.fullWidth / (float)data.fullHeight * 128.f;
-			}
-
-			unsigned char* resized = new unsigned char[data.fullWidth * data.fullHeight * data.channels];
-			resized = STB_Helper::Resize_STB(pixels, data.fullWidth, data.fullHeight, data.width, data.height, data.channels);
-
-
-			const int size = data.width * data.height * data.channels;
-			data.data.resize(size);
-			memcpy(data.data.data(), resized, size);
-
-			STB_Helper::FreeData_STB(resized);
 		}
 
-		CreateOpenGLTextureFromData(data);
-		return true;
+		return LoadPreview(aGuid);
 	}
 
-	void TextureIconManager::ExportLoadedTextures()
+	const Preview* PreviewManager::TryGetPreviewData(GUID aGuid)
 	{
-		namespace fs = std::filesystem;
-
-		auto path = PathManager::GetProjectLocalPath() / IconBundleFilePath;
-		std::string pathString = path.generic_string();
-
+		for (Preview& prev : ActivePreviews)
 		{
-			Utilities::File file(pathString.c_str(), std::ios::binary | std::ios::out);
+			if (prev.guid == aGuid)
+			{
+				prev.lastFrameUsed = 0;
+				return &prev;
+			}
 		}
 
-		std::ofstream out(path, std::ios::binary);
-
-		const int count = (int)loadedIcons.size();
-		out.write(reinterpret_cast<const char*>(&count), sizeof(int));
-
-		for (auto& [id, data] : loadedIcons)
-		{
-			out.write(reinterpret_cast<const char*>(&id), sizeof(size_t));
-			out.write(reinterpret_cast<const char*>(&data.channels), sizeof(unsigned));
-			out.write(reinterpret_cast<const char*>(&data.width), sizeof(unsigned));
-			out.write(reinterpret_cast<const char*>(&data.height), sizeof(unsigned));
-			out.write(reinterpret_cast<const char*>(&data.fullWidth), sizeof(unsigned));
-			out.write(reinterpret_cast<const char*>(&data.fullHeight), sizeof(unsigned));
-			out.write(reinterpret_cast<const char*>(&data.lastWriteTime), sizeof(long long));
-
-			out.write(reinterpret_cast<const char*>(data.data.data()), data.width * data.height * data.channels);
-		}
-
-		out.close();
+		return nullptr;
 	}
 
-	bool TextureIconManager::IsFileReady(const std::filesystem::path& path)
+	const Preview& PreviewManager::LoadPreview(GUID aGuid)
 	{
-		std::ifstream file(path, std::ios::binary);
-		return file.is_open() && file.peek() != std::ifstream::traits_type::eof();
-	}
+		Graphics::IRenderer& rend = Graphics::RendererManager::GetRenderer();
+		Graphics::IGraphicsDevice* device = rend.GetDevice();
 
-	void TextureIconManager::CreateOpenGLTextureFromData(IconData& data)
-	{
-		//glGenTextures(1, &data.textureID);
-		//glBindTexture(GL_TEXTURE_2D, data.textureID);
+		const std::filesystem::path path = PathManager::GetArtifactsPath() / "Previews";
+		Graphics::TextureDescription desc{};
 
-		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		const std::string guid = aGuid.ToString();
+		const std::filesystem::path previewPath = path / (guid + ".preview");
 
-		//GLenum format;
-		//if (data.channels == 1)
-		//	format = GL_RED;
-		//else if (data.channels == 2)
-		//	format = GL_RG;
-		//else if (data.channels == 3)
-		//	format = GL_RGB;
-		//else if (data.channels == 4)
-		//	format = GL_RGBA;
+		std::ifstream file(path / (guid + ".preview"), std::ios::binary);
+		file.read(reinterpret_cast<char*>(&desc.width), sizeof(int));
+		file.read(reinterpret_cast<char*>(&desc.height), sizeof(int));
+		file.read(reinterpret_cast<char*>(&desc.channels), sizeof(int));
 
-		//glTexImage2D(GL_TEXTURE_2D, 0, format, data.width,
-		//	data.height, 0, format, GL_UNSIGNED_BYTE, data.data.data());
-		//glGenerateMipmap(GL_TEXTURE_2D);
+		const int size = desc.width * desc.height * desc.channels;
+		std::vector<Byte> bytes(size);
+		file.read(reinterpret_cast<char*>(bytes.data()), size);
 
-		//glBindTexture(GL_TEXTURE_2D, 0);
+		Preview prev;
+		prev.guid = aGuid;
+		prev.textureId = device->CreateTexture(bytes, desc);
+		prev.height = desc.height;
+		prev.width = desc.width;
 
+		ActivePreviews.push_back(prev);
 
-		// TODO: MOVE OVER TO RENDERER
-	}
-
-	const IconData& TextureIconManager::GetIcon(const Utilities::FileInfo& fileInfo)
-	{
-		size_t id = std::hash<std::string>{}(fileInfo.relativeFilePath.generic_string());
-
-		if (loadedIcons.find(id) == loadedIcons.end()) return emptyInternalIconData;
-
-
-		return loadedIcons[id];
+		return ActivePreviews.back();
 	}
 }
-#endif

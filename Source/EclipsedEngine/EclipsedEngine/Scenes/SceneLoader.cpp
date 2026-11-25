@@ -66,7 +66,9 @@ namespace Eclipse
 			{
 				const std::string guidStr = go.GetString();
 
-				const std::filesystem::path path = PathManager::GetAssetsPath() / "__external__" / "Scenes" / aName / guidStr;
+				const std::filesystem::path path = PathManager::GetExternalAssetsPath() / "Scenes" / aName / guidStr;
+				if (!std::filesystem::exists(path))
+					continue;
 
 				std::ifstream file(path, std::ios::binary);
 				std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -89,7 +91,9 @@ namespace Eclipse
 			{
 				const std::string guidStr = go.GetString();
 
-				const std::filesystem::path path = PathManager::GetAssetsPath() / "__external__" / "Scenes" / aName / guidStr;
+				const std::filesystem::path path = PathManager::GetExternalAssetsPath() / "Scenes" / aName / guidStr;
+				if (!std::filesystem::exists(path))
+					continue;
 
 				std::ifstream file(path, std::ios::binary);
 				std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

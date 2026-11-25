@@ -1,62 +1,37 @@
-
-#ifdef ECL_EDITOR
 #pragma once
 
-#include <filesystem>
-
-#include "Core/EventSystem/EventSystem.h"
-//#include "Assets/MetaData/AssetMeta.h"
-#include "Core/Files/FileInfo.h"
-
+#include <unordered_map>
+#include <vector>
+#include <Core/GUID.h>
 
 namespace Eclipse::Editor
 {
-	struct IconData
+	struct Preview
 	{
-		bool exists = false;
-		unsigned textureID = 0;
-		int channels;
+		GUID guid;
+		unsigned textureId;
 		int width;
 		int height;
-
-		int fullWidth, fullHeight;
-		long long lastWriteTime;
-		std::vector<unsigned char> data;
+		unsigned long long lastFrameUsed = 0;
 	};
 
-	class TextureIconManager final
+	class PreviewManager final
 	{
 	public:
 		static void Init();
 
-
-
-		static void CheckForChanges();
 		static void Update();
-		static void LoadIconsFile();
-		static void LoadAllTextureIcons();
-		static bool LoadTextureIconFromPath(const std::filesystem::path& path);
-		static void ExportLoadedTextures();
 
-		static bool IsFileReady(const std::filesystem::path& path);
+	public:
+		static unsigned int GetPreview(GUID aGuid);
+		static const Preview& GetPreviewData(GUID aGuid);
+		static const Preview* TryGetPreviewData(GUID aGuid);
 
-		static void CreateOpenGLTextureFromData(IconData& data);
-
-		static const IconData& GetIcon(const Utilities::FileInfo& fileInfo);
+		static const Preview& LoadPreview(GUID aGuid);
 
 	private:
-		static void ImportAsset(/*const Assets::AssetMeta& meta*/);
-
-	private:
-		static inline std::vector<std::string> filesToLoad;
-		static inline char buffer[1024];
-		static inline unsigned long bytesReturned;
-
-		static inline const char* IconBundleFilePath = "Icons.bundle";
-		static inline std::unordered_map<size_t, IconData> loadedIcons;
-
-	private:
-		static inline IconData emptyInternalIconData = {};
+		static inline constexpr unsigned long long FramesToLive = 100;
+		static inline unsigned long long CurrentFrame = 0;
+		static inline std::vector<Preview> ActivePreviews;
 	};
 }
-#endif

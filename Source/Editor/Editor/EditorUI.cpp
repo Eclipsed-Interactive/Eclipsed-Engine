@@ -18,7 +18,7 @@ namespace Eclipse::Editor
 	void EditorUI::Init()
 	{
 		PROFILE_SCOPED;
-		TextureIconManager::LoadAllTextureIcons();
+		PreviewManager::Init();
 
 		LoadFonts();
 		SetupStyle();
@@ -31,7 +31,7 @@ namespace Eclipse::Editor
 
 	void EditorUI::BeginFrame()
 	{
-
+		PreviewManager::Update();
 	}
 
 	void EditorUI::EndFrame()

@@ -20,6 +20,7 @@ namespace Eclipse
 
 		static std::filesystem::path GetEditorPath() { return GetProjectRoot() / "Editor"; }
 		static std::filesystem::path GetAssetsPath() { return GetProjectRoot() / "Content"; }
+		static std::filesystem::path GetExternalAssetsPath() { return GetProjectRoot() / "External"; }
 
 		// Fix this, the directory does not exist if published a build.
 		static std::filesystem::path GetEngineAssetsPath() { return GetEngineRoot().parent_path() / "Assets"; }
