@@ -25,12 +25,6 @@
 
 namespace Eclipse
 {
-#ifdef ECLIPSED_NETWORKING
-	void UIImage::sprite_OnRep()
-	{
-	}
-#endif
-
 #ifdef ECL_EDITOR
 	void UIImage::EditorUpdate()
 	{
@@ -51,10 +45,11 @@ namespace Eclipse
 		}
 	}
 #endif // ECL_EDITOR
+
 	void UIImage::OnComponentAdded()
 	{
-		if (material->IsReady()) hasMaterial = true;
-		if (sprite->IsReady()) hasSprite = true;
+		if (material.IsReady()) hasMaterial = true;
+		if (sprite.IsReady()) hasSprite = true;
 
 		//if (!hasMaterial)
 		//{

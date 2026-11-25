@@ -6,12 +6,16 @@
 #include "AssetSystem/Assets/Types/Material.h"
 #include "AssetSystem/Assets/Types/Texture.h"
 #include <Core/GraphicsBuffers/TransformBuffer.h>
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+
+#include "EclipsedEngine.Core.hpp"
+
 namespace Eclipse
 {
     class ECL_API UIImage : public BaseRenderComponent
     {
+        MAKE_REFLECTABLE(UIImage);
+        REFLECTION_FLAG(COMPONENT);
+
         COMPONENT_BASE_2(UIImage, 0)
 
     public:
@@ -30,8 +34,11 @@ namespace Eclipse
         Math::Vector2f spriteRectMin = { 0.f, 0.f };
         Math::Vector2f spriteRectMax = { 1.f, 1.f };
 
-        MANUAL_REPLICATED_SERIALIZED_FIELD(Texture, sprite, UIImage);
-        SERIALIZED_FIELD(Material, material);
+        [[SerializeField]]
+        Texture sprite;
+
+        [[SerializeField]]
+        Material material;
 
         TransformBuffer myTransformBuffer;
     };

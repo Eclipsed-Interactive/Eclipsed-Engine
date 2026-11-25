@@ -12,11 +12,11 @@ namespace Eclipse {
 	{
 		FMOD::Studio::System* studio = *MainSingleton::GetPointer<FMOD::Studio::System*>();
 
-		if (!bank0->empty())
+		if (!bank0.empty())
 		{
 			FMOD::Studio::Bank* bank;
 			FMOD_RESULT result = studio->loadBankFile(
-				(PathManager::GetAssetsPath() / bank0.Get()).generic_string().c_str(),
+				(PathManager::GetAssetsPath() / bank0).generic_string().c_str(),
 				FMOD_STUDIO_LOAD_BANK_NORMAL,
 				&bank
 			);
@@ -26,11 +26,11 @@ namespace Eclipse {
 			}
 		}
 
-		if (!bank1->empty())
+		if (!bank1.empty())
 		{
 			FMOD::Studio::Bank* bank;
 			FMOD_RESULT result = studio->loadBankFile(
-				(PathManager::GetAssetsPath() / bank1.Get()).generic_string().c_str(),
+				(PathManager::GetAssetsPath() / bank1).generic_string().c_str(),
 				FMOD_STUDIO_LOAD_BANK_NORMAL,
 				&bank
 			);
@@ -40,11 +40,11 @@ namespace Eclipse {
 			}
 		}
 
-		if (!bank2->empty())
+		if (!bank2.empty())
 		{
 			FMOD::Studio::Bank* bank;
 			FMOD_RESULT result = studio->loadBankFile(
-				(PathManager::GetAssetsPath() / bank2.Get()).generic_string().c_str(),
+				(PathManager::GetAssetsPath() / bank2).generic_string().c_str(),
 				FMOD_STUDIO_LOAD_BANK_NORMAL,
 				&bank
 			);
@@ -54,11 +54,11 @@ namespace Eclipse {
 			}
 		}
 
-		if (!bank3->empty())
+		if (!bank3.empty())
 		{
 			FMOD::Studio::Bank* bank;
 			FMOD_RESULT result = studio->loadBankFile(
-				(PathManager::GetAssetsPath() / bank3.Get()).generic_string().c_str(),
+				(PathManager::GetAssetsPath() / bank3).generic_string().c_str(),
 				FMOD_STUDIO_LOAD_BANK_NORMAL,
 				&bank
 			);
@@ -68,11 +68,11 @@ namespace Eclipse {
 			}
 		}
 
-		if (!bank4->empty())
+		if (!bank4.empty())
 		{
 			FMOD::Studio::Bank* bank;
 			FMOD_RESULT result = studio->loadBankFile(
-				(PathManager::GetAssetsPath() / bank4.Get()).generic_string().c_str(),
+				(PathManager::GetAssetsPath() / bank4).generic_string().c_str(),
 				FMOD_STUDIO_LOAD_BANK_NORMAL,
 				&bank
 			);

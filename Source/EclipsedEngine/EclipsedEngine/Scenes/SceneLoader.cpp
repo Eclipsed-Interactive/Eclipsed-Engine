@@ -143,6 +143,93 @@ namespace Eclipse
 			LoadGameObjects(name, d["objects"]);
 	}
 
+	void SceneSerializer::LoadSnapshot(const std::string& snapshot)
+	{
+		if (snapshot.empty())
+			return;
+
+		rapidjson::Document d;
+		d.Parse(snapshot.c_str());
+
+		if (d.HasParseError())
+		{
+			throw std::runtime_error("Snapshot couldnt be parsed.");
+		}
+
+		if (d.HasMember("gameobjects") && d["gameobjects"].IsArray())
+		{
+			const auto& gameobjects = d["gameobjects"].GetArray();
+
+			for (const auto& go : gameobjects)
+			{
+				if (!go.HasMember("id") || !go["id"].IsString())
+					continue;
+
+				GUID guid;
+				guid.FromString(go["id"].GetString());
+				GameObject* obj = guid.IsEmpty() ? ComponentManager::CreateGameObject() : ComponentManager::CreateGameObject(guid);
+
+				if (go.HasMember("name") && go["name"].IsString()) obj->SetName(go["name"].GetString());
+				if (go.HasMember("static") && go["static"].IsBool()) obj->SetIsStatic(go["static"].GetBool());
+			}
+
+			for (const auto& go : gameobjects)
+			{
+				if (!go.HasMember("id") || !go["id"].IsString() || !go.HasMember("parent") || !go["parent"].IsString())
+					continue;
+
+				GUID guid, parentGuid;
+				guid.FromString(go["id"].GetString());
+				parentGuid.FromString(go["parent"].GetString());
+
+				GameObject* obj = ComponentManager::GetGameObject(guid);
+				GameObject* parent = ComponentManager::GetGameObject(parentGuid);
+				if (obj && parent)
+					obj->SetParent(parent);
+			}
+		}
+
+		if (!d.HasMember("components") || !d["components"].IsObject())
+			return;
+
+		for (const auto& compType : d["components"].GetObject())
+		{
+			const std::string typeStr = compType.name.GetString();
+			const Reflection::TypeEntry* type = Reflection::ReflectionRegistry::TryGetType(typeStr);
+			if (!type || !compType.value.IsArray())
+				continue;
+
+			for (const auto& comp : compType.value.GetArray())
+			{
+				if (!comp.HasMember("owner") || !comp["owner"].IsString())
+					continue;
+
+				GUID owner;
+				owner.FromString(comp["owner"].GetString());
+
+				const unsigned id = (comp.HasMember("id") && comp["id"].IsUint()) ? comp["id"].GetUint() : Component::GetNextComponentID();
+				Component* component = ComponentManager::AddComponentWithID(owner, id, type->createAtAddress, type->size);
+
+				if (!comp.HasMember("data") || !comp["data"].IsObject())
+					continue;
+
+				for (const auto& field : comp["data"].GetObject())
+				{
+					try
+					{
+						const Reflection::FieldEntry& entry = Reflection::ReflectionRegistry::GetField(typeStr, field.name.GetString());
+						unsigned char* data = reinterpret_cast<unsigned char*>(component) + entry.offset;
+						Serialization::FromJson(entry.type, data, field.value);
+					}
+					catch (...)
+					{
+						// Field was removed or has no serializer; keep the default.
+					}
+				}
+			}
+		}
+	}
+
 	void SceneSerializer::LoadScene(Scene scene)
 	{
 		if (scene.GetJson().empty())

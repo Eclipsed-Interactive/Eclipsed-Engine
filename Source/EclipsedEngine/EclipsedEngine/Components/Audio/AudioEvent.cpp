@@ -9,9 +9,9 @@ namespace Eclipse
 {
 	void AudioEvent::Awake()
 	{
-		if (event->empty()) return;
+		if (event.empty()) return;
 
-		SetAudioEvent(event->c_str());
+		SetAudioEvent(event.c_str());
 
 		if (playOnAwake && instance) {
 			instance->start();

@@ -13,6 +13,8 @@
 	#define ECL_DEV_CONSOLE_ENABLED 0
 #endif
 
+struct ImGuiViewport;
+
 namespace Eclipse
 {
 	class DevConsole

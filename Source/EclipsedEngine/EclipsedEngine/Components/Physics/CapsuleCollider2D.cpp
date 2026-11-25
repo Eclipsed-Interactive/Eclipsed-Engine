@@ -30,7 +30,7 @@ namespace Eclipse
 			OnShapeDirty();
 		}
 
-		if (myLastColliderPivot.x != ColliderPivot->x || myLastColliderPivot.y != ColliderPivot->y)
+		if (myLastColliderPivot.x != ColliderPivot.x || myLastColliderPivot.y != ColliderPivot.y)
 		{
 			OnShapeDirty();
 		}

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "EclipsedEngine/Components/Component.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 
 
 

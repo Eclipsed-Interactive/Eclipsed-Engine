@@ -8,12 +8,12 @@ namespace Eclipse
 {
 	void BoxCollider2D::DeltaChanges()
 	{
-		if (myLastHalfExtents.x != HalfExtents->x || myLastHalfExtents.y != HalfExtents->y)
+		if (myLastHalfExtents.x != HalfExtents.x || myLastHalfExtents.y != HalfExtents.y)
 		{
 			OnShapeDirty();
 		}
 
-		if (myLastColliderPivot.x != ColliderPivot->x || myLastColliderPivot.y != ColliderPivot->y)
+		if (myLastColliderPivot.x != ColliderPivot.x || myLastColliderPivot.y != ColliderPivot.y)
 		{
 			OnShapeDirty();
 		}
@@ -47,11 +47,11 @@ namespace Eclipse
 
 		Math::Vector2f halfExtent = Math::Vector2f(myTransform->GetScale().x, myTransform->GetScale().y) * 0.01f;
 
-		halfExtent.x *= HalfExtents->x;
-		halfExtent.y *= HalfExtents->y;
+		halfExtent.x *= HalfExtents.x;
+		halfExtent.y *= HalfExtents.y;
 
 		myHalfExtents = halfExtent;
 
-		PhysicsEngine::SetTransformBox(myInternalCollider, myHalfExtents, { ColliderPivot->x * halfExtent.x * 2.f, ColliderPivot->y * halfExtent.y * 2.f });
+		PhysicsEngine::SetTransformBox(myInternalCollider, myHalfExtents, { ColliderPivot.x * halfExtent.x * 2.f, ColliderPivot.y * halfExtent.y * 2.f });
 	}
 }

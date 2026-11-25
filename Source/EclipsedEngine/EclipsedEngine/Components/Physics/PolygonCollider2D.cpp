@@ -18,15 +18,15 @@ namespace Eclipse
 
         scale *= aPoint * Math::Vector2f(2.f, 2.f) - Math::Vector2f(1.f, 1.f);
 
-        myPoints->emplace_back(scale);
+        myPoints.emplace_back(scale);
     }
 
     void PolygonCollider2D::DeltaChanges()
     {
-        if (myLastPoints.empty() || memcmp(myPoints->data(), myLastPoints.data(), myPoints->size() * sizeof(Math::Vector2f)))
+        if (myLastPoints.empty() || memcmp(myPoints.data(), myLastPoints.data(), myPoints.size() * sizeof(Math::Vector2f)))
         {
-            myLastPoints.resize(myPoints->size());
-            memcpy(myLastPoints.data(), myPoints->data(), myPoints->size() * sizeof(Math::Vector2f));
+            myLastPoints.resize(myPoints.size());
+            memcpy(myLastPoints.data(), myPoints.data(), myPoints.size() * sizeof(Math::Vector2f));
 
             OnShapeDirty();
         }

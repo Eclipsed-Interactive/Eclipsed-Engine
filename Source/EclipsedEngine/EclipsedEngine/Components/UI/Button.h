@@ -3,13 +3,15 @@
 #include "EclipsedEngine/Components/Component.h"
 
 #include "Core/EventSystem/EventSystem.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 
 namespace Eclipse
 {
 	class ECL_API Button : public Component
 	{
+		MAKE_REFLECTABLE(Button);
+		REFLECTION_FLAG(COMPONENT);
+
 		COMPONENT_BASE_2(Button, 0)
 
 	public:

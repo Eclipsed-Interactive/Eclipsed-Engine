@@ -31,7 +31,7 @@ namespace Eclipse
     void Collider2D::OnComponentAdded()
     {
         myTransform = gameObject->transform;
-        myLastLayer = static_cast<int>(myLayer.Get());
+        myLastLayer = static_cast<int>(myLayer);
 
         myUserData = { gameObject->GetID() };
 
@@ -69,9 +69,9 @@ namespace Eclipse
     {
         DeltaChanges();
 
-        if (myLastLayer != static_cast<int>(myLayer.Get()))
+        if (myLastLayer != static_cast<int>(myLayer))
         {
-            myLastLayer = static_cast<int>(myLayer.Get());
+            myLastLayer = static_cast<int>(myLayer);
             PhysicsEngine::ChangeLayer(myInternalCollider, myLayer);
         }
     }

@@ -33,7 +33,7 @@ namespace Eclipse
 
 		PhysicsEngine::InitWorld();
 
-		SceneSerializer::LoadScene(snapshot);
+		SceneSerializer::LoadSnapshot(snapshot);
 	}
 
 	void SceneManager::UnloadActive()

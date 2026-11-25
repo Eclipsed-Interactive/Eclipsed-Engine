@@ -32,5 +32,6 @@ namespace Eclipse
 		static std::string SaveScene(bool pretty = false);
 		static void LoadScene(Scene scene);
 		static void LoadScene(const std::string& scene);
+		static void LoadSnapshot(const std::string& snapshot);
 	};
 }

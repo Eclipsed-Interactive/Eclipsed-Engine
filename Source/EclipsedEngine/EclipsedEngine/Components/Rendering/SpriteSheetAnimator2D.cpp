@@ -7,28 +7,6 @@
 
 namespace Eclipse
 {
-#ifdef ECLIPSED_NETWORKING
-   void SpriteSheetAnimator2D::myCurrentFrame_OnRep()
-   {
-       //const std::vector<unsigned>& animationFramesIdx = TemporarySpriteAnimation;
-       //if (animationFramesIdx.empty())
-       //    return;
-       //if (!mySpriteRenderer)
-       //    return;
-
-       //Eclipse::AssetSystem::Texture sprite = mySpriteRenderer->GetSprite();
-       //if (!sprite.IsReady())
-       //    return;
-
-       //const std::vector<Math::RectSizePos>& spriteRects = *sprite.GetSpriteRects();
-       //if (spriteRects.empty())
-       //    return;
-
-       //const Math::RectSizePos& rect = spriteRects[animationFramesIdx[myCurrentFrame]];
-       //mySpriteRenderer->SetSpriteRect(rect.position, rect.position + rect.size);
-   }
-#endif
-
    void SpriteSheetAnimator2D::Update()
    {
        if (!myIsOwner)

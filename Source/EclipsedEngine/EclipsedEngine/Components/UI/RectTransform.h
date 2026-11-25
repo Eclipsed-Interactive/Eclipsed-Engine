@@ -2,14 +2,16 @@
 
 #include "ECS/ComponentManager.h"
 #include "EclipsedEngine/Components/Component.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 
 
 namespace Eclipse
 {
     class ECL_API RectTransform : public Component
     {
+        MAKE_REFLECTABLE(RectTransform);
+        REFLECTION_FLAG(COMPONENT);
+
         COMPONENT_BASE_2(RectTransform, UINT_MAX * 0.5f)
 
     private:

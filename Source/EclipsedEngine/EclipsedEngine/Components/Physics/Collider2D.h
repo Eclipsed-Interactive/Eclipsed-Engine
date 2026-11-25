@@ -1,10 +1,9 @@
 #pragma once
 
 #include "EclipsedEngine/Components/Component.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
 #include "Physics/PhysicsEngineSettings.h"
+
+#include "EclipsedEngine.Core.hpp"
 
 struct b2BodyId;
 struct b2ShapeId;
@@ -34,8 +33,11 @@ namespace Eclipse
         virtual void DeltaChanges() {}
 
     public:
-        SERIALIZED_FIELD_DEFAULT(Layer, myLayer, Layer::Default);
-        SERIALIZED_FIELD(Math::Vector2f, ColliderPivot);
+        [[SerializeField]]
+        Layer myLayer = Layer::Default;
+
+        [[SerializeField]]
+        Math::Vector2f ColliderPivot;
 
         PhysMaterial physMaterial;
 

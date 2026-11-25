@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EclipsedEngine.Core.hpp"
+
 #include "Collider2D.h"
 #include "Core/Math/Vector/Vector2.h"
 
@@ -7,7 +9,6 @@ namespace Eclipse
 {
     class ECL_API BoxCollider2D : public Collider2D
     {
-        
         MAKE_REFLECTABLE(BoxCollider2D);
         REFLECTION_FLAG(COMPONENT);
 
@@ -22,10 +23,14 @@ namespace Eclipse
 
         void SetScale(const Math::Vector2f& aHalfExtents);
 
-        SERIALIZED_FIELD_DEFAULT(bool, isTrigger, false);
     private:
         Math::Vector2f myHalfExtents;
-        SERIALIZED_FIELD_DEFAULT_MIN_MAX(Math::Vector2f, HalfExtents, Math::Vector2f(0.5f, 0.5f), Math::Vector2f(0.f, 0.f), Math::Vector2f(FLT_MAX, FLT_MAX));
+
+        [[SerializeField]]
+        bool isTrigger = false;
+
+        [[SerializeField, Range(0.f, FLT_MAX)]]
+        Math::Vector2f HalfExtents = Math::Vector2f(0.5f, 0.5f);
 
         Math::Vector2f myLastHalfExtents;
     };

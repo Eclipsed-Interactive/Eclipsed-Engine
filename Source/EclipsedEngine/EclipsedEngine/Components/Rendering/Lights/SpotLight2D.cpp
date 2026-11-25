@@ -1,4 +1,5 @@
 #include "SpotLight2D.h"
+#include "Core/Math/CommonMath.h"
 
 #include "EclipsedEngine/Components/Transform2D.h"
 #include "EclipsedEngine/Components/Rendering/Camera.h"

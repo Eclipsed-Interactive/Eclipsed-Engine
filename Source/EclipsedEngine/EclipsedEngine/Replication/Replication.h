@@ -9,8 +9,6 @@
 
 #include "EclipsedEngine.Core.hpp"
 
-#include "EclipsedEngine/Reflection/AbstractSerializedVariable.h"
-
 namespace Eclipse
 {
     class Component;

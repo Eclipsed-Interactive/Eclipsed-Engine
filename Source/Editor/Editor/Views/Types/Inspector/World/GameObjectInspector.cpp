@@ -9,8 +9,7 @@
 
 #include "ECS/ComponentManager.h"
 
-#include "EclipsedEngine/Reflection/Reflection.h"
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
+#include "Reflection/Runtime/ReflectionRegistry.h"
 
 #include "Editor/ImGui/ImGui_Impl.h"
 

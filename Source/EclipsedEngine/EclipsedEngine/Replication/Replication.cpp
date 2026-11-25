@@ -9,7 +9,6 @@
 
 #include "Renderer/RenderCommands/CommandList.h"
 #include "ECS/ComponentManager.h"
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 #include "EclipsedEngine/Replication/ReplicationManager.h"
 #include "EclipsedEngine/Replication/ReplicatedVariable.h"
 
@@ -19,46 +18,46 @@ namespace Eclipse::Replication
 {
 	void ReplicationHelper::ClientHelp::RecieveAddComponentMessage(const NetMessage& message)
 	{
-		// if (!ComponentManager::Get().HasGameObject(message.MetaData.GameObjectID))
-		// {
-		//     GameObject* gameobject = ComponentManager::Get().CreateGameObject(message.MetaData.GameObjectID);
-		//     gameobject->SetIsOwner(true);
-		// }
+		//// if (!ComponentManager::Get().HasGameObject(message.MetaData.GameObjectID))
+		//// {
+		////     GameObject* gameobject = ComponentManager::Get().CreateGameObject(message.MetaData.GameObjectID);
+		////     gameobject->SetIsOwner(true);
+		//// }
 
-		int ComponentID = 0;
-		memcpy(&ComponentID, message.data, sizeof(int));
+		//int ComponentID = 0;
+		//memcpy(&ComponentID, message.data, sizeof(int));
 
-		int ComponentNameCharCount = 0;
-		memcpy(&ComponentNameCharCount, message.data + sizeof(int), sizeof(int));
+		//int ComponentNameCharCount = 0;
+		//memcpy(&ComponentNameCharCount, message.data + sizeof(int), sizeof(int));
 
-		char NameBuffer[512];
+		//char NameBuffer[512];
 
-		memcpy(NameBuffer, message.data + sizeof(int) + sizeof(int), ComponentNameCharCount);
-		memset(NameBuffer + ComponentNameCharCount, '\0', 1);
+		//memcpy(NameBuffer, message.data + sizeof(int) + sizeof(int), ComponentNameCharCount);
+		//memset(NameBuffer + ComponentNameCharCount, '\0', 1);
 
-		const char* name = NameBuffer;
+		//const char* name = NameBuffer;
 
-		for (auto& component : ComponentManager::GetComponents(message.MetaData.GameObjectID))
-		{
-			const char* CurrentComponentName = component->GetComponentName();
-			if (!memcmp(name, CurrentComponentName, strlen(name)))
-				return;
-		}
+		//for (auto& component : ComponentManager::GetComponents(message.MetaData.GameObjectID))
+		//{
+		//	const char* CurrentComponentName = component->GetComponentName();
+		//	if (!memcmp(name, CurrentComponentName, strlen(name)))
+		//		return;
+		//}
 
-		std::string StringName = name;
+		//std::string StringName = name;
 
-		Component* newCompoennt = ComponentRegistry::GetAddComponentWithIdByTypeName(StringName)(message.MetaData.GameObjectID, ComponentID);
-		newCompoennt->SetIsOwner(false);
-		newCompoennt->IsReplicated = true;
+		//Component* newCompoennt = ComponentRegistry::GetAddComponentWithIdByTypeName(StringName)(message.MetaData.GameObjectID, ComponentID);
+		//newCompoennt->SetIsOwner(false);
+		//newCompoennt->IsReplicated = true;
+
+		////ComponentsToStartOnDemand.emplace_back(newCompoennt);
 
 		//ComponentsToStartOnDemand.emplace_back(newCompoennt);
-
-		ComponentsToStartOnDemand.emplace_back(newCompoennt);
-		if (ComponentsToStartOnDemand.size() >= myComponentsToRecieved)
-		{
-			StartReplicatedComponents();
-			myComponentsToRecieved = 9999;
-		}
+		//if (ComponentsToStartOnDemand.size() >= myComponentsToRecieved)
+		//{
+		//	StartReplicatedComponents();
+		//	myComponentsToRecieved = 9999;
+		//}
 	}
 
 	void ReplicationHelper::ClientHelp::RecieveAmountOfComponents(const NetMessage& message)

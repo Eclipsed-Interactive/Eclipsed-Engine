@@ -1,8 +1,7 @@
 #pragma once
 
 #include "EclipsedEngine/Components/Component.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 namespace FMOD::Studio {
 	class EventDescription;
 	class EventInstance;
@@ -11,6 +10,9 @@ namespace FMOD::Studio {
 namespace Eclipse {
 	class ECL_API AudioEvent : public Component
 	{
+		MAKE_REFLECTABLE(AudioEvent);
+		REFLECTION_FLAG(COMPONENT);
+
 		BASE_SELECTION(AudioEvent, 1)
 
 	public:
@@ -32,10 +34,10 @@ namespace Eclipse {
 		float GetVolume() const;
 
 	public:
-		SERIALIZED_FIELD(std::string, event);
+		[[SerializeField]] std::string event;
 
-		SERIALIZED_FIELD_DEFAULT(bool, playOnAwake, false);
-		SERIALIZED_FIELD_DEFAULT(float, volume, 1.f);
+		[[SerializeField]] bool playOnAwake = false;
+		[[SerializeField]] float volume = 1.f;
 
 	private:
 		bool isPlaying = false;

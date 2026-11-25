@@ -2,8 +2,7 @@
 
 #include "EclipsedEngine/Components/Component.h"
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 //#include "Assets/Assets/SpriteAnimation.h"
 
 namespace Eclipse
@@ -12,6 +11,9 @@ namespace Eclipse
 
     class ECL_API SpriteSheetAnimator2D : public Component
     {
+        MAKE_REFLECTABLE(SpriteSheetAnimator2D);
+        REFLECTION_FLAG(COMPONENT);
+
         BASE_SELECTION(SpriteSheetAnimator2D, 10)
 
     public:
@@ -42,11 +44,11 @@ namespace Eclipse
         SpriteRenderer2D* mySpriteRenderer;
         std::string myActiveAnimation;
 
-        SERIALIZED_FIELD_DEFAULT(float, myTimePerFrame, 0.04f);
+        [[SerializeField]] float myTimePerFrame = 0.04f;
         float myTimeAccumulator = 0.f;
 
-        REPLICATED_PRIVATE_SERIALIZED_FIELD_DEFAULT(int, myCurrentFrame, 0, SpriteSheetAnimator2D);
-        SERIALIZED_FIELD_DEFAULT(bool, myLoop, true);
+        [[SerializeField]] int myCurrentFrame = 0;
+        [[SerializeField]] bool myLoop = true;
 
         bool myIsPlaying = true;
     };

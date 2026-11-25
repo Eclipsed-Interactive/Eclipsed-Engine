@@ -5,8 +5,6 @@
 
 #include "ECS/GameObject.h"
 
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
-#include "EclipsedEngine/Reflection/Reflection.h"
 //#include "EclipsedEngine/Scenes/SceneLoader.h"
 
 #include <Components/UI/RectTransform.h>

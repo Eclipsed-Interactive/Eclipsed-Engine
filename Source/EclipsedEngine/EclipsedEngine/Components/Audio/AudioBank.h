@@ -2,8 +2,7 @@
 
 #include <vector>
 #include <string>
-#include "EclipsedEngine/Reflection/Reflection_Macros.h"
-#include "EclipsedEngine/Replication/Replication_Macros.h"
+#include "EclipsedEngine.Core.hpp"
 
 #include "EclipsedEngine/Components/Component.h"
 
@@ -14,6 +13,9 @@ namespace FMOD::Studio {
 namespace Eclipse {
 	class ECL_API AudioBank : public Component
 	{
+		MAKE_REFLECTABLE(AudioBank);
+		REFLECTION_FLAG(COMPONENT);
+
 		BASE_SELECTION(AudioBank, 10)
 
 	public:
@@ -21,11 +23,11 @@ namespace Eclipse {
 		void OnDestroy() override;
 
 	private: // Replace this with a vector once its supported.
-		SERIALIZED_FIELD(std::string, bank0);
-		SERIALIZED_FIELD(std::string, bank1);
-		SERIALIZED_FIELD(std::string, bank2);
-		SERIALIZED_FIELD(std::string, bank3);
-		SERIALIZED_FIELD(std::string, bank4);
+		[[SerializeField]] std::string bank0;
+		[[SerializeField]] std::string bank1;
+		[[SerializeField]] std::string bank2;
+		[[SerializeField]] std::string bank3;
+		[[SerializeField]] std::string bank4;
 
 	private:
 		std::vector<FMOD::Studio::Bank*> loadedBanks;

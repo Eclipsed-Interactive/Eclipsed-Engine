@@ -8,7 +8,6 @@
 
 #include "Input/Input.h"
 
-#include "EclipsedEngine/Reflection/Registry/ComponentRegistry.h"
 
 #include "EclipsedEngine/Components/Rendering/SpriteRenderer2D.h"
 
