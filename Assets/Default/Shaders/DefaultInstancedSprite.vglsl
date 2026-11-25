@@ -9,7 +9,7 @@ layout(location = 3) in vec2 size;
 layout(location = 4) in float rotation;
 
 // Outs
-out vec2 outTexCoord;
+layout(location=0) out vec2 outTexCoord;
 
 layout(std140, binding = 0) uniform CameraBuffer
 {

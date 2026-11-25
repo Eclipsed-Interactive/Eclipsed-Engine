@@ -57,7 +57,7 @@ namespace Eclipse::Graphics::OpenGL
 				FirstRenderObject.Sprite->Bind();
 
 			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_SpriteBuffer, 3, FirstRenderObject.SpriteBuffer);
-			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, &FirstRenderObject.MaterialBuffer);
+			buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_MaterialBuffer, 5, FirstRenderObject.MaterialBuffer);
 
 			std::vector<InstancedRenderObject::InternalInstanceTransform> instanceTransform;
 			for (auto& RenderComponent : RenderVector)

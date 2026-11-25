@@ -1,8 +1,7 @@
 {
-    "value0": {
-        "cereal_class_version": 0,
-        "guidStr": "5774574607ec7a80aac940c418ae5813",
-        "type": 3,
-        "metaComponents": []
-    }
+    "guid": "64d0de85685b684a17df281c8276d689",
+    "filename": "",
+    "path": "engine://Default/Shaders/DefaultInstancedSprite.vglsl",
+    "type": 0,
+    "data": {}
 }
