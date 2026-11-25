@@ -27,6 +27,8 @@
 
 #include <EclipsedEngine/Scenes/SceneManager.h>
 
+#include <Core/Math/Math.h>
+
 namespace Eclipse::Editor
 {
 	void HierarchyView::OpenParents(GameObjectID aParentID)
