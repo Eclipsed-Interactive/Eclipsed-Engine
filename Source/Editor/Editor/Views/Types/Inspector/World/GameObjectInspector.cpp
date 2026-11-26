@@ -35,15 +35,52 @@ namespace Eclipse::Editor
 		ImGuiStyle& style = ImGui::GetStyle();
 		const ImVec2 padding = style.WindowPadding;
 
-		static bool enabled = false;
-		ImGui::Checkbox("##game_object_enable", &enabled);
+		{ // Enable
+			bool enabled = gameObject->Enabled();
+
+			ImGui::Checkbox("##game_object_enable", &enabled);
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Text("Enables the game object and stops it from updating.");
+				ImGui::EndTooltip();
+			}
+
+			gameObject->Enable(enabled);
+		}
 
 		ImGui::SameLine();
 
-		char* name = GetNameBuffer(gameObject->GetID(), gameObject->GetName());
-		if (ImGui::InputText("##gameobject_name", name, NAME_BUFFER_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			gameObject->SetName(std::string(name));
+			char* name = GetNameBuffer(gameObject->GetID(), gameObject->GetName());
+			if (ImGui::InputText("##gameobject_name", name, NAME_BUFFER_LENGTH, ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				gameObject->SetName(std::string(name));
+			}
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Text("The name of the gameobject.");
+				ImGui::EndTooltip();
+			}
+		}
+
+		ImGui::SameLine();
+
+		{ // static
+			bool isStatic = gameObject->GetIsStatic();
+			ImGui::Checkbox("static", &isStatic);
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Text("Sets the gameobject to be static.");
+				ImGui::EndTooltip();
+			}
+
+			gameObject->SetIsStatic(isStatic);
 		}
 
 		ImGui::Spacing();

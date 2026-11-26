@@ -70,7 +70,6 @@ namespace Eclipse::AssetSystem
 		shader.setEnvClient(glslang::EShClientOpenGL, glslang::EShTargetOpenGL_450);
 		shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_0);
 
-		// SPIR-V requires explicit locations/bindings; let glslang assign the ones the shaders don't declare.
 		shader.setAutoMapLocations(true);
 		shader.setAutoMapBindings(true);
 
@@ -89,7 +88,6 @@ namespace Eclipse::AssetSystem
 			return false;
 		}
 
-		// Actually assigns the auto-mapped locations/bindings.
 		if (!program.mapIO())
 		{
 			LOG_ERROR("Shader IO mapping failed: " + path.generic_string() + "\n" + program.getInfoLog());

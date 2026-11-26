@@ -57,6 +57,9 @@ namespace Eclipse
 		bool IsOwner() { return myIsOwner; }
 		void SetIsOwner(bool anIsOwner) { myIsOwner = anIsOwner; }
 
+		bool Enabled() const { return myIsEnabled; }
+		void Enable(bool isEnabled) { myIsEnabled = isEnabled; }
+
 	public:
 		void SetName(const std::string& aName);
 		const std::string& GetName() const;
@@ -79,6 +82,8 @@ namespace Eclipse
 		unsigned myPickID = 0;
 #endif
 	private:
+		bool myIsEnabled = true;
+
 		GameObject* GetTopParentInternal(GameObject* aGameobject);
 
 		GameObject* parent = nullptr;
@@ -100,8 +105,6 @@ namespace Eclipse
 		[[nodiscard]] GUID GetGUID() const { return id; }
 
 	private:
-		// The GUID is the gameobject's id and the key it is registered under in ComponentManager.
-		// It is set once on construction; use ComponentManager::CreateGameObject(GUID) to create with a specific id.
 		GUID id;
 	};
 

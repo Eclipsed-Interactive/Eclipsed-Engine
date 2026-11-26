@@ -73,6 +73,7 @@ namespace Eclipse::Editor
 		FontSmall = LoadFont(16);
 		FontMedium = LoadFont(20);
 		FontLarge = LoadFont(32);
+		FontExtraLarge = LoadFont(56);
 
 		io.Fonts->Build();
 
