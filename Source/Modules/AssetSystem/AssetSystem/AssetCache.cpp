@@ -5,6 +5,10 @@
 #include "Metadata/AssetMeta.h"
 #include "Core/MainSingleton.h"
 
+#include <AssetSystem/Loading/AssetLoaderRegistry.h>
+#include <AssetSystem/Artifacts/ArtifactRegistry.h>
+#include <AssetSystem/ArtifactHeader.h>
+
 namespace Eclipse::AssetSystem
 {
 	std::vector<GUID> AssetCache::pendingReload;
@@ -17,7 +21,7 @@ namespace Eclipse::AssetSystem
 
 		return nullptr;
 	}
-	
+
 	AssetData* AssetCache::Store(GUID guid, AssetData* data)
 	{
 		auto it = loadedAssets.find(guid);
@@ -44,6 +48,23 @@ namespace Eclipse::AssetSystem
 
 	void AssetCache::ProcessReloads()
 	{
+		for (GUID guid : pendingReload)
+		{
+			AssetData* data = Get(guid);
+			if (!data) continue;
 
+			std::vector<Byte> bytes;
+			if (!ArtifactRegistry::Read(guid, bytes)) continue;
+
+			const IAssetLoader* loader = AssetLoaderRegistry::FindByMagic(data->magic);
+
+			ArtifactReader reader(bytes);
+			ArtifactHeader header; reader.Read(&header, sizeof header);
+
+			loader->Unload(data);
+			loader->Load(reader, data);
+		}
+
+		pendingReload.clear();
 	}
 }

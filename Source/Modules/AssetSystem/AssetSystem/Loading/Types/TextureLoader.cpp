@@ -43,4 +43,9 @@ namespace Eclipse::AssetSystem
 
 		return true;
 	}
+
+	bool TextureLoader::Unload(AssetData* aData) const
+	{
+		return false;
+	}
 }

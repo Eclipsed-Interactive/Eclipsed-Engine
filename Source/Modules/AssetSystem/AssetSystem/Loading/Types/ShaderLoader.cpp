@@ -40,4 +40,8 @@ namespace Eclipse::AssetSystem
 
 		return true;
 	}
+	bool ShaderLoader::Unload(AssetData* aData) const
+	{
+		return false;
+	}
 }

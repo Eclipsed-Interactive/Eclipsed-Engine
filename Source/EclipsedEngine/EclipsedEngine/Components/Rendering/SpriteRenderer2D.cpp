@@ -52,6 +52,7 @@ namespace Eclipse
 	void SpriteRenderer2D::OnChangeSprite()
 	{
 		hasSprite = mySprite.IsReady();
+		OnChangeMaterial();
 	}
 
 	void SpriteRenderer2D::OnChangeMirror()
@@ -128,6 +129,12 @@ namespace Eclipse
 		buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
 
 		graphicsDevice = Graphics::RendererManager::GetRenderer().GetDevice();
+
+		OnChangeColor();
+		OnChangeMaterial();
+		OnChangeMirror();
+		OnChangeSprite();
+		OnChangeZIndex();
 	}
 
 	void SpriteRenderer2D::CheckInFrustum()
@@ -203,6 +210,9 @@ namespace Eclipse
 			PixelPickMaterial.Bind();
 		else
 			myMaterial.Bind();
+
+		if (mySprite.IsReady())
+			mySprite.Bind();
 #else
 		graphicsDevice->BindMaterial(material);
 #endif

@@ -2,6 +2,7 @@
 
 #include "Reflection/Attributes/AttributeContainer.h"
 #include "Reflection/Attributes/Attributes.hpp"
+#include "AssetSystem/AssetTypes.h"
 
 #include "Core/Math/Random.h"
 
@@ -25,97 +26,16 @@
 #include "ImGui/imgui_internal.h"
 #include "ImGui/imgui_stdlib.h"
 
+#include <FontAwesome/7/IconsFontAwesome7.h>
+
+#include <AssetSystem/Assets/Types/AudioClip.h>
+#include <AssetSystem/Assets/Types/Material.h>
+#include <AssetSystem/Assets/Types/Texture.h>
+
 namespace Eclipse::Editor
 {
-	//namespace
-	//{
-	//	bool TryGetGUIDFromPayload(const ImGuiPayload* aPayload, GUID& aOutGuid)
-	//	{
-	//		const std::string relativePath(static_cast<const char*>(aPayload->Data), aPayload->DataSize);
-	//		Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-
-	//		for (const std::filesystem::path& root : { PathManager::GetAssetsPath(), PathManager::GetEngineAssetsPath() })
-	//		{
-	//			try
-	//			{
-	//				aOutGuid = database.GetGUIDFromFullPath(root / relativePath);
-	//				return true;
-	//			}
-	//			catch (...)
-	//			{
-
-	//			}
-	//		}
-
-	//		return false;
-	//	}
-
-	//	template<typename TAsset>
-	//	std::string GetDisplayName(const TAsset& asset, const char* typeName)
-	//	{
-	//		if (!asset.IsValid()) return std::string("None (") + typeName + ")";
-	//		try
-	//		{
-	//			const Assets::AssetDatabase& database = MainSingleton::GetInstance<Assets::AssetDatabase>();
-	//			return database.GetProcessedFile(asset.GetAssetID()).fileName;
-	//		}
-	//		catch (const std::runtime_error&)
-	//		{
-	//			return std::string("Missing (") + typeName + ")";
-	//		}
-	//	}
-
-	//	bool DrawAssetPicker(const char* popupId, Assets::AssetType assetType, const GUID& current, GUID& outGuid)
-	//	{
-	//		if (!ImGui::BeginPopup(popupId)) return false;
-
-	//		static ImGuiTextFilter filter;
-	//		if (ImGui::IsWindowAppearing())
-	//		{
-	//			filter.Clear();
-	//			ImGui::SetKeyboardFocusHere();
-	//		}
-	//		filter.Draw("##Filter", -FLT_MIN);
-
-	//		std::vector<const Assets::AssetMeta*> assets;
-	//		for (const auto& [guid, meta] : MainSingleton::GetInstance<Assets::AssetDatabase>().GetSources())
-	//		{
-	//			if (meta.type == assetType && filter.PassFilter(meta.fileName.c_str()))
-	//				assets.push_back(&meta);
-	//		}
-	//		std::sort(assets.begin(), assets.end(), [](const Assets::AssetMeta* a, const Assets::AssetMeta* b) { return a->fileName < b->fileName; });
-
-	//		bool picked = false;
-	//		if (ImGui::BeginListBox("##assets", ImVec2(-FLT_MIN, 10.f * ImGui::GetTextLineHeightWithSpacing())))
-	//		{
-	//			if (ImGui::Selectable("None", current.IsEmpty()))
-	//			{
-	//				outGuid = GUID();
-	//				picked = true;
-	//				ImGui::CloseCurrentPopup();
-	//			}
-
-	//			for (const Assets::AssetMeta* meta : assets)
-	//			{
-	//				ImGui::PushID(meta);
-	//				if (ImGui::Selectable(meta->fileName.c_str(), meta->guid == current))
-	//				{
-	//					outGuid = meta->guid;
-	//					picked = true;
-	//					ImGui::CloseCurrentPopup();
-	//				}
-	//				if (ImGui::IsItemHovered() && !meta->fullPath.empty())
-	//					ImGui::SetTooltip("%s", meta->fullPath.generic_string().c_str());
-	//				ImGui::PopID();
-	//			}
-	//			ImGui::EndListBox();
-	//		}
-
-	//		ImGui::EndPopup();
-	//		return picked;
-	//	}
-
-
+	namespace
+	{
 		void InvokeOnChange(void* anObject, const Reflection::FieldEntry& anEntry)
 		{
 			if (const Reflection::OnChange* onChange = anEntry.attributeContainer.TryGet<Reflection::OnChange>())
@@ -125,91 +45,130 @@ namespace Eclipse::Editor
 			}
 		}
 
-	//	template<typename TAsset>
-	//	bool AssetEquals(const TAsset& a, const TAsset& b)
-	//	{
-	//		if (a.IsValid() != b.IsValid()) return false;
-	//		if (!a.IsValid()) return true;
-	//		return a.GetAssetID() == b.GetAssetID();
-	//	}
+		bool RoundedButton()
+		{
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			const ImGuiStyle& style = ImGui::GetStyle();
 
-	//	template<typename TAsset>
-	//	bool DrawAssetField(TAsset& anAsset, Utilities::FileInfo::FileType_ aFileType, Assets::AssetType anAssetType, const char* aTypeName)
-	//	{
-	//		TAsset newAsset = anAsset;
-	//		bool assigned = false;
+			ImVec2 labelSize = ImGui::CalcTextSize(ICON_FA_XMARK, nullptr, true);
 
-	//		const ImGuiStyle& style = ImGui::GetStyle();
-	//		const float clearWidth = ImGui::GetFrameHeight();
-	//		const float boxWidth = (std::max)(50.f, ImGui::GetContentRegionAvail().x - clearWidth - style.ItemInnerSpacing.x);
-	//		const ImVec2 boxSize(boxWidth, ImGui::GetFrameHeight());
+			float width = labelSize.x + style.FramePadding.x * 2.f;
+			float height = labelSize.y + style.FramePadding.y * 2.f;
 
-	//		const ImVec2 boxMin = ImGui::GetCursorScreenPos();
-	//		const ImVec2 boxMax(boxMin.x + boxSize.x, boxMin.y + boxSize.y);
+			const ImVec2 min = ImGui::GetCursorScreenPos();
+			const ImVec2 max = ImVec2(min.x + width, min.y + height);
+			const ImVec2 size = ImVec2(width, width);
 
-	//		const ImGuiPayload* dragged = ImGui::GetDragDropPayload();
-	//		const char* dndId = DragAndDrop::dnd_id[aFileType];
-	//		const bool compatibleDrag = dragged && dragged->IsDataType(dndId);
+			auto color = ImGui::GetColorU32(ImGuiCol_FrameBgHovered);
 
-	//		const bool clicked = ImGui::InvisibleButton("##asset_field", boxSize);
-	//		const bool isHovered = ImGui::IsItemHovered();
+			ImGui::InvisibleButton("##", size);
+			if (ImGui::IsItemHovered())
+			{
+				color = ImGui::GetColorU32(ImGuiCol_FrameBgActive);
+			}
 
-	//		ImDrawList* drawList = ImGui::GetWindowDrawList();
-	//		drawList->AddRectFilled(boxMin, boxMax, ImGui::GetColorU32(isHovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), style.FrameRounding);
+			{
+				const ImVec2 textSize = ImGui::CalcTextSize(ICON_FA_XMARK);
+				const ImVec2 textPos = {
+					min.x + (size.x - textSize.x) * 0.5f,
+					min.y + size.y - textSize.y
+				};
 
-	//		if (compatibleDrag)
-	//		{
-	//			drawList->AddRect(boxMin, boxMax, ImGui::GetColorU32(ImGuiCol_DragDropTarget), style.FrameRounding, 0, 1.5f);
-	//		}
 
-	//		const std::string label = GetDisplayName(anAsset, aTypeName);
+				ImDrawFlags flags = ImDrawFlags_RoundCornersRight;
 
-	//		const ImVec4 textColor = anAsset.IsValid() ? style.Colors[ImGuiCol_Text] : style.Colors[ImGuiCol_TextDisabled];
-	//		const ImVec2 textPos(boxMin.x + style.FramePadding.x, boxMin.y + style.FramePadding.y);
-	//		drawList->PushClipRect(boxMin, ImVec2(boxMax.x - style.FramePadding.x, boxMax.y), true);
-	//		drawList->AddText(textPos, ImGui::GetColorU32(textColor), label.c_str());
-	//		drawList->PopClipRect();
 
-	//		if (ImGui::BeginDragDropTarget())
-	//		{
-	//			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(dndId))
-	//			{
-	//				GUID guid;
-	//				if (TryGetGUIDFromPayload(payload, guid))
-	//				{
-	//					newAsset = Assets::AssetManager::Load<TAsset>(guid);
-	//					assigned = true;
-	//				}
-	//			}
-	//			ImGui::EndDragDropTarget();
-	//		}
+				drawList->AddRectFilled(min, max, color, style.FrameRounding, flags);
+				drawList->AddText(textPos, ImGui::GetColorU32(ImGuiCol_Text), ICON_FA_XMARK);
+			}
 
-	//		if (clicked)
-	//			ImGui::OpenPopup("##AssetPicker");
 
-	//		ImGui::SetNextWindowPos(ImVec2(boxMin.x, boxMax.y));
-	//		ImGui::SetNextWindowSize(ImVec2(boxSize.x + style.ItemInnerSpacing.x + clearWidth, 0.f));
-	//		GUID picked;
-	//		if (DrawAssetPicker("##AssetPicker", anAssetType, anAsset.IsValid() ? anAsset.GetAssetID() : GUID(), picked))
-	//		{
-	//			newAsset = picked.IsEmpty() ? TAsset() : Assets::AssetManager::Load<TAsset>(picked);
-	//			assigned = true;
-	//		}
 
-	//		ImGui::SameLine();
-	//		if (ImGui::Button("X", ImVec2(clearWidth, clearWidth)))
-	//		{
-	//			newAsset = TAsset();
-	//			assigned = true;
-	//		}
+			return false;
+		}
 
-	//		if (!assigned || AssetEquals(anAsset, newAsset))
-	//			return false;
+		template<typename T>
+		bool DrawAssetField(T* asset, const char* aDnd)
+		{
+			bool changed = false;
+			GUID guid = asset->GetGUID();
+			ImGui::PushID(&guid);
 
-	//		anAsset = newAsset;
-	//		return true;
-	//	}
-	//}
+			const bool hasAsset = !guid.IsEmpty();
+
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			const ImGuiStyle& style = ImGui::GetStyle();
+
+			float height = ImGui::GetFrameHeight();
+			ImVec2 btnSize = ImVec2(height, height);
+
+			ImVec2 start = ImGui::GetCursorScreenPos();
+			float rightEdge = start.x + ImGui::GetContentRegionAvail().x;
+
+			ImVec2 fieldMin = start;
+			ImVec2 fieldMax = ImVec2(rightEdge - btnSize.x, start.y + height);
+			ImVec2 fieldSize = ImVec2(fieldMax.x - fieldMin.x, height);
+
+			{ // Field 
+				std::string label = hasAsset ? guid.ToString() : "No asset.";
+
+				const bool clicked = ImGui::InvisibleButton("##field", fieldSize);
+
+				auto color = ImGui::GetColorU32(ImGuiCol_FrameBg);
+
+				if (ImGui::IsItemActive()) color = ImGui::GetColorU32(ImGuiCol_FrameBgActive);
+				else if (ImGui::IsItemHovered()) color = ImGui::GetColorU32(ImGuiCol_FrameBgHovered);
+
+				drawList->AddRectFilled(fieldMin, fieldMax, color, style.FrameRounding, ImDrawFlags_RoundCornersLeft);
+				ImGui::RenderTextClipped(ImVec2(fieldMin.x + style.FramePadding.x, fieldMin.y), 
+					ImVec2(fieldMax.x - style.FramePadding.x, fieldMax.y),
+					label.c_str(), nullptr, nullptr, ImVec2(0.f, 0.5f));
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(aDnd))
+					{
+						const std::string guidStr(static_cast<const char*>(payload->Data), payload->DataSize);
+						GUID newGuid;
+						newGuid.FromString(guidStr);
+
+						if (!newGuid.IsEmpty())
+						{
+							*asset = Assets::Load<T>(newGuid);
+							changed = true;
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+			}
+
+			ImVec2 btnMin = ImVec2(rightEdge - btnSize.x, start.y);
+			ImVec2 btnMax = ImVec2(rightEdge, start.y + height);
+			ImGui::SetCursorScreenPos(btnMin);
+
+			{ // Clear button
+				const bool clicked = ImGui::InvisibleButton("##clear", btnSize);
+				
+				auto color = ImGui::GetColorU32(ImGuiCol_Button);
+
+				if(ImGui::IsItemActive()) color = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+				else if (ImGui::IsItemHovered()) color = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+
+				drawList->AddRectFilled(btnMin, btnMax, color, style.FrameRounding, ImDrawFlags_RoundCornersRight);
+				ImGui::RenderTextClipped(btnMin, btnMax, ICON_FA_XMARK, nullptr, nullptr, ImVec2(0.5f, 0.5f));
+
+				if (clicked)
+				{
+					*asset = {};
+					changed = true;
+				}
+			}
+
+			ImGui::PopID();
+
+			return changed;
+		}
+	}
 
 	void InspectorFieldDrawer::Draw(void* v, const Reflection::FieldEntry& field)
 	{
@@ -274,20 +233,21 @@ namespace Eclipse::Editor
 			}
 		);
 
-		//Register<AudioClip>([](void* v, const Reflection::AttributeContainer& attrs) {
-		//	return DrawAssetField(*reinterpret_cast<AudioClip*>(v), Utilities::FileInfo::FileType_Audio, AssetType::AudioClip, "Audio Clip");
-		//	}
-		//);
 
-		//Register<Texture>([](void* v, const Reflection::AttributeContainer& attrs) {
-		//	return DrawAssetField(*reinterpret_cast<Texture*>(v), Utilities::FileInfo::FileType_Texture, AssetType::Texture, "Texture");
-		//	}
-		//);
+		Register<AudioClip>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(reinterpret_cast<AudioClip*>(v), DragAndDrop::dnd_id[Utilities::FileInfo::FileType_Audio]);
+			}
+		);
 
-		//Register<Material>([](void* v, const Reflection::AttributeContainer& attrs) {
-		//	return DrawAssetField(*reinterpret_cast<Material*>(v), Utilities::FileInfo::FileType_Material, AssetType::Material, "Material");
-		//	}
-		//);
+		Register<Texture>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(reinterpret_cast<Texture*>(v), DragAndDrop::dnd_id[Utilities::FileInfo::FileType_Texture]);
+			}
+		);
+
+		Register<Material>([](void* v, const Reflection::AttributeContainer& attrs) {
+			return DrawAssetField(reinterpret_cast<Material*>(v), DragAndDrop::dnd_id[Utilities::FileInfo::FileType_Material]);
+			}
+		);
 	}
 
 	bool InspectorFieldDrawer::DrawValue(void* value, TypeID type, const Reflection::AttributeContainer& attrs)

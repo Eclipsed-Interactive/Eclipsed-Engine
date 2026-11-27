@@ -20,4 +20,12 @@ namespace Eclipse::AssetSystem
 
 		return true;
 	}
+	bool SceneLoader::Unload(AssetData* aData) const
+	{
+		SceneData* scene = static_cast<SceneData*>(aData);
+		scene->json.clear();
+		scene->json.shrink_to_fit();
+
+		return true;
+	}
 }

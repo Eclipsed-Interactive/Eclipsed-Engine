@@ -15,6 +15,8 @@ namespace Eclipse::AssetSystem
 		Editor::FileWatcher::SubscribeToPath(aSourceLocation,
 			[scheme = std::string(aScheme)](const Editor::FileWatcherEvent& e)
 			{
+				if (std::filesystem::path(e.path).extension() == ".TMP") return;
+
 				SourceRegistry::Refresh(scheme.c_str());
 			}
 		);

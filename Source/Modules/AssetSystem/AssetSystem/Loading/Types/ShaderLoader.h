@@ -16,5 +16,7 @@ namespace Eclipse::AssetSystem
 		unsigned int GetMagic() const override { return 'ESHA'; }
 		AssetData* Create() const override { return new ShaderData; }
 		bool Load(ArtifactReader& aReader, AssetData* aData) const override;
+		bool Unload(AssetData* aData) const override;
+
 	};
 }

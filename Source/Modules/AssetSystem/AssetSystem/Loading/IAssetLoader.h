@@ -15,5 +15,6 @@ namespace Eclipse::AssetSystem
 		virtual unsigned int GetMagic() const = 0;
 		virtual AssetData* Create() const = 0;
 		virtual bool Load(ArtifactReader& aReader, AssetData* aData) const = 0;
+		virtual bool Unload(AssetData* aData) const = 0;
 	};
 }

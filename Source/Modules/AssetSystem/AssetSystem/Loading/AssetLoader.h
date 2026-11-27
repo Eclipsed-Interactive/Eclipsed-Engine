@@ -39,6 +39,7 @@ namespace Eclipse::AssetSystem
 			throw std::runtime_error("No asset loader registered for asset: " + aGuid.ToString());
 
 		AssetData* data = AssetCache::Store(aGuid, loader->Create());
+		data->magic = T::Magic;
 
 		ArtifactReader reader(bytes);
 

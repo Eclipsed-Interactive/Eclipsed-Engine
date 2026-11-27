@@ -9,6 +9,8 @@
 
 #include "ArtifactHeader.h"
 
+#include <AssetSystem/AssetCache.h>
+
 namespace Eclipse::AssetSystem
 {
 	void AssetImporterd::Import(const SourceMount& aMount, const AssetMeta* aMeta)
@@ -39,5 +41,9 @@ namespace Eclipse::AssetSystem
 		writer.Write(ctx.Out().GetBytes().data(), header.payloadSize);
 
 		writer.SaveToFile(aMeta->ArtifactPath());
+
+		AssetData* data = AssetCache::Get(aMeta->GUID());
+		if(data != nullptr)
+			AssetCache::MarkForReload(aMeta->GUID());
 	}
 }

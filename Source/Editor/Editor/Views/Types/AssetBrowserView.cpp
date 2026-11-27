@@ -153,7 +153,15 @@ namespace Eclipse::Editor
 
 			if (Active_Hierarchy_Node)
 			{
-				DragAndDrop::BeginSource(child->info.relativeFilePath.generic_string().c_str(), child->info.relativeFilePath.generic_string().size(), child->info);
+				//if (!std::filesystem::is_regular_file(child->info.filePath)) return;
+
+				//if (!Assets::TryGetGuid(child->info.filePath, child->info.guid))
+				//{
+				////const std::string guid = child->info.guid.ToString();
+				//}
+
+				const std::string guid = child->info.guid.ToString();
+				DragAndDrop::BeginSource(guid.c_str(), guid.size(), child->info);
 			}
 
 		}
@@ -309,8 +317,8 @@ namespace Eclipse::Editor
 				(ImTextureID)data.textureId,
 				imageMin,
 				imageMax,
-				ImVec2(0, 1),
-				ImVec2(1, 0),
+				ImVec2(0, 0),
+				ImVec2(1, 1),
 				col
 			);
 
@@ -362,7 +370,9 @@ namespace Eclipse::Editor
 
 		if (node != nullptr)
 		{
-			DragAndDrop::BeginSource(node->info.relativeFilePath.string().c_str(), node->info.relativeFilePath.string().size(), node->info);
+			const std::string guid = node->info.guid.ToString();
+
+			DragAndDrop::BeginSource(guid.c_str(), guid.size(), node->info);
 		}
 
 		std::string label = node->info.filePath.filename().string();

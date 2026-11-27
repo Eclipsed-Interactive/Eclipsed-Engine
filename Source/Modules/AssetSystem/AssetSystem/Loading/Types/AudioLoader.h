@@ -16,5 +16,6 @@ namespace Eclipse::AssetSystem
 		unsigned int GetMagic() const override { return 'EAUD'; }
 		AssetData* Create() const override { return new AudioData; }
 		bool Load(ArtifactReader& aReader, AssetData* aData) const override;
+		bool Unload(AssetData* aData) const override;
 	};
 }

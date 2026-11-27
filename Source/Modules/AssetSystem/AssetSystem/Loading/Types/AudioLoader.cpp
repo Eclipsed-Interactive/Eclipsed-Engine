@@ -31,4 +31,8 @@ namespace Eclipse::AssetSystem
 
 		return true;
 	}
+	bool AudioLoader::Unload(AssetData* aData) const
+	{
+		return false;
+	}
 }

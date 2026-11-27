@@ -35,4 +35,8 @@ namespace Eclipse::AssetSystem
 
 		return true;
 	}
+	bool MaterialLoader::Unload(AssetData* aData) const
+	{
+		return false;
+	}
 }

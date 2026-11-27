@@ -13,9 +13,9 @@ namespace Eclipse::Input
 	class INPUT_API AbstractInput
 	{
 	public:
-		virtual bool GetKey(char aKey) { return false; }
-		virtual bool GetKey(int aKey) { return false; }
-		virtual bool GetKey(Keycode::Scancode aKey) { return false; }
+		virtual bool GetKey(char aKey) { return aKey >= 0 && aKey < MAX_KEYS && currentKeys[aKey]; }
+		virtual bool GetKey(int aKey) { return aKey >= 0 && aKey < MAX_KEYS && currentKeys[aKey]; }
+		virtual bool GetKey(Keycode::Scancode aKey) { return aKey >= 0 && aKey < MAX_KEYS && currentKeys[aKey]; }
 
 		virtual bool GetKeyDown(char aKey) { return false; }
 		virtual bool GetKeyDown(int aKey) { return false; }

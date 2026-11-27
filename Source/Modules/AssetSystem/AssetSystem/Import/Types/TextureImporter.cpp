@@ -13,7 +13,7 @@ namespace Eclipse::AssetSystem
 
 		int width = 0, height = 0, channels = 0;
 		unsigned char* pixels = nullptr;
-		pixels = STB_Helper::Load_Texture_STB(ctx.GetPath().generic_string().c_str(), width, height, channels, 0, true);
+		pixels = STB_Helper::Load_Texture_STB(ctx.GetPath().generic_string().c_str(), width, height, channels, 0, false);
 		if (!pixels) return false;
 
 		writer.Write(&width, sizeof(width));

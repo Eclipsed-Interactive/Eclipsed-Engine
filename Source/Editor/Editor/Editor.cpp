@@ -27,6 +27,8 @@
 
 #include "PlayModeController.h"
 
+#include <AssetSystem/AssetCache.h>
+
 namespace Eclipse::Editor
 {
 	void Editor::EarlyInit()
@@ -75,6 +77,8 @@ namespace Eclipse::Editor
 
 	void Editor::BeginFrame()
 	{
+		AssetSystem::AssetCache::ProcessReloads();
+
 		PlayModeController::ApplyMode();
 
 		Engine::BeginFrame();
