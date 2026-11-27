@@ -94,7 +94,13 @@ namespace Eclipse::Editor
 		int counter = 0;
 
 		Component* componentToRemove = nullptr;
-		for (auto comp : ComponentManager::GetComponents(gobjId))
+
+		std::vector<Component*> comps = ComponentManager::GetComponents(gobjId);
+		std::stable_sort(comps.begin(), comps.end(), [](const Component* a, const Component* b) {
+			return a->GetUpdatePriority() > b->GetUpdatePriority();
+			});
+
+		for (auto comp : comps)
 		{
 			if (!comp)
 				continue;
