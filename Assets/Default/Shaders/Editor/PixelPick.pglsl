@@ -1,10 +1,6 @@
 #version 460 core
 
-struct Material 
-{
-   sampler2D albedo;
-};
-uniform Material material;
+layout(binding=0) uniform sampler2D albedo;
 
 layout(std140, binding=5) uniform MaterialBuffer
 {
@@ -33,8 +29,8 @@ void main()
 
    frag_colour = vec4(pixelPickColor.rgb, 1);
 
-   vec4 textureAlbedo = texture(material.albedo, modifiedUV);
-   if(textureAlbedo.a < 0.15)
+   float textureAlbedo = texture(albedo, modifiedUV).a * color.a;
+   if(textureAlbedo < 0.15)
    {
       frag_colour.a = 0;
    }

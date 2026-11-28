@@ -47,6 +47,10 @@
 #include <AssetSystem/Assets/Types/Material.h>
 #include <AssetSystem/Helper/TextManager.h>
 
+// Things of great importance
+
+// TemporarySettingsSingleton
+
 namespace Eclipse
 {
 	Graphics::IRenderer* Engine::renderer = nullptr;

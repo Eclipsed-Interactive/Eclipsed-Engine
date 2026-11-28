@@ -99,7 +99,7 @@ namespace Eclipse
 		void SetIsStatic(bool aIsStatic) { IsStatic = aIsStatic; }
 
 	private:
-		bool IsStatic = false;
+		bool IsStatic = true;
 
 	public:
 		[[nodiscard]] GUID GetGUID() const { return id; }

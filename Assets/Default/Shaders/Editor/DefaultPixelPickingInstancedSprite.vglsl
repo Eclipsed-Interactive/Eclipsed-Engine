@@ -1,0 +1,61 @@
+#version 460 core
+
+// Layout Ins
+layout(location = 0) in vec2 VertexPosition;
+layout(location = 1) in vec2 TexCoord;
+
+layout(location = 2) in vec2 position;
+layout(location = 3) in vec2 size;
+layout(location = 4) in float rotation;
+layout(location = 5) in int PixelPickColor;
+
+// Outs
+layout(location = 0) out vec2 outTexCoord;
+layout(location = 1) out flat vec4 OutPixelPickColor;
+
+layout(std140, binding = 0) uniform CameraBuffer
+{
+   vec2 cameraPosition;
+   vec2 cameraScale;
+   float cameraRotation;
+
+   float resolutionRatio;
+};
+
+layout(std140, binding = 3) uniform SpriteBuffer
+{
+   vec2 spriteScaleMultiplier;
+   vec2 mirrored;
+};
+
+void main()
+{
+   uint px = uint(PixelPickColor);
+   uint ColorR = (px >> 24) & 0xFFu;
+   uint ColorG = (px >> 16) & 0xFFu;
+   uint ColorB = (px >> 8) & 0xFFu;
+   uint ColorA = px & 0xFFu;
+
+   OutPixelPickColor = vec4(float(ColorR) / 255.f, float(ColorG) / 255.f, float(ColorB) / 255.f, float(ColorA) / 255.f);;
+   outTexCoord = TexCoord;
+
+   float totalRotation = rotation;
+   mat2 rotationMatrix = mat2(cos(totalRotation), -sin(totalRotation), sin(totalRotation), cos(totalRotation));
+
+   // ORIGINAL TRANSFORMATION (for collision compatibility)
+   vec2 scaledVertex = VertexPosition * (size * .01);
+   vec2 rotatedVertex = scaledVertex * rotationMatrix;
+
+   vec2 worldPosition = position + rotatedVertex;
+   vec2 cameraRelative = worldPosition - cameraPosition;
+
+   mat2 camRot = mat2(cos(cameraRotation), -sin(cameraRotation), sin(cameraRotation), cos(cameraRotation));
+   vec2 logicalPosition = cameraRelative * camRot;
+
+   logicalPosition *= cameraScale;
+
+   // Apply aspect ratio correction only for display
+   logicalPosition.x *= resolutionRatio;
+
+   gl_Position = vec4(logicalPosition, 0.0, 1.0);
+}

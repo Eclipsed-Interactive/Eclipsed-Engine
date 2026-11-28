@@ -1,0 +1,31 @@
+#version 460 core
+
+layout(binding=0) uniform sampler2D albedo;
+
+layout(std140, binding=5) uniform MaterialBuffer
+{
+   vec4 color;
+   vec4 spriteRect; // x, y, width, height
+};
+
+
+// Ins
+in vec2 outTexCoord;
+in vec4 OutPixelPickColor;
+
+// Outs
+out vec4 frag_colour;
+
+void main() 
+{
+   vec2 modifiedUV = vec2(
+      spriteRect.x + outTexCoord.x * spriteRect.z,
+      spriteRect.y + outTexCoord.y * spriteRect.w
+   );
+   
+   float textureAlbedo = texture(albedo, modifiedUV).a * color.a;
+   if(textureAlbedo < 0.15)
+      frag_colour = vec4(0);
+   else
+      frag_colour = OutPixelPickColor;
+}

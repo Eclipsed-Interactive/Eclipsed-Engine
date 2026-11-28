@@ -212,18 +212,28 @@ namespace Eclipse::Graphics::OpenGL
 			Sprite::InstanceTransform transform;
 			glBufferData(GL_ARRAY_BUFFER, sizeof(Sprite::InstanceTransform), &transform, GL_DYNAMIC_DRAW);
 
-			glEnableVertexAttribArray(2);
-			glEnableVertexAttribArray(3);
-			glEnableVertexAttribArray(4);
+			const GLsizei stride = sizeof(Sprite::InstanceTransform);
 
 			//Instancing
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Position));
-			glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Scale));
-			glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Sprite::InstanceTransform), (void*)offsetof(Sprite::InstanceTransform, Rotation));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Sprite::InstanceTransform, Position));
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Sprite::InstanceTransform, Scale));
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, stride, (void*)offsetof(Sprite::InstanceTransform, Rotation));
+
+#ifdef ECL_EDITOR
+			glEnableVertexAttribArray(5);
+			glVertexAttribIPointer(5, 1, GL_INT,			stride, (void*)offsetof(Sprite::InstanceTransform, PixelPickColor));
+#endif // ECL_EDITOR
 
 			glVertexAttribDivisor(2, 1);
 			glVertexAttribDivisor(3, 1);
 			glVertexAttribDivisor(4, 1);
+
+#ifdef ECL_EDITOR
+			glVertexAttribDivisor(5, 1);
+#endif // ECL_EDITOR
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}

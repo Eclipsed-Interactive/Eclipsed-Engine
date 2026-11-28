@@ -18,8 +18,9 @@ namespace Eclipse::Graphics::OpenGL
 	{
 	public:
 		void Init() override;
-		void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite) override;
+		void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite, int PixelPickMaterial) override;
 		void ExecuteStaticRendering() override;
+		void ExecutePixelPickingStaticRendering() override;
 
 		//Assets::Material myInstanceMaterial = {0};
 	};

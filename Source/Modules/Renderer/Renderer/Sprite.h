@@ -43,6 +43,10 @@ namespace Eclipse::Graphics
 			Math::Vector2f Position;
 			Math::Vector2f Scale;
 			float Rotation;
+#ifdef ECL_EDITOR
+			int PixelPickColor;
+#endif // ECL_EDT
+
 		};
 
 	public:

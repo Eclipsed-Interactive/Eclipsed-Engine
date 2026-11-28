@@ -40,6 +40,8 @@
 
 #include <ImGui/imgui_internal.h>
 
+#include <fstream>
+
 void Eclipse::Editor::SceneView::TryZoomToObject()
 {
 	GameObjectID currentGO = SelectionContext::GetCurrentData<GameObjectTarget>();
@@ -218,21 +220,26 @@ void Eclipse::Editor::SceneView::SpriteSelector()
 	if (!ImGui::IsMouseClicked(0) || !ImGui::IsWindowHovered())
 		return;
 
-	auto device = Graphics::RendererManager::GetRenderer().GetDevice();
+
+	Graphics::IRenderer& Renderer = Graphics::RendererManager::GetRenderer();
+	
+	Graphics::IGraphicsDevice* device = Renderer.GetDevice();
 	device->BindFrameBuffer(sceneBuffer.frameBufferIndex);
 	device->Clear();
-	auto buffer = Graphics::RendererManager::GetRenderer().GetGraphicsBuffer();
-
 
 	EditorBuffer* editorBuffer;
+	Graphics::IGraphicsBuffer* buffer = Renderer.GetGraphicsBuffer();
 	buffer->GetBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, editorBuffer);
-	editorBuffer->PixelPicking = 1;
-	editorBuffer->IsSceneView = 1;
 	buffer->SetOrCreateBuffer(Graphics::GraphicsBufferEnum::g_EditorBuffer, 35);
 
-	Graphics::CommandListManager* commandListManager = Graphics::RendererManager::GetRenderer().GetCommandListManager();
+	editorBuffer->PixelPicking = 1;
+	editorBuffer->IsSceneView = 1;
+
+	Graphics::CommandListManager* commandListManager = Renderer.GetCommandListManager();
 	commandListManager->GetSpriteCommandList().Execute();
 	commandListManager->GetUICommandList().Execute();
+	
+	Renderer.GetInstancedRendering()->ExecutePixelPickingStaticRendering();
 
 
 	Math::Vector2i MousePosition = GetSceneViewMousePosition();

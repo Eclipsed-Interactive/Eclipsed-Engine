@@ -29,20 +29,16 @@ namespace Eclipse::Graphics
 		MaterialBuffer* MaterialBuffer;
 		Texture* Sprite;
 
-		struct InternalInstanceTransform
-		{
-			Math::Vector2f Position;
-			Math::Vector2f Scale;
-			float Rotation = 0;
-		}  InstanceTransform;
+		Sprite::InstanceTransform InstanceTransform;
 	};
 
 	class IInstancedRenderer
 	{
 	public:
 		virtual void Init() = 0;
-		virtual void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite) = 0;
+		virtual void AddRenderObject(TransformBuffer* aTransformBuffer, SpriteBuffer* aSpriteBuffer, MaterialBuffer* aMaterial, Texture* aSprite, int PixelPickMaterial) = 0;
 		virtual void ExecuteStaticRendering() = 0;
+		virtual void ExecutePixelPickingStaticRendering() = 0;
 		void ClearList()
 		{
 			RenderComponents.clear();

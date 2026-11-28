@@ -111,6 +111,7 @@ namespace Eclipse
 
 	void SpriteRenderer2D::OnComponentAdded()
 	{
+		// Ugla
 		PixelPickMaterial = Eclipse::AssetSystem::AssetLoader::Load<Material>("engine://Default/Materials/Editor/PixelPick_Material.mat");
 
 		if (myMaterial.IsReady()) hasMaterial = true;
@@ -118,6 +119,7 @@ namespace Eclipse
 
 		if (!hasMaterial)
 		{
+			// Ugla
 			myMaterial = Eclipse::AssetSystem::AssetLoader::Load<Material>("engine://Default/Materials/Default_2D_Material.mat");
 			hasMaterial = true;
 		}
@@ -192,7 +194,8 @@ namespace Eclipse
 		if (gameObject->GetIsStatic())
 		{
 			Graphics::IInstancedRenderer* InstancedRenderer = Graphics::RendererManager::GetRenderer().GetInstancedRendering();
-			InstancedRenderer->AddRenderObject(&gameObject->transform->myTransformBuffer, &mySpriteBuffer, &myMaterialBuffer, &mySprite);
+			Math::Color color = Math::Color(gameObject->myPixelPickColor.x, gameObject->myPixelPickColor.y, gameObject->myPixelPickColor.z, gameObject->myPixelPickColor.w);
+			InstancedRenderer->AddRenderObject(&gameObject->transform->myTransformBuffer, &mySpriteBuffer, &myMaterialBuffer, &mySprite, color.GetHexValue());
 
 			return;
 		}
